@@ -33,12 +33,7 @@ class TqdmTypeError(TypeError): ...
 class TqdmKeyError(KeyError): ...
 
 class TqdmWarning(Warning):
-    """
-    base class for all tqdm warnings.
-
-    Used for non-external-code-breaking errors, such as garbled printing.
-    """
-    def __init__(self, msg, fp_write=None, *a, **k) -> None: ...
+    def __init__(self, msg, fp_write=None) -> None: ...
 
 class TqdmExperimentalWarning(TqdmWarning, FutureWarning):
     """beta feature, unstable API and behaviour"""
