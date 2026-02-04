@@ -54,9 +54,48 @@ class AsyncRequest:
 
     def __init__(self, cfg: Config, unreader: AsyncUnreader, peer_addr: _AddressType, req_number: int = 1) -> None: ...
     @classmethod
-    async def parse(cls, cfg: Config, unreader: AsyncUnreader, peer_addr: _AddressType, req_number: int = 1) -> Self: ...
-    def force_close(self) -> None: ...
-    def should_close(self) -> bool: ...
-    def get_header(self, name: str) -> str | None: ...
-    async def read_body(self, size: int = 8192) -> bytes: ...
-    async def drain_body(self) -> None: ...
+    async def parse(cls, cfg: Config, unreader: AsyncUnreader, peer_addr: _AddressType, req_number: int = 1) -> Self:
+        """
+        Parse an HTTP request from the stream.
+
+        Args:
+            cfg: gunicorn config object
+            unreader: AsyncUnreader instance
+            peer_addr: client address tuple
+            req_number: request number on this connection (for keepalive)
+
+        Returns:
+            AsyncRequest: Parsed request object
+
+        Raises:
+            NoMoreData: If no data available
+            Various parsing errors for malformed requests
+        """
+        ...
+    def force_close(self) -> None:
+        """Mark connection for closing after this request."""
+        ...
+    def should_close(self) -> bool:
+        """Check if connection should be closed after this request."""
+        ...
+    def get_header(self, name: str) -> str | None:
+        """Get a header value by name (case-insensitive)."""
+        ...
+    async def read_body(self, size: int = 8192) -> bytes:
+        """
+        Read a chunk of the request body.
+
+        Args:
+            size: Maximum bytes to read
+
+        Returns:
+            bytes: Body data, empty bytes when body is exhausted
+        """
+        ...
+    async def drain_body(self) -> None:
+        """
+        Drain any unread body data.
+
+        Should be called before reusing connection for keepalive.
+        """
+        ...

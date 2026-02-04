@@ -1,3 +1,18 @@
+"""
+Dirty Arbiters - Separate process pool for long-running operations.
+
+Dirty Arbiters provide a separate process pool for executing long-running,
+blocking operations (AI model loading, heavy computation) without blocking
+HTTP workers. Inspired by Erlang's dirty schedulers.
+
+Key Properties:
+- Completely separate from HTTP workers - can be killed/restarted independently
+- Stateful - loaded resources persist in dirty worker memory
+- Message-passing IPC via Unix sockets with JSON serialization
+- Explicit execute() API (no hidden IPC)
+- Asyncio-based for clean concurrent handling and future streaming support
+"""
+
 from .app import DirtyApp as DirtyApp
 from .arbiter import DirtyArbiter as DirtyArbiter
 from .client import (

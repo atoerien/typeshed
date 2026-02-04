@@ -49,7 +49,7 @@ class ASGIWorker(base.Worker):
         """Initialize signal handlers for asyncio."""
         ...
     def handle_quit_signal(self) -> None:
-        """Handle SIGQUIT - immediate shutdown."""
+        """Handle SIGQUIT/SIGINT - immediate shutdown."""
         ...
     def handle_exit_signal(self) -> None:
         """Handle SIGTERM - graceful shutdown."""

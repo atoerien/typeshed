@@ -166,10 +166,53 @@ class Arbiter:
         """
         ...
     def spawn_worker(self) -> int: ...
-    def spawn_workers(self) -> None: ...
-    def kill_workers(self, sig: int) -> None: ...
-    def kill_worker(self, pid: int, sig: int) -> None: ...
-    def spawn_dirty_arbiter(self) -> int | None: ...
-    def kill_dirty_arbiter(self, sig: int) -> None: ...
-    def reap_dirty_arbiter(self) -> None: ...
-    def manage_dirty_arbiter(self) -> None: ...
+    def spawn_workers(self) -> None:
+        """
+        Spawn new workers as needed.
+
+        This is where a worker process leaves the main loop
+        of the master process.
+        """
+        ...
+    def kill_workers(self, sig: int) -> None:
+        """
+        Kill all workers with the signal `sig`
+        :attr sig: `signal.SIG*` value
+        """
+        ...
+    def kill_worker(self, pid: int, sig: int) -> None:
+        """
+        Kill a worker
+
+        :attr pid: int, worker pid
+        :attr sig: `signal.SIG*` value
+ 
+        """
+        ...
+    def spawn_dirty_arbiter(self) -> int | None:
+        """
+        Spawn the dirty arbiter process.
+
+        The dirty arbiter manages a separate pool of workers for
+        long-running, blocking operations.
+        """
+        ...
+    def kill_dirty_arbiter(self, sig: int) -> None:
+        """
+        Send a signal to the dirty arbiter.
+
+        :attr sig: `signal.SIG*` value
+        """
+        ...
+    def reap_dirty_arbiter(self) -> None:
+        """
+        Reap the dirty arbiter process if it has exited.
+        
+        """
+        ...
+    def manage_dirty_arbiter(self) -> None:
+        """
+        Maintain the dirty arbiter process by respawning if needed.
+        
+        """
+        ...

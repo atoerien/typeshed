@@ -1,8 +1,8 @@
 """
 ASGI protocol handler for gunicorn.
 
-Implements asyncio.Protocol to handle HTTP/1.x connections and dispatch
-to ASGI applications.
+Implements asyncio.Protocol to handle HTTP/1.x and HTTP/2 connections
+and dispatch to ASGI applications.
 """
 
 import asyncio

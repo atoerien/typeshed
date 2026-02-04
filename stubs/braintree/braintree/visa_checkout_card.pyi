@@ -7,7 +7,12 @@ from braintree.subscription import Subscription
 
 @deprecated("Visa Checkout is no longer supported for creating new transactions.")
 class VisaCheckoutCard(Resource):
-    """A class representing Visa Checkout card"""
+    """
+    A class representing Visa Checkout card.
+
+    DEPRECATED: Visa Checkout is no longer supported for creating new transactions.
+    This class is retained for search functionality and historical transaction data only.
+    """
     billing_address: Address | None
     subscriptions: list[Subscription]
     verification: CreditCardVerification
