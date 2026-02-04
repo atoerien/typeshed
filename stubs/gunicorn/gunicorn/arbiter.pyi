@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from gunicorn.app.base import BaseApplication
 from gunicorn.config import Config
+from gunicorn.dirty import DirtyArbiter
 from gunicorn.glogging import Logger as GLogger
 from gunicorn.sock import BaseSocket
 from gunicorn.workers.base import Worker
@@ -33,6 +34,9 @@ class Arbiter:
     reexec_pid: int
     master_pid: int
     master_name: str
+    dirty_arbiter_pid: int
+    dirty_arbiter: DirtyArbiter | None
+    dirty_pidfile: str | None
     pid: int
     app: BaseApplication
     cfg: Config
@@ -162,26 +166,10 @@ class Arbiter:
         """
         ...
     def spawn_worker(self) -> int: ...
-    def spawn_workers(self) -> None:
-        """
-        Spawn new workers as needed.
-
-        This is where a worker process leaves the main loop
-        of the master process.
-        """
-        ...
-    def kill_workers(self, sig: int) -> None:
-        """
-        Kill all workers with the signal `sig`
-        :attr sig: `signal.SIG*` value
-        """
-        ...
-    def kill_worker(self, pid: int, sig: int) -> None:
-        """
-        Kill a worker
-
-        :attr pid: int, worker pid
-        :attr sig: `signal.SIG*` value
- 
-        """
-        ...
+    def spawn_workers(self) -> None: ...
+    def kill_workers(self, sig: int) -> None: ...
+    def kill_worker(self, pid: int, sig: int) -> None: ...
+    def spawn_dirty_arbiter(self) -> int | None: ...
+    def kill_dirty_arbiter(self, sig: int) -> None: ...
+    def reap_dirty_arbiter(self) -> None: ...
+    def manage_dirty_arbiter(self) -> None: ...
