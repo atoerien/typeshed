@@ -8,7 +8,7 @@ import tomllib
 from packaging.specifiers import Specifier
 
 
-def subprocess_run(*args: str):
+def subprocess_run(*args: str) -> subprocess.CompletedProcess[bytes]:
     return subprocess.run(args, check=True)
 
 
@@ -23,7 +23,7 @@ class StubMetadata:
     brew_dependencies: list[str]
     choco_dependencies: list[str]
 
-    def make_requirement(self, include_python_version=False) -> str:
+    def make_requirement(self, *, include_python_version=False) -> str:
         req = self.name
 
         if self.extras:
@@ -38,11 +38,11 @@ class StubMetadata:
         return req
 
 
-def parse_metadata(dir: Path):
-    with (dir / "METADATA.toml").open("rb") as f:
+def parse_metadata(path: Path) -> StubMetadata:
+    with (path / "METADATA.toml").open("rb") as f:
         data = tomllib.load(f)
 
-    name = dir.name
+    name = path.name
 
     version = data["version"]
     if version[0].isdigit():
@@ -75,6 +75,6 @@ def parse_metadata(dir: Path):
     )
 
 
-def get_package_requirement(dir: Path) -> str:
-    m = parse_metadata(dir)
+def get_package_requirement(path: Path) -> str:
+    m = parse_metadata(path)
     return m.make_requirement()

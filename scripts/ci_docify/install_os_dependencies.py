@@ -17,14 +17,14 @@ from main import (
 from utils import parse_metadata, subprocess_run
 
 
-def run(cmd: list[str], sudo: bool = False):
+def run(cmd: list[str], *, sudo: bool = False) -> None:
     if sudo:
         cmd = ["sudo", *cmd]
     print(" ".join(cmd))
     subprocess_run(*cmd)
 
 
-def main():
+def main() -> None:
     arg_parser = ArgumentParser()
     arg_parser.add_argument(
         "--sudo",
@@ -70,10 +70,10 @@ def main():
         return
 
     if pkg_manager == "apt":
-        run(["apt-get", "-q", "update"], sudo)
+        run(["apt-get", "-q", "update"], sudo=sudo)
         cmd = ["apt-get", "-q", "install", *packages]
     elif pkg_manager == "brew":
-        run(["brew", "update"], sudo)
+        run(["brew", "update"], sudo=sudo)
         cmd = ["brew", "install", *packages]
     elif pkg_manager == "choco":
         cmd = ["choco", "install", "--no-progress", *packages]
@@ -81,7 +81,7 @@ def main():
         return
 
     try:
-        run(cmd, sudo)
+        run(cmd, sudo=sudo)
     except CalledProcessError as e:
         # ignore choco 3010 - means reboot is required
         if pkg_manager != "choco" or e.returncode != 3010:

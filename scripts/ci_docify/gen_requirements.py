@@ -6,7 +6,7 @@ from main import DOCIFY_VER, TYPING_EXTENSIONS_VER
 from utils import get_package_requirement
 
 
-def main():
+def main() -> None:
     print(f"docify=={DOCIFY_VER}")
     print()
     print(f"typing-extensions=={TYPING_EXTENSIONS_VER}")

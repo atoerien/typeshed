@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 import shutil
 import subprocess
 import sys
@@ -67,7 +66,7 @@ EXTRA_APT_DEPENDENCIES = [
     "libgit2-1.7",  # pygit2
     "libcurl4-openssl-dev",  # many packages
 ]
-IGNORE_APT_DEPENDENCIES = []
+IGNORE_APT_DEPENDENCIES: list[str] = []
 EXTRA_BREW_DEPENDENCIES = [
     "jack",  # JACK-Client
     "libgit2",  # pygit2
@@ -83,14 +82,14 @@ EXTRA_CHOCO_DEPENDENCIES = [
     # "jack",  # JACK-Client
     "mitkerberos",  # ldap3
 ]
-IGNORE_CHOCO_DEPENDENCIES = []
+IGNORE_CHOCO_DEPENDENCIES: list[str] = []
 
 
-def make_venv_path(pyver: str) -> str:
-    return f".venv_py{pyver}"
+def make_venv_path(pyver: str) -> Path:
+    return Path(f".venv_py{pyver}")
 
 
-def init_venv(pyver: str) -> str:
+def init_venv(pyver: str) -> Path:
     venv = make_venv_path(pyver)
     subprocess_run(
         "uv",
@@ -101,18 +100,18 @@ def init_venv(pyver: str) -> str:
         "only-managed",
         "-p",
         f"python{pyver}",
-        venv,
+        str(venv),
     )
     uv_pip_install(venv, [f"docify=={DOCIFY_VER}"])
     # uv_pip_install(venv, ["https://github.com/AThePeanut4/docify.git"])
     return venv
 
 
-def uv_pip_install(venv: str, reqs: list[str]):
+def uv_pip_install(venv: Path, reqs: list[str]) -> None:
     if sys.platform == "win32":
-        python_path = rf"{venv}\Scripts\python.exe"
+        python_path = venv / "Scripts" / "python.exe"
     else:
-        python_path = f"{venv}/bin/python"
+        python_path = venv / "bin" / "python"
 
     subprocess_run(
         "uv",
@@ -120,21 +119,21 @@ def uv_pip_install(venv: str, reqs: list[str]):
         "install",
         "-q",
         "-p",
-        python_path,
+        str(python_path),
         *reqs,
     )
 
 
-def run_docify(venv: str, dir: Path):
+def run_docify(venv: Path, input_dir: Path) -> None:
     if sys.platform == "win32":
-        path = rf"{venv}\Scripts\docify.exe"
+        path = venv / "Scripts" / "docify.exe"
     else:
-        path = f"{venv}/bin/docify"
+        path = venv / "bin" / "docify"
 
-    subprocess_run(path, "-qi", str(dir))
+    subprocess_run(str(path), "-qi", str(input_dir))
 
 
-def docify_stdlib(pyver: str):
+def docify_stdlib(pyver: str) -> None:
     print("  stdlib:")
     venv = init_venv(pyver)
     print("    initialised venv")
@@ -148,7 +147,7 @@ def docify_stdlib(pyver: str):
     print("    done")
 
 
-def docify_package(pyver: str, path: Path):
+def docify_package(pyver: str, path: Path) -> None:
     meta = parse_metadata(path)
     name = meta.name
     requires_python = meta.requires_python
@@ -199,7 +198,7 @@ def docify_package(pyver: str, path: Path):
     print("    done")
 
 
-def run(pyver: str):
+def run(pyver: str) -> None:
     print(f"Running on Python {pyver}:")
     try:
         docify_stdlib(pyver)
@@ -209,7 +208,7 @@ def run(pyver: str):
     finally:
         # remove the venv
         venv = make_venv_path(pyver)
-        if os.path.exists(venv):
+        if venv.exists():
             shutil.rmtree(venv)
     print()
 
