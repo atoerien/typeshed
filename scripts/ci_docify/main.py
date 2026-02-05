@@ -75,6 +75,9 @@ PACKAGE_EXTRA_DEPENDENCIES = {
     # (and have stubs for some reason) and importing one starts a web server
     "pony": ["cx_Oracle", "psycopg2", "mysqlclient"],
 }
+NO_MULTIPROCESS_PACKAGES = [
+    "gunicorn",  # eventlet dependency seems to interfere with multiprocessing
+]
 
 EXTRA_APT_DEPENDENCIES = [
     "libcurl4-openssl-dev",  # many packages
@@ -202,7 +205,10 @@ def docify_package(pyver: str, path: Path) -> None:
     print(f"    installed {' '.join(reqs)}")
 
     try:
-        run_docify(venv, path)
+        if name in NO_MULTIPROCESS_PACKAGES:
+            run_docify(venv, path, workers=1)
+        else:
+            run_docify(venv, path)
     except subprocess.CalledProcessError:
         # ignore docify errors
         return
