@@ -10,7 +10,7 @@ on:
 env:
   PYTHONUNBUFFERED: 1
   UPSTREAM: https://github.com/python/typeshed.git
-  UV_VERSION: 0.5.4
+  UV_VERSION: 0.10.0
 
 jobs:
   setup-merge:
@@ -46,14 +46,14 @@ jobs:
             git commit -m 'chore: merge upstream'
           fi
       - name: Install uv
-        uses: astral-sh/setup-uv@v3
+        uses: astral-sh/setup-uv@v7
         with:
           cache-dependency-glob: "scripts/ci_docify/requirements.txt"
           enable-cache: true
           version: ${{ env.UV_VERSION }}
       - name: Generate requirements_stubs.txt
         run: |
-          uv venv -p python3.13
+          uv venv
           uv pip install -r scripts/ci_docify/requirements.txt
           uv run --no-project scripts/ci_docify/gen_requirements.py > scripts/ci_docify/requirements_stubs.txt
       - name: Commit changes
@@ -91,7 +91,7 @@ jobs:
           version: ${{ env.UV_VERSION }}
       - name: Setup venv
         run: |
-          uv venv -p python3.13
+          uv venv
           uv pip install -r scripts/ci_docify/requirements.txt
       - name: Install dependencies
         run: uv run --no-project scripts/ci_docify/install_os_dependencies.py --sudo apt
@@ -123,7 +123,7 @@ jobs:
           version: ${{ env.UV_VERSION }}
       - name: Setup venv
         run: |
-          uv venv -p python3.13
+          uv venv
           uv pip install -r scripts/ci_docify/requirements.txt
       - name: Install dependencies
         run: uv run --no-project scripts/ci_docify/install_os_dependencies.py brew
@@ -162,7 +162,7 @@ jobs:
           version: ${{ env.UV_VERSION }}
       - name: Setup venv
         run: |
-          uv venv -p python3.13
+          uv venv
           uv pip install -r scripts/ci_docify/requirements.txt
       - name: Install dependencies
         run: uv run --no-project scripts/ci_docify/install_os_dependencies.py choco

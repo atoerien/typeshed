@@ -98,6 +98,7 @@ def init_venv(pyver: str) -> Path:
         "--no-project",
         "--python-preference",
         "only-managed",
+        "--clear",
         "-p",
         f"python{pyver}",
         str(venv),
