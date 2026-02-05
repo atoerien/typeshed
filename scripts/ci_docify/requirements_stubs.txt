@@ -129,7 +129,7 @@ toposort==1.10
 first==2.0.*
 dirhash==0.5.*
 convertdate==2.4.*
-tqdm[slack,telegram]==4.67.2
+tqdm[slack,telegram]==4.67.3
 flake8-simplify==0.30.*
 flake8==7.3.*
 jsonnet==0.21.*
