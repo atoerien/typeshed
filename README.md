@@ -9,7 +9,7 @@ docstrings at runtime.
 ## How?
 
 A daily CI job pulls from upstream and runs
-[docify](https://github.com/AThePeanut4/docify) on the repo, adding docstrings
+[docify](https://github.com/atoerien/docify) on the repo, adding docstrings
 by dynamically importing every module. The script is run on each OS that GitHub
 Actions supports (Ubuntu, macOS and Windows), and on every Python version
 supported by typeshed. Where possible, third-party packages are installed on
@@ -19,4 +19,4 @@ the CI runners so that docstrings can also be added under `stubs/`.
 
 For anything relating to the actual type stubs, please head
 [upstream](https://github.com/python/typeshed), and for docstring-related
-issues, go to [docify](https://github.com/AThePeanut4/docify).
+issues, go to [docify](https://github.com/atoerien/docify).
