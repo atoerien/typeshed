@@ -1,3 +1,10 @@
+"""
+Representing and manipulating email headers via custom objects.
+
+This module provides an implementation of the HeaderRegistry API.
+The implementation is designed to flexibly follow RFC5322 rules.
+"""
+
 import sys
 import types
 from collections.abc import Iterable, Mapping

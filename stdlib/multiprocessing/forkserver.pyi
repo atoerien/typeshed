@@ -64,7 +64,9 @@ elif sys.version_info >= (3, 13):
         sys_path: list[str] | None = None,
         *,
         sys_argv: list[str] | None = None,
-    ) -> None: ...
+    ) -> None:
+        """Run forkserver."""
+        ...
 
 else:
     def main(
