@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import tomllib
-from packaging.specifiers import Specifier
+from packaging.specifiers import SpecifierSet
 
 
 def subprocess_run(*args: str) -> subprocess.CompletedProcess[bytes]:
@@ -15,10 +15,11 @@ def subprocess_run(*args: str) -> subprocess.CompletedProcess[bytes]:
 @dataclass
 class StubMetadata:
     name: str
-    version: Specifier
+    version: SpecifierSet
     extras: list[str]
+    platforms: list[str]
     extra_requirements: list[str]
-    requires_python: Specifier | None
+    requires_python: SpecifierSet | None
     apt_dependencies: list[str]
     brew_dependencies: list[str]
     choco_dependencies: list[str]
@@ -33,7 +34,7 @@ class StubMetadata:
 
         if include_python_version and self.requires_python:
             rp = self.requires_python
-            req = f"{req}; python_version{rp.operator}'{rp.version}'"
+            req = f"{req}; python_version{rp}"
 
         return req
 
@@ -47,12 +48,14 @@ def parse_metadata(path: Path) -> StubMetadata:
     version = data["version"]
     if version[0].isdigit():
         version = f"=={version}"
-    version = Specifier(version)
+    version = SpecifierSet(version)
 
     tools = data.get("tool", {})
     tools_stubtest = tools.get("stubtest", {})
 
     extras: list[str] = tools_stubtest.get("extras", [])
+
+    platforms = tools_stubtest.get("ci_platforms", ["linux"])
 
     extra_requirements = tools_stubtest.get("stubtest_requirements", [])
     apt_dependencies = tools_stubtest.get("apt_dependencies", [])
@@ -61,12 +64,13 @@ def parse_metadata(path: Path) -> StubMetadata:
 
     requires_python = data.get("requires_python")
     if requires_python:
-        requires_python = Specifier(requires_python)
+        requires_python = SpecifierSet(requires_python)
 
     return StubMetadata(
         name,
         version,
         extras,
+        platforms,
         extra_requirements,
         requires_python,
         apt_dependencies,

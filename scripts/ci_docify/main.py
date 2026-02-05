@@ -7,81 +7,89 @@ import subprocess
 import sys
 from pathlib import Path
 
-from packaging.specifiers import Specifier
+from packaging.specifiers import SpecifierSet
 from utils import parse_metadata, subprocess_run
 
 PYTHON_VERSIONS = ("3.13", "3.12", "3.11", "3.10", "3.9")
 
 DOCIFY_VER = "1.1.0"
-TYPING_EXTENSIONS_VER = "4.12.2"
+TYPING_EXTENSIONS_VER = "4.15.0"
 
-IGNORED_PACKAGES = [
+PACKAGE_IGNORE = [
     "Jetson.GPIO",  # can't import
     "RPi.GPIO",  # only builds on RPi
     "gdb",  # internal to gdb, can't import directly
     "pyserial",  # no __name__ == "__main__" check :(
     "uWSGI",  # doesn't build from sdist properly
 ]
-PACKAGE_PYVER_OVERRIDES = {
-    "atheris": "<=3.10",  # >=3.11 is unsupported
-    "cffi": "<=3.12",  # no bdist for 3.13, sdist build fails
-    "corus": "<=3.12",  # depends on cgi module, removed in 3.13
-    "humanfriendly": "<=3.12",  # depends on pipes module, removed in 3.13
-    "ibm-db": "<=3.12",  # no bdist for 3.13, sdist build fails
-    "networkx": ">=3.10",  # <=3.9 is unsupported
-    "opentracing": "<=3.11",  # tornado==5.1.1 dependency doesn't build on >=3.12
-    "pygit2": "<=3.12",  # no bdist for 3.13, sdist build is a pain
-    "tensorflow": "<=3.12",  # 3.13 is unsupported
-    "tree-sitter-languages": "<=3.12",  # bdist only, not available for 3.13 yet
-    "tqdm": "<=3.12",  # tensorflow dependency
+PACKAGE_OVERRIDE_PLATFORMS = {
+    "docker": ["linux", "win32"],  # some windows-specific stuff
+    "pyinstaller": ["linux", "win32"],  # some windows-specific stuff
+    "python-dateutil": ["linux", "win32"],  # some windows-specific stuff
+    "vobject": ["linux", "win32"],  # some windows-specific stuff
+}
+PACKAGE_OVERRIDE_PYVER = {
+    "atheris": ">=3.11,<=3.13",  # supports 3.11-3.13 only
+    "gevent": ">=3.11",  # doesn't build on 3.10 or earlier
+    "gunicorn": ">=3.11",  # gevent dependency doesn't build on 3.10 or earlier
 }
 PACKAGE_EXTRA_EXTRAS = {
     "dateparser": ["calendars"],
     "docker": ["ssh"],
+    "geopandas": ["all"],
     "python-jose": ["cryptography", "pycryptodome"],
     "workalendar": ["astronomy"],
 }
-PACKAGE_OVERRIDE_DEPENDENCIES = {
-    "tensorflow": [],
-}
+PACKAGE_OVERRIDE_DEPENDENCIES: dict[str, list[str]] = {}
 PACKAGE_EXTRA_DEPENDENCIES = {
+    "Authlib": [
+        "pycryptodomex",
+        "Django",
+        "sqlalchemy",
+        "Flask",
+        "Werkzeug",
+        "httpx",
+        "requests",
+        "starlette",
+    ],
+    "aws-xray-sdk": [
+        "bottle",
+        "mysql-connector-python",
+        "aiohttp",
+        "sqlalchemy",
+        "Flask-SQLAlchemy",
+        "httpx",
+        "PyMySQL",
+        "Django",
+        "Flask",
+        "pynamodb",
+        "pymongo",
+        "pg8000",
+        "aiobotocore",
+    ],
     "docutils": ["recommonmark"],
     "openpyxl": ["numpy"],
-    "opentracing": ["mock", "pytest-mock", "gevent", "tornado==5.1.*"],
-    "python-gflags": ["six"],
-}
-OS_SPECIFIC_PACKAGES = {
-    "JACK-Client": ["linux", "macos"],  # choco install jack fails on windows
-    "atheris": ["linux"],  # building on macos/windows is a pain
-    "capturer": ["linux", "macos"],  # requires unix-only stdlib modules
-    "dateparser": ["linux", "macos"],  # requires unix-only fasttext module
-    "ibm-db": ["linux"],  # arm is unsupported, import fails on windows
-    "psycopg2": ["linux", "macos"],  # building on windows is a pain
-    "pycurl": ["linux", "macos"],  # building on windows is a pain
-    "pywin32": ["win32"],  # windows only
-    "wurlitzer": ["linux", "macos"],  # unix only
+    # tornado 5.1.1 doesn't build on 3.12 or later
+    "opentracing": ["mock", "pytest-mock", "gevent", "tornado==5.1.*;python_version<='3.11'"],
+    # not including bottle, Flask, Flask-Login as these are only used in example packages
+    # (and have stubs for some reason) and importing one starts a web server
+    "pony": ["cx_Oracle", "psycopg2", "mysqlclient"],
 }
 
 EXTRA_APT_DEPENDENCIES = [
-    "libgit2-1.7",  # pygit2
     "libcurl4-openssl-dev",  # many packages
 ]
-IGNORE_APT_DEPENDENCIES: list[str] = []
+IGNORE_APT_DEPENDENCIES: list[str] = [
+    "libomp-dev",  # hnswlib
+]
 EXTRA_BREW_DEPENDENCIES = [
-    "jack",  # JACK-Client
-    "libgit2",  # pygit2
-    "mariadb",  # mysqlclient
-    "postgresql@16",  # psycopg2
     "openssl",  # many packages
 ]
 IGNORE_BREW_DEPENDENCIES = [
     "libuv",  # already installed
     "openssl",  # already installed
 ]
-EXTRA_CHOCO_DEPENDENCIES = [
-    # "jack",  # JACK-Client
-    "mitkerberos",  # ldap3
-]
+EXTRA_CHOCO_DEPENDENCIES: list[str] = []
 IGNORE_CHOCO_DEPENDENCIES: list[str] = []
 
 
@@ -103,8 +111,7 @@ def init_venv(pyver: str) -> Path:
         f"python{pyver}",
         str(venv),
     )
-    uv_pip_install(venv, [f"docify=={DOCIFY_VER}"])
-    # uv_pip_install(venv, ["https://github.com/AThePeanut4/docify.git"])
+    uv_pip_install(venv, ["git+https://github.com/atoerien/docify@multiprocessing"])
     return venv
 
 
@@ -125,13 +132,13 @@ def uv_pip_install(venv: Path, reqs: list[str]) -> None:
     )
 
 
-def run_docify(venv: Path, input_dir: Path) -> None:
+def run_docify(venv: Path, input_dir: Path, *, workers=0) -> None:
     if sys.platform == "win32":
         path = venv / "Scripts" / "docify.exe"
     else:
         path = venv / "bin" / "docify"
 
-    subprocess_run(str(path), "-qi", str(input_dir))
+    subprocess_run(str(path), "-qi", "--workers", str(workers), str(input_dir))
 
 
 def docify_stdlib(pyver: str) -> None:
@@ -152,19 +159,22 @@ def docify_package(pyver: str, path: Path) -> None:
     meta = parse_metadata(path)
     name = meta.name
     requires_python = meta.requires_python
+    platforms = meta.platforms
 
     print(f"  {name}:")
 
-    if name in IGNORED_PACKAGES:
+    if name in PACKAGE_IGNORE:
         print("    ignoring")
         return
 
-    if name in OS_SPECIFIC_PACKAGES and sys.platform not in OS_SPECIFIC_PACKAGES[name]:
-        print(f"    ignoring - unavailable on {sys.platform}")
+    if name in PACKAGE_OVERRIDE_PLATFORMS:
+        platforms = PACKAGE_OVERRIDE_PLATFORMS[name]
+    if sys.platform not in platforms:
+        print(f"    ignoring - requires sys.platform in {platforms}")
         return
 
-    if name in PACKAGE_PYVER_OVERRIDES:
-        requires_python = Specifier(PACKAGE_PYVER_OVERRIDES[name])
+    if name in PACKAGE_OVERRIDE_PYVER:
+        requires_python = SpecifierSet(PACKAGE_OVERRIDE_PYVER[name])
     if requires_python and pyver not in requires_python:
         print(f"    ignoring - requires python_version{requires_python}")
         return
@@ -180,7 +190,7 @@ def docify_package(pyver: str, path: Path) -> None:
         extra_requirements = PACKAGE_OVERRIDE_DEPENDENCIES[name]
 
     reqs = [
-        meta.make_requirement(include_python_version=False),
+        meta.make_requirement(),
         *extra_requirements,
         *PACKAGE_EXTRA_DEPENDENCIES.get(name, []),
     ]
