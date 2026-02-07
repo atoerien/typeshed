@@ -30,8 +30,7 @@ data:
 DEFAULT_BUFFER_SIZE
 
    An int containing the default buffer size used by the module's buffered
-   I/O classes. open() uses the file's blksize (as obtained by os.stat) if
-   possible.
+   I/O classes.
 """
 
 import builtins
@@ -507,9 +506,14 @@ class FileIO(RawIOBase, _RawIOBase, BinaryIO):  # type: ignore[misc]  # incompat
         """
         Read at most size bytes, returned as bytes.
 
-        Only makes one system call, so less data may be returned than requested.
-        In non-blocking mode, returns None if no data is available.
-        Return an empty bytes object at EOF.
+        If size is less than 0, read all bytes in the file making multiple read calls.
+        See ``FileIO.readall``.
+
+        Attempts to make only one system call, retrying only per PEP 475 (EINTR). This
+        means less data may be returned than requested.
+
+        In non-blocking mode, returns None if no data is available. Return an empty
+        bytes object at EOF.
         """
         ...
 

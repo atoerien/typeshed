@@ -352,7 +352,9 @@ if sys.platform != "win32":
             ) -> Server: ...
 
     if sys.version_info >= (3, 14):
-        class _UnixDefaultEventLoopPolicy(events._BaseDefaultEventLoopPolicy): ...
+        class _UnixDefaultEventLoopPolicy(events._BaseDefaultEventLoopPolicy):
+            """UNIX event loop policy"""
+            ...
     else:
         class _UnixDefaultEventLoopPolicy(events.BaseDefaultEventLoopPolicy):
             """UNIX event loop policy with a watcher for child processes."""

@@ -144,7 +144,7 @@ class POP3:
         """Close the connection without assuming anything about it."""
         ...
     def rpop(self, user: str) -> bytes:
-        """Not sure what this does."""
+        """Send RPOP command to access the mailbox with an alternate user."""
         ...
     timestamp: Pattern[str]
     def apop(self, user: str, password: str) -> bytes:

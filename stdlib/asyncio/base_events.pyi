@@ -205,7 +205,13 @@ class BaseEventLoop(AbstractEventLoop):
             name: object = None,
             context: Context | None = None,
             eager_start: bool | None = None,
-        ) -> Task[_T]: ...
+        ) -> Task[_T]:
+            """
+            Schedule or begin executing a coroutine object.
+
+            Return a task object.
+            """
+            ...
     elif sys.version_info >= (3, 11):
         def create_task(self, coro: _CoroutineLike[_T], *, name: object = None, context: Context | None = None) -> Task[_T]:
             """
@@ -230,9 +236,10 @@ class BaseEventLoop(AbstractEventLoop):
         If factory is None the default task factory will be set.
 
         If factory is a callable, it should have a signature matching
-        '(loop, coro)', where 'loop' will be a reference to the active
-        event loop, 'coro' will be a coroutine object.  The callable
-        must return a Future.
+        '(loop, coro, **kwargs)', where 'loop' will be a reference to the active
+        event loop, 'coro' will be a coroutine object, and **kwargs will be
+        arbitrary keyword arguments that should be passed on to Task.
+        The callable must return a Task.
         """
         ...
     def get_task_factory(self) -> _TaskFactory | None:
@@ -906,6 +913,8 @@ class BaseEventLoop(AbstractEventLoop):
         - 'protocol' (optional): Protocol instance;
         - 'transport' (optional): Transport instance;
         - 'socket' (optional): Socket instance;
+        - 'source_traceback' (optional): Traceback of the source;
+        - 'handle_traceback' (optional): Traceback of the handle;
         - 'asyncgen' (optional): Asynchronous generator that caused
                                  the exception.
 

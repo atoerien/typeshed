@@ -521,7 +521,5 @@ def dis(
     + A memo entry isn't referenced before it's defined.
 
     + The markobject isn't stored in the memo.
-
-    + A memo entry isn't redefined.
     """
     ...

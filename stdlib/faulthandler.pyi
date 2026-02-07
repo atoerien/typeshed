@@ -14,7 +14,9 @@ def dump_traceback(file: FileDescriptorLike = sys.stderr, all_threads: bool = Tr
     ...
 
 if sys.version_info >= (3, 14):
-    def dump_c_stack(file: FileDescriptorLike = sys.stderr) -> None: ...
+    def dump_c_stack(file: FileDescriptorLike = sys.stderr) -> None:
+        """Dump the C stack of the current thread."""
+        ...
 
 def dump_traceback_later(
     timeout: float, repeat: bool = False, file: FileDescriptorLike = sys.stderr, exit: bool = False
@@ -26,7 +28,9 @@ def dump_traceback_later(
     ...
 
 if sys.version_info >= (3, 14):
-    def enable(file: FileDescriptorLike = sys.stderr, all_threads: bool = True, c_stack: bool = True) -> None: ...
+    def enable(file: FileDescriptorLike = sys.stderr, all_threads: bool = True, c_stack: bool = True) -> None:
+        """Enable the fault handler."""
+        ...
 
 else:
     def enable(file: FileDescriptorLike = sys.stderr, all_threads: bool = True) -> None:

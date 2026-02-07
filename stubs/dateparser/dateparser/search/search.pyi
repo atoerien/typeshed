@@ -25,6 +25,10 @@ class _ExactLanguageSearch:
     def search_parse(self, shortname, text, settings) -> list[tuple[Incomplete, Incomplete]]: ...
 
 class DateSearchWithDetection:
+    """
+    Class which executes language detection of string in a natural language, translation of a given string,
+    search of substrings which represent date and/or time and parsing of these substrings.
+    """
     loader: Incomplete
     available_language_map: Incomplete
     search: Incomplete

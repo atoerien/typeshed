@@ -1,9 +1,13 @@
 r"""
-UUID objects (universally unique identifiers) according to RFC 4122.
+UUID objects (universally unique identifiers) according to RFC 4122/9562.
 
-This module provides immutable UUID objects (class UUID) and the functions
-uuid1(), uuid3(), uuid4(), uuid5() for generating version 1, 3, 4, and 5
-UUIDs as specified in RFC 4122.
+This module provides immutable UUID objects (class UUID) and functions for
+generating UUIDs corresponding to a specific UUID version as specified in
+RFC 4122/9562, e.g., uuid1() for UUID version 1, uuid3() for UUID version 3,
+and so on.
+
+Note that UUID version 2 is deliberately omitted as it is outside the scope
+of the RFC.
 
 If all you want is a unique ID, you should probably call uuid1() or uuid4().
 Note that uuid1() may compromise privacy since it creates a UUID containing
@@ -43,6 +47,14 @@ Typical usage:
     # make a UUID from a 16-byte string
     >>> uuid.UUID(bytes=x.bytes)
     UUID('00010203-0405-0607-0809-0a0b0c0d0e0f')
+
+    # get the Nil UUID
+    >>> uuid.NIL
+    UUID('00000000-0000-0000-0000-000000000000')
+
+    # get the Max UUID
+    >>> uuid.MAX
+    UUID('ffffffff-ffff-ffff-ffff-ffffffffffff')
 """
 
 import builtins
@@ -84,7 +96,16 @@ class UUID:
 
         fields      a tuple of the six integer fields of the UUID,
                     which are also available as six individual attributes
-                    and two derived attributes:
+                    and two derived attributes. Those attributes are not
+                    always relevant to all UUID versions:
+
+                        The 'time_*' attributes are only relevant to version 1.
+
+                        The 'clock_seq*' and 'node' attributes are only relevant
+                        to versions 1 and 6.
+
+                        The 'time' attribute is only relevant to versions 1, 6
+                        and 7.
 
             time_low                the first 32 bits of the UUID
             time_mid                the next 16 bits of the UUID
@@ -93,19 +114,20 @@ class UUID:
             clock_seq_low           the next 8 bits of the UUID
             node                    the last 48 bits of the UUID
 
-            time                    the 60-bit timestamp
+            time                    the 60-bit timestamp for UUIDv1/v6,
+                                    or the 48-bit timestamp for UUIDv7
             clock_seq               the 14-bit sequence number
 
         hex         the UUID as a 32-character hexadecimal string
 
         int         the UUID as a 128-bit integer
 
-        urn         the UUID as a URN as specified in RFC 4122
+        urn         the UUID as a URN as specified in RFC 4122/9562
 
         variant     the UUID variant (one of the constants RESERVED_NCS,
                     RFC_4122, RESERVED_MICROSOFT, or RESERVED_FUTURE)
 
-        version     the UUID version number (1 through 5, meaningful only
+        version     the UUID version number (1 through 8, meaningful only
                     when the variant is RFC_4122)
 
         is_safe     An enum indicating whether the UUID has been generated in
@@ -216,9 +238,35 @@ def uuid1(node: int | None = None, clock_seq: int | None = None) -> UUID:
     ...
 
 if sys.version_info >= (3, 14):
-    def uuid6(node: int | None = None, clock_seq: int | None = None) -> UUID: ...
-    def uuid7() -> UUID: ...
-    def uuid8(a: int | None = None, b: int | None = None, c: int | None = None) -> UUID: ...
+    def uuid6(node: int | None = None, clock_seq: int | None = None) -> UUID:
+        """
+        Similar to :func:`uuid1` but where fields are ordered differently
+        for improved DB locality.
+
+        More precisely, given a 60-bit timestamp value as specified for UUIDv1,
+        for UUIDv6 the first 48 most significant bits are stored first, followed
+        by the 4-bit version (same position), followed by the remaining 12 bits
+        of the original 60-bit timestamp.
+        """
+        ...
+    def uuid7() -> UUID:
+        """
+        Generate a UUID from a Unix timestamp in milliseconds and random bits.
+
+        UUIDv7 objects feature monotonicity within a millisecond.
+        """
+        ...
+    def uuid8(a: int | None = None, b: int | None = None, c: int | None = None) -> UUID:
+        """
+        Generate a UUID from three custom blocks.
+
+        * 'a' is the first 48-bit chunk of the UUID (octets 0-5);
+        * 'b' is the mid 12-bit chunk (octets 6-7);
+        * 'c' is the last 62-bit chunk (octets 8-15).
+
+        When a value is not specified, a pseudo-random value is generated.
+        """
+        ...
 
 if sys.version_info >= (3, 12):
     def uuid3(namespace: UUID, name: str | bytes) -> UUID:

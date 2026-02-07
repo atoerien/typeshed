@@ -3,6 +3,41 @@ from _typeshed import Incomplete
 from authlib.oauth1 import ResourceProtector as _ResourceProtector
 
 class ResourceProtector(_ResourceProtector):
+    """
+    A protecting method for resource servers. Initialize a resource
+    protector with the these method:
+
+    1. query_client
+    2. query_token,
+    3. exists_nonce
+
+    Usually, a ``query_client`` method would look like (if using SQLAlchemy)::
+
+        def query_client(client_id):
+            return Client.query.filter_by(client_id=client_id).first()
+
+    A ``query_token`` method accept two parameters, ``client_id`` and ``oauth_token``::
+
+        def query_token(client_id, oauth_token):
+            return Token.query.filter_by(
+                client_id=client_id, oauth_token=oauth_token
+            ).first()
+
+    And for ``exists_nonce``, if using cache, we have a built-in hook to create this method::
+
+        from authlib.integrations.flask_oauth1 import create_exists_nonce_func
+
+        exists_nonce = create_exists_nonce_func(cache)
+
+    Then initialize the resource protector with those methods::
+
+        require_oauth = ResourceProtector(
+            app,
+            query_client=query_client,
+            query_token=query_token,
+            exists_nonce=exists_nonce,
+        )
+    """
     app: Incomplete
     query_client: Incomplete
     query_token: Incomplete

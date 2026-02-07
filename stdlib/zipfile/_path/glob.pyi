@@ -30,7 +30,7 @@ if sys.version_info >= (3, 13):
             Apply '(?s:)' to create a non-matching group that
             matches newlines (valid on Unix).
 
-            Append '\Z' to imply fullmatch even when match is used.
+            Append '\z' to imply fullmatch even when match is used.
             """
             ...
         def match_dirs(self, pattern: str) -> str:

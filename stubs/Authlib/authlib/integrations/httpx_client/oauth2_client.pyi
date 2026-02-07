@@ -15,6 +15,7 @@ _Request: TypeAlias = Incomplete  # actual type is httpx.Request
 
 # Inherits from httpx.Auth
 class OAuth2Auth(TokenAuth):
+    """Sign requests for OAuth 2.0, currently only bearer token is supported."""
     requires_request_body: bool
     def auth_flow(self, request: _Request) -> Generator[_Request, _Response, None]: ...
 

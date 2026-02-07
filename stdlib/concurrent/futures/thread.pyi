@@ -59,7 +59,13 @@ if sys.version_info >= (3, 14):
         task: _Task
         def __init__(self, future: Future[Any], task: _Task) -> None: ...
         def run(self, ctx: WorkerContext) -> None: ...
-        def __class_getitem__(cls, item: Any, /) -> GenericAlias: ...
+        def __class_getitem__(cls, item: Any, /) -> GenericAlias:
+            """
+            Represent a PEP 585 generic type
+
+            E.g. for t = list[int], t.__origin__ is list and t.__args__ is (int,).
+            """
+            ...
 
     def _worker(executor_reference: ref[Any], ctx: WorkerContext, work_queue: queue.SimpleQueue[Any]) -> None: ...
 
@@ -138,6 +144,7 @@ class ThreadPoolExecutor(Executor):
             thread_name_prefix: An optional name prefix to give our threads.
             initializer: A callable used to initialize worker threads.
             initargs: A tuple of arguments to pass to the initializer.
+            ctxkwargs: Additional arguments to cls.prepare_context().
         """
         ...
     @overload
@@ -158,6 +165,7 @@ class ThreadPoolExecutor(Executor):
             thread_name_prefix: An optional name prefix to give our threads.
             initializer: A callable used to initialize worker threads.
             initargs: A tuple of arguments to pass to the initializer.
+            ctxkwargs: Additional arguments to cls.prepare_context().
         """
         ...
     @overload
@@ -177,6 +185,7 @@ class ThreadPoolExecutor(Executor):
             thread_name_prefix: An optional name prefix to give our threads.
             initializer: A callable used to initialize worker threads.
             initargs: A tuple of arguments to pass to the initializer.
+            ctxkwargs: Additional arguments to cls.prepare_context().
         """
         ...
     def _adjust_thread_count(self) -> None: ...

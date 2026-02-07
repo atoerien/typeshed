@@ -31,7 +31,9 @@ class BaseProcess:
         """Start child process"""
         ...
     if sys.version_info >= (3, 14):
-        def interrupt(self) -> None: ...
+        def interrupt(self) -> None:
+            """Terminate process; sends SIGINT signal"""
+            ...
 
     def terminate(self) -> None:
         """Terminate process; sends SIGTERM signal or uses TerminateProcess()"""

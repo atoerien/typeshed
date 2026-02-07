@@ -233,7 +233,7 @@ class SSLSession:
         ...
     @property
     def id(self) -> bytes:
-        """Session id"""
+        """Session ID."""
         ...
     @property
     def ticket_lifetime_hint(self) -> int:

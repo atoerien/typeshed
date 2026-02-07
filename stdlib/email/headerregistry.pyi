@@ -279,7 +279,12 @@ if sys.version_info >= (3, 13):
         @classmethod
         def parse(cls, value: str, kwds: dict[str, Any]) -> None: ...
         @staticmethod
-        def value_parser(value: str) -> MessageIDList: ...
+        def value_parser(value: str) -> MessageIDList:
+            """
+            in-reply-to     =   "In-Reply-To:" 1*msg-id CRLF
+            references      =   "References:" 1*msg-id CRLF
+            """
+            ...
 
 @type_check_only
 class _HeaderParser(Protocol):

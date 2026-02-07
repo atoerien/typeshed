@@ -1249,21 +1249,13 @@ def getservbyport(port: int, protocolname: str = ..., /) -> str:
     """
     ...
 def ntohl(x: int, /) -> int:
-    """
-    ntohl(integer) -> integer
-
-    Convert a 32-bit integer from network to host byte order.
-    """
+    """Convert a 32-bit unsigned integer from network to host byte order."""
     ...
 def ntohs(x: int, /) -> int:
     """Convert a 16-bit unsigned integer from network to host byte order."""
     ...
 def htonl(x: int, /) -> int:
-    """
-    htonl(integer) -> integer
-
-    Convert a 32-bit integer from host to network byte order.
-    """
+    """Convert a 32-bit unsigned integer from host to network byte order."""
     ...
 def htons(x: int, /) -> int:
     """Convert a 16-bit unsigned integer from host to network byte order."""
@@ -1366,7 +1358,9 @@ def if_nametoindex(oname: str, /) -> int:
     ...
 
 if sys.version_info >= (3, 14):
-    def if_indextoname(if_index: int, /) -> str: ...
+    def if_indextoname(if_index: int, /) -> str:
+        """Returns the interface name corresponding to the interface index if_index."""
+        ...
 
 else:
     def if_indextoname(index: int, /) -> str:

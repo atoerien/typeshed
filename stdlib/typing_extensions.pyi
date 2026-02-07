@@ -268,7 +268,29 @@ def final(f: _F) -> _F:
     object to allow runtime introspection.
     """
     ...
-def disjoint_base(cls: _TC) -> _TC: ...
+def disjoint_base(cls: _TC) -> _TC:
+    """
+    This decorator marks a class as a disjoint base.
+
+    Child classes of a disjoint base cannot inherit from other disjoint bases that are
+    not parent classes of the disjoint base.
+
+    For example:
+
+        @disjoint_base
+        class Disjoint1: pass
+
+        @disjoint_base
+        class Disjoint2: pass
+
+        class Disjoint3(Disjoint1, Disjoint2): pass  # Type checker error
+
+    Type checkers can use knowledge of disjoint bases to detect unreachable code
+    and determine when two types can overlap.
+
+    See PEP 800.
+    """
+    ...
 
 Literal: _SpecialForm
 
@@ -898,15 +920,34 @@ if sys.version_info >= (3, 14):
 else:
     @runtime_checkable
     class Reader(Protocol[_T_co]):
+        """
+        Protocol for simple I/O reader instances.
+
+        This protocol only supports blocking I/O.
+        """
         __slots__ = ()
         @abc.abstractmethod
-        def read(self, size: int = ..., /) -> _T_co: ...
+        def read(self, size: int = ..., /) -> _T_co:
+            """
+            Read data from the input stream and return it.
+
+            If *size* is specified, at most *size* items (bytes/characters) will be
+            read.
+            """
+            ...
 
     @runtime_checkable
     class Writer(Protocol[_T_contra]):
+        """
+        Protocol for simple I/O writer instances.
+
+        This protocol only supports blocking I/O.
+        """
         __slots__ = ()
         @abc.abstractmethod
-        def write(self, data: _T_contra, /) -> int: ...
+        def write(self, data: _T_contra, /) -> int:
+            """Write *data* to the output stream and return the number of items written."""
+            ...
 
 if sys.version_info >= (3, 13):
     from types import CapsuleType as CapsuleType
@@ -1120,28 +1161,30 @@ else:
     @final
     class TypeAliasType:
         """
-        Type alias.
+        Create named, parameterized type aliases.
 
-        Type aliases are created through the type statement::
-
-            type Alias = int
-
-        In this example, Alias and int will be treated equivalently by static
-        type checkers.
-
-        At runtime, Alias is an instance of TypeAliasType. The __name__
-        attribute holds the name of the type alias. The value of the type alias
-        is stored in the __value__ attribute. It is evaluated lazily, so the
-        value is computed only if the attribute is accessed.
-
-        Type aliases can also be generic::
+        This provides a backport of the new `type` statement in Python 3.12:
 
             type ListOrSet[T] = list[T] | set[T]
 
-        In this case, the type parameters of the alias are stored in the
-        __type_params__ attribute.
+        is equivalent to:
 
-        See PEP 695 for more information.
+            T = TypeVar("T")
+            ListOrSet = TypeAliasType("ListOrSet", list[T] | set[T], type_params=(T,))
+
+        The name ListOrSet can then be used as an alias for the type it refers to.
+
+        The type_params argument should contain all the type parameters used
+        in the value of the type alias. If the alias is not generic, this
+        argument is omitted.
+
+        Static type checkers should only support type aliases declared using
+        TypeAliasType that follow these rules:
+
+        - The first argument (the name) must be a string literal.
+        - The TypeAliasType instance must be immediately assigned to a variable
+          of the same name. (For example, 'X = TypeAliasType("Y", int)' is invalid,
+          as is 'X, Y = TypeAliasType("X", int), TypeAliasType("Y", int)').
         """
         def __init__(
             self, name: str, value: AnnotationForm, *, type_params: tuple[TypeVar | ParamSpec | TypeVarTuple, ...] = ()
@@ -1160,24 +1203,11 @@ else:
         @property
         def __module__(self) -> str | None: ...  # type: ignore[override]
         # Returns typing._GenericAlias, which isn't stubbed.
-        def __getitem__(self, parameters: Incomplete | tuple[Incomplete, ...]) -> AnnotationForm:
-            """Return self[key]."""
-            ...
-        def __init_subclass__(cls, *args: Unused, **kwargs: Unused) -> NoReturn:
-            """
-            This method is called when a class is subclassed.
-
-            The default implementation does nothing. It may be
-            overridden to extend subclasses.
-            """
-            ...
+        def __getitem__(self, parameters: Incomplete | tuple[Incomplete, ...]) -> AnnotationForm: ...
+        def __init_subclass__(cls, *args: Unused, **kwargs: Unused) -> NoReturn: ...
         if sys.version_info >= (3, 10):
-            def __or__(self, right: Any, /) -> _SpecialForm:
-                """Return self|value."""
-                ...
-            def __ror__(self, left: Any, /) -> _SpecialForm:
-                """Return value|self."""
-                ...
+            def __or__(self, right: Any, /) -> _SpecialForm: ...
+            def __ror__(self, left: Any, /) -> _SpecialForm: ...
 
 # PEP 727
 class Doc:
@@ -1219,6 +1249,7 @@ if sys.version_info >= (3, 14):
     from annotationlib import Format as Format, get_annotations as get_annotations, type_repr as type_repr
 else:
     class Format(enum.IntEnum):
+        """An enumeration."""
         VALUE = 1
         VALUE_WITH_FAKE_GLOBALS = 2
         FORWARDREF = 3
@@ -1232,7 +1263,43 @@ else:
         locals: Mapping[str, Any] | None = None,  # value types depend on the key
         eval_str: bool = False,
         format: Literal[Format.STRING],
-    ) -> dict[str, str]: ...
+    ) -> dict[str, str]:
+        """
+        Compute the annotations dict for an object.
+
+        obj may be a callable, class, or module.
+        Passing in an object of any other type raises TypeError.
+
+        Returns a dict.  get_annotations() returns a new dict every time
+        it's called; calling it twice on the same object will return two
+        different but equivalent dicts.
+
+        This is a backport of `inspect.get_annotations`, which has been
+        in the standard library since Python 3.10. See the standard library
+        documentation for more:
+
+            https://docs.python.org/3/library/inspect.html#inspect.get_annotations
+
+        This backport adds the *format* argument introduced by PEP 649. The
+        three formats supported are:
+        * VALUE: the annotations are returned as-is. This is the default and
+          it is compatible with the behavior on previous Python versions.
+        * FORWARDREF: return annotations as-is if possible, but replace any
+          undefined names with ForwardRef objects. The implementation proposed by
+          PEP 649 relies on language changes that cannot be backported; the
+          typing-extensions implementation simply returns the same result as VALUE.
+        * STRING: return annotations as strings, in a format close to the original
+          source. Again, this behavior cannot be replicated directly in a backport.
+          As an approximation, typing-extensions retrieves the annotations under
+          VALUE semantics and then stringifies them.
+
+        The purpose of this backport is to allow users who would like to use
+        FORWARDREF or STRING semantics once PEP 649 is implemented, but who also
+        want to support earlier Python versions, to simply write:
+
+            typing_extensions.get_annotations(obj, format=Format.FORWARDREF)
+        """
+        ...
     @overload
     def get_annotations(
         obj: Any,  # any object with __annotations__ or __annotate__
@@ -1241,7 +1308,43 @@ else:
         locals: Mapping[str, Any] | None = None,  # value types depend on the key
         eval_str: bool = False,
         format: Literal[Format.FORWARDREF],
-    ) -> dict[str, AnnotationForm | ForwardRef]: ...
+    ) -> dict[str, AnnotationForm | ForwardRef]:
+        """
+        Compute the annotations dict for an object.
+
+        obj may be a callable, class, or module.
+        Passing in an object of any other type raises TypeError.
+
+        Returns a dict.  get_annotations() returns a new dict every time
+        it's called; calling it twice on the same object will return two
+        different but equivalent dicts.
+
+        This is a backport of `inspect.get_annotations`, which has been
+        in the standard library since Python 3.10. See the standard library
+        documentation for more:
+
+            https://docs.python.org/3/library/inspect.html#inspect.get_annotations
+
+        This backport adds the *format* argument introduced by PEP 649. The
+        three formats supported are:
+        * VALUE: the annotations are returned as-is. This is the default and
+          it is compatible with the behavior on previous Python versions.
+        * FORWARDREF: return annotations as-is if possible, but replace any
+          undefined names with ForwardRef objects. The implementation proposed by
+          PEP 649 relies on language changes that cannot be backported; the
+          typing-extensions implementation simply returns the same result as VALUE.
+        * STRING: return annotations as strings, in a format close to the original
+          source. Again, this behavior cannot be replicated directly in a backport.
+          As an approximation, typing-extensions retrieves the annotations under
+          VALUE semantics and then stringifies them.
+
+        The purpose of this backport is to allow users who would like to use
+        FORWARDREF or STRING semantics once PEP 649 is implemented, but who also
+        want to support earlier Python versions, to simply write:
+
+            typing_extensions.get_annotations(obj, format=Format.FORWARDREF)
+        """
+        ...
     @overload
     def get_annotations(
         obj: Any,  # any object with __annotations__ or __annotate__
@@ -1250,7 +1353,43 @@ else:
         locals: Mapping[str, Any] | None = None,  # value types depend on the key
         eval_str: bool = False,
         format: Format = Format.VALUE,  # noqa: Y011
-    ) -> dict[str, AnnotationForm]: ...
+    ) -> dict[str, AnnotationForm]:
+        """
+        Compute the annotations dict for an object.
+
+        obj may be a callable, class, or module.
+        Passing in an object of any other type raises TypeError.
+
+        Returns a dict.  get_annotations() returns a new dict every time
+        it's called; calling it twice on the same object will return two
+        different but equivalent dicts.
+
+        This is a backport of `inspect.get_annotations`, which has been
+        in the standard library since Python 3.10. See the standard library
+        documentation for more:
+
+            https://docs.python.org/3/library/inspect.html#inspect.get_annotations
+
+        This backport adds the *format* argument introduced by PEP 649. The
+        three formats supported are:
+        * VALUE: the annotations are returned as-is. This is the default and
+          it is compatible with the behavior on previous Python versions.
+        * FORWARDREF: return annotations as-is if possible, but replace any
+          undefined names with ForwardRef objects. The implementation proposed by
+          PEP 649 relies on language changes that cannot be backported; the
+          typing-extensions implementation simply returns the same result as VALUE.
+        * STRING: return annotations as strings, in a format close to the original
+          source. Again, this behavior cannot be replicated directly in a backport.
+          As an approximation, typing-extensions retrieves the annotations under
+          VALUE semantics and then stringifies them.
+
+        The purpose of this backport is to allow users who would like to use
+        FORWARDREF or STRING semantics once PEP 649 is implemented, but who also
+        want to support earlier Python versions, to simply write:
+
+            typing_extensions.get_annotations(obj, format=Format.FORWARDREF)
+        """
+        ...
     @overload
     def evaluate_forward_ref(
         forward_ref: ForwardRef,
@@ -1261,7 +1400,30 @@ else:
         type_params: Iterable[TypeVar | ParamSpec | TypeVarTuple] | None = None,
         format: Literal[Format.STRING],
         _recursive_guard: Container[str] = ...,
-    ) -> str: ...
+    ) -> str:
+        """
+        Evaluate a forward reference as a type hint.
+
+        This is similar to calling the ForwardRef.evaluate() method,
+        but unlike that method, evaluate_forward_ref() also:
+
+        * Recursively evaluates forward references nested within the type hint.
+        * Rejects certain objects that are not valid type hints.
+        * Replaces type hints that evaluate to None with types.NoneType.
+        * Supports the *FORWARDREF* and *STRING* formats.
+
+        *forward_ref* must be an instance of ForwardRef. *owner*, if given,
+        should be the object that holds the annotations that the forward reference
+        derived from, such as a module, class object, or function. It is used to
+        infer the namespaces to use for looking up names. *globals* and *locals*
+        can also be explicitly given to provide the global and local namespaces.
+        *type_params* is a tuple of type parameters that are in scope when
+        evaluating the forward reference. This parameter must be provided (though
+        it may be an empty tuple) if *owner* is not given and the forward reference
+        does not already have an owner set. *format* specifies the format of the
+        annotation and is a member of the annotationlib.Format enum.
+        """
+        ...
     @overload
     def evaluate_forward_ref(
         forward_ref: ForwardRef,
@@ -1272,7 +1434,30 @@ else:
         type_params: Iterable[TypeVar | ParamSpec | TypeVarTuple] | None = None,
         format: Literal[Format.FORWARDREF],
         _recursive_guard: Container[str] = ...,
-    ) -> AnnotationForm | ForwardRef: ...
+    ) -> AnnotationForm | ForwardRef:
+        """
+        Evaluate a forward reference as a type hint.
+
+        This is similar to calling the ForwardRef.evaluate() method,
+        but unlike that method, evaluate_forward_ref() also:
+
+        * Recursively evaluates forward references nested within the type hint.
+        * Rejects certain objects that are not valid type hints.
+        * Replaces type hints that evaluate to None with types.NoneType.
+        * Supports the *FORWARDREF* and *STRING* formats.
+
+        *forward_ref* must be an instance of ForwardRef. *owner*, if given,
+        should be the object that holds the annotations that the forward reference
+        derived from, such as a module, class object, or function. It is used to
+        infer the namespaces to use for looking up names. *globals* and *locals*
+        can also be explicitly given to provide the global and local namespaces.
+        *type_params* is a tuple of type parameters that are in scope when
+        evaluating the forward reference. This parameter must be provided (though
+        it may be an empty tuple) if *owner* is not given and the forward reference
+        does not already have an owner set. *format* specifies the format of the
+        annotation and is a member of the annotationlib.Format enum.
+        """
+        ...
     @overload
     def evaluate_forward_ref(
         forward_ref: ForwardRef,
@@ -1283,11 +1468,50 @@ else:
         type_params: Iterable[TypeVar | ParamSpec | TypeVarTuple] | None = None,
         format: Format | None = None,
         _recursive_guard: Container[str] = ...,
-    ) -> AnnotationForm: ...
-    def type_repr(value: object) -> str: ...
+    ) -> AnnotationForm:
+        """
+        Evaluate a forward reference as a type hint.
+
+        This is similar to calling the ForwardRef.evaluate() method,
+        but unlike that method, evaluate_forward_ref() also:
+
+        * Recursively evaluates forward references nested within the type hint.
+        * Rejects certain objects that are not valid type hints.
+        * Replaces type hints that evaluate to None with types.NoneType.
+        * Supports the *FORWARDREF* and *STRING* formats.
+
+        *forward_ref* must be an instance of ForwardRef. *owner*, if given,
+        should be the object that holds the annotations that the forward reference
+        derived from, such as a module, class object, or function. It is used to
+        infer the namespaces to use for looking up names. *globals* and *locals*
+        can also be explicitly given to provide the global and local namespaces.
+        *type_params* is a tuple of type parameters that are in scope when
+        evaluating the forward reference. This parameter must be provided (though
+        it may be an empty tuple) if *owner* is not given and the forward reference
+        does not already have an owner set. *format* specifies the format of the
+        annotation and is a member of the annotationlib.Format enum.
+        """
+        ...
+    def type_repr(value: object) -> str:
+        """
+        Convert a Python value to a format suitable for use with the STRING format.
+
+        This is intended as a helper for tools that support the STRING format but do
+        not have access to the code that originally produced the annotations. It uses
+        repr() for most objects.
+        """
+        ...
 
 # PEP 661
 class Sentinel:
+    """
+    Create a unique sentinel object.
+
+    *name* should be the name of the variable to which the return value shall be assigned.
+
+    *repr*, if supplied, will be used for the repr of the sentinel object.
+    If not provided, "<name>" will be used.
+    """
     def __init__(self, name: str, repr: str | None = None) -> None: ...
     if sys.version_info >= (3, 14):
         def __or__(self, other: Any) -> UnionType: ...  # other can be any type form legal for unions

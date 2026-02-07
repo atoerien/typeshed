@@ -500,13 +500,13 @@ if sys.version_info >= (3, 10):
         to a callable accepting two positional-only arguments of types int
         and str:
 
-            type IntFuncDefault[**P = (int, str)] = Callable[P, int]
+            type IntFuncDefault[**P = [int, str]] = Callable[P, int]
 
         For compatibility with Python 3.11 and earlier, ParamSpec objects
         can also be created as follows::
 
             P = ParamSpec('P')
-            DefaultP = ParamSpec('DefaultP', default=(int, str))
+            DefaultP = ParamSpec('DefaultP', default=[int, str])
 
         Parameter specification variables exist primarily for the benefit of
         static type checkers.  They are used to forward the parameter types of
@@ -882,13 +882,13 @@ class SupportsRound(Protocol[_T_co]):
 
 @runtime_checkable
 class Sized(Protocol, metaclass=ABCMeta):
-    """A generic version of collections.abc.Sized."""
+    """Deprecated alias to collections.abc.Sized."""
     @abstractmethod
     def __len__(self) -> int: ...
 
 @runtime_checkable
 class Hashable(Protocol, metaclass=ABCMeta):
-    """A generic version of collections.abc.Hashable."""
+    """Deprecated alias to collections.abc.Hashable."""
     # TODO: This is special, in that a subclass of a hashable class may not be hashable
     #   (for example, list vs. object). It's not obvious how to represent this. This class
     #   is currently mostly useless for static checking.
@@ -899,20 +899,20 @@ class Hashable(Protocol, metaclass=ABCMeta):
 
 @runtime_checkable
 class Iterable(Protocol[_T_co]):
-    """A generic version of collections.abc.Iterable."""
+    """Deprecated alias to collections.abc.Iterable."""
     @abstractmethod
     def __iter__(self) -> Iterator[_T_co]: ...
 
 @runtime_checkable
 class Iterator(Iterable[_T_co], Protocol[_T_co]):
-    """A generic version of collections.abc.Iterator."""
+    """Deprecated alias to collections.abc.Iterator."""
     @abstractmethod
     def __next__(self) -> _T_co: ...
     def __iter__(self) -> Iterator[_T_co]: ...
 
 @runtime_checkable
 class Reversible(Iterable[_T_co], Protocol[_T_co]):
-    """A generic version of collections.abc.Reversible."""
+    """Deprecated alias to collections.abc.Reversible."""
     @abstractmethod
     def __reversed__(self) -> Iterator[_T_co]: ...
 
@@ -922,7 +922,7 @@ _ReturnT_co = TypeVar("_ReturnT_co", covariant=True, default=None)
 
 @runtime_checkable
 class Generator(Iterator[_YieldT_co], Protocol[_YieldT_co, _SendT_contra, _ReturnT_co]):
-    """A generic version of collections.abc.Generator."""
+    """Deprecated alias to collections.abc.Generator."""
     def __next__(self) -> _YieldT_co: ...
     @abstractmethod
     def send(self, value: _SendT_contra, /) -> _YieldT_co:
@@ -984,7 +984,7 @@ else:
 
 @runtime_checkable
 class Awaitable(Protocol[_T_co]):
-    """A generic version of collections.abc.Awaitable."""
+    """Deprecated alias to collections.abc.Awaitable."""
     @abstractmethod
     def __await__(self) -> Generator[Any, Any, _T_co]: ...
 
@@ -993,7 +993,7 @@ _SendT_nd_contra = TypeVar("_SendT_nd_contra", contravariant=True)
 _ReturnT_nd_co = TypeVar("_ReturnT_nd_co", covariant=True)
 
 class Coroutine(Awaitable[_ReturnT_nd_co], Generic[_YieldT_co, _SendT_nd_contra, _ReturnT_nd_co]):
-    """A generic version of collections.abc.Coroutine."""
+    """Deprecated alias to collections.abc.Coroutine."""
     __name__: str
     __qualname__: str
 
@@ -1043,20 +1043,20 @@ class AwaitableGenerator(
 
 @runtime_checkable
 class AsyncIterable(Protocol[_T_co]):
-    """A generic version of collections.abc.AsyncIterable."""
+    """Deprecated alias to collections.abc.AsyncIterable."""
     @abstractmethod
     def __aiter__(self) -> AsyncIterator[_T_co]: ...
 
 @runtime_checkable
 class AsyncIterator(AsyncIterable[_T_co], Protocol[_T_co]):
-    """A generic version of collections.abc.AsyncIterator."""
+    """Deprecated alias to collections.abc.AsyncIterator."""
     @abstractmethod
     def __anext__(self) -> Awaitable[_T_co]: ...
     def __aiter__(self) -> AsyncIterator[_T_co]: ...
 
 @runtime_checkable
 class AsyncGenerator(AsyncIterator[_YieldT_co], Protocol[_YieldT_co, _SendT_contra]):
-    """A generic version of collections.abc.AsyncGenerator."""
+    """Deprecated alias to collections.abc.AsyncGenerator."""
     def __anext__(self) -> Coroutine[Any, Any, _YieldT_co]: ...
     @abstractmethod
     def asend(self, value: _SendT_contra, /) -> Coroutine[Any, Any, _YieldT_co]:
@@ -1096,21 +1096,21 @@ _ContainerT_contra = TypeVar("_ContainerT_contra", contravariant=True, default=A
 
 @runtime_checkable
 class Container(Protocol[_ContainerT_contra]):
-    """A generic version of collections.abc.Container."""
+    """Deprecated alias to collections.abc.Container."""
     # This is generic more on vibes than anything else
     @abstractmethod
     def __contains__(self, x: _ContainerT_contra, /) -> bool: ...
 
 @runtime_checkable
 class Collection(Iterable[_T_co], Container[Any], Protocol[_T_co]):
-    """A generic version of collections.abc.Collection."""
+    """Deprecated alias to collections.abc.Collection."""
     # Note: need to use Container[Any] instead of Container[_T_co] to ensure covariance.
     # Implement Sized (but don't have it as a base class).
     @abstractmethod
     def __len__(self) -> int: ...
 
 class Sequence(Reversible[_T_co], Collection[_T_co]):
-    """A generic version of collections.abc.Sequence."""
+    """Deprecated alias to collections.abc.Sequence."""
     @overload
     @abstractmethod
     def __getitem__(self, index: int) -> _T_co: ...
@@ -1135,7 +1135,7 @@ class Sequence(Reversible[_T_co], Collection[_T_co]):
     def __reversed__(self) -> Iterator[_T_co]: ...
 
 class MutableSequence(Sequence[_T]):
-    """A generic version of collections.abc.MutableSequence."""
+    """Deprecated alias to collections.abc.MutableSequence."""
     @abstractmethod
     def insert(self, index: int, value: _T) -> None:
         """S.insert(index, value) -- insert value before index"""
@@ -1186,7 +1186,7 @@ class MutableSequence(Sequence[_T]):
     def __iadd__(self, values: Iterable[_T]) -> typing_extensions.Self: ...
 
 class AbstractSet(Collection[_T_co]):
-    """A generic version of collections.abc.Set."""
+    """Deprecated alias to collections.abc.Set."""
     @abstractmethod
     def __contains__(self, x: object) -> bool: ...
     def _hash(self) -> int:
@@ -1231,7 +1231,7 @@ class AbstractSet(Collection[_T_co]):
         ...
 
 class MutableSet(AbstractSet[_T]):
-    """A generic version of collections.abc.MutableSet."""
+    """Deprecated alias to collections.abc.MutableSet."""
     @abstractmethod
     def add(self, value: _T) -> None:
         """Add an element."""
@@ -1256,13 +1256,13 @@ class MutableSet(AbstractSet[_T]):
     def __isub__(self, it: AbstractSet[Any]) -> typing_extensions.Self: ...
 
 class MappingView(Sized):
-    """A generic version of collections.abc.MappingView."""
+    """Deprecated alias to collections.abc.MappingView."""
     __slots__ = ("_mapping",)
     def __init__(self, mapping: Sized) -> None: ...  # undocumented
     def __len__(self) -> int: ...
 
 class ItemsView(MappingView, AbstractSet[tuple[_KT_co, _VT_co]], Generic[_KT_co, _VT_co]):
-    """A generic version of collections.abc.ItemsView."""
+    """Deprecated alias to collections.abc.ItemsView."""
     def __init__(self, mapping: SupportsGetItemViewable[_KT_co, _VT_co]) -> None: ...  # undocumented
     def __and__(self, other: Iterable[Any]) -> set[tuple[_KT_co, _VT_co]]: ...
     def __rand__(self, other: Iterable[_T]) -> set[_T]: ...
@@ -1276,7 +1276,7 @@ class ItemsView(MappingView, AbstractSet[tuple[_KT_co, _VT_co]], Generic[_KT_co,
     def __rxor__(self, other: Iterable[_T]) -> set[tuple[_KT_co, _VT_co] | _T]: ...
 
 class KeysView(MappingView, AbstractSet[_KT_co]):
-    """A generic version of collections.abc.KeysView."""
+    """Deprecated alias to collections.abc.KeysView."""
     def __init__(self, mapping: Viewable[_KT_co]) -> None: ...  # undocumented
     def __and__(self, other: Iterable[Any]) -> set[_KT_co]: ...
     def __rand__(self, other: Iterable[_T]) -> set[_T]: ...
@@ -1290,7 +1290,7 @@ class KeysView(MappingView, AbstractSet[_KT_co]):
     def __rxor__(self, other: Iterable[_T]) -> set[_KT_co | _T]: ...
 
 class ValuesView(MappingView, Collection[_VT_co]):
-    """A generic version of collections.abc.ValuesView."""
+    """Deprecated alias to collections.abc.ValuesView."""
     def __init__(self, mapping: SupportsGetItemViewable[Any, _VT_co]) -> None: ...  # undocumented
     def __contains__(self, value: object) -> bool: ...
     def __iter__(self) -> Iterator[_VT_co]: ...
@@ -1301,7 +1301,7 @@ class ValuesView(MappingView, Collection[_VT_co]):
 # don't allow keyword arguments.
 
 class Mapping(Collection[_KT], Generic[_KT, _VT_co]):
-    """A generic version of collections.abc.Mapping."""
+    """Deprecated alias to collections.abc.Mapping."""
     # TODO: We wish the key type could also be covariant, but that doesn't work,
     # see discussion in https://github.com/python/typing/pull/273.
     @abstractmethod
@@ -1334,7 +1334,7 @@ class Mapping(Collection[_KT], Generic[_KT, _VT_co]):
         ...
 
 class MutableMapping(Mapping[_KT, _VT]):
-    """A generic version of collections.abc.MutableMapping."""
+    """Deprecated alias to collections.abc.MutableMapping."""
     @abstractmethod
     def __setitem__(self, key: _KT, value: _VT, /) -> None: ...
     @abstractmethod
@@ -1407,7 +1407,7 @@ class MutableMapping(Mapping[_KT, _VT]):
     def update(self, m: SupportsKeysAndGetItem[_KT, _VT], /) -> None:
         """
         D.update([E, ]**F) -> None.  Update D from mapping/iterable E and F.
-        If E present and has a .keys() method, does:     for k in E: D[k] = E[k]
+        If E present and has a .keys() method, does:     for k in E.keys(): D[k] = E[k]
         If E present and lacks .keys() method, does:     for (k, v) in E: D[k] = v
         In either case, this is followed by: for k, v in F.items(): D[k] = v
         """
@@ -1416,7 +1416,7 @@ class MutableMapping(Mapping[_KT, _VT]):
     def update(self: SupportsGetItem[str, _VT], m: SupportsKeysAndGetItem[str, _VT], /, **kwargs: _VT) -> None:
         """
         D.update([E, ]**F) -> None.  Update D from mapping/iterable E and F.
-        If E present and has a .keys() method, does:     for k in E: D[k] = E[k]
+        If E present and has a .keys() method, does:     for k in E.keys(): D[k] = E[k]
         If E present and lacks .keys() method, does:     for (k, v) in E: D[k] = v
         In either case, this is followed by: for k, v in F.items(): D[k] = v
         """
@@ -1425,7 +1425,7 @@ class MutableMapping(Mapping[_KT, _VT]):
     def update(self, m: Iterable[tuple[_KT, _VT]], /) -> None:
         """
         D.update([E, ]**F) -> None.  Update D from mapping/iterable E and F.
-        If E present and has a .keys() method, does:     for k in E: D[k] = E[k]
+        If E present and has a .keys() method, does:     for k in E.keys(): D[k] = E[k]
         If E present and lacks .keys() method, does:     for (k, v) in E: D[k] = v
         In either case, this is followed by: for k, v in F.items(): D[k] = v
         """
@@ -1434,7 +1434,7 @@ class MutableMapping(Mapping[_KT, _VT]):
     def update(self: SupportsGetItem[str, _VT], m: Iterable[tuple[str, _VT]], /, **kwargs: _VT) -> None:
         """
         D.update([E, ]**F) -> None.  Update D from mapping/iterable E and F.
-        If E present and has a .keys() method, does:     for k in E: D[k] = E[k]
+        If E present and has a .keys() method, does:     for k in E.keys(): D[k] = E[k]
         If E present and lacks .keys() method, does:     for (k, v) in E: D[k] = v
         In either case, this is followed by: for k, v in F.items(): D[k] = v
         """
@@ -1443,7 +1443,7 @@ class MutableMapping(Mapping[_KT, _VT]):
     def update(self: SupportsGetItem[str, _VT], /, **kwargs: _VT) -> None:
         """
         D.update([E, ]**F) -> None.  Update D from mapping/iterable E and F.
-        If E present and has a .keys() method, does:     for k in E: D[k] = E[k]
+        If E present and has a .keys() method, does:     for k in E.keys(): D[k] = E[k]
         If E present and lacks .keys() method, does:     for (k, v) in E: D[k] = v
         In either case, this is followed by: for k, v in F.items(): D[k] = v
         """
@@ -1577,7 +1577,39 @@ if sys.version_info >= (3, 14):
         include_extras: bool = False,
         *,
         format: Format | None = None,  # Default: Format.VALUE
-    ) -> dict[str, Any]: ...  # AnnotationForm
+    ) -> dict[str, Any]:
+        """
+        Return type hints for an object.
+
+        This is often the same as obj.__annotations__, but it handles
+        forward references encoded as string literals and recursively replaces all
+        'Annotated[T, ...]' with 'T' (unless 'include_extras=True').
+
+        The argument may be a module, class, method, or function. The annotations
+        are returned as a dictionary. For classes, annotations include also
+        inherited members.
+
+        TypeError is raised if the argument is not of a type that can contain
+        annotations, and an empty dictionary is returned if no annotations are
+        present.
+
+        BEWARE -- the behavior of globalns and localns is counterintuitive
+        (unless you are familiar with how eval() and exec() work).  The
+        search order is locals first, then globals.
+
+        - If no dict arguments are passed, an attempt is made to use the
+          globals from obj (or the respective module's globals for classes),
+          and these are also used as the locals.  If the object does not appear
+          to have globals, an empty dictionary is used.  For classes, the search
+          order is globals first then locals.
+
+        - If one dict argument is passed, it is used for both globals and
+          locals.
+
+        - If two dict arguments are passed, they specify globals and
+          locals, respectively.
+        """
+        ...
 
 else:
     def get_type_hints(
@@ -1994,7 +2026,27 @@ if sys.version_info >= (3, 14):
         locals: Mapping[str, Any] | None = None,
         type_params: tuple[TypeVar, ParamSpec, TypeVarTuple] | None = None,
         format: Format | None = None,
-    ) -> Any: ...  # AnnotationForm
+    ) -> Any:
+        """
+        Evaluate a forward reference as a type hint.
+
+        This is similar to calling the ForwardRef.evaluate() method,
+        but unlike that method, evaluate_forward_ref() also
+        recursively evaluates forward references nested within the type hint.
+
+        *forward_ref* must be an instance of ForwardRef. *owner*, if given,
+        should be the object that holds the annotations that the forward reference
+        derived from, such as a module, class object, or function. It is used to
+        infer the namespaces to use for looking up names. *globals* and *locals*
+        can also be explicitly given to provide the global and local namespaces.
+        *type_params* is a tuple of type parameters that are in scope when
+        evaluating the forward reference. This parameter should be provided (though
+        it may be an empty tuple) if *owner* is not given and the forward reference
+        does not already have an owner set. *format* specifies the format of the
+        annotation and is a member of the annotationlib.Format enum, defaulting to
+        VALUE.
+        """
+        ...
 
 else:
     @final

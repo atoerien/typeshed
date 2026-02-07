@@ -138,6 +138,10 @@ class Bdb:
             If the debugger stops on the current opcode, invoke
             self.user_opcode(). Raise BdbQuit if self.quitting is set.
             Return self.trace_dispatch to continue tracing in this scope.
+
+            Opcode event will always trigger the user callback. For now the only
+            opcode event is from an inline set_trace() and we want to stop there
+            unconditionally.
             """
             ...
 
@@ -164,7 +168,7 @@ class Bdb:
         ...
     def break_anywhere(self, frame: FrameType) -> bool:
         """
-        Return True if there is any breakpoint for frame's filename.
+        Return True if there is any breakpoint in that frame
         
         """
         ...
@@ -339,8 +343,12 @@ class Bdb:
     if sys.version_info >= (3, 14):
         def start_trace(self) -> None: ...
         def stop_trace(self) -> None: ...
-        def disable_current_event(self) -> None: ...
-        def restart_events(self) -> None: ...
+        def disable_current_event(self) -> None:
+            """Disable the current event."""
+            ...
+        def restart_events(self) -> None:
+            """Restart all events."""
+            ...
 
 class Breakpoint:
     """

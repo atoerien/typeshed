@@ -105,7 +105,38 @@ class Fraction(Rational):
 
     if sys.version_info >= (3, 14):
         @overload
-        def __new__(cls, numerator: _ConvertibleToIntegerRatio) -> Self: ...
+        def __new__(cls, numerator: _ConvertibleToIntegerRatio) -> Self:
+            """
+            Constructs a Rational.
+
+            Takes a string like '3/2' or '1.5', another Rational instance, a
+            numerator/denominator pair, or a float.
+
+            Examples
+            --------
+
+            >>> Fraction(10, -8)
+            Fraction(-5, 4)
+            >>> Fraction(Fraction(1, 7), 5)
+            Fraction(1, 35)
+            >>> Fraction(Fraction(1, 7), Fraction(2, 3))
+            Fraction(3, 14)
+            >>> Fraction('314')
+            Fraction(314, 1)
+            >>> Fraction('-35/4')
+            Fraction(-35, 4)
+            >>> Fraction('3.1415') # conversion from numeric string
+            Fraction(6283, 2000)
+            >>> Fraction('-47e-2') # string may include a decimal exponent
+            Fraction(-47, 100)
+            >>> Fraction(1.47)  # direct construction from float (exact conversion)
+            Fraction(6620291452234629, 4503599627370496)
+            >>> Fraction(2.25)
+            Fraction(9, 4)
+            >>> Fraction(Decimal('1.47'))
+            Fraction(147, 100)
+            """
+            ...
 
     @classmethod
     def from_float(cls, f: float) -> Self:
@@ -293,11 +324,35 @@ class Fraction(Rational):
         ...
     if sys.version_info >= (3, 14):
         @overload
-        def __pow__(a, b: int, modulo: None = None) -> Fraction: ...
+        def __pow__(a, b: int, modulo: None = None) -> Fraction:
+            """
+            a ** b
+
+            If b is not an integer, the result will be a float or complex
+            since roots are generally irrational. If b is an integer, the
+            result will be rational.
+            """
+            ...
         @overload
-        def __pow__(a, b: float | Fraction, modulo: None = None) -> float: ...
+        def __pow__(a, b: float | Fraction, modulo: None = None) -> float:
+            """
+            a ** b
+
+            If b is not an integer, the result will be a float or complex
+            since roots are generally irrational. If b is an integer, the
+            result will be rational.
+            """
+            ...
         @overload
-        def __pow__(a, b: complex, modulo: None = None) -> complex: ...
+        def __pow__(a, b: complex, modulo: None = None) -> complex:
+            """
+            a ** b
+
+            If b is not an integer, the result will be a float or complex
+            since roots are generally irrational. If b is an integer, the
+            result will be rational.
+            """
+            ...
     else:
         @overload
         def __pow__(a, b: int) -> Fraction:
@@ -331,9 +386,13 @@ class Fraction(Rational):
             ...
     if sys.version_info >= (3, 14):
         @overload
-        def __rpow__(b, a: float | Fraction, modulo: None = None) -> float: ...
+        def __rpow__(b, a: float | Fraction, modulo: None = None) -> float:
+            """a ** b"""
+            ...
         @overload
-        def __rpow__(b, a: complex, modulo: None = None) -> complex: ...
+        def __rpow__(b, a: complex, modulo: None = None) -> complex:
+            """a ** b"""
+            ...
     else:
         @overload
         def __rpow__(b, a: float | Fraction) -> float:
@@ -420,4 +479,10 @@ class Fraction(Rational):
         ...
     if sys.version_info >= (3, 14):
         @classmethod
-        def from_number(cls, number: float | Rational | _ConvertibleToIntegerRatio) -> Self: ...
+        def from_number(cls, number: float | Rational | _ConvertibleToIntegerRatio) -> Self:
+            """
+            Converts a finite real number to a rational number, exactly.
+
+            Beware that Fraction.from_number(0.3) != Fraction(3, 10).
+            """
+            ...

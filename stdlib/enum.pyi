@@ -140,6 +140,7 @@ class EnumMeta(type):
             `value` is in `cls` if:
             1) `value` is a member of `cls`, or
             2) `value` is the value of one of the `cls`'s members.
+            3) `value` is a pseudo-member (flags)
             """
             ...
     elif sys.version_info >= (3, 11):

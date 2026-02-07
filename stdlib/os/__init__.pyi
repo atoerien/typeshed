@@ -11,7 +11,7 @@ This exports:
   - os.extsep is the extension separator (always '.')
   - os.altsep is the alternate pathname separator (None or '/')
   - os.pathsep is the component separator used in $PATH etc
-  - os.linesep is the line separator in text files ('\r' or '\n' or '\r\n')
+  - os.linesep is the line separator in text files ('\n' or '\r\n')
   - os.defpath is the default search path for executables
   - os.devnull is the file path of the null device ('/dev/null', etc.)
 
@@ -1764,7 +1764,21 @@ if sys.platform != "win32":
         ...
 
 if sys.version_info >= (3, 14):
-    def readinto(fd: int, buffer: ReadableBuffer, /) -> int: ...
+    def readinto(fd: int, buffer: ReadableBuffer, /) -> int:
+        """
+        Read into a buffer object from a file descriptor.
+
+        The buffer should be mutable and bytes-like. On success, returns the number of
+        bytes read. Less bytes may be read than the size of the buffer. The underlying
+        system call will be retried when interrupted by a signal, unless the signal
+        handler raises an exception. Other errors will not be retried and an error will
+        be raised.
+
+        Returns 0 if *fd* is at end of file or if the provided *buffer* has length 0
+        (which can be used to check for errors without reading data). Never returns
+        negative.
+        """
+        ...
 
 @final
 class terminal_size(structseq[int], tuple[int, int]):
@@ -1867,7 +1881,7 @@ def chdir(path: FileDescriptorOrPath) -> None:
 
     path may always be specified as a string.
     On some platforms, path may also be specified as an open file descriptor.
-      If this functionality is unavailable, using it raises an exception.
+    If this functionality is unavailable, using it raises an exception.
     """
     ...
 
@@ -2384,12 +2398,12 @@ def walk(
 
     import os
     from os.path import join, getsize
-    for root, dirs, files in os.walk('python/Lib/email'):
+    for root, dirs, files in os.walk('python/Lib/xml'):
         print(root, "consumes ")
         print(sum(getsize(join(root, name)) for name in files), end=" ")
         print("bytes in", len(files), "non-directory files")
-        if 'CVS' in dirs:
-            dirs.remove('CVS')  # don't visit CVS directories
+        if '__pycache__' in dirs:
+            dirs.remove('__pycache__')  # don't visit __pycache__ directories
     """
     ...
 
@@ -2428,13 +2442,13 @@ if sys.platform != "win32":
         Example:
 
         import os
-        for root, dirs, files, rootfd in os.fwalk('python/Lib/email'):
+        for root, dirs, files, rootfd in os.fwalk('python/Lib/xml'):
             print(root, "consumes", end="")
             print(sum(os.stat(name, dir_fd=rootfd).st_size for name in files),
                   end="")
             print("bytes in", len(files), "non-directory files")
-            if 'CVS' in dirs:
-                dirs.remove('CVS')  # don't visit CVS directories
+            if '__pycache__' in dirs:
+                dirs.remove('__pycache__')  # don't visit __pycache__ directories
         """
         ...
     @overload
@@ -2471,13 +2485,13 @@ if sys.platform != "win32":
         Example:
 
         import os
-        for root, dirs, files, rootfd in os.fwalk('python/Lib/email'):
+        for root, dirs, files, rootfd in os.fwalk('python/Lib/xml'):
             print(root, "consumes", end="")
             print(sum(os.stat(name, dir_fd=rootfd).st_size for name in files),
                   end="")
             print("bytes in", len(files), "non-directory files")
-            if 'CVS' in dirs:
-                dirs.remove('CVS')  # don't visit CVS directories
+            if '__pycache__' in dirs:
+                dirs.remove('__pycache__')  # don't visit __pycache__ directories
         """
         ...
     if sys.platform == "linux":
@@ -2664,9 +2678,28 @@ if sys.version_info >= (3, 14):
     @deprecated("Soft deprecated. Use the subprocess module instead.")
     def popen(cmd: str, mode: str = "r", buffering: int = -1) -> _wrap_close: ...
     @deprecated("Soft deprecated. Use the subprocess module instead.")
-    def spawnl(mode: int, file: StrOrBytesPath, arg0: StrOrBytesPath, *args: StrOrBytesPath) -> int: ...
+    def spawnl(mode: int, file: StrOrBytesPath, arg0: StrOrBytesPath, *args: StrOrBytesPath) -> int:
+        """
+        spawnl(mode, file, *args) -> integer
+
+        Execute file with arguments from args in a subprocess.
+        If mode == P_NOWAIT return the pid of the process.
+        If mode == P_WAIT return the process's exit code if it exits normally;
+        otherwise return -SIG, where SIG is the signal that killed it. 
+        """
+        ...
     @deprecated("Soft deprecated. Use the subprocess module instead.")
-    def spawnle(mode: int, file: StrOrBytesPath, arg0: StrOrBytesPath, *args: Any) -> int: ...  # Imprecise sig
+    def spawnle(mode: int, file: StrOrBytesPath, arg0: StrOrBytesPath, *args: Any) -> int:
+        """
+        spawnle(mode, file, *args, env) -> integer
+
+        Execute file with arguments from args in a subprocess with the
+        supplied environment.
+        If mode == P_NOWAIT return the pid of the process.
+        If mode == P_WAIT return the process's exit code if it exits normally;
+        otherwise return -SIG, where SIG is the signal that killed it. 
+        """
+        ...
 
 else:
     def popen(cmd: str, mode: str = "r", buffering: int = -1) -> _wrap_close: ...
@@ -2695,9 +2728,28 @@ else:
 if sys.platform != "win32":
     if sys.version_info >= (3, 14):
         @deprecated("Soft deprecated. Use the subprocess module instead.")
-        def spawnv(mode: int, file: StrOrBytesPath, args: _ExecVArgs) -> int: ...
+        def spawnv(mode: int, file: StrOrBytesPath, args: _ExecVArgs) -> int:
+            """
+            spawnv(mode, file, args) -> integer
+
+            Execute file with arguments from args in a subprocess.
+            If mode == P_NOWAIT return the pid of the process.
+            If mode == P_WAIT return the process's exit code if it exits normally;
+            otherwise return -SIG, where SIG is the signal that killed it. 
+            """
+            ...
         @deprecated("Soft deprecated. Use the subprocess module instead.")
-        def spawnve(mode: int, file: StrOrBytesPath, args: _ExecVArgs, env: _ExecEnv) -> int: ...
+        def spawnve(mode: int, file: StrOrBytesPath, args: _ExecVArgs, env: _ExecEnv) -> int:
+            """
+            spawnve(mode, file, args, env) -> integer
+
+            Execute file with arguments from args in a subprocess with the
+            specified environment.
+            If mode == P_NOWAIT return the pid of the process.
+            If mode == P_WAIT return the process's exit code if it exits normally;
+            otherwise return -SIG, where SIG is the signal that killed it. 
+            """
+            ...
 
     else:
         def spawnv(mode: int, file: StrOrBytesPath, args: _ExecVArgs) -> int:
@@ -2735,7 +2787,9 @@ else:
 
 if sys.version_info >= (3, 14):
     @deprecated("Soft deprecated. Use the subprocess module instead.")
-    def system(command: StrOrBytesPath) -> int: ...
+    def system(command: StrOrBytesPath) -> int:
+        """Execute the command in a subshell."""
+        ...
 
 else:
     def system(command: StrOrBytesPath) -> int:
@@ -2813,13 +2867,53 @@ if sys.platform == "win32":
 else:
     if sys.version_info >= (3, 14):
         @deprecated("Soft deprecated. Use the subprocess module instead.")
-        def spawnlp(mode: int, file: StrOrBytesPath, arg0: StrOrBytesPath, *args: StrOrBytesPath) -> int: ...
+        def spawnlp(mode: int, file: StrOrBytesPath, arg0: StrOrBytesPath, *args: StrOrBytesPath) -> int:
+            """
+            spawnlp(mode, file, *args) -> integer
+
+            Execute file (which is looked for along $PATH) with arguments from
+            args in a subprocess with the supplied environment.
+            If mode == P_NOWAIT return the pid of the process.
+            If mode == P_WAIT return the process's exit code if it exits normally;
+            otherwise return -SIG, where SIG is the signal that killed it. 
+            """
+            ...
         @deprecated("Soft deprecated. Use the subprocess module instead.")
-        def spawnlpe(mode: int, file: StrOrBytesPath, arg0: StrOrBytesPath, *args: Any) -> int: ...  # Imprecise signature
+        def spawnlpe(mode: int, file: StrOrBytesPath, arg0: StrOrBytesPath, *args: Any) -> int:
+            """
+            spawnlpe(mode, file, *args, env) -> integer
+
+            Execute file (which is looked for along $PATH) with arguments from
+            args in a subprocess with the supplied environment.
+            If mode == P_NOWAIT return the pid of the process.
+            If mode == P_WAIT return the process's exit code if it exits normally;
+            otherwise return -SIG, where SIG is the signal that killed it. 
+            """
+            ...
         @deprecated("Soft deprecated. Use the subprocess module instead.")
-        def spawnvp(mode: int, file: StrOrBytesPath, args: _ExecVArgs) -> int: ...
+        def spawnvp(mode: int, file: StrOrBytesPath, args: _ExecVArgs) -> int:
+            """
+            spawnvp(mode, file, args) -> integer
+
+            Execute file (which is looked for along $PATH) with arguments from
+            args in a subprocess.
+            If mode == P_NOWAIT return the pid of the process.
+            If mode == P_WAIT return the process's exit code if it exits normally;
+            otherwise return -SIG, where SIG is the signal that killed it. 
+            """
+            ...
         @deprecated("Soft deprecated. Use the subprocess module instead.")
-        def spawnvpe(mode: int, file: StrOrBytesPath, args: _ExecVArgs, env: _ExecEnv) -> int: ...
+        def spawnvpe(mode: int, file: StrOrBytesPath, args: _ExecVArgs, env: _ExecEnv) -> int:
+            """
+            spawnvpe(mode, file, args, env) -> integer
+
+            Execute file (which is looked for along $PATH) with arguments from
+            args in a subprocess with the supplied environment.
+            If mode == P_NOWAIT return the pid of the process.
+            If mode == P_WAIT return the process's exit code if it exits normally;
+            otherwise return -SIG, where SIG is the signal that killed it. 
+            """
+            ...
 
     else:
         def spawnlp(mode: int, file: StrOrBytesPath, arg0: StrOrBytesPath, *args: StrOrBytesPath) -> int:

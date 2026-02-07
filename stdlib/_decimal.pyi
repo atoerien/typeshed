@@ -85,7 +85,13 @@ else:
         ...
 
 if sys.version_info >= (3, 14):
-    def IEEEContext(bits: int, /) -> Context: ...
+    def IEEEContext(bits: int, /) -> Context:
+        """
+        Return a context object initialized to the proper values for one of the
+        IEEE interchange formats.  The argument must be a multiple of 32 and less
+        than IEEE_CONTEXT_MAX_BITS.
+        """
+        ...
 
 DefaultContext: Context
 BasicContext: Context

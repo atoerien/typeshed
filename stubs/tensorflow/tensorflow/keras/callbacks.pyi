@@ -364,7 +364,6 @@ class BackupAndRestore(Callback):
     >>> callback = keras.callbacks.BackupAndRestore(backup_dir="/tmp/backup")
     >>> model = keras.models.Sequential([keras.layers.Dense(10)])
     >>> model.compile(keras.optimizers.SGD(), loss='mse')
-    >>> model.build(input_shape=(None, 20))
     >>> try:
     ...   model.fit(np.arange(100).reshape(5, 20), np.zeros(5), epochs=10,
     ...             batch_size=1, callbacks=[callback, InterruptingCallback()],
@@ -391,12 +390,6 @@ class BackupAndRestore(Callback):
           When set to an integer, the callback saves the checkpoint every
           `save_freq` batches. Set `save_freq=False` only if using
           preemption checkpointing (i.e. with `save_before_preemption=True`).
-        double_checkpoint: Boolean. If enabled, `BackupAndRestore` callback
-          will save 2 last training states (current and previous). After
-          interruption if current state can't be loaded due to IO error
-          (e.g. file corrupted) it will try to restore previous one. Such
-          behaviour will consume twice more space on disk, but increase fault
-          tolerance. Defaults to `False`.
         delete_checkpoint: Boolean. This `BackupAndRestore`
           callback works by saving a checkpoint to back up the training state.
           If `delete_checkpoint=True`, the checkpoint will be deleted after
@@ -531,8 +524,8 @@ class LambdaCallback(Callback):
           `epoch`, `logs`
         - `on_train_begin` and `on_train_end` expect one positional argument:
           `logs`
-        - `on_train_batch_begin` and `on_train_batch_end` expect a positional
-          argument `batch` and a keyword argument `logs`
+        - `on_train_batch_begin` and `on_train_batch_end` expect two positional
+          arguments: `batch`, `logs`
         - See `Callback` class definition for the full list of functions and their
           expected arguments.
 
@@ -695,13 +688,12 @@ class ModelCheckpoint(Callback):
             which will be filled the value of `epoch` and keys in `logs`
             (passed in `on_epoch_end`).
             The `filepath` name needs to end with `".weights.h5"` when
-            `save_weights_only=True` or should end with `".keras"` or `".h5"`
-            when checkpoint saving the whole model (default).
+            `save_weights_only=True` or should end with `".keras"` when
+            checkpoint saving the whole model (default).
             For example:
-            if `filepath` is `"{epoch:02d}-{val_loss:.2f}.keras"` or
-            "{epoch:02d}-{val_loss:.2f}.weights.h5"`, then the model
-            checkpoints will be saved with the epoch number and the validation
-            loss in the filename. The directory of the filepath
+            if `filepath` is `"{epoch:02d}-{val_loss:.2f}.keras"`, then the
+            model checkpoints will be saved with the epoch number and the
+            validation loss in the filename. The directory of the filepath
             should not be reused by any other callbacks to avoid conflicts.
         monitor: The metric name to monitor. Typically the metrics are set by
             the `Model.compile` method. Note:
@@ -726,8 +718,9 @@ class ModelCheckpoint(Callback):
             decision to overwrite the current save file is made based on either
             the maximization or the minimization of the monitored quantity.
             For `val_acc`, this should be `"max"`, for `val_loss` this should be
-            `"min"`, etc. In `"auto"` mode, the direction is automatically
-            inferred from the name of the monitored quantity.
+            `"min"`, etc. In `"auto"` mode, the mode is set to `"max"` if the
+            quantities monitored are `"acc"` or start with `"fmeasure"` and are
+            set to `"min"` for the rest of the quantities.
         save_weights_only: if `True`, then only the model's weights will be
             saved (`model.save_weights(filepath)`), else the full model is
             saved (`model.save(filepath)`).
@@ -925,9 +918,10 @@ class TensorBoard(Callback):
             Batch-level summary writing is also available via `train_step`
             override. Please see
             [TensorBoard Scalars tutorial](
-                https://www.tensorflow.org/tensorboard/scalars_and_keras#batch-level_logging)
+                https://www.tensorflow.org/tensorboard/scalars_and_keras#batch-level_logging)  # noqa: E501
             for more details.
-        profile_batch: Profile the batch(es) to sample compute characteristics.
+        profile_batch: (Not supported at this time)
+            Profile the batch(es) to sample compute characteristics.
             profile_batch must be a non-negative integer or a tuple of integers.
             A pair of positive integers signify a range of batches to profile.
             By default, profiling is disabled.
@@ -1026,36 +1020,5 @@ class TensorBoard(Callback):
         ...
 
 class TerminateOnNaN(Callback):
-    """
-    Callback that terminates training when a NaN loss is encountered.
-
-    This callback monitors the loss value during training
-    and terminates training when a NaN or Inf loss is detected.
-    By default, training is stopped gracefully
-    by setting `model.stop_training = True`, which triggers all callback cleanup
-    methods including `on_train_end()`.
-
-    Alternatively, you can use `raise_error=True` to immediately raise a
-    RuntimeError when NaN/Inf is detected. This raise_error termination
-    prevents `on_train_end()` from being called on other callbacks, which
-    is useful for preserving backup states or preventing unintended cleanup
-    when training fails.
-
-    Args:
-        raise_error: Boolean, default False. If False, uses graceful stop via
-            `model.stop_training = True`. If True, immediately raises
-            RuntimeError on NaN/Inf loss, bypassing callback cleanup methods.
-
-    Example:
-
-    ```
-    # Graceful termination (default)
-    callback = keras.callbacks.TerminateOnNaN()
-    model.fit(x, y, callbacks=[callback])
-
-    # raise_error termination (strict failure)
-    callback = keras.callbacks.TerminateOnNaN(raise_error=True)
-    model.fit(x, y, callbacks=[callback])
-    ```
-    """
+    """Callback that terminates training when a NaN loss is encountered."""
     ...

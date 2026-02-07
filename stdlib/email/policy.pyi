@@ -53,7 +53,7 @@ class EmailPolicy(Policy[_MessageT]):
                            wrapping is done.  Default is 78.
 
     mangle_from_        -- a flag that, when True escapes From_ lines in the
-                           body of the message by putting a `>' in front of
+                           body of the message by putting a '>' in front of
                            them. This is used when the message is being
                            serialized by a generator. Default: False.
 
@@ -169,7 +169,7 @@ class EmailPolicy(Policy[_MessageT]):
         surrogateescaped binary data.
         The name is parsed as everything up to the ':' and returned unmodified.
         The value is determined by stripping leading whitespace off the
-        remainder of the first line, joining all subsequent lines together, and
+        remainder of the first line joined with all subsequent lines, and
         stripping any trailing carriage return or linefeed characters.  (This
         is the same as Compat32).
         """

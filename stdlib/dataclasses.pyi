@@ -444,7 +444,24 @@ if sys.version_info >= (3, 14):
         metadata: Mapping[Any, Any] | None = None,
         kw_only: bool | Literal[_MISSING_TYPE.MISSING] = ...,
         doc: str | None = None,
-    ) -> _T: ...
+    ) -> _T:
+        """
+        Return an object to identify dataclass fields.
+
+        default is the default value of the field.  default_factory is a
+        0-argument function called to initialize a field's value.  If init
+        is true, the field will be a parameter to the class's __init__()
+        function.  If repr is true, the field will be included in the
+        object's repr().  If hash is true, the field will be included in the
+        object's hash().  If compare is true, the field will be used in
+        comparison functions.  metadata, if specified, must be a mapping
+        which is stored but not otherwise examined by dataclass.  If kw_only
+        is true, the field will become a keyword-only parameter to
+        __init__().  doc is an optional docstring for this field.
+
+        It is an error to specify both default and default_factory.
+        """
+        ...
     @overload
     def field(
         *,
@@ -457,7 +474,24 @@ if sys.version_info >= (3, 14):
         metadata: Mapping[Any, Any] | None = None,
         kw_only: bool | Literal[_MISSING_TYPE.MISSING] = ...,
         doc: str | None = None,
-    ) -> _T: ...
+    ) -> _T:
+        """
+        Return an object to identify dataclass fields.
+
+        default is the default value of the field.  default_factory is a
+        0-argument function called to initialize a field's value.  If init
+        is true, the field will be a parameter to the class's __init__()
+        function.  If repr is true, the field will be included in the
+        object's repr().  If hash is true, the field will be included in the
+        object's hash().  If compare is true, the field will be used in
+        comparison functions.  metadata, if specified, must be a mapping
+        which is stored but not otherwise examined by dataclass.  If kw_only
+        is true, the field will become a keyword-only parameter to
+        __init__().  doc is an optional docstring for this field.
+
+        It is an error to specify both default and default_factory.
+        """
+        ...
     @overload
     def field(
         *,
@@ -470,7 +504,24 @@ if sys.version_info >= (3, 14):
         metadata: Mapping[Any, Any] | None = None,
         kw_only: bool | Literal[_MISSING_TYPE.MISSING] = ...,
         doc: str | None = None,
-    ) -> Any: ...
+    ) -> Any:
+        """
+        Return an object to identify dataclass fields.
+
+        default is the default value of the field.  default_factory is a
+        0-argument function called to initialize a field's value.  If init
+        is true, the field will be a parameter to the class's __init__()
+        function.  If repr is true, the field will be included in the
+        object's repr().  If hash is true, the field will be included in the
+        object's hash().  If compare is true, the field will be used in
+        comparison functions.  metadata, if specified, must be a mapping
+        which is stored but not otherwise examined by dataclass.  If kw_only
+        is true, the field will become a keyword-only parameter to
+        __init__().  doc is an optional docstring for this field.
+
+        It is an error to specify both default and default_factory.
+        """
+        ...
 
 elif sys.version_info >= (3, 10):
     @overload  # `default` and `default_factory` are optional and mutually exclusive.
@@ -703,7 +754,34 @@ if sys.version_info >= (3, 14):
         weakref_slot: bool = False,
         module: str | None = None,
         decorator: _DataclassFactory = ...,
-    ) -> type: ...
+    ) -> type:
+        """
+        Return a new dynamically created dataclass.
+
+        The dataclass name will be 'cls_name'.  'fields' is an iterable
+        of either (name), (name, type) or (name, type, Field) objects. If type is
+        omitted, use the string 'typing.Any'.  Field objects are created by
+        the equivalent of calling 'field(name, type [, Field-info])'.::
+
+          C = make_dataclass('C', ['x', ('y', int), ('z', int, field(init=False))], bases=(Base,))
+
+        is equivalent to::
+
+          @dataclass
+          class C(Base):
+              x: 'typing.Any'
+              y: int
+              z: int = field(init=False)
+
+        For the bases and namespace parameters, see the builtin type() function.
+
+        The parameters init, repr, eq, order, unsafe_hash, frozen, match_args, kw_only,
+        slots, and weakref_slot are passed to dataclass().
+
+        If module parameter is defined, the '__module__' attribute of the dataclass is
+        set to that value.
+        """
+        ...
 
 elif sys.version_info >= (3, 12):
     def make_dataclass(

@@ -524,7 +524,7 @@ class GeneratorType(Generator[_YieldT_co, _SendT_contra, _ReturnT_co]):
         ...
     def send(self, arg: _SendT_contra, /) -> _YieldT_co:
         """
-        send(arg) -> send 'arg' into generator,
+        send(value) -> send 'value' into generator,
         return next yielded value or raise StopIteration.
         """
         ...
@@ -828,29 +828,43 @@ class FrameType:
     @property
     def f_back(self) -> FrameType | None: ...
     @property
-    def f_builtins(self) -> dict[str, Any]: ...
+    def f_builtins(self) -> dict[str, Any]:
+        """Return the built-in variables in the frame."""
+        ...
     @property
-    def f_code(self) -> CodeType: ...
+    def f_code(self) -> CodeType:
+        """Return the code object being executed in this frame."""
+        ...
     @property
-    def f_globals(self) -> dict[str, Any]: ...
+    def f_globals(self) -> dict[str, Any]:
+        """Return the global variables in the frame."""
+        ...
     @property
-    def f_lasti(self) -> int: ...
+    def f_lasti(self) -> int:
+        """Return the index of the last attempted instruction in the frame."""
+        ...
     # see discussion in #6769: f_lineno *can* sometimes be None,
     # but you should probably file a bug report with CPython if you encounter it being None in the wild.
     # An `int | None` annotation here causes too many false-positive errors, so applying `int | Any`.
     @property
-    def f_lineno(self) -> int | MaybeNone: ...
+    def f_lineno(self) -> int | MaybeNone:
+        """Return the current line number in the frame."""
+        ...
     @property
-    def f_locals(self) -> dict[str, Any]: ...
+    def f_locals(self) -> dict[str, Any]:
+        """Return the mapping used by the frame to look up local variables."""
+        ...
     f_trace: Callable[[FrameType, str, Any], Any] | None
     f_trace_lines: bool
     f_trace_opcodes: bool
     def clear(self) -> None:
-        """F.clear(): clear most references held by the frame"""
+        """Clear all references held by the frame."""
         ...
     if sys.version_info >= (3, 14):
         @property
-        def f_generator(self) -> GeneratorType[Any, Any, Any] | CoroutineType[Any, Any, Any] | None: ...
+        def f_generator(self) -> GeneratorType[Any, Any, Any] | CoroutineType[Any, Any, Any] | None:
+            """Return the generator or coroutine associated with this frame, or None."""
+            ...
 
 @final
 class GetSetDescriptorType:
@@ -1053,7 +1067,7 @@ if sys.version_info >= (3, 10):
     @final
     class UnionType:
         """
-        Represent a PEP 604 union type
+        Represent a union type
 
         E.g. for int | str
         """

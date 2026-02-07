@@ -3,8 +3,8 @@ Parser for command line options.
 
 This module helps scripts to parse the command line arguments in
 sys.argv.  It supports the same conventions as the Unix getopt()
-function (including the special meanings of arguments of the form `-'
-and `--').  Long options similar to those supported by GNU software
+function (including the special meanings of arguments of the form '-'
+and '--').  Long options similar to those supported by GNU software
 may be used as well via an optional third argument.  This module
 provides two functions and an exception:
 
@@ -40,12 +40,14 @@ def getopt(
     running program.  Typically, this means "sys.argv[1:]".  shortopts
     is the string of option letters that the script wants to
     recognize, with options that require an argument followed by a
-    colon (i.e., the same format that Unix getopt() uses).  If
+    colon and options that accept an optional argument followed by
+    two colons (i.e., the same format that Unix getopt() uses).  If
     specified, longopts is a list of strings with the names of the
     long options which should be supported.  The leading '--'
     characters should not be included in the option name.  Options
     which require an argument should be followed by an equal sign
-    ('=').
+    ('=').  Options which accept an optional argument should be
+    followed by an equal sign and question mark ('=?').
 
     The return value consists of two elements: the first is a list of
     (option, value) pairs; the second is the list of program arguments
@@ -70,7 +72,7 @@ def gnu_getopt(
     processing options as soon as a non-option argument is
     encountered.
 
-    If the first character of the option string is `+', or if the
+    If the first character of the option string is '+', or if the
     environment variable POSIXLY_CORRECT is set, then option
     processing stops as soon as a non-option argument is encountered.
     """

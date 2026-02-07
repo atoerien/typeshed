@@ -39,7 +39,27 @@ from types import CodeType
 __all__ = ["compile_command", "Compile", "CommandCompiler"]
 
 if sys.version_info >= (3, 14):
-    def compile_command(source: str, filename: str = "<input>", symbol: str = "single", flags: int = 0) -> CodeType | None: ...
+    def compile_command(source: str, filename: str = "<input>", symbol: str = "single", flags: int = 0) -> CodeType | None:
+        r"""
+        Compile a command and determine whether it is incomplete.
+
+        Arguments:
+
+        source -- the source string; may contain \n characters
+        filename -- optional filename from which source was read; default
+                    "<input>"
+        symbol -- optional grammar start symbol; "single" (default), "exec"
+                  or "eval"
+
+        Return value / exceptions raised:
+
+        - Return a code object if the command is complete and valid
+        - Return None if the command is incomplete
+        - Raise SyntaxError, ValueError or OverflowError if the command is a
+          syntax error (OverflowError and ValueError can be produced by
+          malformed literals).
+        """
+        ...
 
 else:
     def compile_command(source: str, filename: str = "<input>", symbol: str = "single") -> CodeType | None:

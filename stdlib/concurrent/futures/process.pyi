@@ -446,5 +446,25 @@ class ProcessPoolExecutor(Executor):
     def _adjust_process_count(self) -> None: ...
 
     if sys.version_info >= (3, 14):
-        def kill_workers(self) -> None: ...
-        def terminate_workers(self) -> None: ...
+        def kill_workers(self) -> None:
+            """
+            Attempts to kill the executor's workers.
+            Iterates through all of the current worker processes and kills
+            each one that is still alive.
+
+            After killing workers, the pool will be in a broken state
+            and no longer usable (for instance, new tasks should not be
+            submitted).
+            """
+            ...
+        def terminate_workers(self) -> None:
+            """
+            Attempts to terminate the executor's workers.
+            Iterates through all of the current worker processes and terminates
+            each one that is still alive.
+
+            After terminating workers, the pool will be in a broken state
+            and no longer usable (for instance, new tasks should not be
+            submitted).
+            """
+            ...

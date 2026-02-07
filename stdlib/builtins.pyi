@@ -709,7 +709,13 @@ class int:
         """Flooring an Integral returns itself."""
         ...
     if sys.version_info >= (3, 14):
-        def __round__(self, ndigits: SupportsIndex | None = None, /) -> int: ...
+        def __round__(self, ndigits: SupportsIndex | None = None, /) -> int:
+            """
+            Rounding an Integral returns itself.
+
+            Rounding with an ndigits argument also returns an integer.
+            """
+            ...
     else:
         def __round__(self, ndigits: SupportsIndex = ..., /) -> int:
             """
@@ -949,7 +955,9 @@ class float:
         ...
     if sys.version_info >= (3, 14):
         @classmethod
-        def from_number(cls, number: float | SupportsIndex | SupportsFloat, /) -> Self: ...
+        def from_number(cls, number: float | SupportsIndex | SupportsFloat, /) -> Self:
+            """Convert real number to a floating-point number."""
+            ...
 
 @disjoint_base
 class complex:
@@ -1041,7 +1049,9 @@ class complex:
             ...
     if sys.version_info >= (3, 14):
         @classmethod
-        def from_number(cls, number: complex | SupportsComplex | SupportsFloat | SupportsIndex, /) -> Self: ...
+        def from_number(cls, number: complex | SupportsComplex | SupportsFloat | SupportsIndex, /) -> Self:
+            """Convert number to a complex floating-point number."""
+            ...
 
 @type_check_only
 class _FormatMapMapping(Protocol):
@@ -1264,10 +1274,9 @@ class str(Sequence[str]):
         ...
     def isprintable(self) -> bool:
         """
-        Return True if the string is printable, False otherwise.
+        Return True if all characters in the string are printable, False otherwise.
 
-        A string is printable if all of its characters are considered printable in
-        repr() or if it is empty.
+        A character is printable if repr() may use it in its output.
         """
         ...
     def isspace(self) -> bool:
@@ -2304,7 +2313,14 @@ class bytes(Sequence[int]):
         ...
     if sys.version_info >= (3, 14):
         @classmethod
-        def fromhex(cls, string: str | ReadableBuffer, /) -> Self: ...
+        def fromhex(cls, string: str | ReadableBuffer, /) -> Self:
+            r"""
+            Create a bytes object from a string of hexadecimal numbers.
+
+            Spaces between two numbers are accepted.
+            Example: bytes.fromhex('B9 01EF') -> b'\\xb9\\x01\\xef'.
+            """
+            ...
     else:
         @classmethod
         def fromhex(cls, string: str, /) -> Self:
@@ -2871,7 +2887,14 @@ class bytearray(MutableSequence[int]):
         ...
     if sys.version_info >= (3, 14):
         @classmethod
-        def fromhex(cls, string: str | ReadableBuffer, /) -> Self: ...
+        def fromhex(cls, string: str | ReadableBuffer, /) -> Self:
+            r"""
+            Create a bytearray object from a string of hexadecimal numbers.
+
+            Spaces between two numbers are accepted.
+            Example: bytearray.fromhex('B9 01EF') -> bytearray(b'\\xb9\\x01\\xef')
+            """
+            ...
     else:
         @classmethod
         def fromhex(cls, string: str, /) -> Self:
@@ -2975,7 +2998,14 @@ class bytearray(MutableSequence[int]):
         """Release the buffer object that exposes the underlying memory of the object."""
         ...
     if sys.version_info >= (3, 14):
-        def resize(self, size: int, /) -> None: ...
+        def resize(self, size: int, /) -> None:
+            """
+            Resize the internal buffer of bytearray to len.
+
+            size
+              New size to resize to.
+            """
+            ...
 
 _IntegerFormats: TypeAlias = Literal[
     "b", "B", "@b", "@B", "h", "H", "@h", "@H", "i", "I", "@i", "@I", "l", "L", "@l", "@L", "q", "Q", "@q", "@Q", "P", "@P"
@@ -3164,8 +3194,16 @@ class memoryview(Sequence[_I]):
         """Release the buffer object that exposes the underlying memory of the object."""
         ...
     if sys.version_info >= (3, 14):
-        def index(self, value: object, start: SupportsIndex = 0, stop: SupportsIndex = sys.maxsize, /) -> int: ...
-        def count(self, value: object, /) -> int: ...
+        def index(self, value: object, start: SupportsIndex = 0, stop: SupportsIndex = sys.maxsize, /) -> int:
+            """
+            Return the index of the first occurrence of a value.
+
+            Raises ValueError if the value is not present.
+            """
+            ...
+        def count(self, value: object, /) -> int:
+            """Count the number of occurrences of a value."""
+            ...
     else:
         # These are inherited from the Sequence ABC, but don't actually exist on memoryview.
         # See https://github.com/python/cpython/issues/125420
@@ -3173,7 +3211,9 @@ class memoryview(Sequence[_I]):
         count: ClassVar[None]  # type: ignore[assignment]
 
     if sys.version_info >= (3, 14):
-        def __class_getitem__(cls, item: Any, /) -> GenericAlias: ...
+        def __class_getitem__(cls, item: Any, /) -> GenericAlias:
+            """See PEP 585"""
+            ...
 
 @final
 class bool(int):
@@ -4660,6 +4700,9 @@ class map(Generic[_S]):
     """
     Make an iterator that computes the function using arguments from
     each of the iterables.  Stops when the shortest iterable is exhausted.
+
+    If strict is true and one of the arguments is exhausted before the others,
+    raise a ValueError.
     """
     # 3.14 adds `strict` argument.
     if sys.version_info >= (3, 14):
@@ -5011,9 +5054,9 @@ def open(
     given, the default buffering policy works as follows:
 
     * Binary files are buffered in fixed-size chunks; the size of the buffer
-      is chosen using a heuristic trying to determine the underlying device's
-      "block size" and falling back on `io.DEFAULT_BUFFER_SIZE`.
-      On many systems, the buffer will typically be 4096 or 8192 bytes long.
+     is max(min(blocksize, 8 MiB), DEFAULT_BUFFER_SIZE)
+     when the device block size is available.
+     On most systems, the buffer will typically be 128 kilobytes long.
 
     * "Interactive" text files (files for which isatty() returns True)
       use line buffering.  Other text files use the policy described above
@@ -5140,9 +5183,9 @@ def open(
     given, the default buffering policy works as follows:
 
     * Binary files are buffered in fixed-size chunks; the size of the buffer
-      is chosen using a heuristic trying to determine the underlying device's
-      "block size" and falling back on `io.DEFAULT_BUFFER_SIZE`.
-      On many systems, the buffer will typically be 4096 or 8192 bytes long.
+     is max(min(blocksize, 8 MiB), DEFAULT_BUFFER_SIZE)
+     when the device block size is available.
+     On most systems, the buffer will typically be 128 kilobytes long.
 
     * "Interactive" text files (files for which isatty() returns True)
       use line buffering.  Other text files use the policy described above
@@ -5269,9 +5312,9 @@ def open(
     given, the default buffering policy works as follows:
 
     * Binary files are buffered in fixed-size chunks; the size of the buffer
-      is chosen using a heuristic trying to determine the underlying device's
-      "block size" and falling back on `io.DEFAULT_BUFFER_SIZE`.
-      On many systems, the buffer will typically be 4096 or 8192 bytes long.
+     is max(min(blocksize, 8 MiB), DEFAULT_BUFFER_SIZE)
+     when the device block size is available.
+     On most systems, the buffer will typically be 128 kilobytes long.
 
     * "Interactive" text files (files for which isatty() returns True)
       use line buffering.  Other text files use the policy described above
@@ -5396,9 +5439,9 @@ def open(
     given, the default buffering policy works as follows:
 
     * Binary files are buffered in fixed-size chunks; the size of the buffer
-      is chosen using a heuristic trying to determine the underlying device's
-      "block size" and falling back on `io.DEFAULT_BUFFER_SIZE`.
-      On many systems, the buffer will typically be 4096 or 8192 bytes long.
+     is max(min(blocksize, 8 MiB), DEFAULT_BUFFER_SIZE)
+     when the device block size is available.
+     On most systems, the buffer will typically be 128 kilobytes long.
 
     * "Interactive" text files (files for which isatty() returns True)
       use line buffering.  Other text files use the policy described above
@@ -5523,9 +5566,9 @@ def open(
     given, the default buffering policy works as follows:
 
     * Binary files are buffered in fixed-size chunks; the size of the buffer
-      is chosen using a heuristic trying to determine the underlying device's
-      "block size" and falling back on `io.DEFAULT_BUFFER_SIZE`.
-      On many systems, the buffer will typically be 4096 or 8192 bytes long.
+     is max(min(blocksize, 8 MiB), DEFAULT_BUFFER_SIZE)
+     when the device block size is available.
+     On most systems, the buffer will typically be 128 kilobytes long.
 
     * "Interactive" text files (files for which isatty() returns True)
       use line buffering.  Other text files use the policy described above
@@ -5652,9 +5695,9 @@ def open(
     given, the default buffering policy works as follows:
 
     * Binary files are buffered in fixed-size chunks; the size of the buffer
-      is chosen using a heuristic trying to determine the underlying device's
-      "block size" and falling back on `io.DEFAULT_BUFFER_SIZE`.
-      On many systems, the buffer will typically be 4096 or 8192 bytes long.
+     is max(min(blocksize, 8 MiB), DEFAULT_BUFFER_SIZE)
+     when the device block size is available.
+     On most systems, the buffer will typically be 128 kilobytes long.
 
     * "Interactive" text files (files for which isatty() returns True)
       use line buffering.  Other text files use the policy described above
@@ -5781,9 +5824,9 @@ def open(
     given, the default buffering policy works as follows:
 
     * Binary files are buffered in fixed-size chunks; the size of the buffer
-      is chosen using a heuristic trying to determine the underlying device's
-      "block size" and falling back on `io.DEFAULT_BUFFER_SIZE`.
-      On many systems, the buffer will typically be 4096 or 8192 bytes long.
+     is max(min(blocksize, 8 MiB), DEFAULT_BUFFER_SIZE)
+     when the device block size is available.
+     On most systems, the buffer will typically be 128 kilobytes long.
 
     * "Interactive" text files (files for which isatty() returns True)
       use line buffering.  Other text files use the policy described above
@@ -5846,7 +5889,15 @@ def open(
     """
     ...
 def ord(c: str | bytes | bytearray, /) -> int:
-    """Return the Unicode code point for a one-character string."""
+    """
+    Return the ordinal value of a character.
+
+    If the argument is a one-character string, return the Unicode code
+    point of that character.
+
+    If the argument is a bytes or bytearray object of length 1, return its
+    single byte value.
+    """
     ...
 @type_check_only
 class _SupportsWriteAndFlush(SupportsWrite[_T_contra], SupportsFlush, Protocol[_T_contra]): ...
@@ -6374,10 +6425,7 @@ class BaseException:
     def __new__(cls, *args: Any, **kwds: Any) -> Self: ...
     def __setstate__(self, state: dict[str, Any] | None, /) -> None: ...
     def with_traceback(self, tb: TracebackType | None, /) -> Self:
-        """
-        Exception.with_traceback(tb) --
-        set self.__traceback__ to tb and return self.
-        """
+        """Set self.__traceback__ to tb and return self."""
         ...
     # Necessary for security-focused static analyzers (e.g, pysa)
     # See https://github.com/python/typeshed/pull/14900
@@ -6391,10 +6439,7 @@ class BaseException:
         # only present after add_note() is called
         __notes__: list[str]
         def add_note(self, note: str, /) -> None:
-            """
-            Exception.add_note(note) --
-            add a note to the exception
-            """
+            """Add a note to the exception"""
             ...
 
 class GeneratorExit(BaseException):

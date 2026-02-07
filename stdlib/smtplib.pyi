@@ -110,7 +110,7 @@ class SMTPSenderRefused(SMTPResponseException):
     Sender address refused.
 
     In addition to the attributes set by on all SMTPResponseException
-    exceptions, this sets `sender' to the string that the SMTP refused.
+    exceptions, this sets 'sender' to the string that the SMTP refused.
     """
     smtp_error: bytes
     sender: str
@@ -254,7 +254,7 @@ class SMTP:
         """
         Connect to a host on a given port.
 
-        If the hostname ends with a colon (`:') followed by a number, and
+        If the hostname ends with a colon (':') followed by a number, and
         there is no port specified, that suffix will be stripped off and the
         number interpreted as the port number to use.
 
@@ -263,7 +263,7 @@ class SMTP:
         """
         ...
     def send(self, s: ReadableBuffer | str) -> None:
-        """Send `s' to the server."""
+        """Send 's' to the server."""
         ...
     def putcmd(self, cmd: str, args: str = "") -> None:
         """Send a command to the server."""
@@ -592,7 +592,7 @@ class SMTP:
         The arguments are as for sendmail, except that msg is an
         email.message.Message object.  If from_addr is None or to_addrs is
         None, these arguments are taken from the headers of the Message as
-        described in RFC 2822 (a ValueError is raised if there is more than
+        described in RFC 5322 (a ValueError is raised if there is more than
         one set of 'Resent-' headers).  Regardless of the values of from_addr and
         to_addr, any Bcc field (or Resent-Bcc field, when the Message is a
         resent) of the Message object won't be transmitted.  The Message

@@ -134,7 +134,9 @@ class zipimporter(_LoaderBasics):
         """
         ...
     if sys.version_info >= (3, 14):
-        def get_resource_reader(self, fullname: str) -> ZipReader: ...  # undocumented
+        def get_resource_reader(self, fullname: str) -> ZipReader:
+            """Return the ResourceReader for a module in a zip file."""
+            ...
     elif sys.version_info >= (3, 10):
         def get_resource_reader(self, fullname: str) -> ZipReader | None:
             """Return the ResourceReader for a module in a zip file."""

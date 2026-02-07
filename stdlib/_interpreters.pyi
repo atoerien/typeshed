@@ -49,7 +49,7 @@ def create(config: types.SimpleNamespace | _Configs | None = "isolated", *, reqr
     The caller is responsible for destroying the interpreter before exiting,
     typically by using _interpreters.destroy().  This can be managed 
     automatically by passing "reqrefs=True" and then using _incref() and
-    _decref()` appropriately.
+    _decref() appropriately.
 
     "config" must be a valid interpreter config or the name of a
     predefined config ("isolated" or "legacy").  The default
@@ -143,12 +143,6 @@ def call(
 
     Call the provided object in the identified interpreter.
     Pass the given args and kwargs, if possible.
-
-    "callable" may be a plain function with no free vars that takes
-    no arguments.
-
-    The function's code object is used and all its state
-    is ignored, including its __globals__ dict.
     """
     ...
 def run_string(

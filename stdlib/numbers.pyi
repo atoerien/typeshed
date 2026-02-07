@@ -310,14 +310,27 @@ class Real(Complex, _RealLike):
 # See comment at the top of the file
 # for why some of these return types are purposefully vague
 class Rational(Real):
-    """.numerator and .denominator should be in lowest terms."""
+    """
+    To Real, Rational adds numerator and denominator properties.
+
+    The numerator and denominator values should be in lowest terms,
+    with a positive denominator.
+    """
     __slots__ = ()
     @property
     @abstractmethod
-    def numerator(self) -> _IntegralLike: ...
+    def numerator(self) -> _IntegralLike:
+        """The numerator of a rational number in lowest terms."""
+        ...
     @property
     @abstractmethod
-    def denominator(self) -> _IntegralLike: ...
+    def denominator(self) -> _IntegralLike:
+        """
+        The denominator of a rational number in lowest terms.
+
+        This denominator should be positive.
+        """
+        ...
     def __float__(self) -> float:
         """
         float(self) = self.numerator / self.denominator

@@ -160,7 +160,8 @@ class ZipFile:
     mode: The mode can be either read 'r', write 'w', exclusive create 'x',
           or append 'a'.
     compression: ZIP_STORED (no compression), ZIP_DEFLATED (requires zlib),
-                 ZIP_BZIP2 (requires bz2) or ZIP_LZMA (requires lzma).
+                 ZIP_BZIP2 (requires bz2), ZIP_LZMA (requires lzma), or
+                 ZIP_ZSTANDARD (requires compression.zstd).
     allowZip64: if True ZipFile will create files with ZIP64 extensions when
                 needed, otherwise it will raise an exception when this would
                 be necessary.
@@ -169,6 +170,9 @@ class ZipFile:
                    When using ZIP_STORED or ZIP_LZMA this keyword has no effect.
                    When using ZIP_DEFLATED integers 0 through 9 are accepted.
                    When using ZIP_BZIP2 integers 1 through 9 are accepted.
+                   When using ZIP_ZSTANDARD integers -7 though 22 are common,
+                   see the CompressionParameter enum in compression.zstd for
+                   details.
     """
     filename: str | None
     debug: int
@@ -364,8 +368,8 @@ class ZipFile:
         """
         Extract a member from the archive to the current working directory,
         using its full name. Its file information is extracted as accurately
-        as possible. `member' may be a filename or a ZipInfo object. You can
-        specify a different directory using `path'. You can specify the
+        as possible. 'member' may be a filename or a ZipInfo object. You can
+        specify a different directory using 'path'. You can specify the
         password to decrypt the file using 'pwd'.
         """
         ...
@@ -374,8 +378,8 @@ class ZipFile:
     ) -> None:
         """
         Extract all members from the archive to the current working
-        directory. `path' specifies a different directory to extract to.
-        `members' is optional and must be a subset of the list returned
+        directory. 'path' specifies a different directory to extract to.
+        'members' is optional and must be a subset of the list returned
         by namelist(). You can specify the password to decrypt all files
         using 'pwd'.
         """
@@ -530,7 +534,16 @@ class ZipInfo:
         """
         ...
     if sys.version_info >= (3, 14):
-        def _for_archive(self, archive: ZipFile) -> Self: ...
+        def _for_archive(self, archive: ZipFile) -> Self:
+            """
+            Resolve suitable defaults from the archive.
+
+            Resolve the date_time, compression attributes, and external attributes
+            to suitable defaults as used by :method:`ZipFile.writestr`.
+
+            Return self.
+            """
+            ...
 
 if sys.version_info >= (3, 12):
     from zipfile._path import CompleteDirs as CompleteDirs, Path as Path

@@ -194,7 +194,9 @@ if sys.version_info < (3, 14):
 class _CArgObject: ...
 
 if sys.version_info >= (3, 14):
-    def byref(obj: _CData | _CDataType, offset: int = 0, /) -> _CArgObject: ...
+    def byref(obj: _CData | _CDataType, offset: int = 0, /) -> _CArgObject:
+        """Return a pointer lookalike to a C instance, only usable as function argument."""
+        ...
 
 else:
     def byref(obj: _CData | _CDataType, offset: int = 0) -> _CArgObject:
@@ -252,6 +254,7 @@ _SetT = TypeVar("_SetT")
 if sys.version_info >= (3, 14):
     @final
     class CField(Generic[_CT, _GetT, _SetT]):
+        """Structure/Union member"""
         offset: int
         size: int
         name: str
@@ -263,10 +266,16 @@ if sys.version_info >= (3, 14):
         bit_size: int
         is_anonymous: bool
         @overload
-        def __get__(self, instance: None, owner: builtins.type[Any] | None = None, /) -> Self: ...
+        def __get__(self, instance: None, owner: builtins.type[Any] | None = None, /) -> Self:
+            """Return an attribute of instance, which is of type owner."""
+            ...
         @overload
-        def __get__(self, instance: Any, owner: builtins.type[Any] | None = None, /) -> _GetT: ...
-        def __set__(self, instance: Any, value: _SetT, /) -> None: ...
+        def __get__(self, instance: Any, owner: builtins.type[Any] | None = None, /) -> _GetT:
+            """Return an attribute of instance, which is of type owner."""
+            ...
+        def __set__(self, instance: Any, value: _SetT, /) -> None:
+            """Set an attribute of instance to value."""
+            ...
 
     _CField = CField
 
@@ -434,10 +443,7 @@ class Array(_CData, Generic[_CT], metaclass=_PyCArrayType):
         ...
 
 def addressof(obj: _CData | _CDataType, /) -> int:
-    """
-    addressof(C instance) -> integer
-    Return the address of the C instance internal buffer
-    """
+    """Return the address of the C instance internal buffer"""
     ...
 def alignment(obj_or_type: _CData | _CDataType | type[_CData | _CDataType], /) -> int:
     """
@@ -452,11 +458,7 @@ def resize(obj: _CData | _CDataType, size: int, /) -> None:
     ...
 def set_errno(value: int, /) -> int: ...
 def sizeof(obj_or_type: _CData | _CDataType | type[_CData | _CDataType], /) -> int:
-    """
-    sizeof(C type) -> integer
-    sizeof(C instance) -> integer
-    Return the size in bytes of a C instance
-    """
+    """Return the size in bytes of a C instance."""
     ...
 def PyObj_FromPtr(address: int, /) -> Any: ...
 def Py_DECREF(o: _T, /) -> _T: ...

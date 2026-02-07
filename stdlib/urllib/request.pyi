@@ -162,8 +162,7 @@ if sys.version_info >= (3, 13):
         the reason phrase returned by the server --- instead of the response
         headers as it is specified in the documentation for HTTPResponse.
 
-        For FTP, file, and data URLs and requests explicitly handled by legacy
-        URLopener and FancyURLopener classes, this function returns a
+        For FTP, file, and data URLs, this function returns a
         urllib.response.addinfourl object.
 
         Note that None may be returned if no handler handles the request (though
@@ -318,8 +317,25 @@ def build_opener(*handlers: BaseHandler | Callable[[], BaseHandler]) -> OpenerDi
     ...
 
 if sys.version_info >= (3, 14):
-    def url2pathname(url: str, *, require_scheme: bool = False, resolve_host: bool = False) -> str: ...
-    def pathname2url(pathname: str, *, add_scheme: bool = False) -> str: ...
+    def url2pathname(url: str, *, require_scheme: bool = False, resolve_host: bool = False) -> str:
+        """
+        Convert the given file URL to a local file system path.
+
+        The 'file:' scheme prefix must be omitted unless *require_scheme*
+        is set to true.
+
+        The URL authority may be resolved with gethostbyname() if
+        *resolve_host* is set to true.
+        """
+        ...
+    def pathname2url(pathname: str, *, add_scheme: bool = False) -> str:
+        """
+        Convert the given local file system path to a file URL.
+
+        The 'file:' scheme prefix is omitted unless *add_scheme*
+        is set to true.
+        """
+        ...
 
 else:
     if sys.platform == "win32":
@@ -343,9 +359,7 @@ def getproxies() -> dict[str, str]:
     Return a dictionary of scheme -> proxy server URL mappings.
 
     Scan the environment for variables named <scheme>_proxy;
-    this seems to be the standard convention.  If you need a
-    different way, you can pass a proxies dictionary to the
-    [Fancy]URLopener constructor.
+    this seems to be the standard convention.
     """
     ...
 def getproxies_environment() -> dict[str, str]:
@@ -353,9 +367,7 @@ def getproxies_environment() -> dict[str, str]:
     Return a dictionary of scheme -> proxy server URL mappings.
 
     Scan the environment for variables named <scheme>_proxy;
-    this seems to be the standard convention.  If you need a
-    different way, you can pass a proxies dictionary to the
-    [Fancy]URLopener constructor.
+    this seems to be the standard convention.
     """
     ...
 def parse_http_list(s: str) -> list[str]:

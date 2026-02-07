@@ -1,3 +1,12 @@
+"""
+authlib.jose.draft.
+~~~~~~~~~~~~~~~~~~~~
+
+Content Encryption per `Section 4`_.
+
+.. _`Section 4`: https://datatracker.ietf.org/doc/html/draft-amringer-jose-chacha-02#section-4
+"""
+
 from _typeshed import Incomplete
 
 from authlib.jose.rfc7516 import JWEEncAlgorithm
@@ -9,5 +18,26 @@ class XC20PEncAlgorithm(JWEEncAlgorithm):
     key_size: Incomplete
     CEK_SIZE: Incomplete
     def __init__(self, key_size) -> None: ...
-    def encrypt(self, msg, aad, iv, key) -> tuple[bytes, bytes]: ...
-    def decrypt(self, ciphertext, aad, iv, tag, key) -> bytes: ...
+    def encrypt(self, msg, aad, iv, key) -> tuple[bytes, bytes]:
+        """
+        Content Encryption with AEAD_XCHACHA20_POLY1305.
+
+        :param msg: text to be encrypt in bytes
+        :param aad: additional authenticated data in bytes
+        :param iv: initialization vector in bytes
+        :param key: encrypted key in bytes
+        :return: (ciphertext, tag)
+        """
+        ...
+    def decrypt(self, ciphertext, aad, iv, tag, key) -> bytes:
+        """
+        Content Decryption with AEAD_XCHACHA20_POLY1305.
+
+        :param ciphertext: ciphertext in bytes
+        :param aad: additional authenticated data in bytes
+        :param iv: initialization vector in bytes
+        :param tag: authentication tag in bytes
+        :param key: encrypted key in bytes
+        :return: message
+        """
+        ...

@@ -217,9 +217,9 @@ class Condition(_ContextManagerMixin, _LoopBoundMixin):
         ...
     def notify_all(self) -> None:
         """
-        Wake up all threads waiting on this condition. This method acts
-        like notify(), but wakes up all waiting threads instead of one. If the
-        calling thread has not acquired the lock when this method is called,
+        Wake up all tasks waiting on this condition. This method acts
+        like notify(), but wakes up all waiting tasks instead of one. If the
+        calling task has not acquired the lock when this method is called,
         a RuntimeError is raised.
         """
         ...

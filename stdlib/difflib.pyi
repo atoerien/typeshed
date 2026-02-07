@@ -91,8 +91,8 @@ class SequenceMatcher(Generic[_T]):
     sequences.  As a rule of thumb, a .ratio() value over 0.6 means the
     sequences are close matches:
 
-    >>> print(round(s.ratio(), 3))
-    0.866
+    >>> print(round(s.ratio(), 2))
+    0.87
     >>>
 
     If you're only interested in where the sequences match,
@@ -635,7 +635,20 @@ class Differ:
         ...
 
 if sys.version_info >= (3, 14):
-    def IS_LINE_JUNK(line: str, pat: Callable[[str], re.Match[str] | None] | None = None) -> bool: ...
+    def IS_LINE_JUNK(line: str, pat: Callable[[str], re.Match[str] | None] | None = None) -> bool:
+        r"""
+        Return True for ignorable line: if `line` is blank or contains a single '#'.
+
+        Examples:
+
+        >>> IS_LINE_JUNK('\n')
+        True
+        >>> IS_LINE_JUNK('  #   \n')
+        True
+        >>> IS_LINE_JUNK('hello\n')
+        False
+        """
+        ...
 
 else:
     def IS_LINE_JUNK(line: str, pat: Callable[[str], re.Match[str] | None] = ...) -> bool:

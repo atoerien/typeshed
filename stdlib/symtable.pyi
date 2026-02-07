@@ -153,7 +153,12 @@ class Function(SymbolTable):
 class Class(SymbolTable):
     if sys.version_info >= (3, 14):
         @deprecated("Deprecated since Python 3.14; will be removed in Python 3.16.")
-        def get_methods(self) -> tuple[str, ...]: ...
+        def get_methods(self) -> tuple[str, ...]:
+            """
+            Return a tuple of methods declared in the class.
+        
+            """
+            ...
     else:
         def get_methods(self) -> tuple[str, ...]:
             """
@@ -188,7 +193,12 @@ class Symbol:
         """
         ...
     if sys.version_info >= (3, 14):
-        def is_type_parameter(self) -> bool: ...
+        def is_type_parameter(self) -> bool:
+            """
+            Return *True* if the symbol is a type parameter.
+        
+            """
+            ...
 
     def is_global(self) -> bool:
         """
@@ -221,7 +231,12 @@ class Symbol:
         """
         ...
     if sys.version_info >= (3, 14):
-        def is_free_class(self) -> bool: ...
+        def is_free_class(self) -> bool:
+            """
+            Return *True* if a class-scoped symbol is free from
+            the perspective of a method.
+            """
+            ...
 
     def is_imported(self) -> bool:
         """
@@ -233,8 +248,18 @@ class Symbol:
         """Return *True* if a symbol is assigned to."""
         ...
     if sys.version_info >= (3, 14):
-        def is_comp_iter(self) -> bool: ...
-        def is_comp_cell(self) -> bool: ...
+        def is_comp_iter(self) -> bool:
+            """
+            Return *True* if the symbol is a comprehension iteration variable.
+        
+            """
+            ...
+        def is_comp_cell(self) -> bool:
+            """
+            Return *True* if the symbol is a cell in an inlined comprehension.
+        
+            """
+            ...
 
     def is_namespace(self) -> bool:
         """

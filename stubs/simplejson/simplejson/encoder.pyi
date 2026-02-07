@@ -227,8 +227,8 @@ def encode_basestring(s: str | bytes, _PY3: Literal[True] = True, _q: str = '"')
     ...
 def encode_basestring_ascii(s: str | bytes, /) -> str:
     """
-    encode_basestring_ascii(basestring) -> str
-
     Return an ASCII-only JSON representation of a Python string
+
+    
     """
     ...

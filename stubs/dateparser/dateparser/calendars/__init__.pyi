@@ -5,6 +5,13 @@ from dateparser.conf import Settings
 from dateparser.parser import _parser
 
 class CalendarBase:
+    """
+    Base setup class for non-Gregorian calendar system.
+
+    :param source:
+        Date string passed to calendar parser.
+    :type source: str
+    """
     parser: Incomplete
     source: Incomplete
     def __init__(self, source) -> None: ...

@@ -93,12 +93,16 @@ NLSET: Final[set[str]]
 SPECIALSNL: Final[set[str]]
 
 # Added in Python 3.9.23, 3.10.17, 3.11.12, 3.12.9, 3.13.2
-def make_quoted_pairs(value: Any) -> str: ...
+def make_quoted_pairs(value: Any) -> str:
+    """Escape dquote and backslash for use within a quoted-string."""
+    ...
 def quote_string(value: Any) -> str: ...
 
 if sys.version_info >= (3, 13):
     # Added in Python 3.13.12, 3.14.3
-    def make_parenthesis_pairs(value: Any) -> str: ...
+    def make_parenthesis_pairs(value: Any) -> str:
+        """Escape parenthesis and backslash for use within a comment."""
+        ...
 
 rfc2047_matcher: Final[Pattern[str]]
 
@@ -748,7 +752,12 @@ def parse_message_id(value: str) -> MessageID:
 
 if sys.version_info >= (3, 13):
     # Added in Python 3.13.12, 3.14.3
-    def parse_message_ids(value: str) -> MessageIDList: ...
+    def parse_message_ids(value: str) -> MessageIDList:
+        """
+        in-reply-to     =   "In-Reply-To:" 1*msg-id CRLF
+        references      =   "References:" 1*msg-id CRLF
+        """
+        ...
 
 def parse_mime_version(value: str) -> MIMEVersion:
     """

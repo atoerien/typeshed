@@ -460,7 +460,16 @@ if sys.version_info >= (3, 10):
         ...
 
 if sys.version_info >= (3, 14):
-    def assume_default_colors(fg: int, bg: int, /) -> None: ...
+    def assume_default_colors(fg: int, bg: int, /) -> None:
+        """
+        Allow use of default values for colors on terminals supporting this feature.
+
+        Assign terminal default foreground/background colors to color number -1.
+        Change the definition of the color-pair 0 to (fg, bg).
+
+        Use this to support transparency in your application.
+        """
+        ...
 
 def has_ic() -> bool:
     """Return True if the terminal has insert- and delete-character capabilities."""
@@ -900,12 +909,7 @@ def ungetmouse(id: int, x: int, y: int, z: int, bstate: int, /) -> None:
     ...
 def update_lines_cols() -> None: ...
 def use_default_colors() -> None:
-    """
-    Allow use of default values for colors on terminals supporting this feature.
-
-    Use this to support transparency in your application.  The default color
-    is assigned to the color number -1.
-    """
+    """Equivalent to assume_default_colors(-1, -1)."""
     ...
 def use_env(flag: bool, /) -> None:
     """
@@ -1061,7 +1065,7 @@ class window:  # undocumented
         """Remove attribute attr from the "background" set."""
         ...
     def attron(self, attr: int, /) -> None:
-        """Add attribute attr from the "background" set."""
+        """Add attribute attr to the "background" set."""
         ...
     def attrset(self, attr: int, /) -> None:
         """Set the "background" set of attributes."""
@@ -1154,13 +1158,97 @@ class window:  # undocumented
         """
         ...
     @overload
-    def chgat(self, attr: int) -> None: ...
+    def chgat(self, attr: int) -> None:
+        """
+        chgat([y, x,] [n=-1,] attr)
+        Set the attributes of characters.
+
+          y
+            Y-coordinate.
+          x
+            X-coordinate.
+          n
+            Number of characters.
+          attr
+            Attributes for characters.
+
+        Set the attributes of num characters at the current cursor position, or at
+        position (y, x) if supplied.  If no value of num is given or num = -1, the
+        attribute will be set on all the characters to the end of the line.  This
+        function does not move the cursor.  The changed line will be touched using
+        the touchline() method so that the contents will be redisplayed by the next
+        window refresh.
+        """
+        ...
     @overload
-    def chgat(self, num: int, attr: int) -> None: ...
+    def chgat(self, num: int, attr: int) -> None:
+        """
+        chgat([y, x,] [n=-1,] attr)
+        Set the attributes of characters.
+
+          y
+            Y-coordinate.
+          x
+            X-coordinate.
+          n
+            Number of characters.
+          attr
+            Attributes for characters.
+
+        Set the attributes of num characters at the current cursor position, or at
+        position (y, x) if supplied.  If no value of num is given or num = -1, the
+        attribute will be set on all the characters to the end of the line.  This
+        function does not move the cursor.  The changed line will be touched using
+        the touchline() method so that the contents will be redisplayed by the next
+        window refresh.
+        """
+        ...
     @overload
-    def chgat(self, y: int, x: int, attr: int) -> None: ...
+    def chgat(self, y: int, x: int, attr: int) -> None:
+        """
+        chgat([y, x,] [n=-1,] attr)
+        Set the attributes of characters.
+
+          y
+            Y-coordinate.
+          x
+            X-coordinate.
+          n
+            Number of characters.
+          attr
+            Attributes for characters.
+
+        Set the attributes of num characters at the current cursor position, or at
+        position (y, x) if supplied.  If no value of num is given or num = -1, the
+        attribute will be set on all the characters to the end of the line.  This
+        function does not move the cursor.  The changed line will be touched using
+        the touchline() method so that the contents will be redisplayed by the next
+        window refresh.
+        """
+        ...
     @overload
-    def chgat(self, y: int, x: int, num: int, attr: int) -> None: ...
+    def chgat(self, y: int, x: int, num: int, attr: int) -> None:
+        """
+        chgat([y, x,] [n=-1,] attr)
+        Set the attributes of characters.
+
+          y
+            Y-coordinate.
+          x
+            X-coordinate.
+          n
+            Number of characters.
+          attr
+            Attributes for characters.
+
+        Set the attributes of num characters at the current cursor position, or at
+        position (y, x) if supplied.  If no value of num is given or num = -1, the
+        attribute will be set on all the characters to the end of the line.  This
+        function does not move the cursor.  The changed line will be touched using
+        the touchline() method so that the contents will be redisplayed by the next
+        window refresh.
+        """
+        ...
     def clear(self) -> None: ...
     def clearok(self, yes: int) -> None: ...
     def clrtobot(self) -> None: ...
@@ -1353,13 +1441,61 @@ class window:  # undocumented
     def getmaxyx(self) -> tuple[int, int]: ...
     def getparyx(self) -> tuple[int, int]: ...
     @overload
-    def getstr(self) -> bytes: ...
+    def getstr(self) -> bytes:
+        """
+        getstr([[y, x,] n=2047])
+        Read a string from the user, with primitive line editing capacity.
+
+          y
+            Y-coordinate.
+          x
+            X-coordinate.
+          n
+            Maximal number of characters.
+        """
+        ...
     @overload
-    def getstr(self, n: int) -> bytes: ...
+    def getstr(self, n: int) -> bytes:
+        """
+        getstr([[y, x,] n=2047])
+        Read a string from the user, with primitive line editing capacity.
+
+          y
+            Y-coordinate.
+          x
+            X-coordinate.
+          n
+            Maximal number of characters.
+        """
+        ...
     @overload
-    def getstr(self, y: int, x: int) -> bytes: ...
+    def getstr(self, y: int, x: int) -> bytes:
+        """
+        getstr([[y, x,] n=2047])
+        Read a string from the user, with primitive line editing capacity.
+
+          y
+            Y-coordinate.
+          x
+            X-coordinate.
+          n
+            Maximal number of characters.
+        """
+        ...
     @overload
-    def getstr(self, y: int, x: int, n: int) -> bytes: ...
+    def getstr(self, y: int, x: int, n: int) -> bytes:
+        """
+        getstr([[y, x,] n=2047])
+        Read a string from the user, with primitive line editing capacity.
+
+          y
+            Y-coordinate.
+          x
+            X-coordinate.
+          n
+            Maximal number of characters.
+        """
+        ...
     def getyx(self) -> tuple[int, int]: ...
     @overload
     def hline(self, ch: _ChType, n: int) -> None:
@@ -1563,9 +1699,43 @@ class window:  # undocumented
         """
         ...
     @overload
-    def instr(self, n: int = 2047) -> bytes: ...
+    def instr(self, n: int = 2047) -> bytes:
+        """
+        instr([y, x,] n=2047)
+        Return a string of characters, extracted from the window.
+
+          y
+            Y-coordinate.
+          x
+            X-coordinate.
+          n
+            Maximal number of characters.
+
+        Return a string of characters, extracted from the window starting at the
+        current cursor position, or at y, x if specified.  Attributes are stripped
+        from the characters.  If n is specified, instr() returns a string at most
+        n characters long (exclusive of the trailing NUL).
+        """
+        ...
     @overload
-    def instr(self, y: int, x: int, n: int = 2047) -> bytes: ...
+    def instr(self, y: int, x: int, n: int = 2047) -> bytes:
+        """
+        instr([y, x,] n=2047)
+        Return a string of characters, extracted from the window.
+
+          y
+            Y-coordinate.
+          x
+            X-coordinate.
+          n
+            Maximal number of characters.
+
+        Return a string of characters, extracted from the window starting at the
+        current cursor position, or at y, x if specified.  Attributes are stripped
+        from the characters.  If n is specified, instr() returns a string at most
+        n characters long (exclusive of the trailing NUL).
+        """
+        ...
     def is_linetouched(self, line: int, /) -> bool:
         """
         Return True if the specified line was modified, otherwise return False.

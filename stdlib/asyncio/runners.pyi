@@ -51,7 +51,9 @@ if sys.version_info >= (3, 11):
             """Return embedded event loop."""
             ...
         if sys.version_info >= (3, 14):
-            def run(self, coro: Awaitable[_T], *, context: Context | None = None) -> _T: ...
+            def run(self, coro: Awaitable[_T], *, context: Context | None = None) -> _T:
+                """Run code in the embedded event loop."""
+                ...
         else:
             def run(self, coro: Coroutine[Any, Any, _T], *, context: Context | None = None) -> _T:
                 """Run a coroutine inside the embedded event loop."""
@@ -72,6 +74,7 @@ if sys.version_info >= (3, 12):
         running in the same thread.
 
         If debug is True, the event loop will be run in debug mode.
+        If loop_factory is passed, it is used for new event loop creation.
 
         This function always creates a new event loop and closes it at the end.
         It should be used as a main entry point for asyncio programs, and should
