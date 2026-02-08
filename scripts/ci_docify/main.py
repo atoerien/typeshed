@@ -71,9 +71,14 @@ PACKAGE_EXTRA_DEPENDENCIES = {
     "openpyxl": ["numpy"],
     # tornado 5.1.1 doesn't build on 3.12 or later
     "opentracing": ["mock", "pytest-mock", "gevent", "tornado==5.1.*;python_version<='3.11'"],
+    # requires pkg_resources, which was removed in setuptools 82.0.0
+    "libsass": ["setuptools<82.0.0"],
+    # requires pkg_resources, which was removed in setuptools 82.0.0
+    "passlib": ["setuptools<82.0.0"],
     # not including bottle, Flask, Flask-Login as these are only used in example packages
     # (and have stubs for some reason) and importing one starts a web server
-    "pony": ["cx_Oracle", "psycopg2", "mysqlclient"],
+    # cx_Oracle builds fail, wheels only available on <=3.10
+    "pony": ["cx_Oracle;python_version<='3.10'", "psycopg2", "mysqlclient"],
 }
 NO_MULTIPROCESS_PACKAGES = [
     "gunicorn",  # eventlet dependency seems to interfere with multiprocessing
