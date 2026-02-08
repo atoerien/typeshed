@@ -96,7 +96,7 @@ jobs:
       - name: Install dependencies
         run: uv run --no-project scripts/ci_docify/install_os_dependencies.py --sudo apt
       - name: Run docify
-        run: uv run --no-project scripts/ci_docify/main.py
+        run: xvfb-run uv run --no-project scripts/ci_docify/main.py
       - name: Commit changes
         run: |
           git add stdlib stubs
