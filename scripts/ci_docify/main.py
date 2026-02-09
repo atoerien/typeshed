@@ -10,7 +10,7 @@ from pathlib import Path
 from packaging.specifiers import SpecifierSet
 from utils import parse_metadata, subprocess_run
 
-PYTHON_VERSIONS = ("3.13", "3.12", "3.11", "3.10", "3.9")
+PYTHON_VERSIONS = ("3.14", "3.13", "3.12", "3.11", "3.10", "3.9")
 
 DOCIFY_VER = "1.1.0"
 TYPING_EXTENSIONS_VER = "4.15.0"
