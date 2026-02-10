@@ -114,10 +114,12 @@ class Layer(tf.Module, Generic[_InputT_contra, _OutputT_co]):
         trainable: Boolean, whether the layer's variables should be trainable.
         name: String name of the layer.
         dtype: The dtype of the layer's computations and weights. Can also be a
-            `keras.DTypePolicy`, which allows the computation and weight dtype
-            to differ. Defaults to `None`. `None` means to use
-            `keras.config.dtype_policy()`, which is a `float32` policy unless
-            set to different value (via `keras.config.set_dtype_policy()`).
+            `keras.DTypePolicy`,
+            which allows the computation and
+            weight dtype to differ. Defaults to `None`. `None` means to use
+            `keras.config.dtype_policy()`,
+            which is a `float32` policy unless set to different value
+            (via `keras.config.set_dtype_policy()`).
 
     Attributes:
         name: The name of the layer (string).
@@ -318,14 +320,10 @@ class Layer(tf.Module, Generic[_InputT_contra, _OutputT_co]):
             constraint: Contrainst object to call on the variable after any
                 optimizer update, or string name of a built-in constraint.
                 Defaults to `None`.
-            aggregation: Optional string, one of `None`, `"none"`, `"mean"`,
-                `"sum"` or `"only_first_replica"`. Annotates the variable with
-                the type of multi-replica aggregation to be used for this
-                variable when writing custom data parallel training loops.
-                Defaults to `"none"`.
-            overwrite_with_gradient: Boolean, whether to overwrite the variable
-                with the computed gradient. This is useful for float8 training.
-                Defaults to `False`.
+            aggregation: String, one of `'mean'`, `'sum'`,
+                `'only_first_replica'`. Annotates the variable with the type
+                of multi-replica aggregation to be used for this variable
+                when writing custom data parallel training loops.
             name: String name of the variable. Useful for debugging purposes.
         """
         ...
@@ -483,9 +481,9 @@ class StringLookup(_IndexLookup):
     tokens will be used to create the vocabulary and all others will be treated
     as out-of-vocabulary (OOV).
 
-    There are two possible output modes for the layer. When `output_mode` is
-    `"int"`, input strings are converted to their index in the vocabulary (an
-    integer).
+    There are two possible output modes for the layer.
+    When `output_mode` is `"int"`,
+    input strings are converted to their index in the vocabulary (an integer).
     When `output_mode` is `"multi_hot"`, `"count"`, or `"tf_idf"`, input strings
     are encoded into an array where each dimension corresponds to an element in
     the vocabulary.
@@ -505,7 +503,7 @@ class StringLookup(_IndexLookup):
     It can however be used with any backend when running eagerly.
     It can also always be used as part of an input preprocessing pipeline
     with any backend (outside the model itself), which is how we recommend
-    using this layer.
+    to use this layer.
 
     **Note:** This layer is safe to use inside a `tf.data` pipeline
     (independently of which backend you're using).
@@ -522,26 +520,28 @@ class StringLookup(_IndexLookup):
             If this value is 0, OOV inputs will cause an error when calling
             the layer. Defaults to `1`.
         mask_token: A token that represents masked inputs. When `output_mode` is
-            `"int"`, the token is included in the vocabulary and mapped to index
-            0.
-            In other output modes, the token will not appear in the vocabulary
-            and instances of the mask token in the input will be dropped.
-            If set to `None`, no mask term will be added. Defaults to `None`.
+            `"int"`, the token is included in vocabulary and mapped to index 0.
+            In other output modes, the token will not appear
+            in the vocabulary and instances of the mask token
+            in the input will be dropped. If set to `None`,
+            no mask term will be added. Defaults to `None`.
         oov_token: Only used when `invert` is True. The token to return for OOV
             indices. Defaults to `"[UNK]"`.
-        vocabulary: Optional. Either an array of strings or a string path to a
-            text file. If passing an array, you can pass a tuple, list, 1D NumPy
-            array, or 1D tensor containing the string vocabulary terms.
-            If passing a file path, the file should contain one line per term in
-            the vocabulary. If this argument is set, there is no need to
-            `adapt()` the layer.
+        vocabulary: Optional. Either an array of integers or a string path to a
+            text file. If passing an array, can pass a tuple, list,
+            1D NumPy array, or 1D tensor containing the integer vocbulary terms.
+            If passing a file path, the file should contain one line per term
+            in the vocabulary. If this argument is set,
+            there is no need to `adapt()` the layer.
+        vocabulary_dtype: The dtype of the vocabulary terms, for example
+            `"int64"` or `"int32"`. Defaults to `"int64"`.
         idf_weights: Only valid when `output_mode` is `"tf_idf"`.
             A tuple, list, 1D NumPy array, or 1D tensor or the same length
             as the vocabulary, containing the floating point inverse document
             frequency weights, which will be multiplied by per sample term
             counts for the final TF-IDF weight.
-            If the `vocabulary` argument is set and `output_mode` is `"tf_idf"`,
-            this argument must be supplied.
+            If the `vocabulary` argument is set, and `output_mode` is
+            `"tf_idf"`, this argument must be supplied.
         invert: Only valid when `output_mode` is `"int"`.
             If `True`, this layer will map indices to vocabulary items
             instead of mapping vocabulary items to indices.
@@ -557,11 +557,11 @@ class StringLookup(_IndexLookup):
                 If the last dimension is not size 1, will append a new
                 dimension for the encoded output.
             - `"multi_hot"`: Encodes each sample in the input into a single
-                array the same size as the vocabulary containing a 1 for each
-                vocabulary term present in the sample.
-                Treats the last dimension as the sample dimension, if the input
-                shape is `(..., sample_length)`, the output shape will be
-                `(..., num_tokens)`.
+                array the same size as the vocabulary,
+                containing a 1 for each vocabulary term present in the sample.
+                Treats the last dimension as the sample dimension,
+                if input shape is `(..., sample_length)`,
+                output shape will be `(..., num_tokens)`.
             - `"count"`: As `"multi_hot"`, but the int array contains
                 a count of the number of times the token at that index
                 appeared in the sample.
@@ -695,8 +695,8 @@ class StringLookup(_IndexLookup):
     array([[0.  , 0.25, 0.  , 0.6 , 0.8 ],
            [1.0 , 0.  , 0.75, 0.  , 0.4 ]], dtype=float32)
 
-    To specify the idf weights for OOV values, you will need to pass the entire
-    vocabulary including the leading OOV token.
+    To specify the idf weights for oov values, you will need to pass the entire
+    vocabulary including the leading oov token.
 
     >>> vocab = ["[UNK]", "a", "b", "c", "d"]
     >>> idf_weights = [0.9, 0.25, 0.75, 0.6, 0.4]
@@ -724,7 +724,7 @@ class StringLookup(_IndexLookup):
     array([[b'a', b'c', b'd'],
            [b'd', b'[UNK]', b'b']], dtype=object)
 
-    Note that the first index corresponds to the OOV token by default.
+    Note that the first index correspond to the oov token by default.
 
 
     **Forward and inverse lookup pairs**
@@ -773,7 +773,7 @@ class StringLookup(_IndexLookup):
     ) -> None: ...
     def adapt(self, data: tf.data.Dataset[TensorLike] | AnyArray | DataSequence, steps: Float | None = None) -> None:
         """
-        Computes a vocabulary of terms from tokens in a dataset.
+        Computes a vocabulary of integer terms from tokens in a dataset.
 
         Calling `adapt()` on a `StringLookup` layer is an alternative to passing
         in a precomputed vocabulary on construction via the `vocabulary`
@@ -872,9 +872,8 @@ class IntegerLookup(_IndexLookup):
             If passing a file path, the file should contain one line per term
             in the vocabulary. If this argument is set,
             there is no need to `adapt()` the layer.
-        vocabulary_dtype: The dtype of the vocabulary terms.
-            Only `vocabulary_dtype='int64'` is supported at this time.
-            Defaults to `"int64"`.
+        vocabulary_dtype: The dtype of the vocabulary terms, for example
+            `"int64"` or `"int32"`. Defaults to `"int64"`.
         idf_weights: Only valid when `output_mode` is `"tf_idf"`.
             A tuple, list, 1D NumPy array, or 1D tensor or the same length
             as the vocabulary, containing the floating point inverse document
@@ -907,12 +906,9 @@ class IntegerLookup(_IndexLookup):
                 appeared in the sample.
             - `"tf_idf"`: As `"multi_hot"`, but the TF-IDF algorithm is
                 applied to find the value in each token slot.
-            For `"int"` output, the output shape matches the input shape.
-            For `"one_hot"` output, the output shape is
-            `input_shape + (vocabulary_size,)`, where `input_shape` may
-            have arbitrary rank. For other output modes (`"multi_hot"`,
-            `"count"`, `"tf_idf"`), the output shape is `(batch_size,
-            vocabulary_size)`. Defaults to `"int"`.
+            For `"int"` output, any shape of input and output is supported.
+            For all other output modes, currently only output up to rank 2
+            is supported. Defaults to `"int"`.
         pad_to_max_tokens: Only applicable when `output_mode` is `"multi_hot"`,
             `"count"`, or `"tf_idf"`. If `True`, the output will have
             its feature axis padded to `max_tokens` even if the number
@@ -1160,9 +1156,7 @@ class Dense(Layer[tf.Tensor, tf.Tensor]):
     where `activation` is the element-wise activation function
     passed as the `activation` argument, `kernel` is a weights matrix
     created by the layer, and `bias` is a bias vector created by the layer
-    (only applicable if `use_bias` is `True`). When this layer is
-    followed by a `BatchNormalization` layer, it is recommended to set
-    `use_bias=False` as `BatchNormalization` has its own bias term.
+    (only applicable if `use_bias` is `True`).
 
     Note: If the input to the layer has a rank greater than 2, `Dense`
     computes the dot product between the `inputs` and the `kernel` along the
@@ -1198,11 +1192,6 @@ class Dense(Layer[tf.Tensor, tf.Tensor]):
             computation cost of fine-tuning large dense layers.
             You can also enable LoRA on an existing
             `Dense` layer by calling `layer.enable_lora(rank)`.
-        lora_alpha: Optional integer. If set, this parameter scales the
-            low-rank adaptation delta (computed as the product of two lower-rank
-            trainable matrices) during the forward pass. The delta is scaled by
-            `lora_alpha / lora_rank`, allowing you to fine-tune the strength of
-            the LoRA adjustment independently of `lora_rank`.
 
     Input shape:
         N-D tensor with shape: `(batch_size, ..., input_dim)`.
@@ -1386,7 +1375,7 @@ class ReLU(Layer[tf.Tensor, tf.Tensor]):
 
     Example:
     ``` python
-    relu_layer = keras.layers.ReLU(
+    relu_layer = keras.layers.activations.ReLU(
         max_value=10,
         negative_slope=0.5,
         threshold=0,
@@ -1521,11 +1510,6 @@ class Embedding(Layer[tf.Tensor, tf.Tensor]):
             computation cost of fine-tuning large embedding layers.
             You can also enable LoRA on an existing
             `Embedding` layer by calling `layer.enable_lora(rank)`.
-        lora_alpha: Optional integer. If set, this parameter scales the
-            low-rank adaptation delta (computed as the product of two lower-rank
-            trainable matrices) during the forward pass. The delta is scaled by
-            `lora_alpha / lora_rank`, allowing you to fine-tune the strength of
-            the LoRA adjustment independently of `lora_rank`.
 
     Input shape:
         2D tensor with shape: `(batch_size, input_length)`.
@@ -1562,15 +1546,6 @@ class Conv2D(Layer[tf.Tensor, tf.Tensor]):
     produce a tensor of outputs. If `use_bias` is True, a bias vector is created
     and added to the outputs. Finally, if `activation` is not `None`, it is
     applied to the outputs as well.
-
-    Note on numerical precision: While in general Keras operation execution
-    results are identical across backends up to 1e-7 precision in float32,
-    `Conv2D` operations may show larger variations. Due to the large
-    number of element-wise multiplications and additions in convolution
-    operations, especially with large inputs or kernel sizes, accumulated
-    floating-point differences can exceed this 1e-7 threshold. These variations
-    are particularly noticeable when using different backends (e.g., TensorFlow
-    vs JAX) or different hardware.
 
     Args:
         filters: int, the dimension of the output space (the number of filters
@@ -1767,6 +1742,10 @@ class LayerNormalization(Layer[tf.Tensor, tf.Tensor]):
             When the next layer is linear (also e.g. `nn.relu`), this can be
             disabled since the scaling will be done by the next layer.
             Defaults to `True`.
+        rms_scaling: If True, `center` and `scale` are ignored, and the
+            inputs are scaled by `gamma` and the inverse square root
+            of the square of all inputs. This is an approximate and faster
+            approach that avoids ever computing the mean of the input.
         beta_initializer: Initializer for the beta weight. Defaults to zeros.
         gamma_initializer: Initializer for the gamma weight. Defaults to ones.
         beta_regularizer: Optional regularizer for the beta weight.
@@ -1842,11 +1821,6 @@ class MultiHeadAttention(Layer[Any, tf.Tensor]):
             feature dim (the query input's last dimension).
         attention_axes: axes over which the attention is applied. `None` means
             attention over all axes, but batch, heads, and features.
-        flash_attention: If `None`, the layer attempts to use flash
-            attention for faster and more memory-efficient attention
-            computations when possible. This behavior can be configured using
-            `keras.config.enable_flash_attention()` or
-            `keras.config.disable_flash_attention()`.
         kernel_initializer: Initializer for dense layer kernels.
         bias_initializer: Initializer for dense layer biases.
         kernel_regularizer: Regularizer for dense layer kernels.
@@ -1989,10 +1963,10 @@ class Activation(Layer[tf.Tensor, tf.Tensor]):
     Example:
 
     >>> layer = keras.layers.Activation('relu')
-    >>> layer(np.array([-3.0, -1.0, 0.0, 2.0]))
+    >>> layer([-3.0, -1.0, 0.0, 2.0])
     [0.0, 0.0, 0.0, 2.0]
     >>> layer = keras.layers.Activation(keras.activations.relu)
-    >>> layer(np.array([-3.0, -1.0, 0.0, 2.0]))
+    >>> layer([-3.0, -1.0, 0.0, 2.0])
     [0.0, 0.0, 0.0, 2.0]
     """
     def __init__(

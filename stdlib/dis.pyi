@@ -318,7 +318,17 @@ if sys.version_info >= (3, 14):
         adaptive: bool = False,
         show_offsets: bool = False,
         show_positions: bool = False,
-    ) -> None: ...
+    ) -> None:
+        """
+        Disassemble classes, methods, functions, and other compiled objects.
+
+        With no argument, disassemble the last traceback.
+
+        Compiled objects currently include generator objects, async generator
+        objects, and coroutine objects, all of which store their code object
+        in a special attribute.
+        """
+        ...
     def disassemble(
         co: _HaveCodeType,
         lasti: int = -1,
@@ -328,7 +338,9 @@ if sys.version_info >= (3, 14):
         adaptive: bool = False,
         show_offsets: bool = False,
         show_positions: bool = False,
-    ) -> None: ...
+    ) -> None:
+        """Disassemble a code object."""
+        ...
     def distb(
         tb: types.TracebackType | None = None,
         *,
@@ -337,7 +349,9 @@ if sys.version_info >= (3, 14):
         adaptive: bool = False,
         show_offsets: bool = False,
         show_positions: bool = False,
-    ) -> None: ...
+    ) -> None:
+        """Disassemble a traceback (default: last traceback)."""
+        ...
 
 elif sys.version_info >= (3, 13):
     # 3.13 added `show_offsets`

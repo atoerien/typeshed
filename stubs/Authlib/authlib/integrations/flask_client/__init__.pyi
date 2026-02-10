@@ -13,7 +13,12 @@ class OAuth(BaseOAuth):
     cache: Incomplete
     fetch_token: Incomplete
     update_token: Incomplete
-    def init_app(self, app, cache=None, fetch_token=None, update_token=None): ...
+    def init_app(self, app, cache=None, fetch_token=None, update_token=None):
+        """
+        Initialize lazy for Flask app. This is usually used for Flask application
+        factory pattern.
+        """
+        ...
     def create_client(self, name): ...
     def register(self, name, overwrite=False, **kwargs): ...
 

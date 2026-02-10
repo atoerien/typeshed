@@ -52,7 +52,9 @@ if sys.version_info >= (3, 14):
         *,
         sys_argv: list[str] | None = None,
         authkey_r: int | None = None,
-    ) -> None: ...
+    ) -> None:
+        """Run forkserver."""
+        ...
 
 elif sys.version_info >= (3, 13):
     # `sys_argv` parameter added in Python 3.13.12

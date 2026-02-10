@@ -11,6 +11,7 @@ _Request: TypeAlias = Incomplete  # actual type is httpx.Request
 
 # Inherits from httpx.Auth
 class OAuth1Auth(ClientAuth):
+    """Signs the httpx request using OAuth 1 (RFC5849)."""
     requires_request_body: bool
     def auth_flow(self, request: _Request) -> Generator[_Request, _Response, None]: ...
 
@@ -31,7 +32,20 @@ class AsyncOAuth1Client(_OAuth1Client):
         force_include_body=False,
         **kwargs,
     ) -> None: ...
-    async def fetch_access_token(self, url, verifier=None, **kwargs): ...
+    async def fetch_access_token(self, url, verifier=None, **kwargs):
+        """
+        Method for fetching an access token from the token endpoint.
+
+        This is the final step in the OAuth 1 workflow. An access token is
+        obtained using all previously obtained credentials, including the
+        verifier from the authorization step.
+
+        :param url: Access Token endpoint.
+        :param verifier: A verifier string to prove authorization was granted.
+        :param kwargs: Extra parameters to include for fetching access token.
+        :return: A token dict.
+        """
+        ...
     @staticmethod
     def handle_error(error_type: str | None, error_description: str | None) -> NoReturn: ...
 

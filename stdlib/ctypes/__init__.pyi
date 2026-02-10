@@ -47,12 +47,41 @@ _DLLT = TypeVar("_DLLT", bound=CDLL)
 if sys.version_info >= (3, 14):
     @overload
     @deprecated("ctypes.POINTER with string")
-    def POINTER(cls: str) -> type[Any]: ...
+    def POINTER(cls: str) -> type[Any]:
+        """
+        Create and return a new ctypes pointer type.
+
+        Pointer types are cached and reused internally,
+        so calling this function repeatedly is cheap.
+        """
+        ...
     @overload
-    def POINTER(cls: None) -> type[c_void_p]: ...
+    def POINTER(cls: None) -> type[c_void_p]:
+        """
+        Create and return a new ctypes pointer type.
+
+        Pointer types are cached and reused internally,
+        so calling this function repeatedly is cheap.
+        """
+        ...
     @overload
-    def POINTER(cls: type[_CT]) -> type[_Pointer[_CT]]: ...
-    def pointer(obj: _CT) -> _Pointer[_CT]: ...
+    def POINTER(cls: type[_CT]) -> type[_Pointer[_CT]]:
+        """
+        Create and return a new ctypes pointer type.
+
+        Pointer types are cached and reused internally,
+        so calling this function repeatedly is cheap.
+        """
+        ...
+    def pointer(obj: _CT) -> _Pointer[_CT]:
+        """
+        Create a new pointer instance, pointing to 'obj'.
+
+        The returned object is of the type POINTER(type(obj)). Note that if you
+        just want to pass a pointer to an object to a foreign function call, you
+        should use byref(obj) which is much faster.
+        """
+        ...
 
 else:
     from _ctypes import POINTER as POINTER, pointer as pointer
@@ -281,12 +310,24 @@ def wstring_at(ptr: _CVoidConstPLike, size: int = -1) -> str:
     ...
 
 if sys.version_info >= (3, 14):
-    def memoryview_at(ptr: _CVoidConstPLike, size: int, readonly: bool = False) -> memoryview: ...
+    def memoryview_at(ptr: _CVoidConstPLike, size: int, readonly: bool = False) -> memoryview:
+        """
+        memoryview_at(ptr, size[, readonly]) -> memoryview
+
+        Return a memoryview representing the memory at void *ptr.
+        """
+        ...
 
 class py_object(_CanCastTo, _SimpleCData[_T]):
     _type_: ClassVar[Literal["O"]]
     if sys.version_info >= (3, 14):
-        def __class_getitem__(cls, item: Any, /) -> GenericAlias: ...
+        def __class_getitem__(cls, item: Any, /) -> GenericAlias:
+            """
+            Represent a PEP 585 generic type
+
+            E.g. for t = list[int], t.__origin__ is list and t.__args__ is (int,).
+            """
+            ...
 
 class c_bool(_SimpleCData[bool]):
     _type_: ClassVar[Literal["?"]]

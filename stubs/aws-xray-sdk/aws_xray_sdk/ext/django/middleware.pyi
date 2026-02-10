@@ -11,9 +11,15 @@ HOST_KEY: Final = "HTTP_HOST"
 CONTENT_LENGTH_KEY: Final = "content-length"
 
 class XRayMiddleware:
+    """Middleware that wraps each incoming request to a segment."""
     get_response: Incomplete
     in_lambda_ctx: bool
 
     def __init__(self, get_response) -> None: ...
     def __call__(self, request): ...
-    def process_exception(self, request, exception: Exception) -> None: ...
+    def process_exception(self, request, exception: Exception) -> None:
+        """
+        Add exception information and fault flag to the
+        current segment.
+        """
+        ...

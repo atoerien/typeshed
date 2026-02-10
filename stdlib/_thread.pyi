@@ -62,7 +62,13 @@ class RLock:
         """Release the lock."""
         ...
     if sys.version_info >= (3, 14):
-        def locked(self) -> bool: ...
+        def locked(self) -> bool:
+            """
+            locked()
+
+            Return a boolean indicating whether this object is locked right now.
+            """
+            ...
 
 if sys.version_info >= (3, 13):
     @final
@@ -400,7 +406,9 @@ if sys.version_info >= (3, 12):
         ...
 
 if sys.version_info >= (3, 14):
-    def set_name(name: str) -> None: ...
+    def set_name(name: str) -> None:
+        """Set the name of the current thread."""
+        ...
 
 @disjoint_base
 class _local:

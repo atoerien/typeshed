@@ -1,4 +1,7 @@
-"""exec$(dirname $0)/python3.12$0$@"""
+"""
+exec' "$(dirname -- "$(realpath -- "$0")")/python3.12" "$0" "$@"
+' 
+"""
 
 import os
 from _typeshed import SupportsContainsAndGetItem, SupportsGetItem, SupportsItemAccess, Unused

@@ -88,9 +88,12 @@ if sys.version_info < (3, 12):
 class ResourceLoader(Loader):
     """
     Abstract base class for loaders which can return data from their
-    back-end storage.
+    back-end storage to facilitate reading data to perform an import.
 
     This ABC represents one of the optional protocols specified by PEP 302.
+
+    For directly loading resources, use TraversableResources instead. This class
+    primarily exists for backwards compatibility with other ABCs in this module.
     """
     @abstractmethod
     def get_data(self, path: str) -> bytes:

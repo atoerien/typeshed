@@ -164,7 +164,14 @@ class Untokenizer:
     encoding: str | None
     def add_whitespace(self, start: _Position) -> None: ...
     if sys.version_info >= (3, 12):
-        def add_backslash_continuation(self, start: _Position) -> None: ...
+        def add_backslash_continuation(self, start: _Position) -> None:
+            """
+            Add backslash continuation characters if the row has increased
+            without encountering a newline token.
+
+            This also inserts the correct amount of whitespace before the backslash.
+            """
+            ...
 
     def untokenize(self, iterable: Iterable[_Token]) -> str: ...
     def compat(self, token: Sequence[int | str], iterable: Iterable[_Token]) -> None: ...
@@ -182,16 +189,10 @@ def untokenize(iterable: Iterable[_Token]) -> str | Any:
     with at least two elements, a token number and token value.  If
     only two tokens are passed, the resulting output is poor.
 
-    Round-trip invariant for full input:
-        Untokenized source will match input source exactly
-
-    Round-trip invariant for limited input:
-        # Output bytes will tokenize back to the input
-        t1 = [tok[:2] for tok in tokenize(f.readline)]
-        newcode = untokenize(t1)
-        readline = BytesIO(newcode).readline
-        t2 = [tok[:2] for tok in tokenize(readline)]
-        assert t1 == t2
+    The result is guaranteed to tokenize back to match the input so
+    that the conversion is lossless and round-trips are assured.
+    The guarantee applies only to the token type and token string as
+    the spacing between tokens (column positions) may change.
     """
     ...
 def detect_encoding(readline: Callable[[], bytes | bytearray]) -> tuple[str, Sequence[bytes]]:

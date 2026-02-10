@@ -54,6 +54,10 @@ class _ExactLanguageSearch:
     def search_parse(self, shortname: str, text: str, settings: Settings) -> list[tuple[str, datetime.datetime]]: ...
 
 class DateSearchWithDetection:
+    """
+    Class which executes language detection of string in a natural language, translation of a given string,
+    search of substrings which represent date and/or time and parsing of these substrings.
+    """
     loader: LocaleDataLoader
     available_language_map: OrderedDict[str, Locale]
     search: _ExactLanguageSearch
@@ -72,5 +76,37 @@ class DateSearchWithDetection:
         languages: list[str] | tuple[str, ...] | AbstractSet[str] | None = None,
         settings: Settings | dict[str, Any] | None = None,
         detect_languages_function: _DetectLanguagesFunction | None = None,
-    ) -> _SearchDates: ...
-    def preprocess_text(self, text: str, languages: Iterable[str] | None) -> str: ...
+    ) -> _SearchDates:
+        """
+        Find all substrings of the given string which represent date and/or time and parse them.
+
+        :param text:
+            A string in a natural language which may contain date and/or time expressions.
+        :type text: str
+
+        :param languages:
+            A list of two letters language codes.e.g. ['en', 'es']. If languages are given, it will not attempt
+            to detect the language.
+        :type languages: list
+
+        :param settings:
+               Configure customized behavior using settings defined in :mod:`dateparser.conf.Settings`.
+        :type settings: dict
+
+        :param detect_languages_function:
+               A function for language detection that takes as input a `text` and a `confidence_threshold`,
+               returns a list of detected language codes.
+        :type detect_languages_function: function
+
+        :return: a dict mapping keys to two letter language code and a list of tuples of pairs:
+                substring representing date expressions and corresponding :mod:`datetime.datetime` object.
+            For example:
+            {'Language': 'en', 'Dates': [('on 4 October 1957', datetime.datetime(1957, 10, 4, 0, 0))]}
+            If language of the string isn't recognised returns:
+            {'Language': None, 'Dates': None}
+        :raises: ValueError - Unknown Language
+        """
+        ...
+    def preprocess_text(self, text: str, languages: Iterable[str] | None) -> str:
+        """Preprocess text to handle language-specific quirks."""
+        ...

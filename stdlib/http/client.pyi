@@ -204,11 +204,11 @@ class HTTPMessage(email.message.Message[str, str]):
 
 @overload
 def parse_headers(fp: SupportsReadline[bytes], _class: Callable[[], _MessageT]) -> _MessageT:
-    """Parses only RFC2822 headers from a file pointer."""
+    """Parses only RFC 5322 headers from a file pointer."""
     ...
 @overload
 def parse_headers(fp: SupportsReadline[bytes]) -> HTTPMessage:
-    """Parses only RFC2822 headers from a file pointer."""
+    """Parses only RFC 5322 headers from a file pointer."""
     ...
 
 class HTTPResponse(io.BufferedIOBase, BinaryIO):  # type: ignore[misc]  # incompatible method definitions in the base classes
@@ -418,10 +418,10 @@ class HTTPConnection:
         """
         Send a request to the server.
 
-        `method' specifies an HTTP request method, e.g. 'GET'.
-        `url' specifies the object being requested, e.g. '/index.html'.
-        `skip_host' if True does not add automatically a 'Host:' header
-        `skip_accept_encoding' if True does not add automatically an
+        'method' specifies an HTTP request method, e.g. 'GET'.
+        'url' specifies the object being requested, e.g. '/index.html'.
+        'skip_host' if True does not add automatically a 'Host:' header
+        'skip_accept_encoding' if True does not add automatically an
            'Accept-Encoding:' header
         """
         ...
@@ -443,7 +443,7 @@ class HTTPConnection:
         ...
     def send(self, data: _DataType | str) -> None:
         """
-        Send `data' to the server.
+        Send 'data' to the server.
         ``data`` can be a string object, a bytes object, an array object, a
         file-like object that supports a .read() method, or an iterable object.
         """

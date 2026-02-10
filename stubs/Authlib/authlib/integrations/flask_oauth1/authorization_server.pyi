@@ -7,6 +7,21 @@ from authlib.oauth1 import AuthorizationServer as _AuthorizationServer, OAuth1Re
 log: logging.Logger
 
 class AuthorizationServer(_AuthorizationServer):
+    """
+    Flask implementation of :class:`authlib.rfc5849.AuthorizationServer`.
+    Initialize it with Flask app instance, client model class and cache::
+
+        server = AuthorizationServer(app=app, query_client=query_client)
+        # or initialize lazily
+        server = AuthorizationServer()
+        server.init_app(app, query_client=query_client)
+
+    :param app: A Flask app instance
+    :param query_client: A function to get client by client_id. The client
+        model class MUST implement the methods described by
+        :class:`~authlib.oauth1.rfc5849.ClientMixin`.
+    :param token_generator: A function to generate token
+    """
     app: Incomplete
     query_client: Incomplete
     token_generator: Incomplete

@@ -23,7 +23,7 @@ def bind(qid: SupportsIndex) -> None:
     ...
 def create(maxsize: SupportsIndex, fmt: SupportsIndex, unboundop: _UnboundOp) -> int:
     """
-    create(maxsize, fmt, unboundop) -> qid
+    create(maxsize, unboundop, fallback) -> qid
 
     Create a new cross-interpreter queue and return its unique generated ID.
     It is a new reference as though bind() had been called on the queue.
@@ -42,10 +42,10 @@ def destroy(qid: SupportsIndex) -> None:
     ...
 def get(qid: SupportsIndex) -> tuple[Any, int, _UnboundOp | None]:
     """
-    get(qid) -> (obj, fmt)
+    get(qid) -> (obj, unboundop)
 
     Return a new object from the data at the front of the queue.
-    The object's format is also returned.
+    The unbound op is also returned.
 
     If there is nothing to receive then raise QueueEmpty.
     """
@@ -80,15 +80,15 @@ def is_full(qid: SupportsIndex) -> bool:
     ...
 def list_all() -> list[tuple[int, int, _UnboundOp]]:
     """
-    list_all() -> [(qid, fmt)]
+    list_all() -> [(qid, unboundop, fallback)]
 
     Return the list of IDs for all queues.
-    Each corresponding default format is also included.
+    Each corresponding default unbound op and fallback is also included.
     """
     ...
 def put(qid: SupportsIndex, obj: Any, fmt: SupportsIndex, unboundop: _UnboundOp) -> None:
     """
-    put(qid, obj, fmt)
+    put(qid, obj)
 
     Add the object's data to the queue.
     """

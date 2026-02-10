@@ -52,7 +52,7 @@ def filterwarnings(
     """
     Insert an entry into the list of warnings filters (at the front).
 
-    'action' -- one of "error", "ignore", "always", "default", "module",
+    'action' -- one of "error", "ignore", "always", "all", "default", "module",
                 or "once"
     'message' -- a regex that the warning message must match
     'category' -- a class that the warning must be a subclass of
@@ -66,7 +66,7 @@ def simplefilter(action: _ActionKind, category: type[Warning] = ..., lineno: int
     Insert a simple entry into the list of warnings filters (at the front).
 
     A simple filter matches all modules and messages.
-    'action' -- one of "error", "ignore", "always", "default", "module",
+    'action' -- one of "error", "ignore", "always", "all", "default", "module",
                 or "once"
     'category' -- a class that the warning must be a subclass of
     'lineno' -- an integer line number, 0 matches all warnings
@@ -134,9 +134,6 @@ class catch_warnings(Generic[_W_co]):
             """
             Specify whether to record warnings and if an alternative module
             should be used other than sys.modules['warnings'].
-
-            For compatibility with Python 3.0, please consider all arguments to be
-            keyword-only.
             """
             ...
         @overload
@@ -153,9 +150,6 @@ class catch_warnings(Generic[_W_co]):
             """
             Specify whether to record warnings and if an alternative module
             should be used other than sys.modules['warnings'].
-
-            For compatibility with Python 3.0, please consider all arguments to be
-            keyword-only.
             """
             ...
         @overload
@@ -172,9 +166,6 @@ class catch_warnings(Generic[_W_co]):
             """
             Specify whether to record warnings and if an alternative module
             should be used other than sys.modules['warnings'].
-
-            For compatibility with Python 3.0, please consider all arguments to be
-            keyword-only.
             """
             ...
     else:

@@ -71,5 +71,31 @@ def make_tarball(
     verbose: bool = False,
     owner: str | None = None,
     group: str | None = None,
-) -> str: ...
-def make_zipfile(base_name: str, base_dir: StrPath, verbose: bool = False) -> str: ...
+) -> str:
+    """
+    Create a (possibly compressed) tar file from all the files under
+    'base_dir'.
+
+    'compress' must be "gzip" (the default), "bzip2", "xz", or None.
+
+    'owner' and 'group' can be used to define an owner and a group for the
+    archive that is being built. If not provided, the current owner and group
+    will be used.
+
+    The output tar file will be named 'base_dir' +  ".tar", possibly plus
+    the appropriate compression extension (".gz", ".bz2", ".xz" or ".Z").
+
+    Returns the output filename.
+    """
+    ...
+def make_zipfile(base_name: str, base_dir: StrPath, verbose: bool = False) -> str:
+    """
+    Create a zip file from all the files under 'base_dir'.
+
+    The output zip file will be named 'base_name' + ".zip".  Uses either the
+    "zipfile" Python module (if available) or the InfoZIP "zip" utility
+    (if installed and found on the default search path).  If neither tool is
+    available, raises DistutilsExecError.  Returns the name of the output zip
+    file.
+    """
+    ...

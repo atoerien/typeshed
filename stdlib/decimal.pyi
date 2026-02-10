@@ -181,7 +181,18 @@ class Decimal:
     def __new__(cls, value: _DecimalNew = "0", context: Context | None = None) -> Self: ...
     if sys.version_info >= (3, 14):
         @classmethod
-        def from_number(cls, number: Decimal | float, /) -> Self: ...
+        def from_number(cls, number: Decimal | float, /) -> Self:
+            """
+            Class method that converts a real number to a decimal number, exactly.
+
+            >>> Decimal.from_number(314)              # int
+            Decimal('314')
+            >>> Decimal.from_number(0.1)              # float
+            Decimal('0.1000000000000000055511151231257827021181583404541015625')
+            >>> Decimal.from_number(Decimal('3.14'))  # another decimal instance
+            Decimal('3.14')
+            """
+            ...
 
     @classmethod
     def from_float(cls, f: float, /) -> Self:
@@ -588,16 +599,32 @@ class Decimal:
         """
         ...
     def logical_and(self, other: _Decimal, context: Context | None = None) -> Decimal:
-        """Return the digit-wise 'and' of the two (logical) operands."""
+        """
+        Applies an 'and' operation between self and other's digits.
+
+        Both self and other must be logical numbers.
+        """
         ...
     def logical_invert(self, context: Context | None = None) -> Decimal:
-        """Return the digit-wise inversion of the (logical) operand."""
+        """
+        Invert all its digits.
+
+        The self must be logical number.
+        """
         ...
     def logical_or(self, other: _Decimal, context: Context | None = None) -> Decimal:
-        """Return the digit-wise 'or' of the two (logical) operands."""
+        """
+        Applies an 'or' operation between self and other's digits.
+
+        Both self and other must be logical numbers. 
+        """
         ...
     def logical_xor(self, other: _Decimal, context: Context | None = None) -> Decimal:
-        """Return the digit-wise 'exclusive or' of the two (logical) operands."""
+        """
+        Applies an 'xor' operation between self and other's digits.
+
+        Both self and other must be logical numbers.
+        """
         ...
     def max_mag(self, other: _Decimal, context: Context | None = None) -> Decimal:
         """
@@ -854,16 +881,100 @@ class Context:
         """Return the exponent of the magnitude of the operand's MSD."""
         ...
     def logical_and(self, x: _Decimal, y: _Decimal, /) -> Decimal:
-        """Digit-wise and of x and y."""
+        """
+        Applies the logical operation 'and' between each operand's digits.
+
+        The operands must be both logical numbers.
+
+            >>> ExtendedContext.logical_and(Decimal('0'), Decimal('0'))
+            Decimal('0')
+            >>> ExtendedContext.logical_and(Decimal('0'), Decimal('1'))
+            Decimal('0')
+            >>> ExtendedContext.logical_and(Decimal('1'), Decimal('0'))
+            Decimal('0')
+            >>> ExtendedContext.logical_and(Decimal('1'), Decimal('1'))
+            Decimal('1')
+            >>> ExtendedContext.logical_and(Decimal('1100'), Decimal('1010'))
+            Decimal('1000')
+            >>> ExtendedContext.logical_and(Decimal('1111'), Decimal('10'))
+            Decimal('10')
+            >>> ExtendedContext.logical_and(110, 1101)
+            Decimal('100')
+            >>> ExtendedContext.logical_and(Decimal(110), 1101)
+            Decimal('100')
+            >>> ExtendedContext.logical_and(110, Decimal(1101))
+            Decimal('100')
+        """
         ...
     def logical_invert(self, x: _Decimal, /) -> Decimal:
-        """Invert all digits of x."""
+        """
+        Invert all the digits in the operand.
+
+        The operand must be a logical number.
+
+            >>> ExtendedContext.logical_invert(Decimal('0'))
+            Decimal('111111111')
+            >>> ExtendedContext.logical_invert(Decimal('1'))
+            Decimal('111111110')
+            >>> ExtendedContext.logical_invert(Decimal('111111111'))
+            Decimal('0')
+            >>> ExtendedContext.logical_invert(Decimal('101010101'))
+            Decimal('10101010')
+            >>> ExtendedContext.logical_invert(1101)
+            Decimal('111110010')
+        """
         ...
     def logical_or(self, x: _Decimal, y: _Decimal, /) -> Decimal:
-        """Digit-wise or of x and y."""
+        """
+        Applies the logical operation 'or' between each operand's digits.
+
+        The operands must be both logical numbers.
+
+            >>> ExtendedContext.logical_or(Decimal('0'), Decimal('0'))
+            Decimal('0')
+            >>> ExtendedContext.logical_or(Decimal('0'), Decimal('1'))
+            Decimal('1')
+            >>> ExtendedContext.logical_or(Decimal('1'), Decimal('0'))
+            Decimal('1')
+            >>> ExtendedContext.logical_or(Decimal('1'), Decimal('1'))
+            Decimal('1')
+            >>> ExtendedContext.logical_or(Decimal('1100'), Decimal('1010'))
+            Decimal('1110')
+            >>> ExtendedContext.logical_or(Decimal('1110'), Decimal('10'))
+            Decimal('1110')
+            >>> ExtendedContext.logical_or(110, 1101)
+            Decimal('1111')
+            >>> ExtendedContext.logical_or(Decimal(110), 1101)
+            Decimal('1111')
+            >>> ExtendedContext.logical_or(110, Decimal(1101))
+            Decimal('1111')
+        """
         ...
     def logical_xor(self, x: _Decimal, y: _Decimal, /) -> Decimal:
-        """Digit-wise xor of x and y."""
+        """
+        Applies the logical operation 'xor' between each operand's digits.
+
+        The operands must be both logical numbers.
+
+            >>> ExtendedContext.logical_xor(Decimal('0'), Decimal('0'))
+            Decimal('0')
+            >>> ExtendedContext.logical_xor(Decimal('0'), Decimal('1'))
+            Decimal('1')
+            >>> ExtendedContext.logical_xor(Decimal('1'), Decimal('0'))
+            Decimal('1')
+            >>> ExtendedContext.logical_xor(Decimal('1'), Decimal('1'))
+            Decimal('0')
+            >>> ExtendedContext.logical_xor(Decimal('1100'), Decimal('1010'))
+            Decimal('110')
+            >>> ExtendedContext.logical_xor(Decimal('1111'), Decimal('10'))
+            Decimal('1101')
+            >>> ExtendedContext.logical_xor(110, 1101)
+            Decimal('1011')
+            >>> ExtendedContext.logical_xor(Decimal(110), 1101)
+            Decimal('1011')
+            >>> ExtendedContext.logical_xor(110, Decimal(1101))
+            Decimal('1011')
+        """
         ...
     def max(self, x: _Decimal, y: _Decimal, /) -> Decimal:
         """Compare the values numerically and return the maximum."""

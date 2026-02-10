@@ -38,13 +38,13 @@ class Message(Generic[_HeaderT_co, _HeaderParamT_contra]):
     """
     Basic message object.
 
-    A message object is defined as something that has a bunch of RFC 2822
+    A message object is defined as something that has a bunch of RFC 5322
     headers and a payload.  It may optionally have an envelope header
     (a.k.a. Unix-From or From_ header).  If the message is a container (i.e. a
     multipart or a message/rfc822), then the payload is a list of Message
     objects, otherwise it is a string.
 
-    Message objects implement part of the `mapping' interface, which assumes
+    Message objects implement part of the 'mapping' interface, which assumes
     there is exactly one occurrence of the header per message.  Some headers
     do in fact appear multiple times (e.g. Received) and for those headers,
     you must use the explicit API to set or get all the headers.  Not all of
@@ -361,7 +361,7 @@ class Message(Generic[_HeaderT_co, _HeaderParamT_contra]):
 
         msg.add_header('content-disposition', 'attachment', filename='bud.gif')
         msg.add_header('content-disposition', 'attachment',
-                       filename=('utf-8', '', Fußballer.ppt'))
+                       filename=('utf-8', '', 'Fußballer.ppt'))
         msg.add_header('content-disposition', 'attachment',
                        filename='Fußballer.ppt'))
         """
@@ -380,7 +380,7 @@ class Message(Generic[_HeaderT_co, _HeaderParamT_contra]):
         Return the message's content type.
 
         The returned string is coerced to lower case of the form
-        `maintype/subtype'.  If there was no Content-Type header in the
+        'maintype/subtype'.  If there was no Content-Type header in the
         message, the default type as given by get_default_type() will be
         returned.  Since according to RFC 2045, messages always have a default
         type this will always return a value.
@@ -394,7 +394,7 @@ class Message(Generic[_HeaderT_co, _HeaderParamT_contra]):
         """
         Return the message's main content type.
 
-        This is the `maintype' part of the string returned by
+        This is the 'maintype' part of the string returned by
         get_content_type().
         """
         ...
@@ -402,13 +402,13 @@ class Message(Generic[_HeaderT_co, _HeaderParamT_contra]):
         """
         Returns the message's sub-content type.
 
-        This is the `subtype' part of the string returned by
+        This is the 'subtype' part of the string returned by
         get_content_type().
         """
         ...
     def get_default_type(self) -> str:
         """
-        Return the `default' content type.
+        Return the 'default' content type.
 
         Most messages have a default content type of text/plain, except for
         messages that are subparts of multipart/digest containers.  Such
@@ -417,7 +417,7 @@ class Message(Generic[_HeaderT_co, _HeaderParamT_contra]):
         ...
     def set_default_type(self, ctype: str) -> None:
         """
-        Set the `default' content type.
+        Set the 'default' content type.
 
         ctype should be either "text/plain" or "message/rfc822", although this
         is not enforced.  The default content type is not stored in the
@@ -432,8 +432,8 @@ class Message(Generic[_HeaderT_co, _HeaderParamT_contra]):
         Return the message's Content-Type parameters, as a list.
 
         The elements of the returned list are 2-tuples of key/value pairs, as
-        split on the `=' sign.  The left hand side of the `=' is the key,
-        while the right hand side is the value.  If there is no `=' sign in
+        split on the '=' sign.  The left hand side of the '=' is the key,
+        while the right hand side is the value.  If there is no '=' sign in
         the parameter the value is the empty string.  The value is as
         described in the get_param() method.
 
@@ -448,8 +448,8 @@ class Message(Generic[_HeaderT_co, _HeaderParamT_contra]):
         Return the message's Content-Type parameters, as a list.
 
         The elements of the returned list are 2-tuples of key/value pairs, as
-        split on the `=' sign.  The left hand side of the `=' is the key,
-        while the right hand side is the value.  If there is no `=' sign in
+        split on the '=' sign.  The left hand side of the '=' is the key,
+        while the right hand side is the value.  If there is no '=' sign in
         the parameter the value is the empty string.  The value is as
         described in the get_param() method.
 
@@ -543,9 +543,9 @@ class Message(Generic[_HeaderT_co, _HeaderParamT_contra]):
         Return the filename associated with the payload if present.
 
         The filename is extracted from the Content-Disposition header's
-        `filename' parameter, and it is unquoted.  If that header is missing
-        the `filename' parameter, this method falls back to looking for the
-        `name' parameter.
+        'filename' parameter, and it is unquoted.  If that header is missing
+        the 'filename' parameter, this method falls back to looking for the
+        'name' parameter.
         """
         ...
     @overload
@@ -554,9 +554,9 @@ class Message(Generic[_HeaderT_co, _HeaderParamT_contra]):
         Return the filename associated with the payload if present.
 
         The filename is extracted from the Content-Disposition header's
-        `filename' parameter, and it is unquoted.  If that header is missing
-        the `filename' parameter, this method falls back to looking for the
-        `name' parameter.
+        'filename' parameter, and it is unquoted.  If that header is missing
+        the 'filename' parameter, this method falls back to looking for the
+        'name' parameter.
         """
         ...
     @overload
@@ -564,7 +564,7 @@ class Message(Generic[_HeaderT_co, _HeaderParamT_contra]):
         """
         Return the boundary associated with the payload if present.
 
-        The boundary is extracted from the Content-Type header's `boundary'
+        The boundary is extracted from the Content-Type header's 'boundary'
         parameter, and it is unquoted.
         """
         ...
@@ -573,7 +573,7 @@ class Message(Generic[_HeaderT_co, _HeaderParamT_contra]):
         """
         Return the boundary associated with the payload if present.
 
-        The boundary is extracted from the Content-Type header's `boundary'
+        The boundary is extracted from the Content-Type header's 'boundary'
         parameter, and it is unquoted.
         """
         ...

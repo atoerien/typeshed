@@ -455,7 +455,15 @@ class _GzipReader(DecompressReader):
     def __init__(self, fp: _ReadableFileobj) -> None: ...
 
 if sys.version_info >= (3, 14):
-    def compress(data: SizedBuffer, compresslevel: int = 9, *, mtime: float = 0) -> bytes: ...
+    def compress(data: SizedBuffer, compresslevel: int = 9, *, mtime: float = 0) -> bytes:
+        """
+        Compress data in one shot and return the compressed string.
+
+        compresslevel sets the compression level in range of 0-9.
+        mtime can be used to set the modification time.
+        The modification time is set to 0 by default, for reproducibility.
+        """
+        ...
 
 else:
     def compress(data: SizedBuffer, compresslevel: int = 9, *, mtime: float | None = None) -> bytes:

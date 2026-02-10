@@ -98,8 +98,22 @@ def split_quoted(s: str) -> list[str]:
     ...
 def execute(
     func: Callable[[Unpack[_Ts]], Unused], args: tuple[Unpack[_Ts]], msg: str | None = None, verbose: bool = False
-) -> None: ...
-def strtobool(val: str) -> Literal[0, 1]: ...
+) -> None:
+    """
+    Perform some action that affects the outside world (e.g. by
+    writing to the filesystem). Was previously used to deal with
+    "dry run" operations, but now runs unconditionally.
+    """
+    ...
+def strtobool(val: str) -> Literal[0, 1]:
+    """
+    Convert a string representation of truth to true (1) or false (0).
+
+    True values are 'y', 'yes', 't', 'true', 'on', and '1'; false values
+    are 'n', 'no', 'f', 'false', 'off', and '0'.  Raises ValueError if
+    'val' is anything else.
+    """
+    ...
 def byte_compile(
     py_files: Iterable[str],
     optimize: int = 0,
@@ -126,9 +140,6 @@ def byte_compile(
     source filename, and 'base_dir' is a directory name that will be
     prepended (after 'prefix' is stripped).  You can supply either or both
     (or neither) of 'prefix' and 'base_dir', as you wish.
-
-    If 'dry_run' is true, doesn't actually do anything that would
-    affect the filesystem.
 
     Byte-compilation is either done directly in this interpreter process
     with the standard py_compile module, or indirectly by writing a

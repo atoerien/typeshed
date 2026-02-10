@@ -192,7 +192,12 @@ class PurePath(PathLike[str]):
             """
             ...
     if sys.version_info >= (3, 14):
-        def is_relative_to(self, other: StrPath) -> bool: ...
+        def is_relative_to(self, other: StrPath) -> bool:
+            """
+            Return True if the path is relative to another path or False.
+        
+            """
+            ...
     elif sys.version_info >= (3, 12):
         @overload
         def is_relative_to(self, other: StrPath, /) -> bool:
@@ -232,7 +237,16 @@ class PurePath(PathLike[str]):
             ...
 
     if sys.version_info >= (3, 14):
-        def relative_to(self, other: StrPath, *, walk_up: bool = False) -> Self: ...
+        def relative_to(self, other: StrPath, *, walk_up: bool = False) -> Self:
+            """
+            Return the relative path to another path identified by the passed
+            arguments.  If the operation is not possible (because this is not
+            related to the other path), raise ValueError.
+
+            The *walk_up* parameter controls whether `..` may be used to resolve
+            the path.
+            """
+            ...
     elif sys.version_info >= (3, 12):
         @overload
         def relative_to(self, other: StrPath, /, *, walk_up: bool = False) -> Self:
@@ -510,23 +524,44 @@ class Path(PurePath):
 
     if sys.version_info >= (3, 14):
         @property
-        def info(self) -> PathInfo: ...
+        def info(self) -> PathInfo:
+            """
+            A PathInfo object that exposes the file type and other file attributes
+            of this path.
+            """
+            ...
         @overload
-        def move_into(self, target_dir: _PathT) -> _PathT: ...  # type: ignore[overload-overlap]
+        def move_into(self, target_dir: _PathT) -> _PathT:
+            """Move this file or directory tree into the given existing directory."""
+            ...
         @overload
-        def move_into(self, target_dir: StrPath) -> Self: ...  # type: ignore[overload-overlap]
+        def move_into(self, target_dir: StrPath) -> Self:
+            """Move this file or directory tree into the given existing directory."""
+            ...
         @overload
-        def move(self, target: _PathT) -> _PathT: ...  # type: ignore[overload-overlap]
+        def move(self, target: _PathT) -> _PathT:
+            """Recursively move this file or directory tree to the given destination."""
+            ...
         @overload
-        def move(self, target: StrPath) -> Self: ...  # type: ignore[overload-overlap]
+        def move(self, target: StrPath) -> Self:
+            """Recursively move this file or directory tree to the given destination."""
+            ...
         @overload
-        def copy_into(self, target_dir: _PathT, *, follow_symlinks: bool = True, preserve_metadata: bool = False) -> _PathT: ...  # type: ignore[overload-overlap]
+        def copy_into(self, target_dir: _PathT, *, follow_symlinks: bool = True, preserve_metadata: bool = False) -> _PathT:
+            """Copy this file or directory tree into the given existing directory."""
+            ...
         @overload
-        def copy_into(self, target_dir: StrPath, *, follow_symlinks: bool = True, preserve_metadata: bool = False) -> Self: ...  # type: ignore[overload-overlap]
+        def copy_into(self, target_dir: StrPath, *, follow_symlinks: bool = True, preserve_metadata: bool = False) -> Self:
+            """Copy this file or directory tree into the given existing directory."""
+            ...
         @overload
-        def copy(self, target: _PathT, *, follow_symlinks: bool = True, preserve_metadata: bool = False) -> _PathT: ...  # type: ignore[overload-overlap]
+        def copy(self, target: _PathT, *, follow_symlinks: bool = True, preserve_metadata: bool = False) -> _PathT:
+            """Recursively copy this file or directory tree to the given destination."""
+            ...
         @overload
-        def copy(self, target: StrPath, *, follow_symlinks: bool = True, preserve_metadata: bool = False) -> Self: ...  # type: ignore[overload-overlap]
+        def copy(self, target: StrPath, *, follow_symlinks: bool = True, preserve_metadata: bool = False) -> Self:
+            """Recursively copy this file or directory tree to the given destination."""
+            ...
 
     # Adapted from builtins.open
     # Text mode: always returns a TextIOWrapper
@@ -837,7 +872,7 @@ class WindowsPath(Path, PureWindowsPath):
 if sys.version_info >= (3, 13):
     class UnsupportedOperation(NotImplementedError):
         """
-        An exception that is raised when an unsupported operation is called on
-        a path object.
+        An exception that is raised when an unsupported operation is attempted.
+    
         """
         ...

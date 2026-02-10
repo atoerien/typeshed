@@ -161,9 +161,28 @@ class TextIOBase(_TextIOBase, IOBase):
 
 if sys.version_info >= (3, 14):
     class Reader(Protocol[_T_co]):
+        """
+        Protocol for simple I/O reader instances.
+
+        This protocol only supports blocking I/O.
+        """
         __slots__ = ()
-        def read(self, size: int = ..., /) -> _T_co: ...
+        def read(self, size: int = ..., /) -> _T_co:
+            """
+            Read data from the input stream and return it.
+
+            If *size* is specified, at most *size* items (bytes/characters) will be
+            read.
+            """
+            ...
 
     class Writer(Protocol[_T_contra]):
+        """
+        Protocol for simple I/O writer instances.
+
+        This protocol only supports blocking I/O.
+        """
         __slots__ = ()
-        def write(self, data: _T_contra, /) -> int: ...
+        def write(self, data: _T_contra, /) -> int:
+            """Write *data* to the output stream and return the number of items written."""
+            ...

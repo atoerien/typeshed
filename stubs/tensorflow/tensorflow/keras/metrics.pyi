@@ -688,33 +688,11 @@ class SparseTopKCategoricalAccuracy(MeanMetricWrapper):
     """
     Computes how often integer targets are in the top `K` predictions.
 
-    By default, the arguments expected by `update_state()` are:
-    - `y_true`: a tensor of shape `(batch_size)` representing indices of true
-        categories.
-    - `y_pred`: a tensor of shape `(batch_size, num_categories)` containing the
-        scores for each sample for all possible categories.
-
-    With `from_sorted_ids=True`, the arguments expected by `update_state` are:
-    - `y_true`: a tensor of shape `(batch_size)` representing indices or IDs of
-        true categories.
-    - `y_pred`: a tensor of shape `(batch_size, N)` containing the indices or
-        IDs of the top `N` categories sorted in order from highest score to
-        lowest score. `N` must be greater or equal to `k`.
-
-    The `from_sorted_ids=True` option can be more efficient when the set of
-    categories is very large and the model has an optimized way to retrieve the
-    top ones either without scoring or without maintaining the scores for all
-    the possible categories.
-
     Args:
         k: (Optional) Number of top elements to look at for computing accuracy.
             Defaults to `5`.
         name: (Optional) string name of the metric instance.
         dtype: (Optional) data type of the metric result.
-        from_sorted_ids: (Optional) When `False`, the default, the tensor passed
-            in `y_pred` contains the unsorted scores of all possible categories.
-            When `True`, `y_pred` contains a the indices or IDs for the top
-            categories.
 
     Example:
 
@@ -728,12 +706,6 @@ class SparseTopKCategoricalAccuracy(MeanMetricWrapper):
     ...                sample_weight=[0.7, 0.3])
     >>> m.result()
     0.3
-
-    >>> m = keras.metrics.SparseTopKCategoricalAccuracy(k=1,
-    ...                                                from_sorted_ids=True)
-    >>> m.update_state([2, 1], [[1, 0, 3], [1, 2, 3]])
-    >>> m.result()
-    0.5
 
     Usage with `compile()` API:
 
@@ -762,6 +734,7 @@ class MeanSquaredError(MeanMetricWrapper):
         dtype: (Optional) data type of the metric result.
 
     Example:
+
     >>> m = keras.metrics.MeanSquaredError()
     >>> m.update_state([[0, 1], [0, 0]], [[1, 1], [0, 0]])
     >>> m.result()
@@ -810,6 +783,7 @@ class Mean(Reduce):
     >>> m.update_state([1, 3, 5, 7], sample_weight=[1, 1, 0, 0])
     >>> m.result()
     2.0
+    ```
     """
     def __init__(self, name: str | None = "mean", dtype: DTypeLike | None = None) -> None: ...
 

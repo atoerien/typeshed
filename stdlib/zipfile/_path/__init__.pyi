@@ -69,7 +69,107 @@ if sys.version_info >= (3, 12):
                 ...
 
     class Path:
-        "A :class:`importlib.resources.abc.Traversable` interface for zip files.\n\nImplements many of the features users enjoy from\n:class:`pathlib.Path`.\n\nConsider a zip file with this structure::\n\n    .\n    ├── a.txt\n    └── b\n        ├── c.txt\n        └── d\n            └── e.txt\n\n>>> data = io.BytesIO()\n>>> zf = ZipFile(data, 'w')\n>>> zf.writestr('a.txt', 'content of a')\n>>> zf.writestr('b/c.txt', 'content of c')\n>>> zf.writestr('b/d/e.txt', 'content of e')\n>>> zf.filename = 'mem/abcde.zip'\n\nPath accepts the zipfile object itself or a filename\n\n>>> path = Path(zf)\n\nFrom there, several path operations are available.\n\nDirectory iteration (including the zip file itself):\n\n>>> a, b = path.iterdir()\n>>> a\nPath('mem/abcde.zip', 'a.txt')\n>>> b\nPath('mem/abcde.zip', 'b/')\n\nname property:\n\n>>> b.name\n'b'\n\njoin with divide operator:\n\n>>> c = b / 'c.txt'\n>>> c\nPath('mem/abcde.zip', 'b/c.txt')\n>>> c.name\n'c.txt'\n\nRead text:\n\n>>> c.read_text(encoding='utf-8')\n'content of c'\n\nexistence:\n\n>>> c.exists()\nTrue\n>>> (b / 'missing.txt').exists()\nFalse\n\nCoercion to string:\n\n>>> import os\n>>> str(c).replace(os.sep, posixpath.sep)\n'mem/abcde.zip/b/c.txt'\n\nAt the root, ``name``, ``filename``, and ``parent``\nresolve to the zipfile.\n\n>>> str(path)\n'mem/abcde.zip/'\n>>> path.name\n'abcde.zip'\n>>> path.filename == pathlib.Path('mem/abcde.zip')\nTrue\n>>> str(path.parent)\n'mem'\n\nIf the zipfile has no filename, such \ufeffattributes are not\nvalid and accessing them will raise an Exception.\n\n>>> zf.filename = None\n>>> path.name\nTraceback (most recent call last):\n...\nTypeError: ...\n\n>>> path.filename\nTraceback (most recent call last):\n...\nTypeError: ...\n\n>>> path.parent\nTraceback (most recent call last):\n...\nTypeError: ...\n\n# workaround python/cpython#106763\n>>> pass"
+        """
+        A :class:`importlib.resources.abc.Traversable` interface for zip files.
+
+        Implements many of the features users enjoy from
+        :class:`pathlib.Path`.
+
+        Consider a zip file with this structure::
+
+            .
+            ├── a.txt
+            └── b
+                ├── c.txt
+                └── d
+                    └── e.txt
+
+        >>> data = io.BytesIO()
+        >>> zf = ZipFile(data, 'w')
+        >>> zf.writestr('a.txt', 'content of a')
+        >>> zf.writestr('b/c.txt', 'content of c')
+        >>> zf.writestr('b/d/e.txt', 'content of e')
+        >>> zf.filename = 'mem/abcde.zip'
+
+        Path accepts the zipfile object itself or a filename
+
+        >>> path = Path(zf)
+
+        From there, several path operations are available.
+
+        Directory iteration (including the zip file itself):
+
+        >>> a, b = path.iterdir()
+        >>> a
+        Path('mem/abcde.zip', 'a.txt')
+        >>> b
+        Path('mem/abcde.zip', 'b/')
+
+        name property:
+
+        >>> b.name
+        'b'
+
+        join with divide operator:
+
+        >>> c = b / 'c.txt'
+        >>> c
+        Path('mem/abcde.zip', 'b/c.txt')
+        >>> c.name
+        'c.txt'
+
+        Read text:
+
+        >>> c.read_text(encoding='utf-8')
+        'content of c'
+
+        existence:
+
+        >>> c.exists()
+        True
+        >>> (b / 'missing.txt').exists()
+        False
+
+        Coercion to string:
+
+        >>> import os
+        >>> str(c).replace(os.sep, posixpath.sep)
+        'mem/abcde.zip/b/c.txt'
+
+        At the root, ``name``, ``filename``, and ``parent``
+        resolve to the zipfile.
+
+        >>> str(path)
+        'mem/abcde.zip/'
+        >>> path.name
+        'abcde.zip'
+        >>> path.filename == pathlib.Path('mem/abcde.zip')
+        True
+        >>> str(path.parent)
+        'mem'
+
+        If the zipfile has no filename, such attributes are not
+        valid and accessing them will raise an Exception.
+
+        >>> zf.filename = None
+        >>> path.name
+        Traceback (most recent call last):
+        ...
+        TypeError: ...
+
+        >>> path.filename
+        Traceback (most recent call last):
+        ...
+        TypeError: ...
+
+        >>> path.parent
+        Traceback (most recent call last):
+        ...
+        TypeError: ...
+
+        # workaround python/cpython#106763
+        >>> pass
+        """
         root: CompleteDirs
         at: str
         def __init__(self, root: ZipFile | StrPath | IO[bytes], at: str = "") -> None:

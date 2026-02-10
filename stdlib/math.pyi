@@ -152,11 +152,7 @@ def fabs(x: _SupportsFloatOrIndex, /) -> float:
     """Return the absolute value of the float x."""
     ...
 def factorial(x: SupportsIndex, /) -> int:
-    """
-    Find n!.
-
-    Raise a ValueError if x is negative or non-integral.
-    """
+    """Find n!."""
     ...
 @type_check_only
 class _SupportsFloor(Protocol[_T_co]):
@@ -208,8 +204,6 @@ def gcd(*integers: SupportsIndex) -> int:
     ...
 def hypot(*coordinates: _SupportsFloatOrIndex) -> float:
     """
-    hypot(*coordinates) -> value
-
     Multidimensional Euclidean distance from the origin to a point.
 
     Roughly equivalent to:
@@ -419,7 +413,7 @@ if sys.version_info >= (3, 12):
 
         Roughly equivalent to:
 
-            sum(itertools.starmap(operator.mul, zip(p, q, strict=True)))
+            sum(map(operator.mul, p, q, strict=True))
 
         For float and mixed int/float inputs, the intermediate products
         and sums are computed with extended precision.

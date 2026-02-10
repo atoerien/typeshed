@@ -1558,7 +1558,13 @@ def all_tasks(loop: AbstractEventLoop | None = None) -> set[Task[Any]]:
 if sys.version_info >= (3, 14):
     def create_task(
         coro: _CoroutineLike[_T], *, name: str | None = None, context: Context | None = None, eager_start: bool | None = None
-    ) -> Task[_T]: ...
+    ) -> Task[_T]:
+        """
+        Schedule the execution of a coroutine object in a spawn task.
+
+        Return a Task object.
+        """
+        ...
 
 elif sys.version_info >= (3, 11):
     def create_task(coro: _CoroutineLike[_T], *, name: str | None = None, context: Context | None = None) -> Task[_T]:

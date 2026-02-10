@@ -216,7 +216,12 @@ def HEADRequest(
     *,
     method: str = "HEAD",
     extensions: Mapping[str, Any] | None = None,
-) -> Request: ...
+) -> Request:
+    """
+    Create a new function with partial application of the given arguments
+    and keywords.
+    """
+    ...
 def PATCHRequest(
     url: str,
     data: _RequestData | None = None,
@@ -226,7 +231,12 @@ def PATCHRequest(
     *,
     method: str = "PATCH",
     extensions: Mapping[str, Any] | None = None,
-) -> Request: ...
+) -> Request:
+    """
+    Create a new function with partial application of the given arguments
+    and keywords.
+    """
+    ...
 def PUTRequest(
     url: str,
     data: _RequestData | None = None,
@@ -236,7 +246,12 @@ def PUTRequest(
     *,
     method: str = "PUT",
     extensions: Mapping[str, Any] | None = None,
-) -> Request: ...
+) -> Request:
+    """
+    Create a new function with partial application of the given arguments
+    and keywords.
+    """
+    ...
 
 class Response(io.IOBase):
     """

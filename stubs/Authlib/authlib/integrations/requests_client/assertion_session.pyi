@@ -9,6 +9,12 @@ class AssertionAuth(OAuth2Auth):
 
 # Inherits from requests.Session
 class AssertionSession(AssertionClient):
+    """
+    Constructs a new Assertion Framework for OAuth 2.0 Authorization Grants
+    per RFC7521_.
+
+    .. _RFC7521: https://tools.ietf.org/html/rfc7521
+    """
     token_auth_class = AssertionAuth
     JWT_BEARER_GRANT_TYPE: Incomplete
     ASSERTION_METHODS: Incomplete
@@ -28,4 +34,6 @@ class AssertionSession(AssertionClient):
         leeway=60,
         **kwargs,
     ) -> None: ...
-    def request(self, method, url, withhold_token=False, auth=None, **kwargs): ...
+    def request(self, method, url, withhold_token=False, auth=None, **kwargs):
+        """Send request with auto refresh token feature."""
+        ...

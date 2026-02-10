@@ -133,7 +133,7 @@ class Trace:
         @param countfuncs true iff it should just output a list of
                      (filename, modulename, funcname,) for functions
                      that were called at least once;  This overrides
-                     `count' and `trace'
+                     'count' and 'trace'
         @param ignoremods a list of the names of modules to ignore
         @param ignoredirs a list of the names of directories to ignore
                      all of the (recursive) contents of
@@ -167,7 +167,7 @@ class Trace:
         """
         Handler for call events.
 
-        If the code block being entered is to be ignored, returns `None',
+        If the code block being entered is to be ignored, returns 'None',
         else returns self.localtrace.
         """
         ...

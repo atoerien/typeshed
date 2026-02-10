@@ -8,6 +8,16 @@ __all__ = ("loads", "load", "TOMLDecodeError")
 
 if sys.version_info >= (3, 14):
     class TOMLDecodeError(ValueError):
+        """
+        An error raised if a document is not valid TOML.
+
+        Adds the following attributes to ValueError:
+        msg: The unformatted error message
+        doc: The TOML document being parsed
+        pos: The index of doc where parsing failed
+        lineno: The line corresponding to pos
+        colno: The column corresponding to pos
+        """
         msg: str
         doc: str
         pos: int

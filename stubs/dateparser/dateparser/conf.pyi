@@ -7,6 +7,32 @@ _P = ParamSpec("_P")
 _R = TypeVar("_R")
 
 class Settings:
+    """
+    Control and configure default parsing behavior of dateparser.
+    Currently, supported settings are:
+
+    * `DATE_ORDER`
+    * `PREFER_LOCALE_DATE_ORDER`
+    * `TIMEZONE`
+    * `TO_TIMEZONE`
+    * `RETURN_AS_TIMEZONE_AWARE`
+    * `PREFER_MONTH_OF_YEAR`
+    * `PREFER_DAY_OF_MONTH`
+    * `PREFER_DATES_FROM`
+    * `RELATIVE_BASE`
+    * `STRICT_PARSING`
+    * `REQUIRE_PARTS`
+    * `SKIP_TOKENS`
+    * `NORMALIZE`
+    * `RETURN_TIME_AS_PERIOD`
+    * `RETURN_TIME_SPAN`
+    * `DEFAULT_START_OF_WEEK`
+    * `DEFAULT_DAYS_IN_MONTH`
+    * `PARSERS`
+    * `DEFAULT_LANGUAGES`
+    * `LANGUAGE_DETECTION_CONFIDENCE_THRESHOLD`
+    * `CACHE_SIZE_LIMIT`
+    """
     # Next attributes are optional and may be missing.
     # Please keep in sync with _Settings TypedDict
     DATE_ORDER: str

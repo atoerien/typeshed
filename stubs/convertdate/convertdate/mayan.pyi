@@ -56,7 +56,11 @@ def next_tzolkin(tzolkin: tuple[int, str], jd: float) -> float:
     """For a given tzolk'in day, and a julian day count, find the next occurrance of that tzolk'in after the date"""
     ...
 def next_tzolkin_haab(tzolkin: tuple[int, str], haab: tuple[int, str], jd: float) -> float:
-    """For a given haab-tzolk'in combination, and a Julian day count, find the next occurrance of the combination after the date"""
+    """
+    Find the next occurence of a haab-tzolk'in combination.
+
+    Requires a Julian day count as the starting place for the search.
+    """
     ...
 def month_length(month: str) -> Literal[5, 20]:
     """Not the actual length of the month, but accounts for the 5 unlucky/nameless days"""

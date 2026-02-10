@@ -63,7 +63,13 @@ def get_intersecting_periods(
 ) -> Iterator[_DateT]: ...
 def sanitize_date(date_string: str) -> str: ...
 def get_date_from_timestamp(date_string: str, settings: Settings, negative: bool | None = False) -> datetime | None: ...
-def parse_with_formats(date_string: str, date_formats: Iterable[str], settings: Settings) -> DateData: ...
+def parse_with_formats(date_string: str, date_formats: Iterable[str], settings: Settings) -> DateData:
+    """
+    Parse with formats and return a dictionary with 'period' and 'obj_date'.
+
+    :returns: :class:`datetime.datetime`, dict or None
+    """
+    ...
 
 class _DateLocaleParser:
     locale: Locale
@@ -185,7 +191,49 @@ class DateDataParser:
     ) -> None: ...
     def get_date_data(
         self, date_string: str, date_formats: list[str] | tuple[str, ...] | AbstractSet[str] | None = None
-    ) -> DateData: ...
+    ) -> DateData:
+        """
+        Parse string representing date and/or time in recognizable localized formats.
+        Supports parsing multiple languages and timezones.
+
+        :param date_string:
+            A string representing date and/or time in a recognizably valid format.
+        :type date_string: str
+        :param date_formats:
+            A list of format strings using directives as given
+            `here <https://docs.python.org/2/library/datetime.html#strftime-and-strptime-behavior>`_.
+            The parser applies formats one by one, taking into account the detected languages.
+        :type date_formats: list
+
+        :return: a ``DateData`` object.
+
+        :raises: ValueError - Unknown Language
+
+        .. note:: *Period* values can be a 'day' (default), 'week', 'month', 'year', 'time'.
+
+        *Period* represents the granularity of date parsed from the given string.
+
+        In the example below, since no day information is present, the day is assumed to be current
+        day ``16`` from *current date* (which is June 16, 2015, at the moment of writing this).
+        Hence, the level of precision is ``month``:
+
+            >>> DateDataParser().get_date_data('March 2015')
+            DateData(date_obj=datetime.datetime(2015, 3, 16, 0, 0), period='month', locale='en')
+
+        Similarly, for date strings with no day and month information present, level of precision
+        is ``year`` and day ``16`` and month ``6`` are from *current_date*.
+
+            >>> DateDataParser().get_date_data('2014')
+            DateData(date_obj=datetime.datetime(2014, 6, 16, 0, 0), period='year', locale='en')
+
+        Dates with time zone indications or UTC offsets are returned in UTC time unless
+        specified using `Settings <https://dateparser.readthedocs.io/en/latest/settings.html#settings>`__.
+
+            >>> DateDataParser().get_date_data('23 March 2000, 1:21 PM CET')
+            DateData(date_obj=datetime.datetime(2000, 3, 23, 13, 21, tzinfo=<StaticTzInfo 'CET'>),
+            period='day', locale='en')
+        """
+        ...
     def get_date_tuple(
         self, date_string: str, date_formats: list[str] | tuple[str, ...] | AbstractSet[str] | None = None
     ) -> _DateData: ...

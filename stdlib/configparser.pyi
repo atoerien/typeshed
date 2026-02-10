@@ -880,7 +880,17 @@ if sys.version_info >= (3, 13):
 
 if sys.version_info >= (3, 14):
     class UnnamedSectionDisabledError(Error):
+        """
+        Raised when an attempt to use UNNAMED_SECTION is made with the
+        feature disabled.
+        """
         msg: Final = "Support for UNNAMED_SECTION is disabled."
         def __init__(self) -> None: ...
 
-    class InvalidWriteError(Error): ...
+    class InvalidWriteError(Error):
+        """
+        Raised when attempting to write data that the parser would read back differently.
+        ex: writing a key which begins with the section header pattern would read back as a
+        new section 
+        """
+        ...

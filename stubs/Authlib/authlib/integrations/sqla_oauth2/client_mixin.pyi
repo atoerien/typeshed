@@ -9,7 +9,14 @@ class OAuth2ClientMixin(ClientMixin):
     client_secret_expires_at: Incomplete
     _client_metadata: Incomplete
     @property
-    def client_info(self) -> dict[str, Incomplete]: ...
+    def client_info(self) -> dict[str, Incomplete]:
+        """
+        Implementation for Client Info in OAuth 2.0 Dynamic Client
+        Registration Protocol via `Section 3.2.1`_.
+
+        .. _`Section 3.2.1`: https://tools.ietf.org/html/rfc7591#section-3.2.1
+        """
+        ...
     @property
     def client_metadata(self): ...
     def set_client_metadata(self, value) -> None: ...

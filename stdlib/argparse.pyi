@@ -16,11 +16,12 @@ command-line and writes the result to a file::
         'integers', metavar='int', nargs='+', type=int,
         help='an integer to be summed')
     parser.add_argument(
-        '--log', default=sys.stdout, type=argparse.FileType('w'),
+        '--log',
         help='the file where the sum should be written')
     args = parser.parse_args()
-    args.log.write('%s' % sum(args.integers))
-    args.log.close()
+    with (open(args.log, 'w') if args.log is not None
+          else contextlib.nullcontext(sys.stdout)) as log:
+        log.write('%s' % sum(args.integers))
 
 The module contains the following public classes:
 
@@ -37,7 +38,8 @@ The module contains the following public classes:
 
     - FileType -- A factory for defining types of files to be created. As the
         example above shows, instances of FileType are typically passed as
-        the type= argument of add_argument() calls.
+        the type= argument of add_argument() calls. Deprecated since
+        Python 3.14.
 
     - Action -- The base class for parser actions. Typically actions are
         selected by passing strings like 'store_true' or 'append_const' to
@@ -243,6 +245,9 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
         - allow_abbrev -- Allow long options to be abbreviated unambiguously
         - exit_on_error -- Determines whether or not ArgumentParser exits with
             error info when an error occurs
+        - suggest_on_error - Enables suggestions for mistyped argument choices
+            and subparser names (default: ``False``)
+        - color - Allow color output in help messages (default: ``False``)
     """
     prog: str
     usage: str | None
@@ -707,6 +712,22 @@ class Namespace(_AttributeHolder):
 if sys.version_info >= (3, 14):
     @deprecated("Deprecated since Python 3.14. Open files after parsing arguments instead.")
     class FileType:
+        """
+        Deprecated factory for creating file object types
+
+        Instances of FileType are typically passed as type= arguments to the
+        ArgumentParser add_argument() method.
+
+        Keyword Arguments:
+            - mode -- A string indicating how the file is to be opened. Accepts the
+                same values as the builtin open() function.
+            - bufsize -- The file's desired buffer size. Accepts the same values as
+                the builtin open() function.
+            - encoding -- The file's encoding. Accepts the same values as the
+                builtin open() function.
+            - errors -- A string indicating how encoding and decoding errors are to
+                be handled. Accepts the same value as the builtin open() function.
+        """
         # undocumented
         _mode: str
         _bufsize: int

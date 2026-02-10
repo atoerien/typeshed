@@ -9,6 +9,10 @@ SND_ASYNC - PlaySound returns immediately
 SND_NODEFAULT - Do not play a default beep if the sound can not be found
 SND_NOSTOP - Do not interrupt any sounds currently playing
 SND_NOWAIT - Return immediately if the sound driver is busy
+SND_APPLICATION - sound is an application-specific alias in the registry.
+SND_SENTRY - Triggers a SoundSentry event when the sound is played.
+SND_SYNC - Play the sound synchronously, default behavior.
+SND_SYSTEM - Assign sound to the audio session for system notification sounds.
 
 Beep(frequency, duration) - Make a beep through the PC speaker.
 MessageBeep(type) - Call Windows MessageBeep.

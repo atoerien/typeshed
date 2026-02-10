@@ -25,6 +25,7 @@ else:
         CreateKey() - Creates the specified key, or opens it if it already exists.
         DeleteKey() - Deletes the specified key.
         DeleteValue() - Removes a named value from the specified registry key.
+        DeleteTree() - Deletes the specified key and all its subkeys and values recursively.
         EnumKey() - Enumerates subkeys of the specified open registry key.
         EnumValue() - Enumerates values of the specified open registry key.
         ExpandEnvironmentStrings() - Expand the env strings in a REG_EXPAND_SZ

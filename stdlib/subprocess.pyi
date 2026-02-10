@@ -189,8 +189,8 @@ if sys.version_info >= (3, 11):
         in the returncode attribute, and output & stderr attributes if those streams
         were captured.
 
-        If timeout is given, and the process takes too long, a TimeoutExpired
-        exception will be raised.
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
 
         There is an optional argument "input", allowing you to
         pass bytes or a string to the subprocess's stdin.  If you use this argument
@@ -253,8 +253,8 @@ if sys.version_info >= (3, 11):
         in the returncode attribute, and output & stderr attributes if those streams
         were captured.
 
-        If timeout is given, and the process takes too long, a TimeoutExpired
-        exception will be raised.
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
 
         There is an optional argument "input", allowing you to
         pass bytes or a string to the subprocess's stdin.  If you use this argument
@@ -317,8 +317,8 @@ if sys.version_info >= (3, 11):
         in the returncode attribute, and output & stderr attributes if those streams
         were captured.
 
-        If timeout is given, and the process takes too long, a TimeoutExpired
-        exception will be raised.
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
 
         There is an optional argument "input", allowing you to
         pass bytes or a string to the subprocess's stdin.  If you use this argument
@@ -382,8 +382,8 @@ if sys.version_info >= (3, 11):
         in the returncode attribute, and output & stderr attributes if those streams
         were captured.
 
-        If timeout is given, and the process takes too long, a TimeoutExpired
-        exception will be raised.
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
 
         There is an optional argument "input", allowing you to
         pass bytes or a string to the subprocess's stdin.  If you use this argument
@@ -446,8 +446,8 @@ if sys.version_info >= (3, 11):
         in the returncode attribute, and output & stderr attributes if those streams
         were captured.
 
-        If timeout is given, and the process takes too long, a TimeoutExpired
-        exception will be raised.
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
 
         There is an optional argument "input", allowing you to
         pass bytes or a string to the subprocess's stdin.  If you use this argument
@@ -510,8 +510,8 @@ if sys.version_info >= (3, 11):
         in the returncode attribute, and output & stderr attributes if those streams
         were captured.
 
-        If timeout is given, and the process takes too long, a TimeoutExpired
-        exception will be raised.
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
 
         There is an optional argument "input", allowing you to
         pass bytes or a string to the subprocess's stdin.  If you use this argument
@@ -1313,7 +1313,7 @@ if sys.version_info >= (3, 11):
     ) -> int:
         """
         Run command with arguments.  Wait for command to complete or
-        timeout, then return the returncode attribute.
+        for timeout seconds, then return the returncode attribute.
 
         The arguments are the same as for the Popen constructor.  Example:
 

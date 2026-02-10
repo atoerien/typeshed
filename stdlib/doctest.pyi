@@ -381,7 +381,7 @@ class DocTestRunner:
     `OutputChecker` to the constructor.
 
     The test runner's display output can be controlled in two ways.
-    First, an output function (`out) can be passed to
+    First, an output function (`out`) can be passed to
     `TestRunner.run`; this function will be called with strings that
     should be displayed.  It defaults to `sys.stdout.write`.  If
     capturing the output is not sufficient, then the display output
@@ -646,8 +646,8 @@ def testmod(
     from module m (or the current module if m is not supplied), starting
     with m.__doc__.
 
-    Also test examples reachable from dict m.__test__ if it exists and is
-    not None.  m.__test__ maps names to functions, classes and strings;
+    Also test examples reachable from dict m.__test__ if it exists.
+    m.__test__ maps names to functions, classes and strings;
     function and class docstrings are tested even if the name is private;
     strings are tested directly, as if they were docstrings.
 
@@ -1049,7 +1049,7 @@ def testsource(module: None | str | types.ModuleType, name: str) -> str:
     """
     ...
 def debug_src(src: str, pm: bool = False, globs: dict[str, Any] | None = None) -> None:
-    """Debug a single doctest docstring, in argument `src`'"""
+    """Debug a single doctest docstring, in argument `src`"""
     ...
 def debug_script(src: str, pm: bool = False, globs: dict[str, Any] | None = None) -> None:
     """Debug a test script.  `src` is the script, as a string."""

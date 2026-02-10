@@ -348,7 +348,19 @@ class SysLogHandler(Handler):
             facility: str | int = 1,
             socktype: SocketKind | None = None,
             timeout: float | None = None,
-        ) -> None: ...
+        ) -> None:
+            """
+            Initialize a handler.
+
+            If address is specified as a string, a UNIX socket is used. To log to a
+            local syslogd, "SysLogHandler(address="/dev/log")" can be used.
+            If facility is not specified, LOG_USER is used. If socktype is
+            specified as socket.SOCK_DGRAM or socket.SOCK_STREAM, that specific
+            socket type will be used. For Unix sockets, you can also specify a
+            socktype of None, in which case socket.SOCK_DGRAM will be used, falling
+            back to socket.SOCK_STREAM.
+            """
+            ...
     else:
         def __init__(
             self, address: tuple[str, int] | str = ("localhost", 514), facility: str | int = 1, socktype: SocketKind | None = None
@@ -470,7 +482,8 @@ class SMTPHandler(Handler):
         only be used when authentication credentials are supplied. The tuple
         will be either an empty tuple, or a single-value tuple with the name
         of a keyfile, or a 2-value tuple with the names of the keyfile and
-        certificate file. (This tuple is passed to the `starttls` method).
+        certificate file. (This tuple is passed to the
+        `ssl.SSLContext.load_cert_chain` method).
         A timeout in seconds can be specified for the SMTP connection (the
         default is one second).
         """
@@ -690,7 +703,11 @@ class QueueListener:
         ...
 
     if sys.version_info >= (3, 14):
-        def __enter__(self) -> Self: ...
+        def __enter__(self) -> Self:
+            """For use as a context manager. Starts the listener."""
+            ...
         def __exit__(
             self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None
-        ) -> None: ...
+        ) -> None:
+            """For use as a context manager. Stops the listener."""
+            ...

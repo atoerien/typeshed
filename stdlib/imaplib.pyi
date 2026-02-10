@@ -168,7 +168,7 @@ class IMAP4:
 
         (typ, [data]) = <instance>.append(mailbox, flags, date_time, message)
 
-                All args except `message' can be None.
+                All args except 'message' can be None.
         """
         ...
     def authenticate(self, mechanism: str, authobject: Callable[[bytes], bytes | None]) -> tuple[str, str]:
@@ -302,7 +302,18 @@ class IMAP4:
         """
         ...
     if sys.version_info >= (3, 14):
-        def idle(self, duration: float | None = None) -> Idler: ...
+        def idle(self, duration: float | None = None) -> Idler:
+            """
+            Return an iterable IDLE context manager producing untagged responses.
+            If the argument is not None, limit iteration to 'duration' seconds.
+
+            with M.idle(duration=29 * 60) as idler:
+                for typ, data in idler:
+                    print(typ, data)
+
+            Note: 'duration' requires a socket connection (not IMAP4_stream).
+            """
+            ...
 
     def list(self, directory: str = '""', pattern: str = "*") -> tuple[str, _AnyResponseData]:
         """
@@ -511,19 +522,38 @@ class IMAP4:
 
         (typ, [data]) = <instance>.xatom(name, arg, ...)
 
-        Returns response appropriate to extension command `name'.
+        Returns response appropriate to extension command 'name'.
         """
         ...
     def print_log(self) -> None: ...
 
 if sys.version_info >= (3, 14):
     class Idler:
+        """
+        Iterable IDLE context manager: start IDLE & produce untagged responses.
+
+        An object of this type is returned by the IMAP4.idle() method.
+
+        Note: The name and structure of this class are subject to change.
+        """
         def __init__(self, imap: IMAP4, duration: float | None = None) -> None: ...
         def __enter__(self) -> Self: ...
         def __exit__(self, exc_type: object, exc_val: Unused, exc_tb: Unused) -> Literal[False]: ...
         def __iter__(self) -> Self: ...
         def __next__(self) -> tuple[str, float | None]: ...
-        def burst(self, interval: float = 0.1) -> Generator[tuple[str, float | None]]: ...
+        def burst(self, interval: float = 0.1) -> Generator[tuple[str, float | None]]:
+            """
+            Yield a burst of responses no more than 'interval' seconds apart.
+
+            with M.idle() as idler:
+                # get a response and any others following by < 0.1 seconds
+                batch = list(idler.burst())
+                print(f'processing {len(batch)} responses...')
+                print(batch)
+
+            Note: This generator requires a socket connection (not IMAP4_stream).
+            """
+            ...
 
 class IMAP4_SSL(IMAP4):
     """

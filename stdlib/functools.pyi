@@ -35,7 +35,18 @@ _RWrapper = TypeVar("_RWrapper")
 
 if sys.version_info >= (3, 14):
     @overload
-    def reduce(function: Callable[[_T, _S], _T], iterable: Iterable[_S], /, initial: _T) -> _T: ...
+    def reduce(function: Callable[[_T, _S], _T], iterable: Iterable[_S], /, initial: _T) -> _T:
+        """
+        Apply a function of two arguments cumulatively to the items of an iterable, from left to right.
+
+        This effectively reduces the iterable to a single value.  If initial is present,
+        it is placed before the items of the iterable in the calculation, and serves as
+        a default when the iterable is empty.
+
+        For example, reduce(lambda x, y: x+y, [1, 2, 3, 4, 5])
+        calculates ((((1 + 2) + 3) + 4) + 5).
+        """
+        ...
 
 else:
     @overload
@@ -43,26 +54,28 @@ else:
         """
         reduce(function, iterable[, initial], /) -> value
 
-        Apply a function of two arguments cumulatively to the items of a sequence
-        or iterable, from left to right, so as to reduce the iterable to a single
-        value.  For example, reduce(lambda x, y: x+y, [1, 2, 3, 4, 5]) calculates
-        ((((1+2)+3)+4)+5).  If initial is present, it is placed before the items
-        of the iterable in the calculation, and serves as a default when the
-        iterable is empty.
+        Apply a function of two arguments cumulatively to the items of an iterable, from left to right.
+
+        This effectively reduces the iterable to a single value.  If initial is present,
+        it is placed before the items of the iterable in the calculation, and serves as
+        a default when the iterable is empty.
+
+        For example, reduce(lambda x, y: x+y, [1, 2, 3, 4, 5])
+        calculates ((((1 + 2) + 3) + 4) + 5).
         """
         ...
 
 @overload
 def reduce(function: Callable[[_T, _T], _T], iterable: Iterable[_T], /) -> _T:
     """
-    reduce(function, iterable[, initial], /) -> value
+    Apply a function of two arguments cumulatively to the items of an iterable, from left to right.
 
-    Apply a function of two arguments cumulatively to the items of a sequence
-    or iterable, from left to right, so as to reduce the iterable to a single
-    value.  For example, reduce(lambda x, y: x+y, [1, 2, 3, 4, 5]) calculates
-    ((((1+2)+3)+4)+5).  If initial is present, it is placed before the items
-    of the iterable in the calculation, and serves as a default when the
-    iterable is empty.
+    This effectively reduces the iterable to a single value.  If initial is present,
+    it is placed before the items of the iterable in the calculation, and serves as
+    a default when the iterable is empty.
+
+    For example, reduce(lambda x, y: x+y, [1, 2, 3, 4, 5])
+    calculates ((((1 + 2) + 3) + 4) + 5).
     """
     ...
 
@@ -205,12 +218,35 @@ if sys.version_info >= (3, 14):
         wrapped: Callable[_PWrapped, _RWrapped],
         assigned: Iterable[str] = ("__module__", "__name__", "__qualname__", "__doc__", "__annotate__", "__type_params__"),
         updated: Iterable[str] = ("__dict__",),
-    ) -> _Wrapped[_PWrapped, _RWrapped, _PWrapper, _RWrapper]: ...
+    ) -> _Wrapped[_PWrapped, _RWrapped, _PWrapper, _RWrapper]:
+        """
+        Update a wrapper function to look like the wrapped function
+
+        wrapper is the function to be updated
+        wrapped is the original function
+        assigned is a tuple naming the attributes assigned directly
+        from the wrapped function to the wrapper function (defaults to
+        functools.WRAPPER_ASSIGNMENTS)
+        updated is a tuple naming the attributes of the wrapper that
+        are updated with the corresponding attribute from the wrapped
+        function (defaults to functools.WRAPPER_UPDATES)
+        """
+        ...
     def wraps(
         wrapped: Callable[_PWrapped, _RWrapped],
         assigned: Iterable[str] = ("__module__", "__name__", "__qualname__", "__doc__", "__annotate__", "__type_params__"),
         updated: Iterable[str] = ("__dict__",),
-    ) -> _Wrapper[_PWrapped, _RWrapped]: ...
+    ) -> _Wrapper[_PWrapped, _RWrapped]:
+        """
+        Decorator factory to apply update_wrapper() to a wrapper function
+
+        Returns a decorator that invokes update_wrapper() with the decorated
+        function as the wrapper argument and the arguments to wraps() as the
+        remaining arguments. Default arguments are as for update_wrapper().
+        This is a convenience function to simplify applying partial() to
+        update_wrapper().
+        """
+        ...
 
 elif sys.version_info >= (3, 12):
     def update_wrapper(
@@ -396,8 +432,7 @@ class singledispatchmethod(Generic[_T]):
     """
     Single-dispatch generic method descriptor.
 
-    Supports wrapping existing descriptors and handles non-descriptor
-    callables as instance methods.
+    Supports wrapping existing descriptors.
     """
     dispatcher: _SingleDispatchCallable[_T]
     func: Callable[..., _T]
@@ -476,7 +511,13 @@ def _make_key(
 
 if sys.version_info >= (3, 14):
     @final
-    class _PlaceholderType: ...
+    class _PlaceholderType:
+        """
+        The type of the Placeholder singleton.
+
+        Used as a placeholder for partial arguments.
+        """
+        ...
 
     Placeholder: Final[_PlaceholderType]
 

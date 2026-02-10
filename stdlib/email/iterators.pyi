@@ -17,8 +17,8 @@ def typed_subpart_iterator(msg: Message, maintype: str = "text", subtype: str | 
     """
     Iterate over the subparts with a given MIME type.
 
-    Use `maintype' as the main MIME type to match against; this defaults to
-    "text".  Optional `subtype' is the MIME subtype to match against; if
+    Use 'maintype' as the main MIME type to match against; this defaults to
+    "text".  Optional 'subtype' is the MIME subtype to match against; if
     omitted, only the main type is matched.
     """
     ...

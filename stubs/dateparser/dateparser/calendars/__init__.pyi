@@ -28,6 +28,13 @@ class _NonGregorianDate(Protocol):
     def weekday(self) -> int | None: ...
 
 class CalendarBase:
+    """
+    Base setup class for non-Gregorian calendar system.
+
+    :param source:
+        Date string passed to calendar parser.
+    :type source: str
+    """
     parser: type[_parser]
     source: str
     def __init__(self, source: str) -> None: ...

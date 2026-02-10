@@ -129,7 +129,7 @@ if sys.version_info >= (3, 11):
 
         Methods from the following RFCs are all observed:
 
-            * RFF 9110: HTTP Semantics, obsoletes 7231, which obsoleted 2616
+            * RFC 9110: HTTP Semantics, obsoletes 7231, which obsoleted 2616
             * RFC 5789: PATCH Method for HTTP
         """
         @property

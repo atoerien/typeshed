@@ -1,6 +1,6 @@
 """
 The sqlite3 extension module provides a DB-API 2.0 (PEP 249) compliant
-interface to the SQLite library, and requires SQLite 3.7.15 or newer.
+interface to the SQLite library, and requires SQLite 3.15.2 or newer.
 
 To use the module, start by creating a database Connection object:
 
@@ -380,8 +380,8 @@ class Connection:
               Table name.
             column
               Column name.
-            row
-              Row index.
+            rowid
+              Row id.
             readonly
               Open the BLOB without write permissions.
             name
@@ -451,7 +451,20 @@ class Connection:
             """
             Creates or redefines an aggregate window function. Non-standard.
 
-    def create_collation(self, name: str, callback: Callable[[str, str], SupportsIndex] | None, /) -> None: ...
+            name
+              The name of the SQL aggregate window function to be created or
+              redefined.
+            num_params
+              The number of arguments the step and inverse methods takes.
+            aggregate_class
+              A class with step(), finalize(), value(), and inverse() methods.
+              Set to None to clear the window function.
+            """
+            ...
+
+    def create_collation(self, name: str, callback: Callable[[str, str], SupportsIndex] | None, /) -> None:
+        """Creates a collation function."""
+        ...
     def create_function(
         self, name: str, narg: int, func: Callable[..., _SqliteData] | None, *, deterministic: bool = False
     ) -> None:

@@ -68,9 +68,12 @@ With a command name as argument, print help about that command.
 "help pdb" shows the full pdb documentation.
 "help exec" gives help on the ! command.
 
-w(here)
+w(here) [count]
 
-Print a stack trace, with the most recent frame at the bottom.
+Print a stack trace. If count is not specified, print the full stack.
+If count is 0, print the current frame entry. If count is positive,
+print count entries from the most recent frame. If count is negative,
+print -count entries from the least recent frame.
 An arrow indicates the "current frame", which determines the
 context of most commands.  'bt' is an alias for this command.
 
@@ -396,10 +399,32 @@ def runcall(func: Callable[_P, _T], *args: _P.args, **kwds: _P.kwargs) -> _T | N
     ...
 
 if sys.version_info >= (3, 14):
-    def set_default_backend(backend: _Backend) -> None: ...
-    def get_default_backend() -> _Backend: ...
-    def set_trace(*, header: str | None = None, commands: Iterable[str] | None = None) -> None: ...
-    async def set_trace_async(*, header: str | None = None, commands: Iterable[str] | None = None) -> None: ...
+    def set_default_backend(backend: _Backend) -> None:
+        """Set the default backend to use for Pdb instances."""
+        ...
+    def get_default_backend() -> _Backend:
+        """Get the default backend to use for Pdb instances."""
+        ...
+    def set_trace(*, header: str | None = None, commands: Iterable[str] | None = None) -> None:
+        """
+        Enter the debugger at the calling stack frame.
+
+        This is useful to hard-code a breakpoint at a given point in a
+        program, even if the code is not otherwise being debugged (e.g. when
+        an assertion fails). If given, *header* is printed to the console
+        just before debugging begins. *commands* is an optional list of
+        pdb commands to run when the debugger starts.
+        """
+        ...
+    async def set_trace_async(*, header: str | None = None, commands: Iterable[str] | None = None) -> None:
+        """
+        Enter the debugger at the calling stack frame, but in async mode.
+
+        This should be used as await pdb.set_trace_async(). Users can do await
+        if they enter the debugger with this function. Otherwise it's the same
+        as set_trace().
+        """
+        ...
 
 else:
     def set_trace(*, header: str | None = None) -> None:
@@ -528,7 +553,14 @@ class Pdb(Bdb, Cmd):
         ...
     def lineinfo(self, identifier: str) -> tuple[None, None, None] | tuple[str, str, int]: ...
     if sys.version_info >= (3, 14):
-        def checkline(self, filename: str, lineno: int, module_globals: _ModuleGlobals | None = None) -> int: ...
+        def checkline(self, filename: str, lineno: int, module_globals: _ModuleGlobals | None = None) -> int:
+            """
+            Check whether specified line seems to be executable.
+
+            Return `lineno` if it is, 0 if not (e.g. a docstring, comment, blank
+            line or EOF). Warning: testing is not comprehensive.
+            """
+            ...
     else:
         def checkline(self, filename: str, lineno: int) -> int:
             """
@@ -610,7 +642,24 @@ class Pdb(Bdb, Cmd):
         """
         ...
     if sys.version_info >= (3, 14):
-        def do_break(self, arg: str, temporary: bool = False) -> bool | None: ...
+        def do_break(self, arg: str, temporary: bool = False) -> bool | None:
+            """
+            b(reak) [ ([filename:]lineno | function) [, condition] ]
+
+            Without argument, list all breaks.
+
+            With a line number argument, set a break at this line in the
+            current file.  With a function name, set a break at the first
+            executable line of that function.  If a second argument is
+            present, it is a string specifying an expression which must
+            evaluate to true before the breakpoint is honored.
+
+            The line number may be prefixed with a filename and a colon,
+            to specify a breakpoint in another file (probably one that
+            hasn't been loaded yet).  The file is searched for on
+            sys.path; the .py suffix may be omitted.
+            """
+            ...
     else:
         def do_break(self, arg: str, temporary: bool | Literal[0, 1] = 0) -> bool | None:
             """
@@ -692,9 +741,12 @@ class Pdb(Bdb, Cmd):
         ...
     def do_where(self, arg: str) -> bool | None:
         """
-        w(here)
+        w(here) [count]
 
-        Print a stack trace, with the most recent frame at the bottom.
+        Print a stack trace. If count is not specified, print the full stack.
+        If count is 0, print the current frame entry. If count is positive,
+        print count entries from the most recent frame. If count is negative,
+        print -count entries from the least recent frame.
         An arrow indicates the "current frame", which determines the
         context of most commands.  'bt' is an alias for this command.
         """
@@ -966,7 +1018,16 @@ class Pdb(Bdb, Cmd):
     if sys.version_info >= (3, 13):
         # Added in 3.13.8 and 3.14.1
         @property
-        def rlcompleter(self) -> type[Completer]: ...
+        def rlcompleter(self) -> type[Completer]:
+            """
+            Return the `Completer` class from `rlcompleter`, while avoiding the
+            side effects of changing the completer from `import rlcompleter`.
+
+            This is a compromise between GH-138860 and GH-139289. If GH-139289 is
+            fixed, then we don't need this and we can just `import rlcompleter` in
+            `Pdb.__init__`.
+            """
+            ...
 
     def _select_frame(self, number: int) -> None: ...
     def _getval_except(self, arg: str, frame: FrameType | None = None) -> object: ...

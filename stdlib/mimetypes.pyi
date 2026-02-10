@@ -64,7 +64,7 @@ def guess_type(url: StrPath, strict: bool = True) -> tuple[str | None, str | Non
     to ".tar.gz".  (This is table-driven too, using the dictionary
     suffix_map).
 
-    Optional `strict' argument when false adds a bunch of commonly found, but
+    Optional 'strict' argument when false adds a bunch of commonly found, but
     non-standard types.
     """
     ...
@@ -75,11 +75,11 @@ def guess_all_extensions(type: str, strict: bool = True) -> list[str]:
     Return value is a list of strings giving the possible filename
     extensions, including the leading dot ('.').  The extension is not
     guaranteed to have been associated with any particular data
-    stream, but would be mapped to the MIME type `type' by
-    guess_type().  If no extension can be guessed for `type', None
+    stream, but would be mapped to the MIME type 'type' by
+    guess_type().  If no extension can be guessed for 'type', None
     is returned.
 
-    Optional `strict' argument when false adds a bunch of commonly found,
+    Optional 'strict' argument when false adds a bunch of commonly found,
     but non-standard types.
     """
     ...
@@ -90,10 +90,10 @@ def guess_extension(type: str, strict: bool = True) -> str | None:
     Return value is a string giving a filename extension, including the
     leading dot ('.').  The extension is not guaranteed to have been
     associated with any particular data stream, but would be mapped to the
-    MIME type `type' by guess_type().  If no extension can be guessed for
-    `type', None is returned.
+    MIME type 'type' by guess_type().  If no extension can be guessed for
+    'type', None is returned.
 
-    Optional `strict' argument when false adds a bunch of commonly found,
+    Optional 'strict' argument when false adds a bunch of commonly found,
     but non-standard types.
     """
     ...
@@ -119,7 +119,7 @@ if sys.version_info >= (3, 13):
         """
         Guess the type of a file based on its path.
 
-        Similar to guess_type(), but takes file path istead of URL.
+        Similar to guess_type(), but takes file path instead of URL.
         """
         ...
 
@@ -155,6 +155,8 @@ class MimeTypes:
         If strict is true, information will be added to
         list of standard types, else to the list of non-standard
         types.
+
+        Valid extensions are empty or start with a '.'.
         """
         ...
     def guess_extension(self, type: str, strict: bool = True) -> str | None:
@@ -164,11 +166,11 @@ class MimeTypes:
         Return value is a string giving a filename extension,
         including the leading dot ('.').  The extension is not
         guaranteed to have been associated with any particular data
-        stream, but would be mapped to the MIME type `type' by
-        guess_type().  If no extension can be guessed for `type', None
+        stream, but would be mapped to the MIME type 'type' by
+        guess_type().  If no extension can be guessed for 'type', None
         is returned.
 
-        Optional `strict' argument when false adds a bunch of commonly found,
+        Optional 'strict' argument when false adds a bunch of commonly found,
         but non-standard types.
         """
         ...
@@ -189,7 +191,7 @@ class MimeTypes:
         mapped to '.tar.gz'.  (This is table-driven too, using the
         dictionary suffix_map.)
 
-        Optional `strict' argument when False adds a bunch of commonly found,
+        Optional 'strict' argument when False adds a bunch of commonly found,
         but non-standard types.
         """
         ...
@@ -200,9 +202,9 @@ class MimeTypes:
         Return value is a list of strings giving the possible filename
         extensions, including the leading dot ('.').  The extension is not
         guaranteed to have been associated with any particular data stream,
-        but would be mapped to the MIME type `type' by guess_type().
+        but would be mapped to the MIME type 'type' by guess_type().
 
-        Optional `strict' argument when false adds a bunch of commonly found,
+        Optional 'strict' argument when false adds a bunch of commonly found,
         but non-standard types.
         """
         ...
@@ -238,6 +240,6 @@ class MimeTypes:
             """
             Guess the type of a file based on its path.
 
-            Similar to guess_type(), but takes file path istead of URL.
+            Similar to guess_type(), but takes file path instead of URL.
             """
             ...

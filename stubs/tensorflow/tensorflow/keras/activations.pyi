@@ -41,7 +41,6 @@ def elu(x: _ActivationInput, alpha: FloatTensorCompatible | FloatDataSequence = 
 
     Args:
         x: Input tensor.
-        alpha: A scalar, slope of positive section. Defaults to `1.0`.
 
     Reference:
 

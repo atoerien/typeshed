@@ -156,10 +156,10 @@ else:
         ...
 
 def print_exc(limit: int | None = None, file: SupportsWrite[str] | None = None, chain: bool = True) -> None:
-    """Shorthand for 'print_exception(sys.exception(), limit, file, chain)'."""
+    """Shorthand for 'print_exception(sys.exception(), limit=limit, file=file, chain=chain)'."""
     ...
 def print_last(limit: int | None = None, file: SupportsWrite[str] | None = None, chain: bool = True) -> None:
-    """This is a shorthand for 'print_exception(sys.last_exc, limit, file, chain)'."""
+    """This is a shorthand for 'print_exception(sys.last_exc, limit=limit, file=file, chain=chain)'."""
     ...
 def print_stack(f: FrameType | None = None, limit: int | None = None, file: SupportsWrite[str] | None = None) -> None:
     """

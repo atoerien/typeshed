@@ -611,6 +611,7 @@ class Formatter:
     %(threadName)s      Thread name (if available)
     %(taskName)s        Task name (if available)
     %(process)d         Process ID (if available)
+    %(processName)s     Process name (if available)
     %(message)s         The result of record.getMessage(), computed just as
                         the record is emitted
     """
@@ -866,9 +867,9 @@ class LoggerAdapter(Generic[_L]):
     if sys.version_info >= (3, 13):
         def __init__(self, logger: _L, extra: Mapping[str, object] | None = None, merge_extra: bool = False) -> None:
             """
-            Initialize the adapter with a logger and a dict-like object which
-            provides contextual information. This constructor signature allows
-            easy stacking of LoggerAdapters, if so desired.
+            Initialize the adapter with a logger and an optional dict-like object
+            which provides contextual information. This constructor signature
+            allows easy stacking of LoggerAdapters, if so desired.
 
             You can effectively pass keyword arguments as shown in the
             following example:

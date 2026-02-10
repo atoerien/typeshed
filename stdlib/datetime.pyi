@@ -1,4 +1,9 @@
-"""Fast implementation of the datetime type."""
+"""
+Specific date/time and related types.
+
+See https://data.iana.org/time-zones/tz-link.html for
+time zone and DST data sources.
+"""
 
 import sys
 from abc import abstractmethod
@@ -121,7 +126,9 @@ class date:
 
     if sys.version_info >= (3, 14):
         @classmethod
-        def strptime(cls, date_string: str, format: str, /) -> Self: ...
+        def strptime(cls, date_string: str, format: str, /) -> Self:
+            """string, format -> new date parsed from a string (like time.strptime())."""
+            ...
 
     # On <3.12, the name of the parameter in the pure-Python implementation
     # didn't match the name in the C implementation,
@@ -274,7 +281,9 @@ class time:
 
     if sys.version_info >= (3, 14):
         @classmethod
-        def strptime(cls, date_string: str, format: str, /) -> Self: ...
+        def strptime(cls, date_string: str, format: str, /) -> Self:
+            """string, format -> new time parsed from a string (like time.strptime())."""
+            ...
 
     # On <3.12, the name of the parameter in the pure-Python implementation
     # didn't match the name in the C implementation,
