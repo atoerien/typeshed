@@ -19,22 +19,6 @@ _CommandT = TypeVar("_CommandT", bound=Command)
 _Ts = TypeVarTuple("_Ts")
 
 class Command:
-    """
-    Abstract base class for defining command classes, the "worker bees"
-    of the Distutils.  A useful analogy for command classes is to think of
-    them as subroutines with local variables called "options".  The options
-    are "declared" in 'initialize_options()' and "defined" (given their
-    final values, aka "finalized") in 'finalize_options()', both of which
-    must be defined by every command class.  The distinction between the
-    two is necessary because option values might come from the outside
-    world (command line, config file, ...), and any options dependent on
-    other options must be computed *after* these outside influences have
-    been processed -- hence 'finalize_options()'.  The "body" of the
-    subroutine, where it does all its work based on the values of its
-    options, is the 'run()' method, which must also be implemented by every
-    command class.
-    """
-    dry_run: bool  # Exposed from __getattr_. Same as Distribution.dry_run
     distribution: Distribution
     # Any to work around variance issues
     sub_commands: ClassVar[list[tuple[str, Callable[[Any], bool] | None]]]

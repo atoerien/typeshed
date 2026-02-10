@@ -109,7 +109,6 @@ def setup(
     # Attributes from distutils.dist.Distribution.__init__ (except self.metadata)
     # These take priority over attributes from distutils.dist.Distribution.display_option_names
     verbose: bool = True,
-    dry_run: bool = False,
     help: bool = False,
     cmdclass: _MutableDictLike[str, type[_Command]] = {},
     command_packages: str | list[str] | None = None,
@@ -235,6 +234,7 @@ class Command(_Command):
     """
     command_consumes_arguments: bool
     distribution: Distribution
+    dry_run: bool
     # Any: Dynamic command subclass attributes
     def __init__(self, dist: Distribution, **kw: Any) -> None:
         """

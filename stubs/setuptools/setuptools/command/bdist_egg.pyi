@@ -75,18 +75,5 @@ def can_scan() -> bool: ...
 INSTALL_DIRECTORY_ATTRS: Final[list[str]]
 
 def make_zipfile(
-    zip_filename: _StrPathT,
-    base_dir,
-    verbose: bool = False,
-    dry_run: bool = False,
-    compress: bool = True,
-    mode: _ZipFileMode = "w",
-) -> _StrPathT:
-    """
-    Create a zip file from all the files under 'base_dir'.  The output
-    zip file will be named 'base_dir' + ".zip".  Uses either the "zipfile"
-    Python module (if available) or the InfoZIP "zip" utility (if installed
-    and found on the default search path).  If neither tool is available,
-    raises DistutilsExecError.  Returns the name of the output zip file.
-    """
-    ...
+    zip_filename: _StrPathT, base_dir, verbose: bool = False, compress: bool = True, mode: _ZipFileMode = "w"
+) -> _StrPathT: ...

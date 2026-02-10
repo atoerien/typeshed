@@ -97,31 +97,9 @@ def split_quoted(s: str) -> list[str]:
     """
     ...
 def execute(
-    func: Callable[[Unpack[_Ts]], Unused],
-    args: tuple[Unpack[_Ts]],
-    msg: str | None = None,
-    verbose: bool = False,
-    dry_run: bool = False,
-) -> None:
-    """
-    Perform some action that affects the outside world (e.g. by
-    writing to the filesystem). Such actions are special because they
-    are disabled by the 'dry_run' flag. This method handles that
-    complication; simply supply the
-    function to call and an argument tuple for it (to embody the
-    "external action" being performed) and an optional message to
-    emit.
-    """
-    ...
-def strtobool(val: str) -> Literal[0, 1]:
-    """
-    Convert a string representation of truth to true (1) or false (0).
-
-    True values are 'y', 'yes', 't', 'true', 'on', and '1'; false values
-    are 'n', 'no', 'f', 'false', 'off', and '0'.  Raises ValueError if
-    'val' is anything else.
-    """
-    ...
+    func: Callable[[Unpack[_Ts]], Unused], args: tuple[Unpack[_Ts]], msg: str | None = None, verbose: bool = False
+) -> None: ...
+def strtobool(val: str) -> Literal[0, 1]: ...
 def byte_compile(
     py_files: Iterable[str],
     optimize: int = 0,
@@ -129,7 +107,6 @@ def byte_compile(
     prefix: str | None = None,
     base_dir: str | None = None,
     verbose: bool = True,
-    dry_run: bool = False,
     direct: bool | None = None,
 ) -> None:
     """

@@ -50,7 +50,7 @@ from types import CellType, CodeType, GenericAlias, TracebackType
 
 # mypy crashes if any of {ByteString, Sequence, MutableSequence, Mapping, MutableMapping}
 # are imported from collections.abc in builtins.pyi
-from typing import (  # noqa: Y022,UP035
+from typing import (  # noqa: Y022,UP035,RUF100
     IO,
     Any,
     BinaryIO,
@@ -4088,60 +4088,14 @@ class property:
         """Delete an attribute of instance."""
         ...
 
-def abs(x: SupportsAbs[_T], /) -> _T:
-    """Return the absolute value of the argument."""
-    ...
-def all(iterable: Iterable[object], /) -> bool:
-    """
-    Return True if bool(x) is True for all values x in the iterable.
-
-    If the iterable is empty, return True.
-    """
-    ...
-def any(iterable: Iterable[object], /) -> bool:
-    """
-    Return True if bool(x) is True for any x in the iterable.
-
-    If the iterable is empty, return False.
-    """
-    ...
-def ascii(obj: object, /) -> str:
-    r"""
-    Return an ASCII-only representation of an object.
-
-    As repr(), return a string containing a printable representation of an
-    object, but escape the non-ASCII characters in the string returned by
-    repr() using \\x, \\u or \\U escapes. This generates a string similar
-    to that returned by repr() in Python 2.
-    """
-    ...
-def bin(number: int | SupportsIndex, /) -> str:
-    """
-    Return the binary representation of an integer.
-
-    >>> bin(2796202)
-    '0b1010101010101010101010'
-    """
-    ...
-def breakpoint(*args: Any, **kws: Any) -> None:
-    """
-    Call sys.breakpointhook(*args, **kws).  sys.breakpointhook() must accept
-    whatever arguments are passed.
-
-    By default, this drops you into the pdb debugger.
-    """
-    ...
-def callable(obj: object, /) -> TypeIs[Callable[..., object]]:
-    """
-    Return whether the object is callable (i.e., some kind of function).
-
-    Note that classes are callable, as are instances of classes with a
-    __call__() method.
-    """
-    ...
-def chr(i: int | SupportsIndex, /) -> str:
-    """Return a Unicode string of one character with ordinal i; 0 <= i <= 0x10ffff."""
-    ...
+def abs(x: SupportsAbs[_T], /) -> _T: ...
+def all(iterable: Iterable[object], /) -> bool: ...
+def any(iterable: Iterable[object], /) -> bool: ...
+def ascii(obj: object, /) -> str: ...
+def bin(number: SupportsIndex, /) -> str: ...
+def breakpoint(*args: Any, **kws: Any) -> None: ...
+def callable(obj: object, /) -> TypeIs[Callable[..., object]]: ...
+def chr(i: SupportsIndex, /) -> str: ...
 
 if sys.version_info >= (3, 10):
     def aiter(async_iterable: SupportsAiter[_SupportsAnextT_co], /) -> _SupportsAnextT_co:
@@ -4541,33 +4495,9 @@ def hash(obj: object, /) -> int:
 
 help: _sitebuiltins._Helper
 
-def hex(number: int | SupportsIndex, /) -> str:
-    """
-    Return the hexadecimal representation of an integer.
-
-    >>> hex(12648430)
-    '0xc0ffee'
-    """
-    ...
-def id(obj: object, /) -> int:
-    """
-    Return the identity of an object.
-
-    This is guaranteed to be unique among simultaneously existing objects.
-    (CPython uses the object's memory address.)
-    """
-    ...
-def input(prompt: object = "", /) -> str:
-    """
-    Read a string from standard input.  The trailing newline is stripped.
-
-    The prompt string, if given, is printed to standard output without a
-    trailing newline before reading input.
-
-    If the user hits EOF (*nix: Ctrl-D, Windows: Ctrl-Z+Return), raise EOFError.
-    On *nix systems, readline is used if available.
-    """
-    ...
+def hex(number: SupportsIndex, /) -> str: ...
+def id(obj: object, /) -> int: ...
+def input(prompt: object = "", /) -> str: ...
 @type_check_only
 class _GetItemIterable(Protocol[_T_co]):
     def __getitem__(self, i: int, /) -> _T_co: ...
@@ -4928,22 +4858,8 @@ def next(i: SupportsNext[_T], /) -> _T:
     """
     ...
 @overload
-def next(i: SupportsNext[_T], default: _VT, /) -> _T | _VT:
-    """
-    next(iterator[, default])
-
-    Return the next item from the iterator. If default is given and the iterator
-    is exhausted, it is returned instead of raising StopIteration.
-    """
-    ...
-def oct(number: int | SupportsIndex, /) -> str:
-    """
-    Return the octal representation of an integer.
-
-    >>> oct(342391)
-    '0o1234567'
-    """
-    ...
+def next(i: SupportsNext[_T], default: _VT, /) -> _T | _VT: ...
+def oct(number: SupportsIndex, /) -> str: ...
 
 _Opener: TypeAlias = Callable[[str, int], int]
 
