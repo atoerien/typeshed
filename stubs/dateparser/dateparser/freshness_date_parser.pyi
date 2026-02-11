@@ -1,5 +1,6 @@
 import re
 from _typeshed import Incomplete
+from datetime import datetime
 from typing import Final
 from zoneinfo import ZoneInfo
 
@@ -11,7 +12,7 @@ PATTERN: Final[re.Pattern[str]]
 class FreshnessDateDataParser:
     """Parses date string like "1 year, 2 months ago" and "3 hours, 50 minutes ago" """
     def get_local_tz(self) -> ZoneInfo: ...
-    def parse(self, date_string: str, settings: Settings) -> tuple[Incomplete | None, str | None]: ...
+    def parse(self, date_string: str, settings: Settings) -> tuple[datetime | None, str | None]: ...
     def get_kwargs(
         self, date_string: str
     ) -> tuple[dict[str, float], dict[str, Incomplete]] | dict[None, None]: ...  # return empty dict if pattern not found

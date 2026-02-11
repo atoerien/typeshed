@@ -1,5 +1,5 @@
-from _typeshed import Incomplete
 from abc import abstractmethod
+from datetime import datetime
 from typing import ClassVar, Protocol, type_check_only
 
 from dateparser.conf import Settings
@@ -51,4 +51,4 @@ class non_gregorian_parser(_parser):
     @abstractmethod
     def handle_two_digit_year(self, year: int) -> int: ...
     @classmethod
-    def parse(cls, datestring: str, settings: Settings) -> tuple[Incomplete, str | None]: ...  # type: ignore[override]
+    def parse(cls, datestring: str, settings: Settings) -> tuple[datetime, str | None]: ...  # type: ignore[override]

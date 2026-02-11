@@ -1,3 +1,0 @@
-"""passlib.utils.scrypt._gen_files - meta script that generates _salsa.py"""
-
-def main() -> None: ...
