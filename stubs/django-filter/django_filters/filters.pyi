@@ -2,7 +2,7 @@ from collections.abc import Callable, Iterable
 from typing import Any
 
 from django import forms
-from django.db.models import Q, QuerySet
+from django.db.models import QuerySet
 from django.forms import Field
 from django_stubs_ext import StrOrPromise
 
@@ -163,7 +163,7 @@ class MultipleChoiceFilter(Filter):
         """
         ...
     def filter(self, qs: QuerySet[Any], value: Any) -> QuerySet[Any]: ...
-    def get_filter_predicate(self, v: Any) -> Q: ...  # Predicate value can be any filter input type
+    def get_filter_predicate(self, v: Any) -> dict[str, Any]: ...  # Predicate value can be any filter input type
 
 class TypedMultipleChoiceFilter(MultipleChoiceFilter):
     field_class: type[forms.TypedMultipleChoiceField]  # More specific than parent MultipleChoiceField
