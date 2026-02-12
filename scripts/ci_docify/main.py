@@ -12,7 +12,7 @@ from utils import parse_metadata, subprocess_run
 
 PYTHON_VERSIONS = ("3.14", "3.13", "3.12", "3.11", "3.10", "3.9")
 
-DOCIFY_VER = "1.1.0"
+DOCIFY_VER = "1.2.0"
 TYPING_EXTENSIONS_VER = "4.15.0"
 
 PACKAGE_IGNORE = [
@@ -115,7 +115,7 @@ def init_venv(pyver: str) -> Path:
         f"python{pyver}",
         str(venv),
     )
-    uv_pip_install(venv, ["git+https://github.com/atoerien/docify@multiprocessing"])
+    uv_pip_install(venv, [f"docify=={DOCIFY_VER}"])
     return venv
 
 
