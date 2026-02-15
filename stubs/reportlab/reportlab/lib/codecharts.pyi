@@ -10,11 +10,12 @@ and graphic objects for single and multi-byte fonts.
 from _typeshed import Incomplete
 from typing import Final
 
+from reportlab.graphics.shapes import Group
 from reportlab.graphics.widgetbase import Widget
 from reportlab.platypus import Flowable
 
 __version__: Final[str]
-adobe2codec: Incomplete
+adobe2codec: dict[str, str]
 
 class CodeChartBase(Flowable):
     """
@@ -27,19 +28,10 @@ class CodeChartBase(Flowable):
     height: Incomplete
     ylist: Incomplete
     xlist: Incomplete
-    def calcLayout(self) -> None:
-        """Work out x and y positions for drawing"""
-        ...
-    def formatByte(self, byt): ...
-    def drawChars(self, charList) -> None:
-        """
-        Fills boxes in order.  None means skip a box.
-        Empty boxes at end get filled with gray
-        """
-        ...
-    def drawLabels(self, topLeft: str = "") -> None:
-        """Writes little labels in the top row and first column"""
-        ...
+    def calcLayout(self) -> None: ...
+    def formatByte(self, byt) -> str: ...
+    def drawChars(self, charList) -> None: ...
+    def drawLabels(self, topLeft: str = "") -> None: ...
 
 class SingleByteEncodingChart(CodeChartBase):
     codePoints: int
@@ -58,7 +50,7 @@ class SingleByteEncodingChart(CodeChartBase):
         boxSize: int = 14,
         hex: int = 1,
     ) -> None: ...
-    def draw(self): ...
+    def draw(self) -> None: ...
 
 class KutenRowCodeChart(CodeChartBase):
     """
@@ -80,9 +72,7 @@ class KutenRowCodeChart(CodeChartBase):
     encodingName: Incomplete
     fontName: Incomplete
     def __init__(self, row, faceName, encodingName) -> None: ...
-    def makeRow(self, row):
-        """Works out the character values for this kuten row"""
-        ...
+    def makeRow(self, row) -> list[bytes | list[None]]: ...
     def draw(self) -> None: ...
 
 class Big5CodeChart(CodeChartBase):
@@ -103,12 +93,7 @@ class Big5CodeChart(CodeChartBase):
     rowLabels: Incomplete
     fontName: Incomplete
     def __init__(self, row, faceName, encodingName) -> None: ...
-    def makeRow(self, row):
-        """
-        Works out the character values for this Big5 row.
-        Rows start at 0xA1
-        """
-        ...
+    def makeRow(self, row) -> list[bytes | list[None]]: ...
     def draw(self) -> None: ...
 
 def hBoxText(msg, canvas, x, y, fontName) -> None:
@@ -127,6 +112,6 @@ class CodeWidget(Widget):
     width: int
     height: int
     def __init__(self) -> None: ...
-    def draw(self): ...
+    def draw(self) -> Group: ...
 
 def test() -> None: ...

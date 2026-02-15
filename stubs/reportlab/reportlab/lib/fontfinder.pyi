@@ -57,21 +57,22 @@ update itself smartly on repeated instantiation.
 
 from _typeshed import Incomplete
 from typing import Final
+from typing_extensions import LiteralString
 
 __version__: Final[str]
 
-def asNative(s): ...
+def asNative(s) -> str: ...
 
-EXTENSIONS: Incomplete
-FF_FIXED: Incomplete
-FF_SERIF: Incomplete
-FF_SYMBOLIC: Incomplete
-FF_SCRIPT: Incomplete
-FF_NONSYMBOLIC: Incomplete
-FF_ITALIC: Incomplete
-FF_ALLCAP: Incomplete
-FF_SMALLCAP: Incomplete
-FF_FORCEBOLD: Incomplete
+EXTENSIONS: Final = [".ttf", ".ttc", ".otf", ".pfb", ".pfa"]
+FF_FIXED: Final = 1
+FF_SERIF: Final = 2
+FF_SYMBOLIC: Final = 4
+FF_SCRIPT: Final = 8
+FF_NONSYMBOLIC: Final = 32
+FF_ITALIC: Final = 64
+FF_ALLCAP: Final = 65536
+FF_SMALLCAP: Final = 131072
+FF_FORCEBOLD: Final = 262144
 
 class FontDescriptor:
     """
@@ -92,9 +93,7 @@ class FontDescriptor:
     metricsFileName: Incomplete
     timeModified: int
     def __init__(self) -> None: ...
-    def getTag(self):
-        """Return an XML tag representation"""
-        ...
+    def getTag(self) -> LiteralString: ...
 
 class FontFinder:
     useCache: Incomplete
@@ -105,24 +104,11 @@ class FontFinder:
     ) -> None: ...
     def addDirectory(self, dirName, recur=None) -> None: ...
     def addDirectories(self, dirNames, recur=None) -> None: ...
-    def getFamilyNames(self):
-        """Returns a list of the distinct font families found"""
-        ...
-    def getFontsInFamily(self, familyName):
-        """Return list of all font objects with this family name"""
-        ...
-    def getFamilyXmlReport(self):
-        """
-        Reports on all families found as XML.
-        
-        """
-        ...
-    def getFontsWithAttributes(self, **kwds):
-        """This is a general lightweight search."""
-        ...
-    def getFont(self, familyName, bold: bool = False, italic: bool = False):
-        """Try to find a font matching the spec"""
-        ...
+    def getFamilyNames(self) -> list[bytes]: ...
+    def getFontsInFamily(self, familyName): ...
+    def getFamilyXmlReport(self) -> LiteralString: ...
+    def getFontsWithAttributes(self, **kwds) -> list[FontDescriptor]: ...
+    def getFont(self, familyName, bold: bool = False, italic: bool = False) -> FontDescriptor: ...
     def save(self, fileName) -> None: ...
     def load(self, fileName) -> None: ...
     def search(self) -> None: ...

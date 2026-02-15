@@ -1,18 +1,4 @@
-"""
-Dirty Arbiters - Separate process pool for long-running operations.
-
-Dirty Arbiters provide a separate process pool for executing long-running,
-blocking operations (AI model loading, heavy computation) without blocking
-HTTP workers. Inspired by Erlang's dirty schedulers.
-
-Key Properties:
-- Completely separate from HTTP workers - can be killed/restarted independently
-- Stateful - loaded resources persist in dirty worker memory
-- Message-passing IPC via Unix sockets with JSON serialization
-- Explicit execute() API (no hidden IPC)
-- Asyncio-based for clean concurrent handling and future streaming support
-"""
-
+from . import stash as stash
 from .app import DirtyApp as DirtyApp
 from .arbiter import DirtyArbiter as DirtyArbiter
 from .client import (
@@ -32,6 +18,13 @@ from .errors import (
     DirtyTimeoutError as DirtyTimeoutError,
     DirtyWorkerError as DirtyWorkerError,
 )
+from .stash import (
+    StashClient as StashClient,
+    StashError as StashError,
+    StashKeyNotFoundError as StashKeyNotFoundError,
+    StashTable as StashTable,
+    StashTableNotFoundError as StashTableNotFoundError,
+)
 
 __all__ = [
     "DirtyError",
@@ -47,6 +40,12 @@ __all__ = [
     "get_dirty_client_async",
     "close_dirty_client",
     "close_dirty_client_async",
+    "stash",
+    "StashClient",
+    "StashTable",
+    "StashError",
+    "StashTableNotFoundError",
+    "StashKeyNotFoundError",
     "DirtyArbiter",
     "set_dirty_socket_path",
 ]

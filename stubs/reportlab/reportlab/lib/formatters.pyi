@@ -4,13 +4,14 @@ Used by the graphics framework.
 """
 
 from _typeshed import Incomplete
+from typing import Literal
+from typing_extensions import LiteralString
 
 class Formatter:
-    """Base formatter - simply applies python format strings"""
-    pattern: Incomplete
-    def __init__(self, pattern) -> None: ...
-    def format(self, obj): ...
-    def __call__(self, x): ...
+    pattern: str
+    def __init__(self, pattern: str) -> None: ...
+    def format(self, obj: object) -> str: ...
+    def __call__(self, x: object) -> str: ...
 
 class DecimalFormatter(Formatter):
     """
@@ -20,12 +21,14 @@ class DecimalFormatter(Formatter):
     instead - "$#,##0.00" is WAY easier than this.
     """
     calcPlaces: Incomplete
-    places: Incomplete
+    places: int
     dot: Incomplete
     comma: Incomplete
     prefix: Incomplete
     suffix: Incomplete
-    def __init__(self, places: int = 2, decimalSep: str = ".", thousandSep=None, prefix=None, suffix=None) -> None: ...
-    def format(self, num): ...
+    def __init__(
+        self, places: int | Literal["auto"] = 2, decimalSep: str = ".", thousandSep=None, prefix=None, suffix=None
+    ) -> None: ...
+    def format(self, num) -> LiteralString: ...
 
 __all__ = ("Formatter", "DecimalFormatter")

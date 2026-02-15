@@ -1,61 +1,6 @@
-"""
-Very simple and fast XML parser, used for intra-paragraph text.
-
-Devised by Aaron Watters in the bad old days before Python had fast
-parsers available.  Constructs the lightest possible in-memory
-representation; parses most files we have seen in pure python very
-quickly.
-
-The output structure is the same as the one produced by pyRXP,
-our validating C-based parser, which was written later.  It will
-use pyRXP if available.
-
-This is used to parse intra-paragraph markup.
-
-Example parse::
-
-    <this type="xml">text <b>in</b> xml</this>
-
-    ( "this",
-      {"type": "xml"},
-      [ "text ",
-        ("b", None, ["in"], None),
-        " xml"
-        ]
-       None )
-
-    { 0: "this"
-      "type": "xml"
-      1: ["text ",
-          {0: "b", 1:["in"]},
-          " xml"]
-    }
-
-Ie, xml tag translates to a tuple:
- (name, dictofattributes, contentlist, miscellaneousinfo)
-
-where miscellaneousinfo can be anything, (but defaults to None)
-(with the intention of adding, eg, line number information)
-
-special cases: name of "" means "top level, no containing tag".
-Top level parse always looks like this::
-
-    ("", list, None, None)
-
- contained text of None means <simple_tag/>
-
-In order to support stuff like::
-
-    <this></this><one></one>
-
-AT THE MOMENT &amp; ETCETERA ARE IGNORED. THEY MUST BE PROCESSED
-IN A POST-PROCESSING STEP.
-
-PROLOGUES ARE NOT UNDERSTOOD.  OTHER STUFF IS PROBABLY MISSING.
-"""
-
-from _typeshed import Incomplete
-from typing import type_check_only
+from _typeshed import FileDescriptorOrPath, Unused
+from collections.abc import Iterable
+from typing import Final, type_check_only
 
 RequirePyRXP: int
 simpleparse: int
@@ -63,25 +8,23 @@ simpleparse: int
 @type_check_only
 class _smartDecode:
     @staticmethod
-    def __call__(s): ...
+    def __call__(s: str | bytes | bytearray) -> str: ...
 
 smartDecode: _smartDecode
-NONAME: str
-NAMEKEY: int
-CONTENTSKEY: int
-CDATAMARKER: str
-LENCDATAMARKER: Incomplete
-CDATAENDMARKER: str
-replacelist: Incomplete
+NONAME: Final = ""
+NAMEKEY: Final = 0
+CONTENTSKEY: Final = 1
+CDATAMARKER: Final = "<![CDATA["
+LENCDATAMARKER: Final = 9
+CDATAENDMARKER: Final = "]]>"
+replacelist: list[tuple[str, str]]
 
-def unEscapeContentList(contentList): ...
-def parsexmlSimple(xmltext, oneOutermostTag: int = 0, eoCB=None, entityReplacer=...):
-    """official interface: discard unused cursor info"""
-    ...
+def unEscapeContentList(contentList: Iterable[str]) -> list[str]: ...
+def parsexmlSimple(xmltext, oneOutermostTag: int = 0, eoCB: Unused = None, entityReplacer=...): ...
 
 parsexml = parsexmlSimple
 
-def parseFile(filename): ...
+def parseFile(filename: FileDescriptorOrPath): ...
 
 verbose: int
 
