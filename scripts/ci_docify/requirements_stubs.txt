@@ -4,7 +4,7 @@ typing-extensions==4.15.0
 
 whatthepatch==1.0.*
 pyaudio==0.2.*
-gunicorn==25.0.3
+gunicorn==25.1.0
 xlrd==2.0.*
 hdbcli==2.25.*
 ibm-db==3.2.6
@@ -119,7 +119,7 @@ watchpoints==0.2.5
 s2clientprotocol==5.*
 protobuf~=6.32.1
 toml==0.10.*
-pyinstaller==6.18.*
+pyinstaller==6.19.*
 fpdf2==2.8.4
 qrbill==1.2.*
 singledispatch==4.1.*
@@ -143,7 +143,7 @@ lunardate==0.2.*
 pynput~=1.8.1
 django-filter==25.2.*
 setuptools==82.0.*
-Authlib==1.6.7
+Authlib==1.6.8
 braintree==4.42.*
 grpcio-channelz==1.*
 str2bool==1.1
