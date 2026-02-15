@@ -8,6 +8,7 @@ from typing import Literal
 from typing_extensions import LiteralString
 
 class Formatter:
+    """Base formatter - simply applies python format strings"""
     pattern: str
     def __init__(self, pattern: str) -> None: ...
     def format(self, obj: object) -> str: ...
