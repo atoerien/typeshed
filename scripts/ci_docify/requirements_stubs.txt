@@ -38,7 +38,7 @@ ldap3==2.9.*
 assertpy==1.1.*
 tqdm[slack,telegram]==4.67.3
 entrypoints==0.4.*
-reportlab[pycairo]==4.4.9
+reportlab[pycairo]==4.4.10
 networkx==3.6.1
 tzdata==2025.*
 seaborn==0.13.2
@@ -48,7 +48,7 @@ ratelimit==2.2.*
 pycocotools==2.0.*
 pyflakes==3.4.*
 pyxdg==0.28.*
-pyperclip==1.9.*
+pyperclip==1.11.*
 retry==0.9.*
 click-log==0.4.*
 PyMySQL==1.1.*
