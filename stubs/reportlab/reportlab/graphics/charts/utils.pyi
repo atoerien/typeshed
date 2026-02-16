@@ -110,6 +110,30 @@ class FillPairedData(list[Incomplete]):
     other: Incomplete
     def __init__(self, v, other: int = 0) -> None: ...
 
-def angle2dir(angle: float) -> Literal["n", "ne", "e", "se", "s", "sw", "w", "nw", "c"]: ...
-def angle2corner(angle: float) -> Literal["n", "ne", "e", "se", "s", "sw", "w", "nw", "c"]: ...
-def boxCornerCoords(bb: Sequence[float], cn: Literal["n", "ne", "e", "se", "s", "sw", "w", "nw", "c"]) -> tuple[float, float]: ...
+def angle2dir(angle: float) -> Literal["n", "ne", "e", "se", "s", "sw", "w", "nw", "c"]:
+    """
+    converts mathematical angle to a compass point from a math angle where
+    0 degrees lies along the x axis ie east==0 degrees
+
+    >>> [angle2dir(_) for _ in [0,360]+[__[0] for __ in _arange2dirs]+[__[1] for __ in _arange2dirs]]
+    ['e', 'e', 'e', 'e', 'ne', 'n', 'nw', 'w', 'sw', 's', 'se', 'e', 'ne', 'n', 'nw', 'w', 'sw', 's', 'se', 'e']
+    """
+    ...
+def angle2corner(angle: float) -> Literal["n", "ne", "e", "se", "s", "sw", "w", "nw", "c"]:
+    """
+    converts a direction angle to a box corner name effectively the reverse direction
+    >>> [angle2corner(_) for _ in [0,360]+[__[0] for __ in _arange2dirs]+[__[1] for __ in _arange2dirs]]
+    ['w', 'w', 'w', 'w', 'sw', 's', 'se', 'e', 'ne', 'n', 'nw', 'w', 'sw', 's', 'se', 'e', 'ne', 'n', 'nw', 'w']
+    """
+    ...
+def boxCornerCoords(bb: Sequence[float], cn: Literal["n", "ne", "e", "se", "s", "sw", "w", "nw", "c"]) -> tuple[float, float]:
+    """
+    return (x,y) for bounding box and corner name
+    >>> bb=(1,0,0,1);[boxCornerCoords(bb,_) for _ in 'c n ne e se s sw w nw'.split()]
+    [(0.5, 0.5), (0.5, 1), (1, 1), (1, 0.5), (1, 0), (0.5, 0), (0, 0), (0, 0.5), (0, 1)]
+    >>> boxCornerCoords(bb,'z')
+    Traceback (most recent call last):
+        ...
+    ValueError: invalid box corner name 'z'
+    """
+    ...
