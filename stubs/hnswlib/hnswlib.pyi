@@ -21,7 +21,7 @@ class Index:
 
         2. __init__(self: hnswlib.Index, index: hnswlib.Index) -> None
 
-        3. __init__(self: hnswlib.Index, space: str, dim: typing.SupportsInt) -> None
+        3. __init__(self: hnswlib.Index, space: str, dim: typing.SupportsInt | typing.SupportsIndex) -> None
         """
         ...
     @overload
@@ -34,7 +34,7 @@ class Index:
 
         2. __init__(self: hnswlib.Index, index: hnswlib.Index) -> None
 
-        3. __init__(self: hnswlib.Index, space: str, dim: typing.SupportsInt) -> None
+        3. __init__(self: hnswlib.Index, space: str, dim: typing.SupportsInt | typing.SupportsIndex) -> None
         """
         ...
     @overload
@@ -47,13 +47,13 @@ class Index:
 
         2. __init__(self: hnswlib.Index, index: hnswlib.Index) -> None
 
-        3. __init__(self: hnswlib.Index, space: str, dim: typing.SupportsInt) -> None
+        3. __init__(self: hnswlib.Index, space: str, dim: typing.SupportsInt | typing.SupportsIndex) -> None
         """
         ...
     def add_items(
         self, data: ArrayLike, ids: ArrayLike | None = None, num_threads: int = -1, replace_deleted: bool = False
     ) -> None:
-        """add_items(self: hnswlib.Index, data: object, ids: object = None, num_threads: typing.SupportsInt = -1, replace_deleted: bool = False) -> None"""
+        """add_items(self: hnswlib.Index, data: object, ids: object = None, num_threads: typing.SupportsInt | typing.SupportsIndex = -1, replace_deleted: bool = False) -> None"""
         ...
     def get_current_count(self) -> int:
         """get_current_count(self: hnswlib.Index) -> int"""
@@ -89,33 +89,33 @@ class Index:
         random_seed: int = 100,
         allow_replace_delete: bool = False,
     ) -> None:
-        """init_index(self: hnswlib.Index, max_elements: typing.SupportsInt, M: typing.SupportsInt = 16, ef_construction: typing.SupportsInt = 200, random_seed: typing.SupportsInt = 100, allow_replace_deleted: bool = False) -> None"""
+        """init_index(self: hnswlib.Index, max_elements: typing.SupportsInt | typing.SupportsIndex, M: typing.SupportsInt | typing.SupportsIndex = 16, ef_construction: typing.SupportsInt | typing.SupportsIndex = 200, random_seed: typing.SupportsInt | typing.SupportsIndex = 100, allow_replace_deleted: bool = False) -> None"""
         ...
     def knn_query(
         self, data: ArrayLike, k: int = 1, num_threads: int = -1, filter: Callable[[int], bool] | None = None
     ) -> tuple[NDArray[np.uint64], NDArray[np.float32]]:
-        """knn_query(self: hnswlib.Index, data: object, k: typing.SupportsInt = 1, num_threads: typing.SupportsInt = -1, filter: collections.abc.Callable[[typing.SupportsInt], bool] = None) -> object"""
+        """knn_query(self: hnswlib.Index, data: object, k: typing.SupportsInt | typing.SupportsIndex = 1, num_threads: typing.SupportsInt | typing.SupportsIndex = -1, filter: collections.abc.Callable[[typing.SupportsInt | typing.SupportsIndex], bool] = None) -> object"""
         ...
     def load_index(self, path_to_index: str, max_elements: int = 0, allow_replace_delete: bool = False) -> None:
-        """load_index(self: hnswlib.Index, path_to_index: str, max_elements: typing.SupportsInt = 0, allow_replace_deleted: bool = False) -> None"""
+        """load_index(self: hnswlib.Index, path_to_index: str, max_elements: typing.SupportsInt | typing.SupportsIndex = 0, allow_replace_deleted: bool = False) -> None"""
         ...
     def mark_deleted(self, label: int) -> None:
-        """mark_deleted(self: hnswlib.Index, label: typing.SupportsInt) -> None"""
+        """mark_deleted(self: hnswlib.Index, label: typing.SupportsInt | typing.SupportsIndex) -> None"""
         ...
     def resize_index(self, new_size: int) -> None:
-        """resize_index(self: hnswlib.Index, new_size: typing.SupportsInt) -> None"""
+        """resize_index(self: hnswlib.Index, new_size: typing.SupportsInt | typing.SupportsIndex) -> None"""
         ...
     def save_index(self, path_to_index: str) -> None:
         """save_index(self: hnswlib.Index, path_to_index: str) -> None"""
         ...
     def set_ef(self, ef: int) -> None:
-        """set_ef(self: hnswlib.Index, ef: typing.SupportsInt) -> None"""
+        """set_ef(self: hnswlib.Index, ef: typing.SupportsInt | typing.SupportsIndex) -> None"""
         ...
     def set_num_threads(self, num_threads: int) -> None:
-        """set_num_threads(self: hnswlib.Index, num_threads: typing.SupportsInt) -> None"""
+        """set_num_threads(self: hnswlib.Index, num_threads: typing.SupportsInt | typing.SupportsIndex) -> None"""
         ...
     def unmark_deleted(self, label: int) -> None:
-        """unmark_deleted(self: hnswlib.Index, label: typing.SupportsInt) -> None"""
+        """unmark_deleted(self: hnswlib.Index, label: typing.SupportsInt | typing.SupportsIndex) -> None"""
         ...
     @property
     def M(self) -> int: ...
