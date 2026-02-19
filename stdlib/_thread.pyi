@@ -96,16 +96,53 @@ if sys.version_info >= (3, 13):
         ...
     @final
     class lock:
-        def acquire(self, blocking: bool = True, timeout: float = -1) -> bool: ...
-        def release(self) -> None: ...
-        def locked(self) -> bool: ...
+        """
+        A lock object is a synchronization primitive.  To create a lock,
+        call threading.Lock().  Methods are:
+
+        acquire() -- lock the lock, possibly blocking until it can be obtained
+        release() -- unlock of the lock
+        locked() -- test whether the lock is currently locked
+
+        A lock is not owned by the thread that locked it; another thread may
+        unlock it.  A thread attempting to lock a lock that it has already locked
+        will block until another thread unlocks it.  Deadlocks may ensue.
+        """
+        def acquire(self, blocking: bool = True, timeout: float = -1) -> bool:
+            """
+            Lock the lock.  Without argument, this blocks if the lock is already
+            locked (even by the same thread), waiting for another thread to release
+            the lock, and return True once the lock is acquired.
+            With an argument, this will only block if the argument is true,
+            and the return value reflects whether the lock is acquired.
+            The blocking operation is interruptible.
+            """
+            ...
+        def release(self) -> None:
+            """
+            Release the lock, allowing another thread that is blocked waiting for
+            the lock to acquire the lock.  The lock must be in the locked state,
+            but it needn't be locked by the same thread that unlocks it.
+            """
+            ...
+        def locked(self) -> bool:
+            """Return whether the lock is in the locked state."""
+            ...
         @deprecated("Obsolete synonym. Use `acquire()` instead.")
-        def acquire_lock(self, blocking: bool = True, timeout: float = -1) -> bool: ...  # undocumented
+        def acquire_lock(self, blocking: bool = True, timeout: float = -1) -> bool:
+            """An obsolete synonym of acquire()."""
+            ...
         @deprecated("Obsolete synonym. Use `release()` instead.")
-        def release_lock(self) -> None: ...  # undocumented
+        def release_lock(self) -> None:
+            """An obsolete synonym of release()."""
+            ...
         @deprecated("Obsolete synonym. Use `locked()` instead.")
-        def locked_lock(self) -> bool: ...  # undocumented
-        def __enter__(self) -> bool: ...
+        def locked_lock(self) -> bool:
+            """An obsolete synonym of locked()."""
+            ...
+        def __enter__(self) -> bool:
+            """Lock the lock."""
+            ...
         def __exit__(
             self, type: type[BaseException] | None, value: BaseException | None, traceback: TracebackType | None
         ) -> None:
@@ -116,16 +153,96 @@ if sys.version_info >= (3, 13):
 else:
     @final
     class LockType:
-        def acquire(self, blocking: bool = True, timeout: float = -1) -> bool: ...
-        def release(self) -> None: ...
-        def locked(self) -> bool: ...
+        """
+        A lock object is a synchronization primitive.  To create a lock,
+        call threading.Lock().  Methods are:
+
+        acquire() -- lock the lock, possibly blocking until it can be obtained
+        release() -- unlock of the lock
+        locked() -- test whether the lock is currently locked
+
+        A lock is not owned by the thread that locked it; another thread may
+        unlock it.  A thread attempting to lock a lock that it has already locked
+        will block until another thread unlocks it.  Deadlocks may ensue.
+        """
+        def acquire(self, blocking: bool = True, timeout: float = -1) -> bool:
+            """
+            acquire(blocking=True, timeout=-1) -> bool
+            (acquire_lock() is an obsolete synonym)
+
+            Lock the lock.  Without argument, this blocks if the lock is already
+            locked (even by the same thread), waiting for another thread to release
+            the lock, and return True once the lock is acquired.
+            With an argument, this will only block if the argument is true,
+            and the return value reflects whether the lock is acquired.
+            The blocking operation is interruptible.
+            """
+            ...
+        def release(self) -> None:
+            """
+            release()
+            (release_lock() is an obsolete synonym)
+
+            Release the lock, allowing another thread that is blocked waiting for
+            the lock to acquire the lock.  The lock must be in the locked state,
+            but it needn't be locked by the same thread that unlocks it.
+            """
+            ...
+        def locked(self) -> bool:
+            """
+            locked() -> bool
+            (locked_lock() is an obsolete synonym)
+
+            Return whether the lock is in the locked state.
+            """
+            ...
         @deprecated("Obsolete synonym. Use `acquire()` instead.")
-        def acquire_lock(self, blocking: bool = True, timeout: float = -1) -> bool: ...  # undocumented
+        def acquire_lock(self, blocking: bool = True, timeout: float = -1) -> bool:
+            """
+            acquire(blocking=True, timeout=-1) -> bool
+            (acquire_lock() is an obsolete synonym)
+
+            Lock the lock.  Without argument, this blocks if the lock is already
+            locked (even by the same thread), waiting for another thread to release
+            the lock, and return True once the lock is acquired.
+            With an argument, this will only block if the argument is true,
+            and the return value reflects whether the lock is acquired.
+            The blocking operation is interruptible.
+            """
+            ...
         @deprecated("Obsolete synonym. Use `release()` instead.")
-        def release_lock(self) -> None: ...  # undocumented
+        def release_lock(self) -> None:
+            """
+            release()
+            (release_lock() is an obsolete synonym)
+
+            Release the lock, allowing another thread that is blocked waiting for
+            the lock to acquire the lock.  The lock must be in the locked state,
+            but it needn't be locked by the same thread that unlocks it.
+            """
+            ...
         @deprecated("Obsolete synonym. Use `locked()` instead.")
-        def locked_lock(self) -> bool: ...  # undocumented
-        def __enter__(self) -> bool: ...
+        def locked_lock(self) -> bool:
+            """
+            locked() -> bool
+            (locked_lock() is an obsolete synonym)
+
+            Return whether the lock is in the locked state.
+            """
+            ...
+        def __enter__(self) -> bool:
+            """
+            acquire(blocking=True, timeout=-1) -> bool
+            (acquire_lock() is an obsolete synonym)
+
+            Lock the lock.  Without argument, this blocks if the lock is already
+            locked (even by the same thread), waiting for another thread to release
+            the lock, and return True once the lock is acquired.
+            With an argument, this will only block if the argument is true,
+            and the return value reflects whether the lock is acquired.
+            The blocking operation is interruptible.
+            """
+            ...
         def __exit__(
             self, type: type[BaseException] | None, value: BaseException | None, traceback: TracebackType | None
         ) -> None:
@@ -153,13 +270,28 @@ def start_new_thread(function: Callable[[Unpack[_Ts]], object], args: tuple[Unpa
     """
     ...
 @overload
-def start_new_thread(function: Callable[..., object], args: tuple[Any, ...], kwargs: dict[str, Any], /) -> int: ...
+def start_new_thread(function: Callable[..., object], args: tuple[Any, ...], kwargs: dict[str, Any], /) -> int:
+    """
+    Start a new thread and return its identifier.
+
+    The thread will call the function with positional arguments from the
+    tuple args and keyword arguments taken from the optional dictionary
+    kwargs.  The thread exits when the function returns; the return value
+    is ignored.  The thread will also exit when the function raises an
+    unhandled exception; a stack trace will be printed unless the exception
+    is SystemExit.
+    """
+    ...
 @overload
 @deprecated("Obsolete synonym. Use `start_new_thread()` instead.")
-def start_new(function: Callable[[Unpack[_Ts]], object], args: tuple[Unpack[_Ts]], /) -> int: ...  # undocumented
+def start_new(function: Callable[[Unpack[_Ts]], object], args: tuple[Unpack[_Ts]], /) -> int:
+    """An obsolete synonym of start_new_thread()."""
+    ...
 @overload
 @deprecated("Obsolete synonym. Use `start_new_thread()` instead.")
-def start_new(function: Callable[..., object], args: tuple[Any, ...], kwargs: dict[str, Any], /) -> int: ...  # undocumented
+def start_new(function: Callable[..., object], args: tuple[Any, ...], kwargs: dict[str, Any], /) -> int:
+    """An obsolete synonym of start_new_thread()."""
+    ...
 
 if sys.version_info >= (3, 10):
     def interrupt_main(signum: signal.Signals = signal.SIGINT, /) -> None:
@@ -178,14 +310,62 @@ else:
         """
         interrupt_main()
 
-def exit() -> NoReturn: ...
+        Raise a KeyboardInterrupt in the main thread.
+        A subthread can use this function to interrupt the main thread.
+        """
+        ...
+
+def exit() -> NoReturn:
+    """
+    This is synonymous to ``raise SystemExit''.  It will cause the current
+    thread to exit silently unless the exception is caught.
+    """
+    ...
 @deprecated("Obsolete synonym. Use `exit()` instead.")
-def exit_thread() -> NoReturn: ...  # undocumented
-def allocate_lock() -> LockType: ...
+def exit_thread() -> NoReturn:
+    """An obsolete synonym of exit()."""
+    ...
+def allocate_lock() -> LockType:
+    """
+    Create a new lock object. See help(type(threading.Lock())) for
+    information about locks.
+    """
+    ...
 @deprecated("Obsolete synonym. Use `allocate_lock()` instead.")
-def allocate() -> LockType: ...  # undocumented
-def get_ident() -> int: ...
-def stack_size(size: int = 0, /) -> int: ...
+def allocate() -> LockType:
+    """An obsolete synonym of allocate_lock()."""
+    ...
+def get_ident() -> int:
+    """
+    Return a non-zero integer that uniquely identifies the current thread
+    amongst other threads that exist simultaneously.
+    This may be used to identify per-thread resources.
+    Even though on some platforms threads identities may appear to be
+    allocated consecutive numbers starting at 1, this behavior should not
+    be relied upon, and the number should be seen purely as a magic cookie.
+    A thread's identity may be reused for another thread after it exits.
+    """
+    ...
+def stack_size(size: int = 0, /) -> int:
+    """
+    Return the thread stack size used when creating new threads.  The
+    optional size argument specifies the stack size (in bytes) to be used
+    for subsequently created threads, and must be 0 (use platform or
+    configured default) or a positive integer value of at least 32,768 (32k).
+    If changing the thread stack size is unsupported, a ThreadError
+    exception is raised.  If the specified size is invalid, a ValueError
+    exception is raised, and the stack size is unmodified.  32k bytes
+     currently the minimum supported stack size value to guarantee
+    sufficient stack space for the interpreter itself.
+
+    Note that some platforms may have particular restrictions on values for
+    the stack size, such as requiring a minimum stack size larger than 32 KiB or
+    requiring allocation in multiples of the system memory page size
+    - platform documentation should be referred to for more information
+    (4 KiB pages are common; using multiples of 4096 for the stack size is
+    the suggested approach in the absence of more specific information).
+    """
+    ...
 
 TIMEOUT_MAX: Final[float]
 
