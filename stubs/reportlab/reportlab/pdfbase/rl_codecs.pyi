@@ -3,10 +3,12 @@ from typing import NamedTuple
 __all__ = ["RL_Codecs"]
 
 class StdCodecData(NamedTuple):
+    """StdCodecData(exceptions, rexceptions)"""
     exceptions: dict[int, int | None] | None
     rexceptions: dict[int, int | None] | None
 
 class ExtCodecData(NamedTuple):
+    """ExtCodecData(baseName, exceptions, rexceptions)"""
     baseName: str
     exceptions: dict[int, int | None] | None
     rexceptions: dict[int, int | None] | None

@@ -99,12 +99,19 @@ def TTFOpenFile(fn: StrOrBytesPath) -> tuple[StrOrBytesPath,]:
     ...
 
 class TTFontParser:
+    """Basic TTF file parser"""
     ttfVersions: tuple[int, ...]
     ttcVersions: tuple[int, ...]
     fileKind: str
     validate: bool | Literal[0, 1]
     subfontNameX: bytes
-    def __init__(self, file, validate: bool | Literal[0, 1] = 0, subfontIndex: int = 0) -> None: ...
+    def __init__(self, file, validate: bool | Literal[0, 1] = 0, subfontIndex: int = 0) -> None:
+        """
+        Loads and parses a TrueType font file.  file can be a filename or a
+        file object.  If validate is set to a false values, skips checksum
+        validation.  This can save time, especially if the font is large.
+        """
+        ...
     ttcVersion: int
     numSubfonts: int
     subfontOffsets: list[int]
@@ -118,32 +125,69 @@ class TTFontParser:
     tables: list[Incomplete]
     def readTableDirectory(self) -> None: ...
     version: int
-    def readHeader(self) -> bool: ...
+    def readHeader(self) -> bool:
+        """read the sfnt header at the current position"""
+        ...
     filename: Incomplete
     def readFile(self, f) -> None: ...
     def checksumTables(self) -> None: ...
     def checksumFile(self) -> None: ...
-    def get_table_pos(self, tag) -> tuple[Incomplete, Incomplete]: ...
-    def seek(self, pos: int) -> None: ...
-    def skip(self, delta: int) -> None: ...
-    def seek_table(self, tag, offset_in_table: int = 0) -> int: ...
-    def read_tag(self) -> str: ...
-    def get_chunk(self, pos: int, length: int) -> bytes: ...
+    def get_table_pos(self, tag) -> tuple[Incomplete, Incomplete]:
+        """Returns the offset and size of a given TTF table."""
+        ...
+    def seek(self, pos: int) -> None:
+        """Moves read pointer to a given offset in file."""
+        ...
+    def skip(self, delta: int) -> None:
+        """Skip the given number of bytes."""
+        ...
+    def seek_table(self, tag, offset_in_table: int = 0) -> int:
+        """
+        Moves read pointer to the given offset within a given table and
+        returns absolute offset of that position in the file.
+        """
+        ...
+    def read_tag(self) -> str:
+        """Read a 4-character tag"""
+        ...
+    def get_chunk(self, pos: int, length: int) -> bytes:
+        """Return a chunk of raw data at given position"""
+        ...
     def read_uint8(self) -> int: ...
-    def read_ushort(self) -> int: ...
-    def read_ulong(self) -> int: ...
-    def read_short(self) -> int: ...
-    def get_ushort(self, pos: int) -> int: ...
-    def get_ulong(self, pos: int) -> int: ...
-    def get_table(self, tag): ...
+    def read_ushort(self) -> int:
+        """Reads an unsigned short"""
+        ...
+    def read_ulong(self) -> int:
+        """Reads an unsigned long"""
+        ...
+    def read_short(self) -> int:
+        """Reads a signed short"""
+        ...
+    def get_ushort(self, pos: int) -> int:
+        """Return an unsigned short at given position"""
+        ...
+    def get_ulong(self, pos: int) -> int:
+        """Return an unsigned long at given position"""
+        ...
+    def get_table(self, tag):
+        """Return the given TTF table"""
+        ...
 
 class TTFontMaker:
+    """Basic TTF file generator"""
     tables: dict[Incomplete, Incomplete]
-    def __init__(self) -> None: ...
-    def add(self, tag, data) -> None: ...
-    def makeStream(self) -> bytes: ...
+    def __init__(self) -> None:
+        """Initializes the generator."""
+        ...
+    def add(self, tag, data) -> None:
+        """Adds a table to the TTF file."""
+        ...
+    def makeStream(self) -> bytes:
+        """Finishes the generation and returns the TTF file as a string"""
+        ...
 
 class CMapFmt2SubHeader(NamedTuple):
+    """CMapFmt2SubHeader(firstCode, entryCount, idDelta, idRangeOffset)"""
     firstCode: int
     entryCount: int
     idDelta: int
@@ -155,9 +199,18 @@ class TTFNameBytes(bytes):
     def __new__(cls, b, enc: str = "utf8") -> Self: ...
 
 class TTFontFile(TTFontParser):
+    """TTF file parser and generator"""
     def __init__(
         self, file, charInfo: bool | Literal[0, 1] = 1, validate: bool | Literal[0, 1] = 0, subfontIndex: int | str | bytes = 0
-    ) -> None: ...
+    ) -> None:
+        """
+        Loads and parses a TrueType font file.
+
+        file can be a filename or a file object.  If validate is set to a false
+        values, skips checksum validation.  This can save time, especially if
+        the font is large.  See TTFontFile.extractInfo for more information.
+        """
+        ...
     name: Incomplete
     familyName: Incomplete
     styleName: Incomplete
@@ -180,8 +233,37 @@ class TTFontFile(TTFontParser):
     charWidths: Incomplete
     hmetrics: Incomplete
     glyphPos: Incomplete
-    def extractInfo(self, charInfo: bool | Literal[0, 1] = 1) -> None: ...
-    def makeSubset(self, subset: Sequence[Incomplete]) -> bytes: ...
+    def extractInfo(self, charInfo: bool | Literal[0, 1] = 1) -> None:
+        """
+        Extract typographic information from the loaded font file.
+
+        The following attributes will be set::
+
+            name         PostScript font name
+            flags        Font flags
+            ascent       Typographic ascender in 1/1000ths of a point
+            descent      Typographic descender in 1/1000ths of a point
+            capHeight    Cap height in 1/1000ths of a point (0 if not available)
+            bbox         Glyph bounding box [l,t,r,b] in 1/1000ths of a point
+            _bbox        Glyph bounding box [l,t,r,b] in unitsPerEm
+            unitsPerEm   Glyph units per em
+            italicAngle  Italic angle in degrees ccw
+            stemV        stem weight in 1/1000ths of a point (approximate)
+
+        If charInfo is true, the following will also be set::
+
+            defaultWidth   default glyph width in 1/1000ths of a point
+            charWidths     dictionary of character widths for every supported UCS character
+                           code
+
+        This will only work if the font has a Unicode cmap (platform 3,
+        encoding 1, format 4 or platform 0 any encoding format 4).  Setting
+        charInfo to false avoids this requirement
+        """
+        ...
+    def makeSubset(self, subset: Sequence[Incomplete]) -> bytes:
+        """Create a subset of a TrueType font"""
+        ...
 
 FF_FIXED: Final = 1
 FF_SERIF: Final = 2
@@ -194,9 +276,24 @@ FF_SMALLCAP: Final = 131072
 FF_FORCEBOLD: Final = 262144
 
 class TTFontFace(TTFontFile, pdfmetrics.TypeFace):
-    def __init__(self, filename, validate: bool | Literal[0, 1] = 0, subfontIndex: int | str | bytes = 0) -> None: ...
-    def getCharWidth(self, code): ...
-    def addSubsetObjects(self, doc, fontname, subset): ...
+    """
+    TrueType typeface.
+
+    Conceptually similar to a single byte typeface, but the glyphs are
+    identified by UCS character codes instead of glyph names.
+    """
+    def __init__(self, filename, validate: bool | Literal[0, 1] = 0, subfontIndex: int | str | bytes = 0) -> None:
+        """Loads a TrueType font from filename."""
+        ...
+    def getCharWidth(self, code):
+        """Returns the width of character U+<code>"""
+        ...
+    def addSubsetObjects(self, doc, fontname, subset):
+        """
+        Generate a TrueType font subset and add it to the PDF document.
+        Returns a PDFReference to the new FontDescriptor object.
+        """
+        ...
 
 class TTEncoding:
     """
@@ -246,11 +343,41 @@ class TTFont:
         subfontIndex: int | str | bytes = 0,
         asciiReadable: bool | Literal[0, 1] | None = None,
         shapable: bool = True,
-    ) -> None: ...
+    ) -> None:
+        """
+        Loads a TrueType font from filename.
+
+        If validate is set to a false values, skips checksum validation.  This
+        can save time, especially if the font is large.
+        """
+        ...
     def stringWidth(self, text, size, encoding: str = "utf8") -> float: ...
-    def splitString(self, text, doc, encoding: str = "utf-8") -> list[tuple[int, bytes]]: ...
-    def getSubsetInternalName(self, subset, doc) -> str: ...
-    def addObjects(self, doc) -> None: ...
+    def splitString(self, text, doc, encoding: str = "utf-8") -> list[tuple[int, bytes]]:
+        """
+        Splits text into a number of chunks, each of which belongs to a
+        single subset.  Returns a list of tuples (subset, string).  Use subset
+        numbers with getSubsetInternalName.  Doc is needed for distinguishing
+        subsets when building different documents at the same time.
+        """
+        ...
+    def getSubsetInternalName(self, subset, doc) -> str:
+        """
+        Returns the name of a PDF Font object corresponding to a given
+        subset of this dynamic font.  Use this function instead of
+        PDFDocument.getInternalFontName.
+        """
+        ...
+    def addObjects(self, doc) -> None:
+        """
+        Makes  one or more PDF objects to be added to the document.  The
+        caller supplies the internal name to be used (typically F1, F2, ... in
+        sequence).
+
+        This method creates a number of Font and FontDescriptor objects.  Every
+        FontDescriptor is a (no more than) 256 character subset of the original
+        TrueType font.
+        """
+        ...
     @property
     def hbFace(self) -> Incomplete | None:
         """return uharbuzz.Face"""

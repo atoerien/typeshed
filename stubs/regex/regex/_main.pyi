@@ -153,28 +153,31 @@ second character.
     \xXX            Matches the character with 2-digit hex code XX.
     \X              Matches a grapheme.
     \Z              Matches only at the end of the string.
+    \z              Matches only at the end of the string. Alias of \Z.
     \\              Matches a literal backslash.
 
 This module exports the following functions:
-    match      Match a regular expression pattern at the beginning of a string.
-    fullmatch  Match a regular expression pattern against all of a string.
-    search     Search a string for the presence of a pattern.
-    sub        Substitute occurrences of a pattern found in a string using a
-               template string.
-    subf       Substitute occurrences of a pattern found in a string using a
-               format string.
-    subn       Same as sub, but also return the number of substitutions made.
-    subfn      Same as subf, but also return the number of substitutions made.
-    split      Split a string by the occurrences of a pattern. VERSION1: will
-               split at zero-width match; VERSION0: won't split at zero-width
-               match.
-    splititer  Return an iterator yielding the parts of a split string.
-    findall    Find all occurrences of a pattern in a string.
-    finditer   Return an iterator yielding a match object for each match.
-    compile    Compile a pattern into a Pattern object.
-    purge      Clear the regular expression cache.
-    escape     Backslash all non-alphanumerics or special characters in a
-               string.
+    match        Match a regular expression pattern at the beginning of a string.
+    prefixmatch  Match a regular expression pattern at the beginning of a string.
+                 Alias of match.
+    fullmatch    Match a regular expression pattern against all of a string.
+    search       Search a string for the presence of a pattern.
+    sub          Substitute occurrences of a pattern found in a string using a
+                 template string.
+    subf         Substitute occurrences of a pattern found in a string using a
+                 format string.
+    subn         Same as sub, but also return the number of substitutions made.
+    subfn        Same as subf, but also return the number of substitutions made.
+    split        Split a string by the occurrences of a pattern. VERSION1: will
+                 split at zero-width match; VERSION0: won't split at zero-width
+                 match.
+    splititer    Return an iterator yielding the parts of a split string.
+    findall      Find all occurrences of a pattern in a string.
+    finditer     Return an iterator yielding a match object for each match.
+    compile      Compile a pattern into a Pattern object.
+    purge        Clear the regular expression cache.
+    escape       Backslash all non-alphanumerics or special characters in a
+                 string.
 
 Most of the functions support a concurrent parameter: if True, the GIL will be
 released during matching, allowing other Python threads to run concurrently. If
@@ -368,7 +371,12 @@ def match(
     timeout: float | None = None,
     ignore_unused: bool = False,
     **kwargs: Any,
-) -> Match[bytes] | None: ...
+) -> Match[bytes] | None:
+    """
+    Try to apply the pattern at the start of the string, returning a match
+    object, or None if no match was found.
+    """
+    ...
 
 prefixmatch = match
 
@@ -850,7 +858,12 @@ class Pattern(Generic[AnyStr]):
         concurrent: bool | None = None,
         partial: bool = False,
         timeout: float | None = None,
-    ) -> Match[bytes] | None: ...
+    ) -> Match[bytes] | None:
+        """
+        match(string, pos=None, endpos=None, concurrent=None, timeout=None) --> MatchObject or None.
+        Match zero or more characters at the beginning of the string.
+        """
+        ...
     prefixmatch = match
     @overload
     def fullmatch(
