@@ -27,7 +27,6 @@ reportlab[pycairo]==4.4.10
 portpicker==1.6.*
 waitress~=3.0.1
 pyfarmhash==0.4.*
-ujson==5.10.*
 assertpy==1.1.*
 PyMySQL==1.1.*
 django-import-export==4.4.*
@@ -161,7 +160,7 @@ mock==5.2.*
 flake8-builtins==3.1.*
 pyasn1==0.6.*
 editdistance==0.8.*
-regex==2026.1.15
+regex==2026.2.19
 whatthepatch==1.0.*
 Flask-Migrate==4.1.*
 pyaudio==0.2.*
