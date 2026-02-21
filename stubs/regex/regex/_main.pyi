@@ -239,6 +239,7 @@ __all__ = [
     "finditer",
     "fullmatch",
     "match",
+    "prefixmatch",
     "purge",
     "search",
     "split",
@@ -367,12 +368,10 @@ def match(
     timeout: float | None = None,
     ignore_unused: bool = False,
     **kwargs: Any,
-) -> Match[bytes] | None:
-    """
-    Try to apply the pattern at the start of the string, returning a match
-    object, or None if no match was found.
-    """
-    ...
+) -> Match[bytes] | None: ...
+
+prefixmatch = match
+
 @overload
 def fullmatch(
     pattern: str | Pattern[str],
@@ -851,12 +850,8 @@ class Pattern(Generic[AnyStr]):
         concurrent: bool | None = None,
         partial: bool = False,
         timeout: float | None = None,
-    ) -> Match[bytes] | None:
-        """
-        match(string, pos=None, endpos=None, concurrent=None, timeout=None) --> MatchObject or None.
-        Match zero or more characters at the beginning of the string.
-        """
-        ...
+    ) -> Match[bytes] | None: ...
+    prefixmatch = match
     @overload
     def fullmatch(
         self: Pattern[str],
