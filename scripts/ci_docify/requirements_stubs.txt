@@ -117,7 +117,7 @@ Flask-SocketIO==5.6.*
 opentracing==2.4.*
 PyMeeus==0.5.*
 grpcio==1.*
-peewee==3.19.0
+peewee==4.0.0
 ldap3==2.9.*
 click-default-group==1.2.*
 WebOb==1.8.*
