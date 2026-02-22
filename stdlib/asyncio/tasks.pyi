@@ -1411,44 +1411,9 @@ else:
         ...
 
 if sys.version_info >= (3, 11):
-    @overload
     async def wait(
         fs: Iterable[_FT], *, timeout: float | None = None, return_when: str = "ALL_COMPLETED"
-    ) -> tuple[set[_FT], set[_FT]]:
-        """
-        Wait for the Futures or Tasks given by fs to complete.
-
-        The fs iterable must not be empty.
-
-        Returns two sets of Future: (done, pending).
-
-        Usage:
-
-            done, pending = await asyncio.wait(fs)
-
-        Note: This does not raise TimeoutError! Futures that aren't done
-        when the timeout occurs are returned in the second set.
-        """
-        ...
-    @overload
-    async def wait(
-        fs: Iterable[Task[_T]], *, timeout: float | None = None, return_when: str = "ALL_COMPLETED"
-    ) -> tuple[set[Task[_T]], set[Task[_T]]]:
-        """
-        Wait for the Futures or Tasks given by fs to complete.
-
-        The fs iterable must not be empty.
-
-        Returns two sets of Future: (done, pending).
-
-        Usage:
-
-            done, pending = await asyncio.wait(fs)
-
-        Note: This does not raise TimeoutError! Futures that aren't done
-        when the timeout occurs are returned in the second set.
-        """
-        ...
+    ) -> tuple[set[_FT], set[_FT]]: ...
 
 elif sys.version_info >= (3, 10):
     @overload
