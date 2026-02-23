@@ -1,7 +1,7 @@
 """Image functionality sliced out of canvas.py for generalization"""
 
 from _typeshed import Incomplete
-from typing import Final
+from typing import Final, Literal
 
 __version__: Final[str]
 
@@ -18,16 +18,16 @@ class PDFImage:
     width: Incomplete
     height: Incomplete
     filename: Incomplete
-    imageCaching: Incomplete
+    imageCaching: bool | Literal[0, 1]
     colorSpace: str
     bitsPerComponent: int
     filters: Incomplete
     source: Incomplete
-    def __init__(self, image, x, y, width=None, height=None, caching: int = 0) -> None: ...
-    def jpg_imagedata(self): ...
-    def cache_imagedata(self): ...
-    def PIL_imagedata(self): ...
-    def non_jpg_imagedata(self, image): ...
+    def __init__(self, image, x, y, width=None, height=None, caching: bool | Literal[0, 1] = 0) -> None: ...
+    def jpg_imagedata(self) -> tuple[list[str], Incomplete, Incomplete]: ...
+    def cache_imagedata(self) -> list[str]: ...
+    def PIL_imagedata(self) -> tuple[list[str], Incomplete, Incomplete]: ...
+    def non_jpg_imagedata(self, image) -> tuple[list[str], int, int]: ...
     imageData: Incomplete
     imgwidth: Incomplete
     imgheight: Incomplete
@@ -42,17 +42,5 @@ class PDFImage:
         anchorAtXY: bool = False,
         showBoundary: bool = False,
         extraReturn=None,
-    ):
-        """
-        Draw an Image into the specified rectangle.  If width and
-        height are omitted, they are calculated from the image size.
-        Also allow file names as well as images.  This allows a
-        caching mechanism
-        """
-        ...
-    def format(self, document):
-        """
-        Allow it to be used within pdfdoc framework.  This only
-        defines how it is stored, not how it is drawn later.
-        """
-        ...
+    ) -> bool: ...
+    def format(self, document) -> bytes: ...

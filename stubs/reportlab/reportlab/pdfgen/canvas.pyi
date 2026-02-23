@@ -8,6 +8,9 @@ from collections.abc import Callable
 from typing import IO, Literal
 
 from reportlab.lib.colors import Color, _ConvertibleToColor
+from reportlab.pdfbase.acroform import AcroForm
+from reportlab.pdfbase.pdfdoc import Destination
+from reportlab.pdfgen.pathobject import PDFPathObject
 from reportlab.pdfgen.textobject import PDFTextObject, _PDFColorSetter
 
 class ShowBoundaryValue:
@@ -23,62 +26,14 @@ class ShowBoundaryValue:
     def __bool__(self) -> bool: ...
 
 class Canvas(_PDFColorSetter):
-    """
-    This class is the programmer's interface to the PDF file format.  Methods
-    are (or will be) provided here to do just about everything PDF can do.
-
-    The underlying model to the canvas concept is that of a graphics state machine
-    that at any given point in time has a current font, fill color (for figure
-    interiors), stroke color (for figure borders), line width and geometric transform, among
-    many other characteristics.
-
-    Canvas methods generally either draw something (like canvas.line) using the
-    current state of the canvas or change some component of the canvas
-    state (like canvas.setFont).  The current state can be saved and restored
-    using the saveState/restoreState methods.
-
-    Objects are "painted" in the order they are drawn so if, for example
-    two rectangles overlap the last draw will appear "on top".  PDF form
-    objects (supported here) are used to draw complex drawings only once,
-    for possible repeated use.
-
-    There are other features of canvas which are not visible when printed,
-    such as outlines and bookmarks which are used for navigating a document
-    in a viewer.
-
-    Here is a very silly example usage which generates a Hello World pdf document.
-
-    Example:: 
-
-       from reportlab.pdfgen import canvas
-       c = canvas.Canvas("hello.pdf")
-       from reportlab.lib.units import inch
-       # move the origin up and to the left
-       c.translate(inch,inch)
-       # define a large font
-       c.setFont("Helvetica", 80)
-       # choose some colors
-       c.setStrokeColorRGB(0.2,0.5,0.3)
-       c.setFillColorRGB(1,0,1)
-       # draw a rectangle
-       c.rect(inch,inch,6*inch,9*inch, fill=1)
-       # make text go straight up
-       c.rotate(90)
-       # change color
-       c.setFillColorRGB(0,0,0.77)
-       # say hello (note after rotate the y coord needs to be negative!)
-       c.drawString(3*inch, -3*inch, "Hello World")
-       c.showPage()
-       c.save()
-    """
-    bottomup: int
+    bottomup: bool | Literal[0, 1]
     imageCaching: Incomplete
-    state_stack: Incomplete
+    state_stack: list[Incomplete]
     def __init__(
         self,
         filename: str | IO[bytes],
         pagesize: tuple[float, float] | None = None,
-        bottomup: int = 1,
+        bottomup: bool | Literal[0, 1] = 1,
         pageCompression=None,
         invariant=None,
         verbosity: int = 0,
@@ -123,208 +78,28 @@ class Canvas(_PDFColorSetter):
     def init_graphics_state(self) -> None: ...
     def push_state_stack(self) -> None: ...
     def pop_state_stack(self) -> None: ...
-    STATE_ATTRIBUTES: Incomplete
-    STATE_RANGE: Incomplete
-    def setAuthor(self, author: str | None) -> None:
-        """
-        identify the author for invisible embedding inside the PDF document.
-        the author annotation will appear in the the text of the file but will
-        not automatically be seen when the document is viewed, but is visible
-        in document properties etc etc.
-        """
-        ...
-    def setDateFormatter(self, dateFormatter) -> None:
-        """accepts a func(yyyy,mm,dd,hh,m,s) used to create embedded formatted date"""
-        ...
-    def addOutlineEntry(self, title, key, level: int = 0, closed=None) -> None:
-        """
-        Adds a new entry to the outline at given level.  If LEVEL not specified,
-        entry goes at the top level.  If level specified, it must be
-        no more than 1 greater than the outline level in the last call.
-
-        The key must be the (unique) name of a bookmark.
-        the title is the (non-unique) name to be displayed for the entry.
-
-        If closed is set then the entry should show no subsections by default
-        when displayed.
-
-        Example::
-
-           c.addOutlineEntry("first section", "section1")
-           c.addOutlineEntry("introduction", "s1s1", 1, closed=1)
-           c.addOutlineEntry("body", "s1s2", 1)
-           c.addOutlineEntry("detail1", "s1s2s1", 2)
-           c.addOutlineEntry("detail2", "s1s2s2", 2)
-           c.addOutlineEntry("conclusion", "s1s3", 1)
-           c.addOutlineEntry("further reading", "s1s3s1", 2)
-           c.addOutlineEntry("second section", "section1")
-           c.addOutlineEntry("introduction", "s2s1", 1)
-           c.addOutlineEntry("body", "s2s2", 1, closed=1)
-           c.addOutlineEntry("detail1", "s2s2s1", 2)
-           c.addOutlineEntry("detail2", "s2s2s2", 2)
-           c.addOutlineEntry("conclusion", "s2s3", 1)
-           c.addOutlineEntry("further reading", "s2s3s1", 2)
-
-        generated outline looks like::
-
-            - first section
-            |- introduction
-            |- body
-            |  |- detail1
-            |  |- detail2
-            |- conclusion
-            |  |- further reading
-            - second section
-            |- introduction
-            |+ body
-            |- conclusion
-            |  |- further reading
-
-        Note that the second "body" is closed.
-
-        Note that you can jump from level 5 to level 3 but not
-        from 3 to 5: instead you need to provide all intervening
-        levels going down (4 in this case).  Note that titles can
-        collide but keys cannot.
-        """
-        ...
-    def setOutlineNames0(self, *nametree) -> None:
-        """
-        nametree should can be a recursive tree like so::
-  
-             c.setOutlineNames(
-               "chapter1dest",
-               ("chapter2dest",
-                ["chapter2section1dest",
-                 "chapter2section2dest",
-                 "chapter2conclusiondest"]
-               ), # end of chapter2 description
-               "chapter3dest",
-               ("chapter4dest", ["c4s1", "c4s2"])
-               )
-
-        each of the string names inside must be bound to a bookmark
-        before the document is generated.
-        """
-        ...
-    def setTitle(self, title: str | None) -> None:
-        """
-        write a title into the PDF file that won't automatically display
-        in the document itself.
-        """
-        ...
-    def setSubject(self, subject: str | None) -> None:
-        """
-        write a subject into the PDF file that won't automatically display
-        in the document itself.
-        """
-        ...
-    def setCreator(self, creator: str | None) -> None:
-        """
-        write a creator into the PDF file that won't automatically display
-        in the document itself. This should be used to name the original app
-        which is passing data into ReportLab, if you wish to name it.
-        """
-        ...
-    def setProducer(self, producer: str | None) -> None:
-        """change the default producer value"""
-        ...
-    def setKeywords(self, keywords: str | None) -> None:
-        """
-        write a list of keywords into the PDF file which shows in document properties.
-        Either submit a single string or a list/tuple
-        """
-        ...
-    def pageHasData(self):
-        """Info function - app can call it after showPage to see if it needs a save"""
-        ...
-    def showOutline(self) -> None:
-        """
-        Specify that Acrobat Reader should start with the outline tree visible.
-        showFullScreen() and showOutline() conflict; the one called last
-        wins.
-        """
-        ...
-    def showFullScreen0(self) -> None:
-        """
-        Specify that Acrobat Reader should start in full screen mode.
-        showFullScreen() and showOutline() conflict; the one called last
-        wins.
-        """
-        ...
+    STATE_ATTRIBUTES: list[str]
+    STATE_RANGE: list[int]
+    def setAuthor(self, author: str | None) -> None: ...
+    def setDateFormatter(self, dateFormatter) -> None: ...
+    def addOutlineEntry(self, title, key, level: int = 0, closed=None) -> None: ...
+    def setOutlineNames0(self, *nametree) -> None: ...
+    def setTitle(self, title: str | None) -> None: ...
+    def setSubject(self, subject: str | None) -> None: ...
+    def setCreator(self, creator: str | None) -> None: ...
+    def setProducer(self, producer: str | None) -> None: ...
+    def setKeywords(self, keywords: str | None) -> None: ...
+    def pageHasData(self) -> bool: ...
+    def showOutline(self) -> None: ...
+    def showFullScreen0(self) -> None: ...
     def setBlendMode(self, v) -> None: ...
-    def showPage(self) -> None:
-        """Close the current page and possibly start on a new page."""
-        ...
-    def setPageCallBack(self, func) -> None:
-        """
-        func(pageNum) will be called on each page end.
-
-        This is mainly a hook for progress monitoring.
-         Call setPageCallback(None) to clear a callback.
-        """
-        ...
-    def bookmarkPage(self, key, fit: str = "Fit", left=None, top=None, bottom=None, right=None, zoom=None):
-        """
-        This creates a bookmark to the current page which can
-        be referred to with the given key elsewhere.
-
-        PDF offers very fine grained control over how Acrobat
-        reader is zoomed when people link to this. The default
-        is to keep the user's current zoom settings. the last
-        arguments may or may not be needed depending on the
-        choice of 'fitType'.
-
-        Fit types and the other arguments they use are:
-
-        - XYZ left top zoom - fine grained control.  null
-          or zero for any of the parameters means 'leave
-          as is', so "0,0,0" will keep the reader's settings.
-          NB. Adobe Reader appears to prefer "null" to 0's.
-
-        - Fit - entire page fits in window
-
-        - FitH top - top coord at top of window, width scaled
-          to fit.
-
-        - FitV left - left coord at left of window, height
-          scaled to fit
-
-        - FitR left bottom right top - scale window to fit
-          the specified rectangle
-
-        (question: do we support /FitB, FitBH and /FitBV
-        which are hangovers from version 1.1 / Acrobat 3.0?)
-        """
-        ...
-    def bookmarkHorizontalAbsolute(self, key, top, left: int = 0, fit: str = "XYZ", **kw):
-        """
-        Bind a bookmark (destination) to the current page at a horizontal position.
-        Note that the yhorizontal of the book mark is with respect to the default
-        user space (where the origin is at the lower left corner of the page)
-        and completely ignores any transform (translation, scale, skew, rotation,
-        etcetera) in effect for the current graphics state.  The programmer is
-        responsible for making sure the bookmark matches an appropriate item on
-        the page.
-        """
-        ...
-    def bookmarkHorizontal(self, key, relativeX, relativeY, **kw) -> None:
-        """w.r.t. the current transformation, bookmark this horizontal."""
-        ...
-    def doForm(self, name) -> None:
-        """
-        use a form XObj in current operation stream.
-
-        The form should either have been defined previously using
-        beginForm ... endForm, or may be defined later.  If it is not
-        defined at save time, an exception will be raised. The form
-        will be drawn within the context of the current graphics
-        state.
-        """
-        ...
-    def hasForm(self, name):
-        """Query whether form XObj really exists yet."""
-        ...
+    def showPage(self) -> None: ...
+    def setPageCallBack(self, func) -> None: ...
+    def bookmarkPage(self, key, fit: str = "Fit", left=None, top=None, bottom=None, right=None, zoom=None) -> Destination: ...
+    def bookmarkHorizontalAbsolute(self, key, top, left: int = 0, fit: str = "XYZ", **kw) -> Destination: ...
+    def bookmarkHorizontal(self, key, relativeX, relativeY, **kw) -> None: ...
+    def doForm(self, name) -> None: ...
+    def hasForm(self, name: str) -> bool: ...
     def drawInlineImage(
         self,
         image,
@@ -337,21 +112,7 @@ class Canvas(_PDFColorSetter):
         anchorAtXY: bool = False,
         showBoundary: bool = False,
         extraReturn=None,
-    ):
-        """
-        See drawImage, which should normally be used instead... 
-
-        drawInlineImage behaves like drawImage, but stores the image content
-        within the graphics stream for the page.  This means that the mask
-        parameter for transparency is not available.  It also means that there 
-        is no saving in file size or time if the same image is reused.  
-
-        In theory it allows images to be displayed slightly faster; however, 
-        we doubt if the difference is noticeable to any human user these days.
-        Only use this if you have studied the PDF specification and know the
-        implications.
-        """
-        ...
+    ) -> tuple[Incomplete, Incomplete]: ...
     def drawImage(
         self,
         image,
@@ -365,130 +126,37 @@ class Canvas(_PDFColorSetter):
         anchorAtXY: bool = False,
         showBoundary: bool = False,
         extraReturn=None,
-    ):
-        """
-        Draws the image (ImageReader object or filename) as specified.
-
-        "image" may be an image filename or an ImageReader object. 
-
-        x and y define the lower left corner of the image you wish to
-        draw (or of its bounding box, if using preserveAspectRation below).
- 
-        If width and height are not given, the width and height of the
-        image in pixels is used at a scale of 1 point to 1 pixel.  
-
-        If width and height are given, the image will be stretched to fill 
-        the given rectangle bounded by (x, y, x+width, y-height).  
-
-        If you supply negative widths and/or heights, it inverts them and adjusts
-        x and y accordingly.
-
-        The method returns the width and height of the underlying image, since
-        this is often useful for layout algorithms and saves you work if you have
-        not specified them yourself.
-
-        The mask parameter supports transparent backgrounds. It takes 6 numbers
-        and defines the range of RGB values which will be masked out or treated
-        as transparent.  For example with [0,2,40,42,136,139], it will mask out
-        any pixels with a Red value from 0-2, Green from 40-42 and
-        Blue from 136-139  (on a scale of 0-255).
-
-        New post version 2.0:  drawImage can center an image in a box you
-        provide, while preserving its aspect ratio.  For example, you might
-        have a fixed square box in your design, and a collection of photos
-        which might be landscape or portrait that you want to appear within 
-        the box.  If preserveAspectRatio is true, your image will appear within
-        the box specified.
-
-
-        If preserveAspectRatio is True, the anchor property can be used to
-        specify how images should fit into the given box.  It should 
-        be set to one of the following values, taken from the points of
-        the compass (plus 'c' for 'centre'):
-
-                nw   n   ne
-                w    c    e
-                sw   s   se
-
-        The default value is 'c' for 'centre'.  Thus, if you want your
-        bitmaps to always be centred and appear at the top of the given box,
-        set anchor='n'.      There are good examples of this in the output
-        of test_pdfgen_general.py
-
-        Unlike drawInlineImage, this creates 'external images' which
-        are only stored once in the PDF file but can be drawn many times.
-        If you give it the same filename twice, even at different locations
-        and sizes, it will reuse the first occurrence, resulting in a saving
-        in file size and generation time.  If you use ImageReader objects,
-        it tests whether the image content has changed before deciding
-        whether to reuse it.
-
-        In general you should use drawImage in preference to drawInlineImage
-        unless you have read the PDF Spec and understand the tradeoffs.
-        """
-        ...
-    def beginForm(self, name, lowerx: int = 0, lowery: int = 0, upperx=None, uppery=None) -> None:
-        """
-        declare the current graphics stream to be a named form.
-        A graphics stream can either be a page or a form, not both.
-        Some operations (like bookmarking) are permitted for pages
-        but not forms.  The form will not automatically be shown in the
-        document but must be explicitly referenced using doForm in pages
-        that require the form.
-        """
-        ...
-    def endForm(self, **extra_attributes) -> None:
-        """
-        emit the current collection of graphics operations as a Form
-        as declared previously in beginForm.
-        """
-        ...
-    def addPostScriptCommand(self, command, position: int = 1) -> None:
-        """
-        Embed literal Postscript in the document.
-
-        With position=0, it goes at very beginning of page stream;
-        with position=1, at current point; and
-        with position=2, at very end of page stream.  What that does
-        to the resulting Postscript depends on Adobe's header :-)
-
-        Use with extreme caution, but sometimes needed for printer tray commands.
-        Acrobat 4.0 will export Postscript to a printer or file containing
-        the given commands.  Adobe Reader 6.0 no longer does as this feature is
-        deprecated.  5.0, I don't know about (please let us know!). This was
-        funded by Bob Marshall of Vector.co.uk and tested on a Lexmark 750.
-        See test_pdfbase_postscript.py for 2 test cases - one will work on
-        any Postscript device, the other uses a 'setpapertray' command which
-        will error in Distiller but work on printers supporting it.
-        """
-        ...
-    def freeTextAnnotation(self, contents, DA, Rect=None, addtopage: int = 1, name=None, relative: int = 0, **kw) -> None:
-        """DA is the default appearance string???"""
-        ...
-    def textAnnotation(self, contents, Rect=None, addtopage: int = 1, name=None, relative: int = 0, **kw) -> None:
-        """
-        Experimental, but works.
-        
-        """
-        ...
+    ) -> tuple[Incomplete, Incomplete]: ...
+    def beginForm(self, name, lowerx: int = 0, lowery: int = 0, upperx=None, uppery=None) -> None: ...
+    def endForm(self, **extra_attributes) -> None: ...
+    def addPostScriptCommand(self, command, position: int = 1) -> None: ...
+    def freeTextAnnotation(
+        self, contents, DA, Rect=None, addtopage: bool | Literal[0, 1] = 1, name=None, relative: bool | Literal[0, 1] = 0, **kw
+    ) -> None: ...
+    def textAnnotation(
+        self, contents, Rect=None, addtopage: bool | Literal[0, 1] = 1, name=None, relative: bool | Literal[0, 1] = 0, **kw
+    ) -> None: ...
     textAnnotation0 = textAnnotation
     def highlightAnnotation(
-        self, contents, Rect, QuadPoints=None, Color=[0.83, 0.89, 0.95], addtopage: int = 1, name=None, relative: int = 0, **kw
-    ) -> None:
-        """
-        Allows adding of a highlighted annotation.
-
-        Rect: Mouseover area to show contents of annotation
-        QuadPoints: List of four x/y points [TOP-LEFT, TOP-RIGHT, BOTTOM-LEFT, BOTTOM-RIGHT]
-          These points outline the areas to highlight.
-          You can have multiple groups of four to allow multiple highlighted areas.
-          Is in the format [x1, y1, x2, y2, x3, y3, x4, y4, x1, y1, x2, y2, x3, y3, x4, y4] etc
-          QuadPoints defaults to be area inside of passed in Rect
-        Color: The color of the highlighting.
-        """
-        ...
+        self,
+        contents,
+        Rect,
+        QuadPoints=None,
+        Color=[0.83, 0.89, 0.95],
+        addtopage: bool | Literal[0, 1] = 1,
+        name=None,
+        relative: bool | Literal[0, 1] = 0,
+        **kw,
+    ) -> None: ...
     def inkAnnotation(
-        self, contents, InkList=None, Rect=None, addtopage: int = 1, name=None, relative: int = 0, **kw
+        self,
+        contents,
+        InkList=None,
+        Rect=None,
+        addtopage: bool | Literal[0, 1] = 1,
+        name=None,
+        relative: bool | Literal[0, 1] = 0,
+        **kw,
     ) -> None: ...
     inkAnnotation0 = inkAnnotation
     def linkAbsolute(
@@ -496,53 +164,31 @@ class Canvas(_PDFColorSetter):
         contents,
         destinationname,
         Rect=None,
-        addtopage: int = 1,
+        addtopage: bool | Literal[0, 1] = 1,
         name=None,
         thickness: int = 0,
         color: Color | None = None,
         dashArray=None,
         **kw,
-    ):
-        """
-        rectangular link annotation positioned wrt the default user space.
-        The identified rectangle on the page becomes a "hot link" which
-        when clicked will send the viewer to the page and position identified
-        by the destination.
-
-        Rect identifies (lowerx, lowery, upperx, uppery) for lower left
-        and upperright points of the rectangle.  Translations and other transforms
-        are IGNORED (the rectangular position is given with respect
-        to the default user space.
-        destinationname should be the name of a bookmark (which may be defined later
-        but must be defined before the document is generated).
-
-        You may want to use the keyword argument Border='[0 0 0]' to
-        suppress the visible rectangle around the during viewing link.
-        """
-        ...
+    ) -> None: ...
     def linkRect(
         self,
         contents,
         destinationname,
         Rect=None,
-        addtopage: int = 1,
+        addtopage: bool | Literal[0, 1] = 1,
         name=None,
-        relative: int = 1,
+        relative: bool | Literal[0, 1] = 1,
         thickness: int = 0,
         color: Color | None = None,
         dashArray=None,
         **kw,
-    ):
-        """
-        rectangular link annotation w.r.t the current user transform.
-        if the transform is skewed/rotated the absolute rectangle will use the max/min x/y
-        """
-        ...
+    ) -> None: ...
     def linkURL(
         self,
         url,
         rect,
-        relative: int = 0,
+        relative: bool | Literal[0, 1] = 0,
         thickness: int = 0,
         color: Color | None = None,
         dashArray=None,
@@ -591,55 +237,14 @@ class Canvas(_PDFColorSetter):
     def setArtBox(self, size) -> None: ...
     def setBleedBox(self, size) -> None: ...
     # NOTE: Only accepts right angles
-    def setPageRotation(self, rot: float) -> None:
-        """Instruct display device that this page is to be rotated"""
-        ...
-    def addLiteral(self, s: object, escaped: int = 1) -> None:
-        """
-        introduce the literal text of PDF operations s into the current stream.
-        Only use this if you are an expert in the PDF file format.
-        """
-        ...
-    def resetTransforms(self) -> None:
-        """
-        I want to draw something (eg, string underlines) w.r.t. the default user space.
-        Reset the matrix! This should be used usually as follows::
-
-           canv.saveState()
-           canv.resetTransforms()
-           #...draw some stuff in default space coords...
-           canv.restoreState() # go back!
-        """
-        ...
-    def transform(self, a: float, b: float, c: float, d: float, e: float, f: float) -> None:
-        """
-        adjoin a mathematical transform to the current graphics state matrix.
-        Not recommended for beginners.
-        """
-        ...
-    def absolutePosition(self, x: float, y: float) -> tuple[float, float]:
-        """return the absolute position of x,y in user space w.r.t. default user space"""
-        ...
-    def translate(self, dx: float, dy: float) -> None:
-        """
-        move the origin from the current (0,0) point to the (dx,dy) point
-        (with respect to the current graphics state).
-        """
-        ...
-    def scale(self, x: float, y: float) -> None:
-        """
-        Scale the horizontal dimension by x and the vertical by y
-        (with respect to the current graphics state).
-        For example canvas.scale(2.0, 0.5) will make everything short and fat.
-        """
-        ...
-    def rotate(self, theta: float) -> None:
-        """
-        Canvas.rotate(theta)
-
-        Rotate the canvas by the angle theta (in degrees).
-        """
-        ...
+    def setPageRotation(self, rot: float) -> None: ...
+    def addLiteral(self, s: object, escaped: Literal[0, 1] = 1) -> None: ...
+    def resetTransforms(self) -> None: ...
+    def transform(self, a: float, b: float, c: float, d: float, e: float, f: float) -> None: ...
+    def absolutePosition(self, x: float, y: float) -> tuple[float, float]: ...
+    def translate(self, dx: float, dy: float) -> None: ...
+    def scale(self, x: float, y: float) -> None: ...
+    def rotate(self, theta: float) -> None: ...
     def skew(self, alpha: float, beta: float) -> None: ...
     def saveState(self) -> None:
         """
@@ -792,59 +397,12 @@ class Canvas(_PDFColorSetter):
         direction: Literal["LTR", "RTL"] | None = None,
         wordSpace: float | None = None,
         shaping: bool = False,
-    ) -> None:
-        """
-        Draws a string aligned on the first '.' (or other pivot character).
-
-        The centre position of the pivot character will be used as x.
-        So, you could draw a straight line down through all the decimals in a
-        column of numbers, and anything without a decimal should be
-        optically aligned with those that have.
-
-        There is one special rule to help with accounting formatting.  Here's
-        how normal numbers should be aligned on the 'dot'. Look at the
-        LAST two::
-
-           12,345,67
-              987.15
-               42
-           -1,234.56
-             (456.78)
-             (456)
-               27 inches
-               13cm
-
-        Since the last three do not contain a dot, a crude dot-finding
-        rule would place them wrong. So we test for the special case
-        where no pivot is found, digits are present, but the last character
-        is not a digit.  We then work back from the end of the string
-        This case is a tad slower but hopefully rare.
-        """
-        ...
-    def getAvailableFonts(self):
-        """
-        Returns the list of PostScript font names available.
-
-        Standard set now, but may grow in future with font embedding.
-        """
-        ...
-    def listLoadedFonts0(self):
-        """Convenience function to list all loaded fonts"""
-        ...
-    def setFont(self, psfontname: str, size: float, leading: float | None = None) -> None:
-        """
-        Sets the font.  If leading not specified, defaults to 1.2 x
-        font size. Raises a readable exception if an illegal font
-        is supplied.  Font names are case-sensitive! Keeps track
-        of font name and size for metrics.
-        """
-        ...
-    def setFontSize(self, size: float | None = None, leading: float | None = None) -> None:
-        """Sets font size or leading without knowing the font face"""
-        ...
-    def stringWidth(self, text: str, fontName: str | None = None, fontSize: float | None = None) -> float:
-        """gets width of a string in the given font and size"""
-        ...
+    ) -> None: ...
+    def getAvailableFonts(self) -> list[Incomplete]: ...
+    def listLoadedFonts0(self) -> list[Incomplete]: ...
+    def setFont(self, psfontname: str, size: float, leading: float | None = None) -> None: ...
+    def setFontSize(self, size: float | None = None, leading: float | None = None) -> None: ...
+    def stringWidth(self, text: str, fontName: str | None = None, fontSize: float | None = None) -> float: ...
     def setLineWidth(self, width: float) -> None: ...
     def setLineCap(self, mode) -> None:
         """0=butt,1=round,2=square"""
@@ -853,113 +411,28 @@ class Canvas(_PDFColorSetter):
         """0=mitre, 1=round, 2=bevel"""
         ...
     def setMiterLimit(self, limit) -> None: ...
-    def setDash(self, array: list[float] | tuple[float, ...] | float = [], phase: float = 0) -> None:
-        """Two notations.  pass two numbers, or an array and phase"""
-        ...
-    def beginPath(self):
-        """
-        Returns a fresh path object.  Paths are used to draw
-        complex figures.  The object returned follows the protocol
-        for a pathobject.PDFPathObject instance
-        """
-        ...
-    def drawPath(self, aPath, stroke: int = 1, fill: int = 0, fillMode=None) -> None:
-        """Draw the path object in the mode indicated"""
-        ...
-    def clipPath(self, aPath, stroke: int = 1, fill: int = 0, fillMode=None) -> None:
-        """clip as well as drawing"""
-        ...
-    def beginText(self, x: float = 0, y: float = 0, direction: Literal["LTR", "RTL"] | None = None) -> PDFTextObject:
-        """
-        Returns a fresh text object.  Text objects are used
-        to add large amounts of text.  See PDFTextObject
-        """
-        ...
-    def drawText(self, aTextObject: PDFTextObject) -> None:
-        """Draws a text object"""
-        ...
-    def setPageCompression(self, pageCompression: int = 1) -> None:
-        """
-        Possible values None, 1 or 0
-        If None the value from rl_config will be used.
-        If on, the page data will be compressed, leading to much
-        smaller files, but takes a little longer to create the files.
-        This applies to all subsequent pages, or until setPageCompression()
-        is next called.
-        """
-        ...
-    def setPageDuration(self, duration=None) -> None:
-        """
-        Allows hands-off animation of presentations :-)
-
-        If this is set to a number, in full screen mode, Acrobat Reader
-        will advance to the next page after this many seconds. The
-        duration of the transition itself (fade/flicker etc.) is controlled
-        by the 'duration' argument to setPageTransition; this controls
-        the time spent looking at the page.  This is effective for all
-        subsequent pages.
-        """
-        ...
+    def setDash(self, array: list[float] | tuple[float, ...] | float = [], phase: float = 0) -> None: ...
+    def beginPath(self) -> PDFPathObject: ...
+    def drawPath(self, aPath, stroke: int = 1, fill: int = 0, fillMode=None) -> None: ...
+    def clipPath(self, aPath, stroke: int = 1, fill: int = 0, fillMode=None) -> None: ...
+    def beginText(self, x: float = 0, y: float = 0, direction: Literal["LTR", "RTL"] | None = None) -> PDFTextObject: ...
+    def drawText(self, aTextObject: PDFTextObject) -> None: ...
+    def setPageCompression(self, pageCompression: bool | Literal[0, 1] | None = 1) -> None: ...
+    def setPageDuration(self, duration=None) -> None: ...
     def setPageTransition(
         self, effectname: str | None = None, duration: float = 1, direction: float = 0, dimension: str = "H", motion: str = "I"
-    ) -> None:
-        """
-        PDF allows page transition effects for use when giving
-        presentations.  There are six possible effects.  You can
-        just guive the effect name, or supply more advanced options
-        to refine the way it works.  There are three types of extra
-        argument permitted, and here are the allowed values::
-
-            direction_arg = [0,90,180,270]
-            dimension_arg = ['H', 'V']
-            motion_arg = ['I','O'] (start at inside or outside)
-
-        This table says which ones take which arguments::
-
-            PageTransitionEffects = {
-                'Split': [direction_arg, motion_arg],
-                'Blinds': [dimension_arg],
-                'Box': [motion_arg],
-                'Wipe' : [direction_arg],
-                'Dissolve' : [],
-                'Glitter':[direction_arg]
-                }
-
-        Have fun!
-        """
-        ...
-    def getCurrentPageContent(self):
-        """
-        Return uncompressed contents of current page buffer.
-
-        This is useful in creating test cases and assertions of what
-        got drawn, without necessarily saving pages to disk
-        """
-        ...
-    def setViewerPreference(self, pref, value) -> None:
-        """set one of the allowed enbtries in the documents viewer preferences"""
-        ...
-    def getViewerPreference(self, pref):
-        """you'll get an error here if none have been set"""
-        ...
-    def delViewerPreference(self, pref) -> None:
-        """you'll get an error here if none have been set"""
-        ...
-    def setCatalogEntry(self, key, value) -> None: ...
-    def getCatalogEntry(self, key): ...
-    def delCatalogEntry(self, key) -> None:
-        """you'll get an error here if it's not been set"""
-        ...
-    def addPageLabel(self, pageNum, style=None, start=None, prefix=None) -> None:
-        """add a PDFPageLabel for pageNum"""
-        ...
+    ) -> None: ...
+    def getCurrentPageContent(self) -> str: ...
+    def setViewerPreference(self, pref, value) -> None: ...
+    def getViewerPreference(self, pref): ...
+    def delViewerPreference(self, pref) -> None: ...
+    def setCatalogEntry(self, key: str, value) -> None: ...
+    def getCatalogEntry(self, key: str): ...
+    def delCatalogEntry(self, key: str) -> None: ...
+    def addPageLabel(self, pageNum, style=None, start=None, prefix=None) -> None: ...
     @property
-    def acroForm(self):
-        """get form from canvas, create the form if needed"""
-        ...
-    def drawBoundary(self, sb, x1: float, y1: float, width: float, height: float) -> None:
-        """draw a boundary as a rectangle (primarily for debugging)."""
-        ...
+    def acroForm(self) -> AcroForm: ...
+    def drawBoundary(self, sb, x1: float, y1: float, width: float, height: float) -> None: ...
     # Following callbacks are accepted: canvas, kind and label
     def setNamedCB(self, name: str, cb: Callable[[Canvas, str | None, str], None]) -> None: ...
     def getNamedCB(self, name: str) -> Callable[[Canvas, str | None, str], None] | None: ...

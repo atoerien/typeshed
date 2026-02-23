@@ -2069,7 +2069,7 @@ class RingBuffer:
         ...
 
 class Status:
-    """Representation of the JACK status bits."""
+    __slots__ = "_code"
     def __init__(self, code: int) -> None: ...
     @property
     def failure(self) -> bool:
@@ -2138,13 +2138,7 @@ class Status:
         ...
 
 class TransportState:
-    """
-    Representation of the JACK transport state.
-
-    See Also
-    --------
-    `Client.transport_state`, :meth:`Client.transport_query`
-    """
+    __slots__ = "_code"
     def __init__(self, code: int) -> None: ...
     def __eq__(self, other: object) -> bool: ...
     def __hash__(self) -> int: ...

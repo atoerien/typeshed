@@ -70,18 +70,14 @@ _AcceptLanguageProperty: TypeAlias = AsymmetricPropertyWithDelete[
     ),
 ]
 
-class AcceptOffer(NamedTuple):
-    """
-    A pre-parsed offer tuple represeting a value in the format
-    ``type/subtype;param0=value0;param1=value1``.
-
-    :ivar type: The media type's root category.
-    :ivar subtype: The media type's subtype.
-    :ivar params: A tuple of 2-tuples containing parameter names and values.
-    """
+@type_check_only
+class _AcceptOffer(NamedTuple):
     type: str
     subtype: str
     params: tuple[tuple[str, str], ...]
+
+class AcceptOffer(_AcceptOffer):
+    __slots__ = ()
 
 class Accept:
     """
