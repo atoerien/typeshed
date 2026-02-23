@@ -10,6 +10,15 @@ from psycopg2._psycopg import _type, connection, cursor
 _T_co = TypeVar("_T_co", covariant=True)
 
 class Range(Generic[_T_co]):
+    """
+    Python representation for a PostgreSQL |range|_ type.
+
+    :param lower: lower bound for the range. `!None` means unbound
+    :param upper: upper bound for the range. `!None` means unbound
+    :param bounds: one of the literal strings ``()``, ``[)``, ``(]``, ``[]``,
+        representing whether the lower or upper bounds are included
+    :param empty: if `!True`, the range is empty
+    """
     __slots__ = ("_lower", "_upper", "_bounds")
     def __init__(
         self, lower: _T_co | None = None, upper: _T_co | None = None, bounds: str = "[)", empty: bool = False

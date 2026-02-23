@@ -256,6 +256,8 @@ def unparse(
         mode, lines are terminated with `'
     '` and indented with `' '`, but this
         can be customized with the `newl` and `indent` parameters.
+        The `bytes_errors` parameter controls decoding errors for byte values and
+        defaults to `'replace'`.
 
     
     """
@@ -300,6 +302,8 @@ def unparse(
         mode, lines are terminated with `'
     '` and indented with `' '`, but this
         can be customized with the `newl` and `indent` parameters.
+        The `bytes_errors` parameter controls decoding errors for byte values and
+        defaults to `'replace'`.
 
     
     """

@@ -77,6 +77,14 @@ class _AcceptOffer(NamedTuple):
     params: tuple[tuple[str, str], ...]
 
 class AcceptOffer(_AcceptOffer):
+    """
+    A pre-parsed offer tuple represeting a value in the format
+    ``type/subtype;param0=value0;param1=value1``.
+
+    :ivar type: The media type's root category.
+    :ivar subtype: The media type's subtype.
+    :ivar params: A tuple of 2-tuples containing parameter names and values.
+    """
     __slots__ = ()
 
 class Accept:

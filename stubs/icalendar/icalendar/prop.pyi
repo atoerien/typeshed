@@ -158,6 +158,7 @@ class vBoolean(int):
     def from_ical(cls, ical: ICAL_TYPE) -> bool: ...
 
 class vText(str):
+    """Simple text."""
     __slots__ = ("encoding", "params")
     encoding: str
     params: Parameters
@@ -170,6 +171,52 @@ class vText(str):
     RELTYPE: property
 
 class vCalAddress(str):
+    """
+    Calendar User Address
+
+    Value Name:
+        CAL-ADDRESS
+
+    Purpose:
+        This value type is used to identify properties that contain a
+        calendar user address.
+
+    Description:
+        The value is a URI as defined by [RFC3986] or any other
+        IANA-registered form for a URI.  When used to address an Internet
+        email transport address for a calendar user, the value MUST be a
+        mailto URI, as defined by [RFC2368].
+
+    Example:
+        ``mailto:`` is in front of the address.
+
+        .. code-block:: text
+
+            mailto:jane_doe@example.com
+
+        Parsing:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import vCalAddress
+            >>> cal_address = vCalAddress.from_ical('mailto:jane_doe@example.com')
+            >>> cal_address
+            vCalAddress('mailto:jane_doe@example.com')
+
+        Encoding:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import vCalAddress, Event
+            >>> event = Event()
+            >>> jane = vCalAddress("mailto:jane_doe@example.com")
+            >>> jane.name = "Jane"
+            >>> event["organizer"] = jane
+            >>> print(event.to_ical())
+            BEGIN:VEVENT
+            ORGANIZER;CN=Jane:mailto:jane_doe@example.com
+            END:VEVENT
+    """
     __slots__ = ("params",)
     params: Parameters
     def __new__(cls, value: ICAL_TYPE, encoding: str = "utf-8", params: SupportsKeysAndGetItem[str, str] = {}) -> Self: ...
@@ -663,6 +710,33 @@ class vPeriod(TimeBase):
     FBTYPE: property
 
 class vWeekday(str):
+    """
+    Either a ``weekday`` or a ``weekdaynum``
+
+    .. code-block:: pycon
+
+        >>> from icalendar import vWeekday
+        >>> vWeekday("MO") # Simple weekday
+        'MO'
+        >>> vWeekday("2FR").relative # Second friday
+        2
+        >>> vWeekday("2FR").weekday
+        'FR'
+        >>> vWeekday("-1SU").relative # Last Sunday
+        -1
+
+    Definition from `RFC 5545, Section 3.3.10 <https://www.rfc-editor.org/rfc/rfc5545#section-3.3.10>`_:
+
+    .. code-block:: text
+
+        weekdaynum = [[plus / minus] ordwk] weekday
+        plus        = "+"
+        minus       = "-"
+        ordwk       = 1*2DIGIT       ;1 to 53
+        weekday     = "SU" / "MO" / "TU" / "WE" / "TH" / "FR" / "SA"
+        ;Corresponding to SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY,
+        ;FRIDAY, and SATURDAY days of the week.
+    """
     __slots__ = ("params", "relative", "weekday")
     week_days: Final[CaselessDict[int]]
     weekday: Literal["SU", "MO", "TU", "WE", "TH", "FR", "SA"] | None
@@ -674,6 +748,7 @@ class vWeekday(str):
     def from_ical(cls, ical: ICAL_TYPE) -> Self: ...
 
 class vFrequency(str):
+    """A simple class that catches illegal values."""
     __slots__ = ("params",)
     frequencies: Final[CaselessDict[str]]
     params: Parameters
@@ -985,6 +1060,49 @@ class vTime(TimeBase):
     def from_ical(ical: ICAL_TYPE) -> datetime.time: ...
 
 class vUri(str):
+    """
+    URI
+
+    Value Name:
+        URI
+
+    Purpose:
+        This value type is used to identify values that contain a
+        uniform resource identifier (URI) type of reference to the
+        property value.
+
+    Format Definition:
+        This value type is defined by the following notation:
+
+        .. code-block:: text
+
+            uri = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+    Description:
+        This value type might be used to reference binary
+        information, for values that are large, or otherwise undesirable
+        to include directly in the iCalendar object.
+
+        Property values with this value type MUST follow the generic URI
+        syntax defined in [RFC3986].
+
+        When a property parameter value is a URI value type, the URI MUST
+        be specified as a quoted-string value.
+
+        Example:
+            The following is a URI for a network file:
+
+            .. code-block:: text
+
+                http://example.com/my-report.txt
+
+            .. code-block:: pycon
+
+                >>> from icalendar.prop import vUri
+                >>> uri = vUri.from_ical('http://example.com/my-report.txt')
+                >>> uri
+                'http://example.com/my-report.txt'
+    """
     __slots__ = ("params",)
     params: Parameters
     def __new__(cls, value: ICAL_TYPE, encoding: str = "utf-8", params: SupportsKeysAndGetItem[str, str] = {}) -> Self: ...
@@ -1126,6 +1244,11 @@ class vUTCOffset:
     def __hash__(self) -> int: ...
 
 class vInline(str):
+    """
+    This is an especially dumb class that just holds raw unparsed text and
+    has parameters. Conversion of inline values are handled by the Component
+    class, so no further processing is needed.
+    """
     __slots__ = ("params",)
     params: Parameters
     def __new__(cls, value: ICAL_TYPE, encoding: str = "utf-8", params: SupportsKeysAndGetItem[str, str] = {}) -> Self: ...

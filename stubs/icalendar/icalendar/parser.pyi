@@ -138,6 +138,10 @@ def unescape_list_or_string(val: list[str]) -> list[str]: ...
 def unescape_list_or_string(val: str) -> str: ...
 
 class Contentline(str):
+    """
+    A content line is basically a string that can be folded and parsed into
+    parts.
+    """
     __slots__ = ("strict",)
     strict: bool
     def __new__(cls, value: str | bytes, strict: bool = False, encoding: str = "utf-8") -> Self: ...

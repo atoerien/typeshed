@@ -803,6 +803,14 @@ class BlobProperty(Property):
         ...
 
 class CompressedTextProperty(BlobProperty):
+    """
+    A version of :class:`TextProperty` which compresses values.
+
+    Values are stored as ``zlib`` compressed UTF-8 byte sequences rather than
+    as strings as in a regular :class:`TextProperty`. This class allows NDB to
+    support passing `compressed=True` to :class:`TextProperty`. It is not
+    necessary to instantiate this class directly.
+    """
     __slots__ = ()
     def __init__(self, *args, **kwargs) -> None: ...
 
