@@ -1,5 +1,4 @@
-"""Public API for tf._api.v2.train namespace"""
-
+from _typeshed import Incomplete
 from collections.abc import Callable
 from typing import Any, TypeVar
 from typing_extensions import Self
@@ -20,26 +19,20 @@ from tensorflow.python.trackable.base import Trackable
 from tensorflow.python.training.tracking.autotrackable import AutoTrackable
 
 class CheckpointOptions:
-    """
-    Options for constructing a Checkpoint.
-
-    Used as the `options` argument to either `tf.train.Checkpoint.save()` or
-    `tf.train.Checkpoint.restore()` methods to adjust how variables are
-    saved/restored.
-
-    Example: Run IO ops on "localhost" while saving a checkpoint:
-
-    ```
-    step = tf.Variable(0, name="step")
-    checkpoint = tf.train.Checkpoint(step=step)
-    options = tf.train.CheckpointOptions(experimental_io_device="/job:localhost")
-    checkpoint.save("/tmp/ckpt", options=options)
-    ```
-    """
+    __slots__ = (
+        "experimental_io_device",
+        "experimental_enable_async_checkpoint",
+        "experimental_write_callbacks",
+        "enable_async",
+        "experimental_sharding_callback",
+        "experimental_skip_slot_variables",
+    )
     experimental_io_device: None | str
     experimental_enable_async_checkpoint: bool
     experimental_write_callbacks: None | list[Callable[[str], object] | Callable[[], object]]
     enable_async: bool
+    experimental_sharding_callback: Incomplete  # should be ShardingCallback
+    experimental_skip_slot_variables: bool
 
     def __init__(
         self,

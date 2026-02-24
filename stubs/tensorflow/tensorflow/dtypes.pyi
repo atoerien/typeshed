@@ -12,21 +12,7 @@ from tensorflow.python.framework.dtypes import HandleData
 class _DTypeMeta(ABCMeta): ...
 
 class DType(metaclass=_DTypeMeta):
-    """
-    Represents the type of the elements in a `Tensor`.
-
-    `DType`'s are used to specify the output data type for operations which
-    require it, or to inspect the data type of existing `Tensor`'s.
-
-    Examples:
-
-    >>> tf.constant(1, dtype=tf.int64)
-    <tf.Tensor: shape=(), dtype=int64, numpy=1>
-    >>> tf.constant(1.0).dtype
-    tf.float32
-
-    See `tf.dtypes` for a complete list of `DType`'s defined.
-    """
+    __slots__ = ["_handle_data"]
     def __init__(self, type_enum: int, handle_data: HandleData | None = None) -> None: ...
     @property
     def name(self) -> str: ...

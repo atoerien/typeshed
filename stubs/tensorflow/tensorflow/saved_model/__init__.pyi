@@ -61,12 +61,13 @@ class Asset:
         ...
 
 class LoadOptions:
-    """
-    Options for loading a SavedModel.
-
-    This function may be used in the `options` argument in functions that
-    load a SavedModel (`tf.saved_model.load`, `tf.keras.models.load_model`).
-    """
+    __slots__ = (
+        "allow_partial_checkpoint",
+        "experimental_io_device",
+        "experimental_skip_checkpoint",
+        "experimental_variable_policy",
+        "experimental_load_function_aliases",
+    )
     allow_partial_checkpoint: bool
     experimental_io_device: str | None
     experimental_skip_checkpoint: bool
