@@ -1593,8 +1593,88 @@ class Operation:
     def __getattr__(self, name: str) -> Incomplete: ...
 
 class TensorShape(metaclass=ABCMeta):
+    """
+    Represents the shape of a `Tensor`.
+
+    >>> t = tf.constant([[1,2,3],[4,5,6]])
+    >>> t.shape
+    TensorShape([2, 3])
+
+    `TensorShape` is the *static* shape representation of a Tensor.
+    During eager execution a Tensor always has a fully specified shape but
+    when tracing a `tf.function` it may be one of the following:
+
+    * *Fully-known shape:* has a known number of dimensions and a known size
+      for each dimension. e.g. `TensorShape([16, 256])`
+    * *Partially-known shape:* has a known number of dimensions, and an unknown
+      size for one or more dimension. e.g. `TensorShape([None, 256])`
+    * *Unknown shape:* has an unknown number of dimensions, and an unknown
+      size in all dimensions. e.g. `TensorShape(None)`
+
+    During function tracing `t.shape` will return a `TensorShape` object
+    representing the shape of Tensor as it is known during tracing.
+    This static representation will be partially defined in cases where the
+    exact shape depends on the values within the tensors. To get the
+    *dynamic* representation, please use `tf.shape(t)`
+    which will return Tensor representing the fully defined shape of `t`.
+    This way, you can express logic that manipulates the shapes of tensors by
+    building other tensors that depend on the dynamic shape of `t`.
+
+    Note: `tf.RaggedTensor.shape` also returns a `tf.TensorShape`,
+    the lengths of any ragged dimensions are unknown (`None`).
+
+    For example, this function prints the `TensorShape' (`t.shape`), when you
+    trace the function, and returns a tensor `tf.shape(t)` for given input `t`:
+
+    >>> @tf.function
+    ... def get_dynamic_shape(t):
+    ...   print("tracing...")
+    ...   print(f"static shape is {t.shape}")
+    ...   return tf.shape(t)
+
+    Just calling the function traces it with a fully-specified static shape:
+
+    >>> result = get_dynamic_shape(tf.constant([[1, 1, 1], [0, 0, 0]]))
+    tracing...
+    static shape is (2, 3)
+    >>> result.numpy()
+    array([2, 3], dtype=int32)
+
+    But `tf.function` can also trace the function with a partially specified
+    (or even unspecified) shape:
+
+    >>> cf1 = get_dynamic_shape.get_concrete_function(tf.TensorSpec(
+    ...                                               shape=[None, 2]))
+    tracing...
+    static shape is (None, 2)
+    >>> cf1(tf.constant([[1., 0],[1, 0],[1, 0]])).numpy()
+    array([3, 2], dtype=int32)
+
+    >>> cf2 = get_dynamic_shape.get_concrete_function(tf.TensorSpec(shape=None))
+    tracing...
+    static shape is <unknown>
+    >>> cf2(tf.constant([[[[[1., 0]]]]])).numpy()
+    array([1, 1, 1, 1, 2], dtype=int32)
+
+    If a tensor is produced by an operation of type `"Foo"`, its shape
+    may be inferred if there is a registered shape function for
+    `"Foo"`. See [Shape
+    functions](https://www.tensorflow.org/guide/create_op#shape_functions_in_c)
+    for details of shape functions and how to register them. Alternatively,
+    you may set the shape explicitly using `tf.Tensor.ensure_shape`.
+    """
     __slots__ = ["_dims"]
-    def __init__(self, dims: ShapeLike) -> None: ...
+    def __init__(self, dims: ShapeLike) -> None:
+        """
+        Creates a new TensorShape with the given dimensions.
+
+        Args:
+          dims: A list of Dimensions, or None if the shape is unspecified.
+
+        Raises:
+          TypeError: If dims cannot be converted to a list of dimensions.
+        """
+        ...
     @property
     def rank(self) -> int:
         """Returns the rank of this shape, or None if it is unspecified."""
@@ -2213,6 +2293,30 @@ class UnconnectedGradients(Enum):
 _SpecProto = TypeVar("_SpecProto", bound=Message)
 
 class TypeSpec(ABC, Generic[_SpecProto]):
+    """
+    Specifies a TensorFlow value type.
+
+    A `tf.TypeSpec` provides metadata describing an object accepted or returned
+    by TensorFlow APIs.  Concrete subclasses, such as `tf.TensorSpec` and
+    `tf.RaggedTensorSpec`, are used to describe different value types.
+
+    For example, `tf.function`'s `input_signature` argument accepts a list
+    (or nested structure) of `TypeSpec`s.
+
+    Creating new subclasses of `TypeSpec` (outside of TensorFlow core) is not
+    currently supported.  In particular, we may make breaking changes to the
+    private methods and properties defined by this base class.
+
+    Example:
+
+    >>> spec = tf.TensorSpec(shape=[None, None], dtype=tf.int32)
+    >>> @tf.function(input_signature=[spec])
+    ... def double(x):
+    ...   return x * 2
+    >>> double(tf.constant([[1, 2], [3, 4]]))
+    <tf.Tensor: shape=(2, 2), dtype=int32,
+        numpy=array([[2, 4], [6, 8]], dtype=int32)>
+    """
     __slots__ = ["_cached_cmp_key"]
     @property
     @abstractmethod
@@ -2313,8 +2417,60 @@ class TypeSpec(ABC, Generic[_SpecProto]):
         ...
 
 class TensorSpec(TypeSpec[struct_pb2.TensorSpecProto]):
+    """
+    Describes the type of a tf.Tensor.
+
+    >>> t = tf.constant([[1,2,3],[4,5,6]])
+    >>> tf.TensorSpec.from_tensor(t)
+    TensorSpec(shape=(2, 3), dtype=tf.int32, name=None)
+
+    Contains metadata for describing the nature of `tf.Tensor` objects
+    accepted or returned by some TensorFlow APIs.
+
+    For example, it can be used to constrain the type of inputs accepted by
+    a tf.function:
+
+    >>> @tf.function(input_signature=[tf.TensorSpec([1, None])])
+    ... def constrained_foo(t):
+    ...   print("tracing...")
+    ...   return t
+
+    Now the `tf.function` is able to assume that `t` is always of the type
+    `tf.TensorSpec([1, None])` which will avoid retracing as well as enforce the
+    type restriction on inputs.
+
+    As a result, the following call with tensor of type `tf.TensorSpec([1, 2])`
+    triggers a trace and succeeds:
+    >>> constrained_foo(tf.constant([[1., 2]])).numpy()
+    tracing...
+    array([[1., 2.]], dtype=float32)
+
+    The following subsequent call with tensor of type `tf.TensorSpec([1, 4])`
+    does not trigger a trace and succeeds:
+    >>> constrained_foo(tf.constant([[1., 2, 3, 4]])).numpy()
+    array([[1., 2., 3., 4.], dtype=float32)
+
+    But the following call with tensor of type `tf.TensorSpec([2, 2])` fails:
+    >>> constrained_foo(tf.constant([[1., 2], [3, 4]])).numpy()
+    Traceback (most recent call last):
+    ...
+    TypeError: Binding inputs to tf.function `constrained_foo` failed ...
+    """
     __slots__: list[str] = []
-    def __init__(self, shape: ShapeLike, dtype: DTypeLike = ..., name: str | None = None) -> None: ...
+    def __init__(self, shape: ShapeLike, dtype: DTypeLike = ..., name: str | None = None) -> None:
+        """
+        Creates a TensorSpec.
+
+        Args:
+          shape: Value convertible to `tf.TensorShape`. The shape of the tensor.
+          dtype: Value convertible to `tf.DType`. The type of the tensor values.
+          name: Optional name for the Tensor.
+
+        Raises:
+          TypeError: If shape is not convertible to a `tf.TensorShape`, or dtype is
+            not convertible to a `tf.DType`.
+        """
+        ...
     @property
     def value_type(self) -> Tensor:
         """The Python type for values that are compatible with this TypeSpec."""
@@ -2377,8 +2533,18 @@ class TensorSpec(TypeSpec[struct_pb2.TensorSpecProto]):
         ...
 
 class SparseTensorSpec(TypeSpec[struct_pb2.TypeSpecProto]):
+    """Type specification for a `tf.sparse.SparseTensor`."""
     __slots__ = ["_shape", "_dtype"]
-    def __init__(self, shape: ShapeLike | None = None, dtype: DTypeLike = ...) -> None: ...
+    def __init__(self, shape: ShapeLike | None = None, dtype: DTypeLike = ...) -> None:
+        """
+        Constructs a type specification for a `tf.sparse.SparseTensor`.
+
+        Args:
+          shape: The dense shape of the `SparseTensor`, or `None` to allow any dense
+            shape.
+          dtype: `tf.DType` of values in the `SparseTensor`.
+        """
+        ...
     @property
     def value_type(self) -> SparseTensor: ...
     @property
@@ -2393,6 +2559,7 @@ class SparseTensorSpec(TypeSpec[struct_pb2.TypeSpecProto]):
     def from_value(cls, value: SparseTensor) -> Self: ...
 
 class RaggedTensorSpec(TypeSpec[struct_pb2.TypeSpecProto]):
+    """Type specification for a `tf.RaggedTensor`."""
     __slots__ = ["_shape", "_dtype", "_ragged_rank", "_row_splits_dtype", "_flat_values_spec"]
     def __init__(
         self,
