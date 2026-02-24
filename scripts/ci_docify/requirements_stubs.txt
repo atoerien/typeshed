@@ -67,7 +67,6 @@ tensorflow~=2.18.0
 toml==0.10.*
 console-menu==0.8.*
 atheris==3.0.*
-pyRFC3339~=2.0.1
 requests[socks]~=2.32.4
 protobuf~=6.32.1
 pyserial[cp2110]==3.5.*
