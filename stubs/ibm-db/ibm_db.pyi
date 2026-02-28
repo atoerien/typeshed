@@ -1,3 +1,5 @@
+"""IBM DataServer Driver for Python."""
+
 from typing import Any, Final, final, overload
 from typing_extensions import Self
 
