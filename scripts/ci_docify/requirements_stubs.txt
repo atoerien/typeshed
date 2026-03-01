@@ -11,7 +11,7 @@ ibm-db==3.2.8
 dirhash==0.5.*
 slumber==0.7.*
 jwcrypto==1.5.*
-regex==2026.2.19
+regex==2026.2.28
 python-dateutil==2.9.*
 pysftp==0.2.*
 hvac==2.4.*
