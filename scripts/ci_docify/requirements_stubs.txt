@@ -121,6 +121,7 @@ pyinstaller==6.19.*
 fpdf2==2.8.4
 qrbill==1.2.*
 singledispatch==4.1.*
+datauri==1.1.*
 cffi==1.17.*
 peewee==4.0.0
 usersettings==1.1.*
