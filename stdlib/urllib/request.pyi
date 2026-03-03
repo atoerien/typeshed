@@ -303,18 +303,8 @@ else:
         """
         ...
 
-def install_opener(opener: OpenerDirector) -> None: ...
-def build_opener(*handlers: BaseHandler | Callable[[], BaseHandler]) -> OpenerDirector:
-    """
-    Create an opener object from a list of handlers.
-
-    The opener will use several default handlers, including support
-    for HTTP, FTP and when applicable HTTPS.
-
-    If any of the handlers passed as arguments are subclasses of the
-    default handlers, the default handlers will not be used.
-    """
-    ...
+def install_opener(opener: OpenerDirector | None) -> None: ...
+def build_opener(*handlers: BaseHandler | Callable[[], BaseHandler]) -> OpenerDirector: ...
 
 if sys.version_info >= (3, 14):
     def url2pathname(url: str, *, require_scheme: bool = False, resolve_host: bool = False) -> str:
