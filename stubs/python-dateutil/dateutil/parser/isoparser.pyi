@@ -17,17 +17,11 @@ _TakesAscii: TypeAlias = str | bytes | _Readable
 __all__ = ["isoparse", "isoparser"]
 
 class isoparser:
-    def __init__(self, sep: str | bytes | None = None):
-        """
-        :param sep:
-            A single character that separates date and time portions. If
-            ``None``, the parser will accept any single character.
-            For strict ISO-8601 adherence, pass ``'T'``.
-        """
-        ...
-    def isoparse(self, dt_str: _TakesAscii) -> datetime:
-        """
-        Parse an ISO-8601 datetime string into a :class:`datetime.datetime`.
+    def __init__(self, sep: str | bytes | None = None) -> None: ...
+    def isoparse(self, dt_str: _TakesAscii) -> datetime: ...
+    def parse_isodate(self, datestr: _TakesAscii) -> date: ...
+    def parse_isotime(self, timestr: _TakesAscii) -> time: ...
+    def parse_tzstr(self, tzstr: _TakesAscii, zero_as_utc: bool = True) -> tzinfo: ...
 
         An ISO-8601 datetime string consists of a date portion, followed
         optionally by a time portion - the date and time portions are separated

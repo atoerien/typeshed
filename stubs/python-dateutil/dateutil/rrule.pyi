@@ -70,45 +70,10 @@ class rrulebase:
     def __iter__(self) -> Iterator[datetime.datetime]: ...
     def __getitem__(self, item: int | slice) -> datetime.datetime: ...
     def __contains__(self, item: datetime.datetime) -> bool: ...
-    def count(self) -> int | None:
-        """
-        Returns the number of recurrences in this set. It will have go
-        through the whole recurrence, if this hasn't been done before. 
-        """
-        ...
-    def before(self, dt: datetime.datetime, inc: bool = False):
-        """
-        Returns the last recurrence before the given datetime instance. The
-        inc keyword defines what happens if dt is an occurrence. With
-        inc=True, if dt itself is an occurrence, it will be returned. 
-        """
-        ...
-    def after(self, dt: datetime.datetime, inc: bool = False):
-        """
-        Returns the first recurrence after the given datetime instance. The
-        inc keyword defines what happens if dt is an occurrence. With
-        inc=True, if dt itself is an occurrence, it will be returned.  
-        """
-        ...
-    def xafter(self, dt: datetime.datetime, count: int | None = None, inc: bool = False) -> Generator[datetime.datetime]:
-        """
-        Generator which yields up to `count` recurrences after the given
-        datetime instance, equivalent to `after`.
-
-        :param dt:
-            The datetime at which to start generating recurrences.
-
-        :param count:
-            The maximum number of recurrences to generate. If `None` (default),
-            dates are generated until the recurrence rule is exhausted.
-
-        :param inc:
-            If `dt` is an instance of the rule and `inc` is `True`, it is
-            included in the output.
-
-        :yields: Yields a sequence of `datetime` objects.
-        """
-        ...
+    def count(self) -> int | None: ...
+    def before(self, dt: datetime.datetime, inc: bool = False) -> datetime.datetime | None: ...
+    def after(self, dt: datetime.datetime, inc: bool = False) -> datetime.datetime | None: ...
+    def xafter(self, dt: datetime.datetime, count: int | None = None, inc: bool = False) -> Generator[datetime.datetime]: ...
     def between(
         self, after: datetime.datetime, before: datetime.datetime, inc: bool = False, count: int = 1
     ) -> list[datetime.datetime]:
