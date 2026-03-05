@@ -63,8 +63,27 @@ class tzutc(tzinfo):
     def utcoffset(self, dt: datetime | None) -> timedelta | None: ...
     def dst(self, dt: datetime | None) -> timedelta | None: ...
     def tzname(self, dt: datetime | None) -> str: ...
-    def is_ambiguous(self, dt: datetime | None) -> bool: ...
-    def fromutc(self, dt: _DateTimeT) -> _DateTimeT: ...
+    def is_ambiguous(self, dt: datetime | None) -> bool:
+        """
+        Whether or not the "wall time" of a given datetime is ambiguous in this
+        zone.
+
+        :param dt:
+            A :py:class:`datetime.datetime`, naive or time zone aware.
+
+
+        :return:
+            Returns ``True`` if ambiguous, ``False`` otherwise.
+
+        .. versionadded:: 2.6.0
+        """
+        ...
+    def fromutc(self, dt: _DateTimeT) -> _DateTimeT:
+        """
+        Fast track version of fromutc() returns the original ``dt`` object for
+        any valid :py:class:`datetime.datetime` object.
+        """
+        ...
     def __eq__(self, other: object) -> bool: ...
     __hash__: ClassVar[None]  # type: ignore[assignment]
     def __ne__(self, other: object) -> bool: ...
@@ -445,9 +464,84 @@ class tzical:
 TZFILES: list[str]
 TZPATHS: list[str]
 
-def datetime_exists(dt: datetime, tz: tzinfo | None = None) -> bool: ...
-def datetime_ambiguous(dt: datetime, tz: tzinfo | None = None) -> bool: ...
-def resolve_imaginary(dt: _DateTimeT) -> _DateTimeT: ...
+def datetime_exists(dt: datetime, tz: tzinfo | None = None) -> bool:
+    """
+    Given a datetime and a time zone, determine whether or not a given datetime
+    would fall in a gap.
+
+    :param dt:
+        A :class:`datetime.datetime` (whose time zone will be ignored if ``tz``
+        is provided.)
+
+    :param tz:
+        A :class:`datetime.tzinfo` with support for the ``fold`` attribute. If
+        ``None`` or not provided, the datetime's own time zone will be used.
+
+    :return:
+        Returns a boolean value whether or not the "wall time" exists in
+        ``tz``.
+
+    .. versionadded:: 2.7.0
+    """
+    ...
+def datetime_ambiguous(dt: datetime, tz: tzinfo | None = None) -> bool:
+    """
+    Given a datetime and a time zone, determine whether or not a given datetime
+    is ambiguous (i.e if there are two times differentiated only by their DST
+    status).
+
+    :param dt:
+        A :class:`datetime.datetime` (whose time zone will be ignored if ``tz``
+        is provided.)
+
+    :param tz:
+        A :class:`datetime.tzinfo` with support for the ``fold`` attribute. If
+        ``None`` or not provided, the datetime's own time zone will be used.
+
+    :return:
+        Returns a boolean value whether or not the "wall time" is ambiguous in
+        ``tz``.
+
+    .. versionadded:: 2.6.0
+    """
+    ...
+def resolve_imaginary(dt: _DateTimeT) -> _DateTimeT:
+    """
+    Given a datetime that may be imaginary, return an existing datetime.
+
+    This function assumes that an imaginary datetime represents what the
+    wall time would be in a zone had the offset transition not occurred, so
+    it will always fall forward by the transition's change in offset.
+
+    .. doctest::
+
+        >>> from dateutil import tz
+        >>> from datetime import datetime
+        >>> NYC = tz.gettz('America/New_York')
+        >>> print(tz.resolve_imaginary(datetime(2017, 3, 12, 2, 30, tzinfo=NYC)))
+        2017-03-12 03:30:00-04:00
+
+        >>> KIR = tz.gettz('Pacific/Kiritimati')
+        >>> print(tz.resolve_imaginary(datetime(1995, 1, 1, 12, 30, tzinfo=KIR)))
+        1995-01-02 12:30:00+14:00
+
+    As a note, :func:`datetime.astimezone` is guaranteed to produce a valid,
+    existing datetime, so a round-trip to and from UTC is sufficient to get
+    an extant datetime, however, this generally "falls back" to an earlier time
+    rather than falling forward to the STD side (though no guarantees are made
+    about this behavior).
+
+    :param dt:
+        A :class:`datetime.datetime` which may or may not exist.
+
+    :return:
+        Returns an existing :class:`datetime.datetime`. If ``dt`` was not
+        imaginary, the datetime returned is guaranteed to be the same object
+        passed to the function.
+
+    .. versionadded:: 2.7.0
+    """
+    ...
 
 # Singleton type defined locally in a function. Calls itself "GettzFunc".
 @type_check_only
