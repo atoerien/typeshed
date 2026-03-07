@@ -137,64 +137,10 @@ class FFI:
         alloc: Callable[[int], CData] | None = None,
         free: Callable[[CData], Any] | None = None,
         should_clear_after_alloc: bool = True,
-    ) -> _cffi_backend._Allocator:
-        """
-        Return a new allocator, i.e. a function that behaves like ffi.new()
-        but uses the provided low-level 'alloc' and 'free' functions.
-
-        'alloc' is called with the size as argument.  If it returns NULL, a
-        MemoryError is raised.  'free' is called with the result of 'alloc'
-        as argument.  Both can be either Python function or directly C
-        functions.  If 'free' is None, then no free function is called.
-        If both 'alloc' and 'free' are None, the default is used.
-
-        If 'should_clear_after_alloc' is set to False, then the memory
-        returned by 'alloc' is assumed to be already cleared (or you are
-        fine with garbage); otherwise CFFI will clear it.
-        """
-        ...
-    def cast(self, cdecl: str | CType, source: CData | int) -> CData:
-        """
-        Similar to a C cast: returns an instance of the named C
-        type initialized with the given 'source'.  The source is
-        casted between integers or pointers of any type.
-        """
-        ...
-    def string(self, cdata: CData, maxlen: int = -1) -> bytes | str:
-        """
-        Return a Python string (or unicode string) from the 'cdata'.
-        If 'cdata' is a pointer or array of characters or bytes, returns
-        the null-terminated string.  The returned string extends until
-        the first null character, or at most 'maxlen' characters.  If
-        'cdata' is an array then 'maxlen' defaults to its length.
-
-        If 'cdata' is a pointer or array of wchar_t, returns a unicode
-        string following the same rules.
-
-        If 'cdata' is a single character or byte or a wchar_t, returns
-        it as a string or unicode string.
-
-        If 'cdata' is an enum, returns the value of the enumerator as a
-        string, or 'NUMBER' if the value is out of range.
-        """
-        ...
-    def unpack(self, cdata: CData, length: int) -> bytes | str | list[Any]:
-        """
-        Unpack an array of C data of the given length,
-        returning a Python string/unicode/list.
-
-        If 'cdata' is a pointer to 'char', returns a byte string.
-        It does not stop at the first null.  This is equivalent to:
-        ffi.buffer(cdata, length)[:]
-
-        If 'cdata' is a pointer to 'wchar_t', returns a unicode string.
-        'length' is measured in wchar_t's; it is not the size in bytes.
-
-        If 'cdata' is a pointer to anything else, returns a list of
-        'length' items.  This is a faster equivalent to:
-        [cdata[i] for i in range(length)]
-        """
-        ...
+    ) -> _cffi_backend._Allocator: ...
+    def cast(self, cdecl: str | CType, source: CData | float) -> CData: ...
+    def string(self, cdata: CData, maxlen: int = -1) -> bytes | str: ...
+    def unpack(self, cdata: CData, length: int) -> bytes | str | list[Any]: ...
     @overload
     def from_buffer(self, cdecl: ReadableBuffer, require_writable: Literal[False] = False) -> CData:
         """
