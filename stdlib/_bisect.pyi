@@ -8,7 +8,7 @@ common approach.
 """
 
 import sys
-from _typeshed import SupportsLenAndGetItem, SupportsRichComparisonT
+from _typeshed import SupportsGetItem, SupportsLenAndGetItem, SupportsRichComparisonT
 from collections.abc import Callable, MutableSequence
 from typing import TypeVar, overload
 
@@ -39,6 +39,14 @@ if sys.version_info >= (3, 10):
         ...
     @overload
     def bisect_left(
+        a: SupportsGetItem[int, SupportsRichComparisonT], x: SupportsRichComparisonT, lo: int, hi: int, *, key: None = None
+    ) -> int: ...
+    @overload
+    def bisect_left(
+        a: SupportsGetItem[int, SupportsRichComparisonT], x: SupportsRichComparisonT, lo: int = 0, *, hi: int, key: None = None
+    ) -> int: ...
+    @overload
+    def bisect_left(
         a: SupportsLenAndGetItem[_T],
         x: SupportsRichComparisonT,
         lo: int = 0,
@@ -59,6 +67,19 @@ if sys.version_info >= (3, 10):
         A custom key function can be supplied to customize the sort order.
         """
         ...
+    @overload
+    def bisect_left(
+        a: SupportsGetItem[int, _T], x: SupportsRichComparisonT, lo: int, hi: int, *, key: Callable[[_T], SupportsRichComparisonT]
+    ) -> int: ...
+    @overload
+    def bisect_left(
+        a: SupportsGetItem[int, _T],
+        x: SupportsRichComparisonT,
+        lo: int = 0,
+        *,
+        hi: int,
+        key: Callable[[_T], SupportsRichComparisonT],
+    ) -> int: ...
     @overload
     def bisect_right(
         a: SupportsLenAndGetItem[SupportsRichComparisonT],
@@ -83,6 +104,14 @@ if sys.version_info >= (3, 10):
         ...
     @overload
     def bisect_right(
+        a: SupportsGetItem[int, SupportsRichComparisonT], x: SupportsRichComparisonT, lo: int, hi: int, *, key: None = None
+    ) -> int: ...
+    @overload
+    def bisect_right(
+        a: SupportsGetItem[int, SupportsRichComparisonT], x: SupportsRichComparisonT, lo: int = 0, *, hi: int, key: None = None
+    ) -> int: ...
+    @overload
+    def bisect_right(
         a: SupportsLenAndGetItem[_T],
         x: SupportsRichComparisonT,
         lo: int = 0,
@@ -103,6 +132,19 @@ if sys.version_info >= (3, 10):
         A custom key function can be supplied to customize the sort order.
         """
         ...
+    @overload
+    def bisect_right(
+        a: SupportsGetItem[int, _T], x: SupportsRichComparisonT, lo: int, hi: int, *, key: Callable[[_T], SupportsRichComparisonT]
+    ) -> int: ...
+    @overload
+    def bisect_right(
+        a: SupportsGetItem[int, _T],
+        x: SupportsRichComparisonT,
+        lo: int = 0,
+        *,
+        hi: int,
+        key: Callable[[_T], SupportsRichComparisonT],
+    ) -> int: ...
     @overload
     def insort_left(
         a: MutableSequence[SupportsRichComparisonT],
@@ -175,34 +217,26 @@ if sys.version_info >= (3, 10):
         ...
 
 else:
+    @overload
     def bisect_left(
         a: SupportsLenAndGetItem[SupportsRichComparisonT], x: SupportsRichComparisonT, lo: int = 0, hi: int | None = None
-    ) -> int:
-        """
-        Return the index where to insert item x in list a, assuming a is sorted.
-
-        The return value i is such that all e in a[:i] have e < x, and all e in
-        a[i:] have e >= x.  So if x already appears in the list, i points just
-        before the leftmost x already there.
-
-        Optional args lo (default 0) and hi (default len(a)) bound the
-        slice of a to be searched.
-        """
-        ...
+    ) -> int: ...
+    @overload
+    def bisect_left(a: SupportsGetItem[int, SupportsRichComparisonT], x: SupportsRichComparisonT, lo: int, hi: int) -> int: ...
+    @overload
+    def bisect_left(
+        a: SupportsGetItem[int, SupportsRichComparisonT], x: SupportsRichComparisonT, lo: int = 0, *, hi: int
+    ) -> int: ...
+    @overload
     def bisect_right(
         a: SupportsLenAndGetItem[SupportsRichComparisonT], x: SupportsRichComparisonT, lo: int = 0, hi: int | None = None
-    ) -> int:
-        """
-        Return the index where to insert item x in list a, assuming a is sorted.
-
-        The return value i is such that all e in a[:i] have e <= x, and all e in
-        a[i:] have e > x.  So if x already appears in the list, i points just
-        beyond the rightmost x already there
-
-        Optional args lo (default 0) and hi (default len(a)) bound the
-        slice of a to be searched.
-        """
-        ...
+    ) -> int: ...
+    @overload
+    def bisect_right(a: SupportsGetItem[int, SupportsRichComparisonT], x: SupportsRichComparisonT, lo: int, hi: int) -> int: ...
+    @overload
+    def bisect_right(
+        a: SupportsGetItem[int, SupportsRichComparisonT], x: SupportsRichComparisonT, lo: int = 0, *, hi: int
+    ) -> int: ...
     def insort_left(
         a: MutableSequence[SupportsRichComparisonT], x: SupportsRichComparisonT, lo: int = 0, hi: int | None = None
     ) -> None:
