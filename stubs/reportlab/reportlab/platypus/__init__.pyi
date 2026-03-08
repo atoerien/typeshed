@@ -1,5 +1,3 @@
-"""Page Layout and Typography Using Scripts" - higher-level framework for flowing documents"""
-
 from typing import Final
 
 from .doctemplate import *

@@ -1,12 +1,3 @@
-"""
-authlib.oidc.core.
-~~~~~~~~~~~~~~~~~
-
-OpenID Connect Core 1.0 Implementation.
-
-http://openid.net/specs/openid-connect-core-1_0.html
-"""
-
 from .claims import (
     CodeIDToken as CodeIDToken,
     HybridIDToken as HybridIDToken,

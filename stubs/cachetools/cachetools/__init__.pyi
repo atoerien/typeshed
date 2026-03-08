@@ -1,5 +1,3 @@
-"""Extensible memoizing collections and decorators."""
-
 from _typeshed import IdentityFunction, Unused
 from collections.abc import Callable, Iterator, MutableMapping, Sequence
 from contextlib import AbstractContextManager
@@ -16,7 +14,6 @@ _T = TypeVar("_T")
 _R = TypeVar("_R")
 
 class Cache(MutableMapping[_KT, _VT]):
-    """Mutable mapping to serve as a simple cache or cache base class."""
     @overload
     def __init__(self, maxsize: float, getsizeof: Callable[[_VT], float]) -> None: ...
     @overload
@@ -33,30 +30,17 @@ class Cache(MutableMapping[_KT, _VT]):
     def pop(self, key: _KT, default: _VT | _T) -> _VT | _T: ...
     def setdefault(self, key: _KT, default: _VT | None = None) -> _VT: ...
     @property
-    def maxsize(self) -> float:
-        """The maximum size of the cache."""
-        ...
+    def maxsize(self) -> float: ...
     @property
-    def currsize(self) -> float:
-        """The current size of the cache."""
-        ...
+    def currsize(self) -> float: ...
     @staticmethod
-    def getsizeof(value: _VT) -> float:
-        """Return the size of a cache element's value."""
-        ...
+    def getsizeof(value: _VT) -> float: ...
 
-class FIFOCache(Cache[_KT, _VT]):
-    """First In First Out (FIFO) cache implementation."""
-    ...
-class LFUCache(Cache[_KT, _VT]):
-    """Least Frequently Used (LFU) cache implementation."""
-    ...
-class LRUCache(Cache[_KT, _VT]):
-    """Least Recently Used (LRU) cache implementation."""
-    ...
+class FIFOCache(Cache[_KT, _VT]): ...
+class LFUCache(Cache[_KT, _VT]): ...
+class LRUCache(Cache[_KT, _VT]): ...
 
 class RRCache(Cache[_KT, _VT]):
-    """Random Replacement (RR) cache implementation."""
     @overload
     def __init__(self, maxsize: float, choice: None = None, getsizeof: None = None) -> None: ...
     @overload
@@ -68,14 +52,11 @@ class RRCache(Cache[_KT, _VT]):
     @overload
     def __init__(self, maxsize: float, choice: Callable[[Sequence[_KT]], _KT], getsizeof: Callable[[_VT], float]) -> None: ...
     @property
-    def choice(self) -> Callable[[Sequence[_KT]], _KT]:
-        """The `choice` function used by the cache."""
-        ...
+    def choice(self) -> Callable[[Sequence[_KT]], _KT]: ...
     def __setitem__(self, key: _KT, value: _VT, cache_setitem: Callable[[Self, _KT, _VT], None] = ...) -> None: ...
     def __delitem__(self, key: _KT, cache_delitem: Callable[[Self, _KT], None] = ...) -> None: ...
 
 class _TimedCache(Cache[_KT, _VT]):
-    """Base class for time aware cache implementations."""
     @overload
     def __init__(self, maxsize: float, timer: Callable[[], float] = ..., getsizeof: None = None) -> None: ...
     @overload
@@ -92,12 +73,9 @@ class _TimedCache(Cache[_KT, _VT]):
         def __exit__(self, *exc: Unused) -> None: ...
 
     @property
-    def timer(self) -> _Timer:
-        """The timer function used by the cache."""
-        ...
+    def timer(self) -> _Timer: ...
 
 class TTLCache(_TimedCache[_KT, _VT]):
-    """LRU Cache implementation with per-item time-to-live (TTL) value."""
     @overload
     def __init__(self, maxsize: float, ttl: float, timer: Callable[[], float] = ..., getsizeof: None = None) -> None: ...
     @overload
@@ -107,18 +85,10 @@ class TTLCache(_TimedCache[_KT, _VT]):
         self, maxsize: float, ttl: float, timer: Callable[[], float] = ..., *, getsizeof: Callable[[_VT], float]
     ) -> None: ...
     @property
-    def ttl(self) -> float:
-        """The time-to-live value of the cache's items."""
-        ...
-    def expire(self, time: float | None = None) -> list[tuple[_KT, _VT]]:
-        """
-        Remove expired items from the cache and return an iterable of the
-        expired `(key, value)` pairs.
-        """
-        ...
+    def ttl(self) -> float: ...
+    def expire(self, time: float | None = None) -> list[tuple[_KT, _VT]]: ...
 
 class TLRUCache(_TimedCache[_KT, _VT]):
-    """Time aware Least Recently Used (TLRU) cache implementation."""
     def __init__(
         self,
         maxsize: float,
@@ -127,18 +97,10 @@ class TLRUCache(_TimedCache[_KT, _VT]):
         getsizeof: Callable[[_VT], float] | None = None,
     ) -> None: ...
     @property
-    def ttu(self) -> Callable[[_KT, _VT, float], float]:
-        """The local time-to-use function used by the cache."""
-        ...
-    def expire(self, time: float | None = None) -> list[tuple[_KT, _VT]]:
-        """
-        Remove expired items from the cache and return an iterable of the
-        expired `(key, value)` pairs.
-        """
-        ...
+    def ttu(self) -> Callable[[_KT, _VT, float], float]: ...
+    def expire(self, time: float | None = None) -> list[tuple[_KT, _VT]]: ...
 
 class _CacheInfo(NamedTuple):
-    """CacheInfo(hits, misses, maxsize, currsize)"""
     hits: int
     misses: int
     maxsize: int | None
@@ -159,12 +121,7 @@ def cached(
     lock: AbstractContextManager[Any] | None = None,
     condition: Condition | None = None,
     info: Literal[True] = ...,
-) -> Callable[[Callable[..., _R]], _cached_wrapper_info[_R]]:
-    """
-    Decorator to wrap a function with a memoizing callable that saves
-    results in a cache.
-    """
-    ...
+) -> Callable[[Callable[..., _R]], _cached_wrapper_info[_R]]: ...
 @overload
 def cached(
     cache: MutableMapping[_KT, Any] | None,
@@ -172,12 +129,7 @@ def cached(
     lock: AbstractContextManager[Any] | None = None,
     condition: Condition | None = None,
     info: Literal[False] = ...,
-) -> Callable[[Callable[..., _R]], _cached_wrapper[_R]]:
-    """
-    Decorator to wrap a function with a memoizing callable that saves
-    results in a cache.
-    """
-    ...
+) -> Callable[[Callable[..., _R]], _cached_wrapper[_R]]: ...
 @overload
 @deprecated("Passing `info` as positional parameter is deprecated.")
 def cached(
@@ -185,12 +137,7 @@ def cached(
     key: Callable[..., _KT] = ...,
     lock: AbstractContextManager[Any] | None = None,
     condition: Literal[True] = ...,
-) -> Callable[[Callable[..., _R]], _cached_wrapper_info[_R]]:
-    """
-    Decorator to wrap a function with a memoizing callable that saves
-    results in a cache.
-    """
-    ...
+) -> Callable[[Callable[..., _R]], _cached_wrapper_info[_R]]: ...
 @overload
 @deprecated("Passing `info` as positional parameter is deprecated.")
 def cached(
@@ -198,20 +145,10 @@ def cached(
     key: Callable[..., _KT] = ...,
     lock: AbstractContextManager[Any] | None = None,
     condition: Literal[False] | None = ...,
-) -> Callable[[Callable[..., _R]], _cached_wrapper[_R]]:
-    """
-    Decorator to wrap a function with a memoizing callable that saves
-    results in a cache.
-    """
-    ...
+) -> Callable[[Callable[..., _R]], _cached_wrapper[_R]]: ...
 def cachedmethod(
     cache: Callable[[Any], MutableMapping[_KT, Any] | None],
     key: Callable[..., _KT] = ...,
     lock: Callable[[Any], AbstractContextManager[Any]] | None = None,
     condition: Condition | None = None,
-) -> IdentityFunction:
-    """
-    Decorator to wrap a class or instance method with a memoizing
-    callable that saves results in a cache.
-    """
-    ...
+) -> IdentityFunction: ...

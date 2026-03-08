@@ -1,5 +1,3 @@
-"""This package contains Docutils Writer modules."""
-
 from _typeshed import StrPath
 from pathlib import Path
 from typing import Any, Final, Generic, TypedDict, TypeVar, type_check_only
@@ -72,105 +70,23 @@ class _WriterParts(TypedDict, total=False):
     titledata: str
 
 class Writer(Component, Generic[_S]):
-    """
-    Abstract base class for docutils Writers.
-
-    Each writer module or package must export a subclass also called 'Writer'.
-    Each writer must support all standard node types listed in
-    `docutils.nodes.node_class_names`.
-
-    The `write()` method is the main entry point.
-    """
     parts: _WriterParts
     language: LanguageImporter | None = None
     document: nodes.document | None = None
     destination: Output | None = None
     output: _S | None = None
     def __init__(self) -> None: ...
-    def write(self, document: nodes.document, destination: Output) -> str | bytes | None:
-        """
-        Process a document into its final form.
+    def write(self, document: nodes.document, destination: Output) -> str | bytes | None: ...
+    def translate(self) -> None: ...
+    def assemble_parts(self) -> None: ...
 
-        Translate `document` (a Docutils document tree) into the Writer's
-        native format, and write it out to its `destination` (a
-        `docutils.io.Output` subclass object).
-
-        Normally not overridden or extended in subclasses.
-        """
-        ...
-    def translate(self) -> None:
-        """
-        Do final translation of `self.document` into `self.output`.  Called
-        from `write`.  Override in subclasses.
-
-        Usually done with a `docutils.nodes.NodeVisitor` subclass, in
-        combination with a call to `docutils.nodes.Node.walk()` or
-        `docutils.nodes.Node.walkabout()`.  The ``NodeVisitor`` subclass must
-        support all standard elements (listed in
-        `docutils.nodes.node_class_names`) and possibly non-standard elements
-        used by the current Reader as well.
-        """
-        ...
-    def assemble_parts(self) -> None:
-        """
-        Assemble the `self.parts` dictionary.  Extend in subclasses.
-
-        See <https://docutils.sourceforge.io/docs/api/publisher.html>.
-        """
-        ...
-
-class UnfilteredWriter(Writer[_S]):
-    """
-    A writer that passes the document tree on unchanged (e.g. a
-    serializer.)
-
-    Documents written by UnfilteredWriters are typically reused at a
-    later date using a subclass of `readers.ReReader`.
-    """
-    ...
+class UnfilteredWriter(Writer[_S]): ...
 
 class DoctreeTranslator(nodes.NodeVisitor):
-    """
-    Generic Docutils document tree translator base class.
-
-    Adds auxiliary methods and attributes that are used by several
-    Docutils writers to the `nodes.NodeVisitor` abstract superclass.
-    """
     settings: Values
     def __init__(self, document: nodes.document) -> None: ...
-    def uri2path(self, uri: str, output_path: StrPath | None = None) -> Path:
-        """
-        Return filesystem path corresponding to a `URI reference`__.
-
-        The `root_prefix`__ setting` is applied to URI references starting
-        with "/" (but not to absolute Windows paths or "file" URIs).
-
-        If `output_path` (defaults to the `output_path`__ setting) is
-        not empty, relative paths are adjusted.
-        (To work in the output document, URI references with relative path
-        relate to the output directory.  For access by the writer, paths
-        must be relative to the working directory.)
-
-        Use case:
-          The <image> element refers to the image via a "URI reference".
-          The corresponding filesystem path is required to read the
-          image size from the file or to embed the image in the output.
-
-          A filesystem path is also expected by the "LaTeX" output format
-          (with relative paths unchanged, relating to the output directory,
-          set `output_path` to the empty string).
-
-        Provisional: the function's location, interface and behaviour
-        may change without advance warning.
-
-        __ https://www.rfc-editor.org/rfc/rfc3986.html#section-4.1
-        __ https://docutils.sourceforge.io/docs/user/config.html#root-prefix
-        __ https://docutils.sourceforge.io/docs/user/config.html#output-path
-        """
-        ...
+    def uri2path(self, uri: str, output_path: StrPath | None = None) -> Path: ...
 
 WRITER_ALIASES: Final[dict[str, str]]
 
-def get_writer_class(writer_name: str) -> type[Writer[Any]]:
-    """Return the Writer class from the `writer_name` module."""
-    ...
+def get_writer_class(writer_name: str) -> type[Writer[Any]]: ...

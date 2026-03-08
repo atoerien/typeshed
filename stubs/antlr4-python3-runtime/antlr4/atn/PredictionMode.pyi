@@ -8,7 +8,6 @@ from antlr4.atn.ATNState import RuleStopState as RuleStopState
 from antlr4.atn.SemanticContext import SemanticContext as SemanticContext
 
 class PredictionMode(Enum):
-    """An enumeration."""
     SLL = 0
     LL = 1
     LL_EXACT_AMBIG_DETECTION = 2

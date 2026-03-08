@@ -1,5 +1,3 @@
 from .core import UnitedStates
 
-class Guam(UnitedStates):
-    """Guam"""
-    ...
+class Guam(UnitedStates): ...

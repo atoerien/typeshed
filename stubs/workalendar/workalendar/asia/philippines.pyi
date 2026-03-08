@@ -1,5 +1,3 @@
 from ..core import ChineseNewYearCalendar, IslamicMixin, WesternMixin
 
-class Philippines(WesternMixin, IslamicMixin, ChineseNewYearCalendar):
-    """Philippines"""
-    ...
+class Philippines(WesternMixin, IslamicMixin, ChineseNewYearCalendar): ...

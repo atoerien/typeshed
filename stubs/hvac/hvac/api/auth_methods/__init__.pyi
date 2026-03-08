@@ -1,5 +1,3 @@
-"""Collection of classes for various Vault auth methods."""
-
 from hvac.api.auth_methods.approle import AppRole as AppRole
 from hvac.api.auth_methods.aws import Aws as Aws
 from hvac.api.auth_methods.azure import Azure as Azure
@@ -38,6 +36,5 @@ __all__ = (
 )
 
 class AuthMethods(VaultApiCategory):
-    """Auth Methods."""
     implemented_classes: list[type[VaultApiBase]]
     unimplemented_classes: list[str]

@@ -54,9 +54,7 @@ class FingerprintDef(google.protobuf.message.Message):
         checkpoint_hash: builtins.int | None = ...,
         version: tensorflow.core.framework.versions_pb2.VersionDef | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["version", b"version"]) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    def HasField(self, field_name: typing.Literal["version", b"version"]) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -73,8 +71,6 @@ class FingerprintDef(google.protobuf.message.Message):
             "version",
             b"version",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___FingerprintDef = FingerprintDef

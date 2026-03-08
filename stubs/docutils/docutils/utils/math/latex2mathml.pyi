@@ -1,10 +1,3 @@
-"""
-Convert LaTex maths code into presentational MathML.
-
-This module is provisional:
-the API is not settled and may change with any minor Docutils version.
-"""
-
 from collections.abc import Iterable
 
 from docutils.utils.math.mathml_elements import MathElement, mover, msub, msubsup, msup, mtd, munder, munderover
@@ -32,88 +25,20 @@ fractions: dict[str, dict[str, bool | int | str] | dict[str, bool | int] | dict[
 delimiter_sizes: list[str]
 bigdelimiters: dict[str, int]
 
-def tex_cmdname(string: str) -> tuple[str, str]:
-    """
-    Return leading TeX command name and remainder of `string`.
-
-    >>> tex_cmdname('mymacro2') # up to first non-letter
-    ('mymacro', '2')
-    >>> tex_cmdname('name 2') # strip trailing whitespace
-    ('name', '2')
-    >>> tex_cmdname('_2') # single non-letter character
-    ('_', '2')
-    """
-    ...
-def tex_number(string: str) -> tuple[str, str]:
-    """
-    Return leading number literal and remainder of `string`.
-
-    >>> tex_number('123.4')
-    ('123.4', '')
-    """
-    ...
-def tex_token(string: str) -> tuple[str, str]:
-    r"""
-    Return first simple TeX token and remainder of `string`.
-
-    >>> tex_token('\command{without argument}')
-    ('\command', '{without argument}')
-    >>> tex_token('or first character')
-    ('o', 'r first character')
-    """
-    ...
-def tex_group(string: str) -> tuple[str, str]:
-    """
-    Return first TeX group or token and remainder of `string`.
-
-    >>> tex_group('{first group} returned without brackets')
-    ('first group', ' returned without brackets')
-    """
-    ...
-def tex_token_or_group(string: str) -> tuple[str, str]:
-    r"""
-    Return first TeX group or token and remainder of `string`.
-
-    >>> tex_token_or_group('\command{without argument}')
-    ('\command', '{without argument}')
-    >>> tex_token_or_group('first character')
-    ('f', 'irst character')
-    >>> tex_token_or_group(' also whitespace')
-    (' ', 'also whitespace')
-    >>> tex_token_or_group('{first group} keep rest')
-    ('first group', ' keep rest')
-    """
-    ...
-def tex_optarg(string: str) -> tuple[str, str]:
-    """
-    Return optional argument and remainder.
-
-    >>> tex_optarg('[optional argument] returned without brackets')
-    ('optional argument', ' returned without brackets')
-    >>> tex_optarg('{empty string, if there is no optional arg}')
-    ('', '{empty string, if there is no optional arg}')
-    """
-    ...
-def parse_latex_math(root: MathElement, source: str) -> MathElement:
-    "Append MathML conversion of `string` to `node` and return it.\n\n>>> parse_latex_math(math(), r'\x07lpha')\nmath(mi('α'))\n>>> parse_latex_math(mrow(), r'x_{n}')\nmrow(msub(mi('x'), mi('n')))"
-    ...
-def handle_cmd(name: str, node: MathElement, string: str) -> tuple[MathElement, str]:
-    "Process LaTeX command `name` followed by `string`.\n\nAppend result to `node`.\nIf needed, parse `string` for command argument.\nReturn new current node and remainder of `string`:\n\n>>> handle_cmd('hbar', math(), r' \x0crac')\n(math(mi('ℏ')), ' \\frac')\n>>> handle_cmd('hspace', math(), r'{1ex} (x)')\n(math(mspace(width='1ex')), ' (x)')"
-    ...
+def tex_cmdname(string: str) -> tuple[str, str]: ...
+def tex_number(string: str) -> tuple[str, str]: ...
+def tex_token(string: str) -> tuple[str, str]: ...
+def tex_group(string: str) -> tuple[str, str]: ...
+def tex_token_or_group(string: str) -> tuple[str, str]: ...
+def tex_optarg(string: str) -> tuple[str, str]: ...
+def parse_latex_math(root: MathElement, source: str) -> MathElement: ...
+def handle_cmd(name: str, node: MathElement, string: str) -> tuple[MathElement, str]: ...
 def handle_math_alphabet(name: str, node: MathElement, string: str) -> tuple[MathElement, str]: ...
 def handle_script_or_limit(
     node: MathElement, c: str, limits: str = ""
-) -> munderover | msubsup | munder | msub | mover | msup:
-    """Append script or limit element to `node`."""
-    ...
+) -> munderover | msubsup | munder | msub | mover | msup: ...
 def begin_environment(node: MathElement, string: str) -> tuple[mtd, str]: ...
 def end_environment(node: MathElement, string: str) -> tuple[MathElement, str]: ...
 def tex_equation_columns(rows: Iterable[str]) -> int: ...
 def align_attributes(rows: Iterable[str]) -> dict[str, str | bool]: ...
-def tex2mathml(tex_math: str, as_block: bool = False) -> str:
-    """
-    Return string with MathML code corresponding to `tex_math`.
-
-    Set `as_block` to ``True`` for displayed formulas.
-    """
-    ...
+def tex2mathml(tex_math: str, as_block: bool = False) -> str: ...

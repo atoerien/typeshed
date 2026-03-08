@@ -3,35 +3,10 @@ from opentracing.span import Span
 from ..tracer import Tracer
 
 class APICompatibilityCheckMixin:
-    """
-    A mixin class for validation that a given tracer implementation
-    satisfies the requirements of the OpenTracing API.
-    """
     def tracer(self) -> Tracer: ...
-    def check_baggage_values(self) -> bool:
-        """
-        If true, the test will validate Baggage items by storing and
-        retrieving them from the trace context. If false, it will only attempt
-        to store and retrieve the Baggage items to check the API compliance,
-        but not actually validate stored values. The latter mode is only
-        useful for no-op tracer.
-        """
-        ...
-    def check_scope_manager(self) -> bool:
-        """
-        If true, the test suite will validate the `ScopeManager` propagation
-        to ensure correct parenting. If false, it will only use the API without
-        asserting. The latter mode is only useful for no-op tracer.
-        """
-        ...
-    def is_parent(self, parent: Span, span: Span) -> bool:
-        """
-        Utility method that must be defined by Tracer implementers to define
-        how the test suite can check when a `Span` is a parent of another one.
-        It depends by the underlying implementation that is not part of the
-        OpenTracing API.
-        """
-        ...
+    def check_baggage_values(self) -> bool: ...
+    def check_scope_manager(self) -> bool: ...
+    def is_parent(self, parent: Span, span: Span) -> bool: ...
     def test_active_span(self) -> None: ...
     def test_start_active_span(self) -> None: ...
     def test_start_active_span_parent(self) -> None: ...

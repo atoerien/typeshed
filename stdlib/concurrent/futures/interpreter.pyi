@@ -1,5 +1,3 @@
-"""Implements InterpreterPoolExecutor."""
-
 import sys
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
@@ -39,9 +37,7 @@ if sys.version_info >= (3, 14):
         def __del__(self) -> None: ...
         def run(self, task: _Task) -> None: ...  # type: ignore[override]
 
-    class BrokenInterpreterPool(BrokenThreadPool):
-        """Raised when a worker thread in an InterpreterPoolExecutor failed initializing."""
-        ...
+    class BrokenInterpreterPool(BrokenThreadPool): ...
 
     class InterpreterPoolExecutor(ThreadPoolExecutor):
         BROKEN: type[BrokenInterpreterPool]
@@ -63,19 +59,7 @@ if sys.version_info >= (3, 14):
             thread_name_prefix: str = "",
             initializer: Callable[[], object] | None = None,
             initargs: tuple[()] = (),
-        ) -> None:
-            """
-            Initializes a new InterpreterPoolExecutor instance.
-
-            Args:
-                max_workers: The maximum number of interpreters that can be used to
-                    execute the given calls.
-                thread_name_prefix: An optional name prefix to give our threads.
-                initializer: A callable or script used to initialize
-                    each worker interpreter.
-                initargs: A tuple of arguments to pass to the initializer.
-            """
-            ...
+        ) -> None: ...
         @overload
         def __init__(
             self,
@@ -84,19 +68,7 @@ if sys.version_info >= (3, 14):
             *,
             initializer: Callable[[Unpack[_Ts]], object],
             initargs: tuple[Unpack[_Ts]],
-        ) -> None:
-            """
-            Initializes a new InterpreterPoolExecutor instance.
-
-            Args:
-                max_workers: The maximum number of interpreters that can be used to
-                    execute the given calls.
-                thread_name_prefix: An optional name prefix to give our threads.
-                initializer: A callable or script used to initialize
-                    each worker interpreter.
-                initargs: A tuple of arguments to pass to the initializer.
-            """
-            ...
+        ) -> None: ...
         @overload
         def __init__(
             self,
@@ -104,16 +76,4 @@ if sys.version_info >= (3, 14):
             thread_name_prefix: str,
             initializer: Callable[[Unpack[_Ts]], object],
             initargs: tuple[Unpack[_Ts]],
-        ) -> None:
-            """
-            Initializes a new InterpreterPoolExecutor instance.
-
-            Args:
-                max_workers: The maximum number of interpreters that can be used to
-                    execute the given calls.
-                thread_name_prefix: An optional name prefix to give our threads.
-                initializer: A callable or script used to initialize
-                    each worker interpreter.
-                initargs: A tuple of arguments to pass to the initializer.
-            """
-            ...
+        ) -> None: ...

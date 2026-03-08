@@ -27,90 +27,18 @@ __with_libyaml__: bool
 __version__: str
 
 def warnings(settings=None): ...
-def scan(stream, Loader: type[_Loader | _CLoader] = ...):
-    """Scan a YAML stream and produce scanning tokens."""
-    ...
-def parse(stream, Loader: type[_Loader | _CLoader] = ...):
-    """Parse a YAML stream and produce parsing events."""
-    ...
-def compose(stream, Loader: type[_Loader | _CLoader] = ...):
-    """
-    Parse the first YAML document in a stream
-    and produce the corresponding representation tree.
-    """
-    ...
-def compose_all(stream, Loader: type[_Loader | _CLoader] = ...):
-    """
-    Parse all YAML documents in a stream
-    and produce corresponding representation trees.
-    """
-    ...
-def load(stream: _ReadStream, Loader: type[_Loader | _CLoader]) -> Any:
-    """
-    Parse the first YAML document in a stream
-    and produce the corresponding Python object.
-    """
-    ...
-def load_all(stream: _ReadStream, Loader: type[_Loader | _CLoader]) -> Iterator[Any]:
-    """
-    Parse all YAML documents in a stream
-    and produce corresponding Python objects.
-    """
-    ...
-def full_load(stream: _ReadStream) -> Any:
-    """
-    Parse the first YAML document in a stream
-    and produce the corresponding Python object.
-
-    Resolve all tags except those known to be
-    unsafe on untrusted input.
-    """
-    ...
-def full_load_all(stream: _ReadStream) -> Iterator[Any]:
-    """
-    Parse all YAML documents in a stream
-    and produce corresponding Python objects.
-
-    Resolve all tags except those known to be
-    unsafe on untrusted input.
-    """
-    ...
-def safe_load(stream: _ReadStream) -> Any:
-    """
-    Parse the first YAML document in a stream
-    and produce the corresponding Python object.
-
-    Resolve only basic YAML tags. This is known
-    to be safe for untrusted input.
-    """
-    ...
-def safe_load_all(stream: _ReadStream) -> Iterator[Any]:
-    """
-    Parse all YAML documents in a stream
-    and produce corresponding Python objects.
-
-    Resolve only basic YAML tags. This is known
-    to be safe for untrusted input.
-    """
-    ...
-def unsafe_load(stream: _ReadStream) -> Any:
-    """
-    Parse the first YAML document in a stream
-    and produce the corresponding Python object.
-
-    Resolve all tags, even those known to be
-    unsafe on untrusted input.
-    """
-    ...
-def unsafe_load_all(stream: _ReadStream) -> Iterator[Any]:
-    """
-    Parse all YAML documents in a stream
-    and produce corresponding Python objects.
-
-    Resolve all tags, even those known to be
-    unsafe on untrusted input.
-    """
-    ...
+def scan(stream, Loader: type[_Loader | _CLoader] = ...): ...
+def parse(stream, Loader: type[_Loader | _CLoader] = ...): ...
+def compose(stream, Loader: type[_Loader | _CLoader] = ...): ...
+def compose_all(stream, Loader: type[_Loader | _CLoader] = ...): ...
+def load(stream: _ReadStream, Loader: type[_Loader | _CLoader]) -> Any: ...
+def load_all(stream: _ReadStream, Loader: type[_Loader | _CLoader]) -> Iterator[Any]: ...
+def full_load(stream: _ReadStream) -> Any: ...
+def full_load_all(stream: _ReadStream) -> Iterator[Any]: ...
+def safe_load(stream: _ReadStream) -> Any: ...
+def safe_load_all(stream: _ReadStream) -> Iterator[Any]: ...
+def unsafe_load(stream: _ReadStream) -> Any: ...
+def unsafe_load_all(stream: _ReadStream) -> Iterator[Any]: ...
 def emit(
     events,
     stream: _WriteStream[Any] | None = None,
@@ -120,12 +48,7 @@ def emit(
     width: int | _Inf | None = None,
     allow_unicode: bool | None = None,
     line_break: str | None = None,
-):
-    """
-    Emit YAML parsing events into a stream.
-    If stream is None, return the produced string instead.
-    """
-    ...
+): ...
 @overload
 def serialize_all(
     nodes,
@@ -142,12 +65,7 @@ def serialize_all(
     explicit_end: bool | None = None,
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
-) -> None:
-    """
-    Serialize a sequence of representation trees into a YAML stream.
-    If stream is None, return the produced string instead.
-    """
-    ...
+) -> None: ...
 @overload
 def serialize_all(
     nodes,
@@ -164,12 +82,7 @@ def serialize_all(
     explicit_end: bool | None = None,
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
-) -> str:
-    """
-    Serialize a sequence of representation trees into a YAML stream.
-    If stream is None, return the produced string instead.
-    """
-    ...
+) -> str: ...
 @overload
 def serialize_all(
     nodes,
@@ -186,12 +99,7 @@ def serialize_all(
     explicit_end: bool | None = None,
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
-) -> bytes:
-    """
-    Serialize a sequence of representation trees into a YAML stream.
-    If stream is None, return the produced string instead.
-    """
-    ...
+) -> bytes: ...
 @overload
 def serialize(
     node,
@@ -208,12 +116,7 @@ def serialize(
     explicit_end: bool | None = None,
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
-) -> None:
-    """
-    Serialize a representation tree into a YAML stream.
-    If stream is None, return the produced string instead.
-    """
-    ...
+) -> None: ...
 @overload
 def serialize(
     node,
@@ -230,12 +133,7 @@ def serialize(
     explicit_end: bool | None = None,
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
-) -> str:
-    """
-    Serialize a representation tree into a YAML stream.
-    If stream is None, return the produced string instead.
-    """
-    ...
+) -> str: ...
 @overload
 def serialize(
     node,
@@ -252,12 +150,7 @@ def serialize(
     explicit_end: bool | None = None,
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
-) -> bytes:
-    """
-    Serialize a representation tree into a YAML stream.
-    If stream is None, return the produced string instead.
-    """
-    ...
+) -> bytes: ...
 @overload
 def dump_all(
     documents: Iterable[Any],
@@ -277,12 +170,7 @@ def dump_all(
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
     sort_keys: bool = True,
-) -> None:
-    """
-    Serialize a sequence of Python objects into a YAML stream.
-    If stream is None, return the produced string instead.
-    """
-    ...
+) -> None: ...
 @overload
 def dump_all(
     documents: Iterable[Any],
@@ -302,12 +190,7 @@ def dump_all(
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
     sort_keys: bool = True,
-) -> str:
-    """
-    Serialize a sequence of Python objects into a YAML stream.
-    If stream is None, return the produced string instead.
-    """
-    ...
+) -> str: ...
 @overload
 def dump_all(
     documents: Iterable[Any],
@@ -327,12 +210,7 @@ def dump_all(
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
     sort_keys: bool = True,
-) -> bytes:
-    """
-    Serialize a sequence of Python objects into a YAML stream.
-    If stream is None, return the produced string instead.
-    """
-    ...
+) -> bytes: ...
 @overload
 def dump(
     data: Any,
@@ -352,12 +230,7 @@ def dump(
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
     sort_keys: bool = True,
-) -> None:
-    """
-    Serialize a Python object into a YAML stream.
-    If stream is None, return the produced string instead.
-    """
-    ...
+) -> None: ...
 @overload
 def dump(
     data: Any,
@@ -377,12 +250,7 @@ def dump(
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
     sort_keys: bool = True,
-) -> str:
-    """
-    Serialize a Python object into a YAML stream.
-    If stream is None, return the produced string instead.
-    """
-    ...
+) -> str: ...
 @overload
 def dump(
     data: Any,
@@ -402,12 +270,7 @@ def dump(
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
     sort_keys: bool = True,
-) -> bytes:
-    """
-    Serialize a Python object into a YAML stream.
-    If stream is None, return the produced string instead.
-    """
-    ...
+) -> bytes: ...
 @overload
 def safe_dump_all(
     documents: Iterable[Any],
@@ -426,13 +289,7 @@ def safe_dump_all(
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
     sort_keys: bool = True,
-) -> None:
-    """
-    Serialize a sequence of Python objects into a YAML stream.
-    Produce only basic YAML tags.
-    If stream is None, return the produced string instead.
-    """
-    ...
+) -> None: ...
 @overload
 def safe_dump_all(
     documents: Iterable[Any],
@@ -451,13 +308,7 @@ def safe_dump_all(
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
     sort_keys: bool = True,
-) -> str:
-    """
-    Serialize a sequence of Python objects into a YAML stream.
-    Produce only basic YAML tags.
-    If stream is None, return the produced string instead.
-    """
-    ...
+) -> str: ...
 @overload
 def safe_dump_all(
     documents: Iterable[Any],
@@ -476,13 +327,7 @@ def safe_dump_all(
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
     sort_keys: bool = True,
-) -> bytes:
-    """
-    Serialize a sequence of Python objects into a YAML stream.
-    Produce only basic YAML tags.
-    If stream is None, return the produced string instead.
-    """
-    ...
+) -> bytes: ...
 @overload
 def safe_dump(
     data: Any,
@@ -501,13 +346,7 @@ def safe_dump(
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
     sort_keys: bool = True,
-) -> None:
-    """
-    Serialize a Python object into a YAML stream.
-    Produce only basic YAML tags.
-    If stream is None, return the produced string instead.
-    """
-    ...
+) -> None: ...
 @overload
 def safe_dump(
     data: Any,
@@ -526,13 +365,7 @@ def safe_dump(
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
     sort_keys: bool = True,
-) -> str:
-    """
-    Serialize a Python object into a YAML stream.
-    Produce only basic YAML tags.
-    If stream is None, return the produced string instead.
-    """
-    ...
+) -> str: ...
 @overload
 def safe_dump(
     data: Any,
@@ -551,139 +384,56 @@ def safe_dump(
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
     sort_keys: bool = True,
-) -> bytes:
-    """
-    Serialize a Python object into a YAML stream.
-    Produce only basic YAML tags.
-    If stream is None, return the produced string instead.
-    """
-    ...
+) -> bytes: ...
 def add_implicit_resolver(
     tag: str,
     regexp: Pattern[str],
     first: Iterable[Any] | None = None,
     Loader: type[BaseResolver] | None = None,
     Dumper: type[BaseResolver] = ...,
-) -> None:
-    """
-    Add an implicit scalar detector.
-    If an implicit scalar value matches the given regexp,
-    the corresponding tag is assigned to the scalar.
-    first is a sequence of possible initial characters or None.
-    """
-    ...
+) -> None: ...
 def add_path_resolver(
     tag: str,
     path: Iterable[Any],
     kind: type[Any] | None = None,
     Loader: type[BaseResolver] | None = None,
     Dumper: type[BaseResolver] = ...,
-) -> None:
-    """
-    Add a path based resolver for the given tag.
-    A path is a list of keys that forms a path
-    to a node in the representation tree.
-    Keys can be string values, integers, or None.
-    """
-    ...
+) -> None: ...
 @overload
 def add_constructor(
     tag: str, constructor: Callable[[Loader | FullLoader | UnsafeLoader, Node], Any], Loader: None = None
-) -> None:
-    """
-    Add a constructor for the given tag.
-    Constructor is a function that accepts a Loader instance
-    and a node object and produces the corresponding Python object.
-    """
-    ...
+) -> None: ...
 @overload
-def add_constructor(tag: str, constructor: Callable[[_Constructor, Node], Any], Loader: type[_Constructor]) -> None:
-    """
-    Add a constructor for the given tag.
-    Constructor is a function that accepts a Loader instance
-    and a node object and produces the corresponding Python object.
-    """
-    ...
+def add_constructor(tag: str, constructor: Callable[[_Constructor, Node], Any], Loader: type[_Constructor]) -> None: ...
 @overload
 def add_multi_constructor(
     tag_prefix: str, multi_constructor: Callable[[Loader | FullLoader | UnsafeLoader, str, Node], Any], Loader: None = None
-) -> None:
-    """
-    Add a multi-constructor for the given tag prefix.
-    Multi-constructor is called for a node if its tag starts with tag_prefix.
-    Multi-constructor accepts a Loader instance, a tag suffix,
-    and a node object and produces the corresponding Python object.
-    """
-    ...
+) -> None: ...
 @overload
 def add_multi_constructor(
     tag_prefix: str, multi_constructor: Callable[[_Constructor, str, Node], Any], Loader: type[_Constructor]
-) -> None:
-    """
-    Add a multi-constructor for the given tag prefix.
-    Multi-constructor is called for a node if its tag starts with tag_prefix.
-    Multi-constructor accepts a Loader instance, a tag suffix,
-    and a node object and produces the corresponding Python object.
-    """
-    ...
+) -> None: ...
 @overload
-def add_representer(data_type: type[_T], representer: Callable[[Dumper, _T], Node]) -> None:
-    """
-    Add a representer for the given type.
-    Representer is a function accepting a Dumper instance
-    and an instance of the given data type
-    and producing the corresponding representation node.
-    """
-    ...
+def add_representer(data_type: type[_T], representer: Callable[[Dumper, _T], Node]) -> None: ...
 @overload
-def add_representer(data_type: type[_T], representer: Callable[[_Representer, _T], Node], Dumper: type[_Representer]) -> None:
-    """
-    Add a representer for the given type.
-    Representer is a function accepting a Dumper instance
-    and an instance of the given data type
-    and producing the corresponding representation node.
-    """
-    ...
+def add_representer(data_type: type[_T], representer: Callable[[_Representer, _T], Node], Dumper: type[_Representer]) -> None: ...
 @overload
-def add_multi_representer(data_type: type[_T], multi_representer: Callable[[Dumper, _T], Node]) -> None:
-    """
-    Add a representer for the given type.
-    Multi-representer is a function accepting a Dumper instance
-    and an instance of the given data type or subtype
-    and producing the corresponding representation node.
-    """
-    ...
+def add_multi_representer(data_type: type[_T], multi_representer: Callable[[Dumper, _T], Node]) -> None: ...
 @overload
 def add_multi_representer(
     data_type: type[_T], multi_representer: Callable[[_Representer, _T], Node], Dumper: type[_Representer]
-) -> None:
-    """
-    Add a representer for the given type.
-    Multi-representer is a function accepting a Dumper instance
-    and an instance of the given data type or subtype
-    and producing the corresponding representation node.
-    """
-    ...
+) -> None: ...
 
 class YAMLObjectMetaclass(type):
-    """The metaclass for YAMLObject."""
     def __init__(cls, name, bases, kwds) -> None: ...
 
 class YAMLObject(metaclass=YAMLObjectMetaclass):
-    """
-    An object that can dump itself to a YAML stream
-    and load itself from a YAML stream.
-    """
     __slots__ = ()
     yaml_loader: Any
     yaml_dumper: Any
     yaml_tag: Any
     yaml_flow_style: Any
     @classmethod
-    def from_yaml(cls, loader, node):
-        """Convert a representation node to a Python object."""
-        ...
+    def from_yaml(cls, loader, node): ...
     @classmethod
-    def to_yaml(cls, dumper, data):
-        """Convert a Python object to a representation node."""
-        ...
+    def to_yaml(cls, dumper, data): ...

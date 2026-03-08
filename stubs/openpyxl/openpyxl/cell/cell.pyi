@@ -1,11 +1,3 @@
-"""
-Manage individual cells in a spreadsheet.
-
-The Cell class is required to know its value and type, display options,
-and any other features of an Excel cell.  Utilities for referencing
-cells using Excel's 'A1' column/row nomenclature are also provided.
-"""
-
 from _typeshed import ReadableBuffer
 from datetime import datetime
 from re import Pattern
@@ -44,11 +36,6 @@ def get_type(t: type, value: object) -> Literal["n", "s", "d", "f"] | None: ...
 def get_time_format(t: _TimeTypes) -> str: ...
 
 class Cell(StyleableObject):
-    """
-    Describes cell associated properties.
-
-    Properties of interest include style, type, value, and address.
-    """
     __slots__ = ("row", "column", "_value", "data_type", "parent", "_hyperlink", "_comment")
     row: int
     column: int
@@ -63,13 +50,9 @@ class Cell(StyleableObject):
         style_array: StyleArray | None = None,
     ) -> None: ...
     @property
-    def coordinate(self) -> str:
-        """This cell's coordinate (ex. 'A5')"""
-        ...
+    def coordinate(self) -> str: ...
     @property
-    def col_idx(self) -> int:
-        """The numerical index of the column"""
-        ...
+    def col_idx(self) -> int: ...
     @property
     def column_letter(self) -> str: ...
     @property
@@ -77,91 +60,29 @@ class Cell(StyleableObject):
     @property
     def base_date(self) -> datetime: ...
     @overload
-    def check_string(self, value: None) -> None:
-        """Check string coding, length, and line break character"""
-        ...
+    def check_string(self, value: None) -> None: ...
     @overload
-    def check_string(self, value: str | ReadableBuffer) -> str:
-        """Check string coding, length, and line break character"""
-        ...
-    def check_error(self, value: object) -> str:
-        """Tries to convert Error" else N/A"""
-        ...
+    def check_string(self, value: str | ReadableBuffer) -> str: ...
+    def check_error(self, value: object) -> str: ...
     @property
-    def value(self) -> _CellGetValue:
-        """
-        Get or set the value held in the cell.
-
-        :type: depends on the value (string, float, int or
-            :class:`datetime.datetime`)
-        """
-        ...
+    def value(self) -> _CellGetValue: ...
     @value.setter
-    def value(self, value: _CellSetValue) -> None:
-        """
-        Get or set the value held in the cell.
-
-        :type: depends on the value (string, float, int or
-            :class:`datetime.datetime`)
-        """
-        ...
+    def value(self, value: _CellSetValue) -> None: ...
     @property
-    def internal_value(self) -> _CellGetValue:
-        """Always returns the value for excel."""
-        ...
+    def internal_value(self) -> _CellGetValue: ...
     @property
-    def hyperlink(self) -> Hyperlink | None:
-        """Return the hyperlink target or an empty string"""
-        ...
+    def hyperlink(self) -> Hyperlink | None: ...
     @hyperlink.setter
-    def hyperlink(self, val: Hyperlink | str | None) -> None:
-        """Return the hyperlink target or an empty string"""
-        ...
+    def hyperlink(self, val: Hyperlink | str | None) -> None: ...
     @property
-    def is_date(self) -> bool:
-        """
-        True if the value is formatted as a date
-
-        :type: bool
-        """
-        ...
-    def offset(self, row: int = 0, column: int = 0) -> _CellOrMergedCell:
-        """
-        Returns a cell location relative to this cell.
-
-        :param row: number of rows to offset
-        :type row: int
-
-        :param column: number of columns to offset
-        :type column: int
-
-        :rtype: :class:`openpyxl.cell.Cell`
-        """
-        ...
+    def is_date(self) -> bool: ...
+    def offset(self, row: int = 0, column: int = 0) -> _CellOrMergedCell: ...
     @property
-    def comment(self) -> Comment | None:
-        """
-        Returns the comment associated with this cell
-
-        :type: :class:`openpyxl.comments.Comment`
-        """
-        ...
+    def comment(self) -> Comment | None: ...
     @comment.setter
-    def comment(self, value: Comment | None) -> None:
-        """
-        Returns the comment associated with this cell
-
-        :type: :class:`openpyxl.comments.Comment`
-        """
-        ...
+    def comment(self, value: Comment | None) -> None: ...
 
 class MergedCell(StyleableObject):
-    """
-    Describes the properties of a cell in a merged cell and helps to
-    display the borders of the merged cell.
-
-    The value of a MergedCell is always None.
-    """
     __slots__ = ("row", "column")
     data_type: str
     comment: Comment | None
@@ -174,9 +95,7 @@ class MergedCell(StyleableObject):
     # Same as Cell.coordinate
     # https://github.com/python/mypy/issues/6700
     @property
-    def coordinate(self) -> str:
-        """This cell's coordinate (ex. 'A5')"""
-        ...
+    def coordinate(self) -> str: ...
     # The value of a MergedCell is always None.
     value: None
 

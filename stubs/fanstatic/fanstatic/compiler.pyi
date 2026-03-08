@@ -9,58 +9,23 @@ from fanstatic.core import Resource
 
 logger: Logger
 
-class CompilerError(Exception):
-    """
-    A compiler or minifier returned an error.
-    
-    """
-    ...
+class CompilerError(Exception): ...
 
 class Compiler:
-    """
-    Generates a target file from a source file.
-    
-    """
     @property
     @abstractmethod
     def name(self) -> str: ...
     @property
     @abstractmethod
     def source_extension(self) -> str: ...
-    def __call__(self, resource: Resource, force: bool = False) -> None:
-        """
-        Perform compilation of ``resource``.
-
-        :param force: If True, always perform compilation. If False (default),        only perform compilation if ``should_process`` returns True.
-        """
-        ...
+    def __call__(self, resource: Resource, force: bool = False) -> None: ...
     def process(self, source: StrOrBytesPath, target: StrOrBytesPath) -> Any: ...
-    def should_process(self, source: StrOrBytesPath, target: StrOrBytesPath) -> bool:
-        """
-        Determine whether to process the resource, based on the mtime of the
-        target and source.
-        """
-        ...
+    def should_process(self, source: StrOrBytesPath, target: StrOrBytesPath) -> bool: ...
     @property
     @abstractmethod
-    def available(self) -> bool:
-        """
-        Whether this compiler is available, i.e. necessary dependencies
-        like external commands or third-party packages are installed.
-        """
-        ...
-    def source_path(self, resource: Resource) -> str | None:
-        """
-        Return an absolute path to the source file (to use as input for
-        compilation)
-        """
-        ...
-    def target_path(self, resource: Resource) -> str | None:
-        """
-        Return an absolute path to the target file (to use as output for
-        compilation)
-        """
-        ...
+    def available(self) -> bool: ...
+    def source_path(self, resource: Resource) -> str | None: ...
+    def target_path(self, resource: Resource) -> str | None: ...
 
 class Minifier(Compiler):
     @property
@@ -79,22 +44,13 @@ def compile_resources(argv: list[str] = ...) -> None: ...
 class sdist_compile(setuptools.command.sdist.sdist): ...
 
 class NullCompiler(Compiler):
-    """
-    Null object (no-op compiler), that will be used when compiler/minifier
-    on a Resource is set to None.
-    """
     name: ClassVar[Literal[""]]
     source_extension = NotImplemented
     def source_path(self, resource: Resource) -> None: ...
     def target_path(self, resource: Resource) -> None: ...
     def should_process(self, source: StrOrBytesPath, target: StrOrBytesPath) -> Literal[False]: ...
     @property
-    def available(self) -> Literal[False]:
-        """
-        Whether this compiler is available, i.e. necessary dependencies
-        like external commands or third-party packages are installed.
-        """
-        ...
+    def available(self) -> Literal[False]: ...
 
 _SourceType = NewType("_SourceType", object)
 _TargetType = NewType("_TargetType", object)

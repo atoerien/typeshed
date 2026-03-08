@@ -1,5 +1,3 @@
-"""PEP HTML Writer."""
-
 from typing import ClassVar, Final
 
 from docutils.writers import html4css1

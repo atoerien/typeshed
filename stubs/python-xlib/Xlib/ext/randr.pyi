@@ -1,16 +1,3 @@
-"""
-RandR - provide access to the RandR extension information.
-
-This implementation is based off version 1.5 of the XRandR protocol, and may
-not be compatible with other versions.
-
-Version 1.5 of the protocol is documented at:
-http://cgit.freedesktop.org/xorg/proto/randrproto/tree/randrproto.txt
-
-Version 1.3.1 here:
-http://www.x.org/releases/X11R7.5/doc/randrproto/randrproto.txt
-"""
-
 from collections.abc import Sequence
 from typing import Final
 from typing_extensions import TypeAlias
@@ -87,26 +74,14 @@ MonitorInfo: rq.Struct
 
 class QueryVersion(rq.ReplyRequest): ...
 
-def query_version(self: Display | resource.Resource) -> QueryVersion:
-    """
-    Get the current version of the RandR extension.
-
-    
-    """
-    ...
+def query_version(self: Display | resource.Resource) -> QueryVersion: ...
 
 class _1_0SetScreenConfig(rq.ReplyRequest): ...
 class SetScreenConfig(rq.ReplyRequest): ...
 
 def set_screen_config(
     self: drawable.Drawable, size_id: int, rotation: int, config_timestamp: int, rate: int = 0, timestamp: int = 0
-) -> SetScreenConfig:
-    """
-    Sets the screen to the specified size, rate, rotation and reflection.
-
-    rate can be 0 to have the server select an appropriate rate.
-    """
-    ...
+) -> SetScreenConfig: ...
 
 class SelectInput(rq.Request): ...
 
@@ -114,21 +89,11 @@ def select_input(self: drawable.Window, mask: int) -> SelectInput: ...
 
 class GetScreenInfo(rq.ReplyRequest): ...
 
-def get_screen_info(self: drawable.Window) -> GetScreenInfo:
-    """
-    Retrieve information about the current and available configurations for
-    the screen associated with this window.
-    """
-    ...
+def get_screen_info(self: drawable.Window) -> GetScreenInfo: ...
 
 class GetScreenSizeRange(rq.ReplyRequest): ...
 
-def get_screen_size_range(self: drawable.Window) -> GetScreenSizeRange:
-    """
-    Retrieve the range of possible screen sizes. The screen may be set to
-    any size within this range.
-    """
-    ...
+def get_screen_size_range(self: drawable.Window) -> GetScreenSizeRange: ...
 
 class SetScreenSize(rq.Request): ...
 

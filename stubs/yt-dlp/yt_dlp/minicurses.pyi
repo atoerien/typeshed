@@ -4,13 +4,7 @@ from typing_extensions import Self
 
 CONTROL_SEQUENCES: Final[dict[str, str]]
 
-def format_text(text: str, f: str) -> str:
-    """
-    @param f    String representation of formatting to apply in the form:
-                [style] [light] font_color [on [light] bg_color]
-                E.g. "red", "bold green on light blue"
-    """
-    ...
+def format_text(text: str, f: str) -> str: ...
 
 class MultilinePrinterBase:
     def __init__(self, stream: TextIO | None = None, lines: int = 1) -> None: ...

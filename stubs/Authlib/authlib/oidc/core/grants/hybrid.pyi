@@ -10,32 +10,7 @@ class OpenIDHybridGrant(OpenIDImplicitGrant):
     RESPONSE_TYPES: Incomplete
     GRANT_TYPE: str
     DEFAULT_RESPONSE_MODE: str
-    def generate_authorization_code(self) -> str:
-        """
-        "The method to generate "code" value for authorization code data.
-        Developers may rewrite this method, or customize the code length with::
-
-            class MyAuthorizationCodeGrant(AuthorizationCodeGrant):
-                AUTHORIZATION_CODE_LENGTH = 32  # default is 48
-        """
-        ...
-    def save_authorization_code(self, code, request):
-        """
-        Save authorization_code for later use. Developers MUST implement
-        it in subclass. Here is an example::
-
-            def save_authorization_code(self, code, request):
-                client = request.client
-                auth_code = AuthorizationCode(
-                    code=code,
-                    client_id=client.client_id,
-                    redirect_uri=request.payload.redirect_uri,
-                    scope=request.payload.scope,
-                    nonce=request.payload.data.get("nonce"),
-                    user_id=request.user.id,
-                )
-                auth_code.save()
-        """
-        ...
+    def generate_authorization_code(self) -> str: ...
+    def save_authorization_code(self, code, request): ...
     def validate_authorization_request(self) -> str: ...
     def create_granted_params(self, grant_user) -> list[tuple[str, str]]: ...

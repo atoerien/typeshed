@@ -1,5 +1,3 @@
-"""Connectivity and cut algorithms"""
-
 from .connectivity import *
 from .cuts import *
 from .disjoint_paths import *

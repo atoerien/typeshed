@@ -10,15 +10,9 @@ from django.http import HttpRequest, QueryDict
 
 from .filters import Filter
 
-def remote_queryset(field: models.Field[Any, Any]) -> QuerySet[Any]:
-    """
-    Get the queryset for the other side of a relationship. This works
-    for both `RelatedField`s and `ForeignObjectRel`s.
-    """
-    ...
+def remote_queryset(field: models.Field[Any, Any]) -> QuerySet[Any]: ...  # Field type params vary by model definition
 
 class UnknownFieldBehavior(Enum):
-    """An enumeration."""
     RAISE = "raise"
     WARN = "warn"
     IGNORE = "ignore"
@@ -61,56 +55,21 @@ class BaseFilterSet:
         request: HttpRequest | None = None,
         prefix: str | None = None,
     ) -> None: ...
-    def is_valid(self) -> bool:
-        """Return True if the underlying form has no errors, or False otherwise."""
-        ...
+    def is_valid(self) -> bool: ...
     @property
-    def errors(self) -> dict[str, list[str]]:
-        """Return an ErrorDict for the data provided for the underlying form."""
-        ...
-    def filter_queryset(self, queryset: QuerySet[Any]) -> QuerySet[Any]:
-        """
-        Filter the queryset with the underlying form's `cleaned_data`. You must
-        call `is_valid()` or `errors` before calling this method.
-
-        This method should be overridden if additional filtering needs to be
-        applied to the queryset before it is cached.
-        """
-        ...
+    def errors(self) -> dict[str, list[str]]: ...
+    def filter_queryset(self, queryset: QuerySet[Any]) -> QuerySet[Any]: ...  # Works with any model type
     @property
     def qs(self) -> QuerySet[Any]: ...  # Filtered queryset of any model
-    def get_form_class(self) -> type[Form]:
-        """
-        Returns a django Form suitable of validating the filterset data.
-
-        This method should be overridden if the form class needs to be
-        customized relative to the filterset instance.
-        """
-        ...
+    def get_form_class(self) -> type[Form]: ...
     @property
     def form(self) -> Form: ...
     @classmethod
-    def get_fields(cls) -> dict[str, models.Field[Any, Any]]:
-        """
-        Resolve the 'fields' argument that should be used for generating filters on the
-        filterset. This is 'Meta.fields' sans the fields in 'Meta.exclude'.
-        """
-        ...
+    def get_fields(cls) -> dict[str, models.Field[Any, Any]]: ...  # Model fields have varying type params
     @classmethod
-    def get_filter_name(cls, field_name: str, lookup_expr: str) -> str:
-        """
-        Combine a field name and lookup expression into a usable filter name.
-        Exact lookups are the implicit default, so "exact" is stripped from the
-        end of the filter name.
-        """
-        ...
+    def get_filter_name(cls, field_name: str, lookup_expr: str) -> str: ...
     @classmethod
-    def get_filters(cls) -> OrderedDict[str, Filter]:
-        """
-        Get all filters for the filterset. This is the combination of declared and
-        generated filters.
-        """
-        ...
+    def get_filters(cls) -> OrderedDict[str, Filter]: ...
     @classmethod
     def handle_unrecognized_field(cls, field_name: str, message: str) -> None: ...
     @classmethod

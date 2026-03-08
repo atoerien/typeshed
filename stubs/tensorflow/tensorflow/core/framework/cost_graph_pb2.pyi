@@ -41,9 +41,7 @@ class CostGraphDef(google.protobuf.message.Message):
             ) -> None: ...
             def ClearField(
                 self, field_name: typing.Literal["preceding_node", b"preceding_node", "preceding_port", b"preceding_port"]
-            ) -> None:
-                """Clears a message field."""
-                ...
+            ) -> None: ...
 
         @typing.final
         class OutputInfo(google.protobuf.message.Message):
@@ -72,17 +70,13 @@ class CostGraphDef(google.protobuf.message.Message):
                 shape: tensorflow.core.framework.tensor_shape_pb2.TensorShapeProto | None = ...,
                 dtype: tensorflow.core.framework.types_pb2.DataType.ValueType | None = ...,
             ) -> None: ...
-            def HasField(self, field_name: typing.Literal["shape", b"shape"]) -> builtins.bool:
-                """Checks if a message field is set."""
-                ...
+            def HasField(self, field_name: typing.Literal["shape", b"shape"]) -> builtins.bool: ...
             def ClearField(
                 self,
                 field_name: typing.Literal[
                     "alias_input_port", b"alias_input_port", "dtype", b"dtype", "shape", b"shape", "size", b"size"
                 ],
-            ) -> None:
-                """Clears a message field."""
-                ...
+            ) -> None: ...
 
         NAME_FIELD_NUMBER: builtins.int
         DEVICE_FIELD_NUMBER: builtins.int
@@ -199,9 +193,7 @@ class CostGraphDef(google.protobuf.message.Message):
                 "temporary_memory_size",
                 b"temporary_memory_size",
             ],
-        ) -> None:
-            """Clears a message field."""
-            ...
+        ) -> None: ...
 
     @typing.final
     class AggregatedCost(google.protobuf.message.Message):
@@ -216,9 +208,7 @@ class CostGraphDef(google.protobuf.message.Message):
         dimension: builtins.str
         """Aggregated cost dimension (e.g. 'memory', 'compute', 'network')."""
         def __init__(self, *, cost: builtins.float | None = ..., dimension: builtins.str | None = ...) -> None: ...
-        def ClearField(self, field_name: typing.Literal["cost", b"cost", "dimension", b"dimension"]) -> None:
-            """Clears a message field."""
-            ...
+        def ClearField(self, field_name: typing.Literal["cost", b"cost", "dimension", b"dimension"]) -> None: ...
 
     NODE_FIELD_NUMBER: builtins.int
     COST_FIELD_NUMBER: builtins.int
@@ -234,8 +224,6 @@ class CostGraphDef(google.protobuf.message.Message):
         node: collections.abc.Iterable[global___CostGraphDef.Node] | None = ...,
         cost: collections.abc.Iterable[global___CostGraphDef.AggregatedCost] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["cost", b"cost", "node", b"node"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["cost", b"cost", "node", b"node"]) -> None: ...
 
 global___CostGraphDef = CostGraphDef

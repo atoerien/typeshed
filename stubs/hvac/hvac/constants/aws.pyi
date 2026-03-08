@@ -1,5 +1,3 @@
-"""Constants related to the AWS auth method and/or secrets engine."""
-
 from collections.abc import Iterable
 
 DEFAULT_MOUNT_POINT: str

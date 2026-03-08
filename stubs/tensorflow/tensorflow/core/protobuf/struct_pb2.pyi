@@ -189,9 +189,7 @@ class StructuredValue(google.protobuf.message.Message):
             "type_spec_value",
             b"type_spec_value",
         ],
-    ) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    ) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -230,9 +228,7 @@ class StructuredValue(google.protobuf.message.Message):
             "type_spec_value",
             b"type_spec_value",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
     def WhichOneof(
         self, oneof_group: typing.Literal["kind", b"kind"]
     ) -> (
@@ -255,9 +251,7 @@ class StructuredValue(google.protobuf.message.Message):
             "numpy_value",
         ]
         | None
-    ):
-        """Returns the name of the field set inside a oneof, or None if no field is set."""
-        ...
+    ): ...
 
 global___StructuredValue = StructuredValue
 
@@ -281,9 +275,7 @@ class ListValue(google.protobuf.message.Message):
     @property
     def values(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___StructuredValue]: ...
     def __init__(self, *, values: collections.abc.Iterable[global___StructuredValue] | None = ...) -> None: ...
-    def ClearField(self, field_name: typing.Literal["values", b"values"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["values", b"values"]) -> None: ...
 
 global___ListValue = ListValue
 
@@ -297,9 +289,7 @@ class TupleValue(google.protobuf.message.Message):
     @property
     def values(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___StructuredValue]: ...
     def __init__(self, *, values: collections.abc.Iterable[global___StructuredValue] | None = ...) -> None: ...
-    def ClearField(self, field_name: typing.Literal["values", b"values"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["values", b"values"]) -> None: ...
 
 global___TupleValue = TupleValue
 
@@ -321,20 +311,14 @@ class DictValue(google.protobuf.message.Message):
         @property
         def value(self) -> global___StructuredValue: ...
         def __init__(self, *, key: builtins.str | None = ..., value: global___StructuredValue | None = ...) -> None: ...
-        def HasField(self, field_name: typing.Literal["value", b"value"]) -> builtins.bool:
-            """Checks if a message field is set."""
-            ...
-        def ClearField(self, field_name: typing.Literal["key", b"key", "value", b"value"]) -> None:
-            """Clears a message field."""
-            ...
+        def HasField(self, field_name: typing.Literal["value", b"value"]) -> builtins.bool: ...
+        def ClearField(self, field_name: typing.Literal["key", b"key", "value", b"value"]) -> None: ...
 
     FIELDS_FIELD_NUMBER: builtins.int
     @property
     def fields(self) -> google.protobuf.internal.containers.MessageMap[builtins.str, global___StructuredValue]: ...
     def __init__(self, *, fields: collections.abc.Mapping[builtins.str, global___StructuredValue] | None = ...) -> None: ...
-    def ClearField(self, field_name: typing.Literal["fields", b"fields"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["fields", b"fields"]) -> None: ...
 
 global___DictValue = DictValue
 
@@ -350,12 +334,8 @@ class PairValue(google.protobuf.message.Message):
     @property
     def value(self) -> global___StructuredValue: ...
     def __init__(self, *, key: builtins.str | None = ..., value: global___StructuredValue | None = ...) -> None: ...
-    def HasField(self, field_name: typing.Literal["value", b"value"]) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
-    def ClearField(self, field_name: typing.Literal["key", b"key", "value", b"value"]) -> None:
-        """Clears a message field."""
-        ...
+    def HasField(self, field_name: typing.Literal["value", b"value"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["key", b"key", "value", b"value"]) -> None: ...
 
 global___PairValue = PairValue
 
@@ -373,9 +353,7 @@ class NamedTupleValue(google.protobuf.message.Message):
     def __init__(
         self, *, name: builtins.str | None = ..., values: collections.abc.Iterable[global___PairValue] | None = ...
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["name", b"name", "values", b"values"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["name", b"name", "values", b"values"]) -> None: ...
 
 global___NamedTupleValue = NamedTupleValue
 
@@ -399,12 +377,8 @@ class TensorSpecProto(google.protobuf.message.Message):
         shape: tensorflow.core.framework.tensor_shape_pb2.TensorShapeProto | None = ...,
         dtype: tensorflow.core.framework.types_pb2.DataType.ValueType | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["shape", b"shape"]) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
-    def ClearField(self, field_name: typing.Literal["dtype", b"dtype", "name", b"name", "shape", b"shape"]) -> None:
-        """Clears a message field."""
-        ...
+    def HasField(self, field_name: typing.Literal["shape", b"shape"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["dtype", b"dtype", "name", b"name", "shape", b"shape"]) -> None: ...
 
 global___TensorSpecProto = TensorSpecProto
 
@@ -438,17 +412,13 @@ class BoundedTensorSpecProto(google.protobuf.message.Message):
     ) -> None: ...
     def HasField(
         self, field_name: typing.Literal["maximum", b"maximum", "minimum", b"minimum", "shape", b"shape"]
-    ) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    ) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
             "dtype", b"dtype", "maximum", b"maximum", "minimum", b"minimum", "name", b"name", "shape", b"shape"
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___BoundedTensorSpecProto = BoundedTensorSpecProto
 
@@ -492,9 +462,7 @@ class TypeSpecProto(google.protobuf.message.Message):
         EXTENSION_TYPE_SPEC: TypeSpecProto._TypeSpecClass.ValueType  # 13
         """Subclasses of tf.ExtensionType"""
 
-    class TypeSpecClass(_TypeSpecClass, metaclass=_TypeSpecClassEnumTypeWrapper):
-        """A utility for finding the names of enum values."""
-        ...
+    class TypeSpecClass(_TypeSpecClass, metaclass=_TypeSpecClassEnumTypeWrapper): ...
     UNKNOWN: TypeSpecProto.TypeSpecClass.ValueType  # 0
     SPARSE_TENSOR_SPEC: TypeSpecProto.TypeSpecClass.ValueType  # 1
     """tf.SparseTensorSpec"""
@@ -550,9 +518,7 @@ class TypeSpecProto(google.protobuf.message.Message):
         type_spec_class_name: builtins.str | None = ...,
         num_flat_components: builtins.int | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["type_state", b"type_state"]) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    def HasField(self, field_name: typing.Literal["type_state", b"type_state"]) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -565,8 +531,6 @@ class TypeSpecProto(google.protobuf.message.Message):
             "type_state",
             b"type_state",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___TypeSpecProto = TypeSpecProto

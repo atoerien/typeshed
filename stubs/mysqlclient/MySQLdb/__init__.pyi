@@ -1,18 +1,3 @@
-"""
-MySQLdb - A DB API v2.0 compatible interface to MySQL.
-
-This package is a wrapper around _mysql, which mostly implements the
-MySQL C API.
-
-connect() -- connects to server
-
-See the C API specification and the MySQL documentation for more info
-on other items.
-
-For information on how MySQLdb handles type conversion, see the
-MySQLdb.converters module.
-"""
-
 from _typeshed import Incomplete
 
 from MySQLdb import connections as connections, constants as constants, converters as converters, cursors as cursors
@@ -49,10 +34,6 @@ apilevel: str
 paramstyle: str
 
 class DBAPISet(frozenset[Incomplete]):
-    """
-    A special type of set for which A == x is true if A is a
-    DBAPISet and x is a member of that set.
-    """
     def __eq__(self, other): ...
 
 STRING: Incomplete
@@ -65,9 +46,7 @@ DATETIME: Incomplete
 ROWID: Incomplete
 
 def Binary(x): ...
-def Connect(*args, **kwargs) -> Connection:
-    """Factory function for connections.Connection."""
-    ...
+def Connect(*args, **kwargs) -> Connection: ...
 
 connect = Connect
 

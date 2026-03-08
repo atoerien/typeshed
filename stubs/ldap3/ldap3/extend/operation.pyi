@@ -1,5 +1,3 @@
-""""""
-
 from _typeshed import Incomplete
 
 from pyasn1.type.base import Asn1Type

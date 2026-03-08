@@ -19,13 +19,6 @@ KEYWORDS: Final[frozenset[str]]
 seq_types: Final[tuple[type[list[Any]], type[tuple[Any, ...]]]]
 
 class Serialisable(metaclass=MetaSerialisable):
-    """
-    Objects can serialise to XML their attributes and child objects.
-    The following class attributes are created by the metaclass at runtime:
-    __attrs__ = attributes
-    __nested__ = single-valued child treated as an attribute
-    __elements__ = child elements
-    """
     # These dunders are always set at runtime by MetaSerialisable so they can't be None
     __attrs__: ClassVar[tuple[str, ...]]
     __nested__: ClassVar[tuple[str, ...]]
@@ -44,9 +37,7 @@ class Serialisable(metaclass=MetaSerialisable):
     # Child classes should be more precise than _SerialisableTreeElement !
     # Use _ChildSerialisableTreeElement instead for child classes that reuse Serialisable.from_tree directly.
     @classmethod
-    def from_tree(cls, node: _SerialisableTreeElement) -> Self | None:
-        """Create object from XML"""
-        ...
+    def from_tree(cls, node: _SerialisableTreeElement) -> Self | None: ...
     # Note: To respect the Liskov substitution principle, idx is a type union of all child class requirements.
     # Use Unused instead for child classes that reuse Serialisable.to_tree directly.
     def to_tree(

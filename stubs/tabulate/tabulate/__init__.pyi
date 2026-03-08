@@ -1,5 +1,3 @@
-"""Pretty-print tabular data."""
-
 from collections.abc import Callable, Container, Iterable, Mapping, Sequence
 from typing import Any, Final, Literal, NamedTuple
 from typing_extensions import Self, TypeAlias
@@ -16,14 +14,12 @@ WIDE_CHARS_MODE: bool
 SEPARATING_LINE: str
 
 class Line(NamedTuple):
-    """Line(begin, hline, sep, end)"""
     begin: str
     hline: str
     sep: str
     end: str
 
 class DataRow(NamedTuple):
-    """DataRow(begin, sep, end)"""
     begin: str
     sep: str
     end: str
@@ -32,7 +28,6 @@ _TableFormatLine: TypeAlias = None | Line | Callable[[list[int], list[str]], str
 _TableFormatRow: TypeAlias = None | DataRow | Callable[[list[Any], list[int], list[str]], str]
 
 class TableFormat(NamedTuple):
-    """TableFormat(lineabove, linebelowheader, linebetweenrows, linebelow, headerrow, datarow, padding, with_header_hide)"""
     lineabove: _TableFormatLine
     linebelowheader: _TableFormatLine
     linebetweenrows: _TableFormatLine
@@ -46,14 +41,7 @@ LATEX_ESCAPE_RULES: Final[dict[str, str]]
 tabulate_formats: list[str]
 multiline_formats: dict[str, str]
 
-def simple_separated_format(separator: str) -> TableFormat:
-    r"""
-    Construct a simple TableFormat with columns separated by a separator.
-
-    >>> tsv = simple_separated_format("\t") ;         tabulate([["foo", 1], ["spam", 23]], tablefmt=tsv) == 'foo \t 1\nspam\t23'
-    True
-    """
-    ...
+def simple_separated_format(separator: str) -> TableFormat: ...
 def tabulate(
     # The key is converted using str().
     tabular_data: Mapping[Any, Iterable[Any]] | Iterable[Iterable[Any]],
@@ -79,11 +67,5 @@ def tabulate(
 ) -> str: ...
 
 class JupyterHTMLStr(str):
-    """
-    Wrap the string with a _repr_html_ method so that Jupyter
-    displays the HTML table
-    """
     @property
-    def str(self) -> Self:
-        """add a .str property so that the raw string is still accessible"""
-        ...
+    def str(self) -> Self: ...

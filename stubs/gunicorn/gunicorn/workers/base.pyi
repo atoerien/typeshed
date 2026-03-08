@@ -34,34 +34,10 @@ class Worker:
 
     def __init__(
         self, age: int, ppid: int, sockets: list[socket.socket], app: BaseApplication, timeout: int, cfg: Config, log: GLogger
-    ) -> None:
-        """
-        This is called pre-fork so it shouldn't do anything to the
-        current process. If there's a need to make process wide
-        changes you'll want to do that in ``self.init_process()``.
-        """
-        ...
-    def notify(self) -> None:
-        """
-        Your worker subclass must arrange to have this method called
-        once every ``self.timeout`` seconds. If you fail in accomplishing
-        this task, the master process will murder your workers.
-        """
-        ...
-    def run(self) -> None:
-        """
-        This is the mainloop of a worker process. You should override
-        this method in a subclass to provide the intended behaviour
-        for your particular evil schemes.
-        """
-        ...
-    def init_process(self) -> None:
-        """
-        If you override this method in a subclass, the last statement
-        in the function should be to call this method with
-        super().init_process() so that the ``run()`` loop is initiated.
-        """
-        ...
+    ) -> None: ...
+    def notify(self) -> None: ...
+    def run(self) -> None: ...
+    def init_process(self) -> None: ...
     def load_wsgi(self) -> None: ...
     def init_signals(self) -> None: ...
     def handle_usr1(self, sig: int, frame: FrameType | None) -> None: ...

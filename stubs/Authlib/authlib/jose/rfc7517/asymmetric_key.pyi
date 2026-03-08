@@ -6,7 +6,6 @@ from typing_extensions import Self
 from authlib.jose.rfc7517 import Key
 
 class AsymmetricKey(Key):
-    """This is the base class for a JSON Web Key."""
     PUBLIC_KEY_FIELDS: ClassVar[list[str]]
     PRIVATE_KEY_FIELDS: ClassVar[list[str]]
     PRIVATE_KEY_CLS: ClassVar[type | tuple[type, ...]]
@@ -17,15 +16,7 @@ class AsymmetricKey(Key):
     def __init__(self, private_key=None, public_key=None, options=None) -> None: ...
     @property
     def public_only(self) -> bool: ...
-    def get_op_key(self, operation):
-        """
-        Get the raw key for the given key_op. This method will also
-        check if the given key_op is supported by this key.
-
-        :param operation: key operation value, such as "sign", "encrypt".
-        :return: raw key
-        """
-        ...
+    def get_op_key(self, operation): ...
     def get_public_key(self): ...
     def get_private_key(self): ...
     def load_raw_key(self) -> None: ...
@@ -34,27 +25,14 @@ class AsymmetricKey(Key):
     def dumps_public_key(self): ...
     def load_private_key(self): ...
     def load_public_key(self): ...
-    def as_dict(self, is_private: bool = False, **params) -> dict[Incomplete, Incomplete]:
-        """Represent this key as a dict of the JSON Web Key."""
-        ...
-    def as_key(self, is_private: bool = False):
-        """Represent this key as raw key."""
-        ...
+    def as_dict(self, is_private: bool = False, **params) -> dict[Incomplete, Incomplete]: ...
+    def as_key(self, is_private: bool = False): ...
     def as_bytes(
         self,
         encoding: Literal["PEM", "DER"] | None = None,
         is_private: bool = False,
         password: str | bytes | float | Iterable[SupportsIndex] | SupportsIndex | SupportsBytes | ReadableBuffer | None = None,
-    ):
-        """
-        Export key into PEM/DER format bytes.
-
-        :param encoding: "PEM" or "DER"
-        :param is_private: export private key or public key
-        :param password: encrypt private key with password
-        :return: bytes
-        """
-        ...
+    ): ...
     def as_pem(
         self,
         is_private: bool = False,

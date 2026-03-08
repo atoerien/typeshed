@@ -1,14 +1,3 @@
-"""
-Sends updates to a Slack app.
-
-Usage:
->>> from tqdm.contrib.slack import tqdm, trange
->>> for i in trange(10, token='{token}', channel='{channel}'):
-...     ...
-
-![screenshot](https://tqdm.github.io/img/screenshot-slack.png)
-"""
-
 from _typeshed import Incomplete, SupportsWrite
 from collections.abc import Iterable, Mapping
 from typing import NoReturn, TypeVar, overload
@@ -19,31 +8,15 @@ from .utils_worker import MonoWorker
 __all__ = ["SlackIO", "tqdm_slack", "tsrange", "tqdm", "trange"]
 
 class SlackIO(MonoWorker):
-    """Non-blocking file-like IO using a Slack app."""
     client: Incomplete
     text: Incomplete
     message: Incomplete
-    def __init__(self, token, channel) -> None:
-        """Creates a new message in the given `channel`."""
-        ...
-    def write(self, s):
-        """Replaces internal `message`'s text with `s`."""
-        ...
+    def __init__(self, token, channel) -> None: ...
+    def write(self, s): ...
 
 _T = TypeVar("_T")
 
 class tqdm_slack(tqdm_auto[_T]):
-    """
-    Standard `tqdm.auto.tqdm` but also sends updates to a Slack app.
-    May take a few seconds to create (`__init__`).
-
-    - create a Slack app with the `chat:write` scope & invite it to a
-      channel: <https://api.slack.com/authentication/basics>
-    - copy the bot `{token}` & `{channel}` and paste below
-    >>> from tqdm.contrib.slack import tqdm, trange
-    >>> for i in tqdm(iterable, token='{token}', channel='{channel}'):
-    ...     ...
-    """
     sio: Incomplete
     @overload
     def __init__(
@@ -77,20 +50,7 @@ class tqdm_slack(tqdm_auto[_T]):
         token: str = ...,
         channel: int = ...,
         **kwargs,
-    ) -> None:
-        """
-        Parameters
-        ----------
-        token  : str, required. Slack token
-            [default: ${TQDM_SLACK_TOKEN}].
-        channel  : int, required. Slack channel
-            [default: ${TQDM_SLACK_CHANNEL}].
-        mininterval  : float, optional.
-          Minimum of [default: 1.5] to avoid rate limit.
-
-        See `tqdm.auto.tqdm.__init__` for other parameters.
-        """
-        ...
+    ) -> None: ...
     @overload
     def __init__(
         self: tqdm_slack[NoReturn],
@@ -123,28 +83,13 @@ class tqdm_slack(tqdm_auto[_T]):
         token: str = ...,
         channel: int = ...,
         **kwargs,
-    ) -> None:
-        """
-        Parameters
-        ----------
-        token  : str, required. Slack token
-            [default: ${TQDM_SLACK_TOKEN}].
-        channel  : int, required. Slack channel
-            [default: ${TQDM_SLACK_CHANNEL}].
-        mininterval  : float, optional.
-          Minimum of [default: 1.5] to avoid rate limit.
-
-        See `tqdm.auto.tqdm.__init__` for other parameters.
-        """
-        ...
+    ) -> None: ...
     def display(  # type: ignore[override]
         self, *, msg: str | None = ..., pos: int | None = ..., close: bool = ..., bar_style=..., check_delay: bool = ...
     ) -> None: ...
     def clear(self, *args, **kwargs) -> None: ...
 
-def tsrange(*args, **kwargs) -> tqdm_slack[int]:
-    """Shortcut for `tqdm.contrib.slack.tqdm(range(*args), **kwargs)`."""
-    ...
+def tsrange(*args, **kwargs) -> tqdm_slack[int]: ...
 
 tqdm = tqdm_slack
 trange = tsrange

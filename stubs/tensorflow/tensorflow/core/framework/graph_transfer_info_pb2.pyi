@@ -30,9 +30,7 @@ class GraphTransferNodeInput(google.protobuf.message.Message):
     node_id: builtins.int
     output_port: builtins.int
     def __init__(self, *, node_id: builtins.int | None = ..., output_port: builtins.int | None = ...) -> None: ...
-    def ClearField(self, field_name: typing.Literal["node_id", b"node_id", "output_port", b"output_port"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["node_id", b"node_id", "output_port", b"output_port"]) -> None: ...
 
 global___GraphTransferNodeInput = GraphTransferNodeInput
 
@@ -83,9 +81,7 @@ class GraphTransferNodeInfo(google.protobuf.message.Message):
             "type_name",
             b"type_name",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___GraphTransferNodeInfo = GraphTransferNodeInfo
 
@@ -116,9 +112,7 @@ class GraphTransferConstNodeInfo(google.protobuf.message.Message):
     def ClearField(
         self,
         field_name: typing.Literal["data", b"data", "dtype", b"dtype", "name", b"name", "node_id", b"node_id", "shape", b"shape"],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___GraphTransferConstNodeInfo = GraphTransferConstNodeInfo
 
@@ -139,9 +133,7 @@ class GraphTransferNodeInputInfo(google.protobuf.message.Message):
         node_id: builtins.int | None = ...,
         node_input: collections.abc.Iterable[global___GraphTransferNodeInput] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["node_id", b"node_id", "node_input", b"node_input"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["node_id", b"node_id", "node_input", b"node_input"]) -> None: ...
 
 global___GraphTransferNodeInputInfo = GraphTransferNodeInputInfo
 
@@ -157,9 +149,7 @@ class GraphTransferNodeOutputInfo(google.protobuf.message.Message):
     def __init__(
         self, *, node_id: builtins.int | None = ..., max_byte_size: collections.abc.Iterable[builtins.int] | None = ...
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["max_byte_size", b"max_byte_size", "node_id", b"node_id"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["max_byte_size", b"max_byte_size", "node_id", b"node_id"]) -> None: ...
 
 global___GraphTransferNodeOutputInfo = GraphTransferNodeOutputInfo
 
@@ -181,9 +171,7 @@ class GraphTransferGraphInputNodeInfo(google.protobuf.message.Message):
         shape: collections.abc.Iterable[builtins.int] | None = ...,
         dtype: tensorflow.core.framework.types_pb2.DataType.ValueType | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["dtype", b"dtype", "name", b"name", "shape", b"shape"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["dtype", b"dtype", "name", b"name", "shape", b"shape"]) -> None: ...
 
 global___GraphTransferGraphInputNodeInfo = GraphTransferGraphInputNodeInfo
 
@@ -205,9 +193,7 @@ class GraphTransferGraphOutputNodeInfo(google.protobuf.message.Message):
         shape: collections.abc.Iterable[builtins.int] | None = ...,
         dtype: tensorflow.core.framework.types_pb2.DataType.ValueType | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["dtype", b"dtype", "name", b"name", "shape", b"shape"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["dtype", b"dtype", "name", b"name", "shape", b"shape"]) -> None: ...
 
 global___GraphTransferGraphOutputNodeInfo = GraphTransferGraphOutputNodeInfo
 
@@ -231,9 +217,7 @@ class GraphTransferInfo(google.protobuf.message.Message):
         NOP: GraphTransferInfo._Destination.ValueType  # 0
         HEXAGON: GraphTransferInfo._Destination.ValueType  # 1
 
-    class Destination(_Destination, metaclass=_DestinationEnumTypeWrapper):
-        """A utility for finding the names of enum values."""
-        ...
+    class Destination(_Destination, metaclass=_DestinationEnumTypeWrapper): ...
     NOP: GraphTransferInfo.Destination.ValueType  # 0
     HEXAGON: GraphTransferInfo.Destination.ValueType  # 1
 
@@ -301,8 +285,6 @@ class GraphTransferInfo(google.protobuf.message.Message):
             "node_output_info",
             b"node_output_info",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___GraphTransferInfo = GraphTransferInfo

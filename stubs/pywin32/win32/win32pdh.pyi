@@ -1,5 +1,3 @@
-"""A module, encapsulating the Windows Performance Data Helpers API"""
-
 from _typeshed import Incomplete
 
 from win32.lib.pywintypes import error as error

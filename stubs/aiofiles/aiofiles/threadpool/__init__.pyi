@@ -1,5 +1,3 @@
-"""Handle files using a thread pool executor."""
-
 from _typeshed import (
     FileDescriptorOrPath,
     OpenBinaryMode,

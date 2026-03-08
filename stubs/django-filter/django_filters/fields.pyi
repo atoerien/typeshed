@@ -91,27 +91,11 @@ class LookupChoiceField(forms.MultiValueField):
     def compress(self, data_list: list[Any] | None) -> Lookup | None: ...  # Data list can contain any lookup components
 
 class IsoDateTimeField(forms.DateTimeField):
-    """
-    Supports 'iso-8601' date format too which is out the scope of
-    the ``datetime.strptime`` standard library
-
-    # ISO 8601: ``http://www.w3.org/TR/NOTE-datetime``
-
-    Based on Gist example by David Medina https://gist.github.com/copitux/5773821
-    """
     ISO_8601: str
     input_formats: list[str]
     def strptime(self, value: str, format: str) -> Any: ...  # Returns datetime objects or parsing results
 
 class BaseCSVField(forms.Field):
-    """
-    Base field for validating CSV types. Value validation is performed by
-    secondary base classes.
-
-    ex::
-        class IntegerCSVField(BaseCSVField, filters.IntegerField):
-            pass
-    """
     base_widget_class: _ClassLevelWidget = ...
     def clean(self, value: Any) -> Any: ...  # Cleaned values can be any valid field type
 

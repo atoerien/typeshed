@@ -26,33 +26,11 @@ class AsyncSubsegmentContextManager(SubsegmentContextManager):
     ) -> None: ...
 
 class AsyncAWSXRayRecorder(AWSXRayRecorder):
-    def capture_async(self, name: str | None = None) -> AsyncSubsegmentContextManager:
-        """
-        A decorator that records enclosed function in a subsegment.
-        It only works with asynchronous functions.
-
-        params str name: The name of the subsegment. If not specified
-        the function name will be used.
-        """
-        ...
+    def capture_async(self, name: str | None = None) -> AsyncSubsegmentContextManager: ...
     def in_segment_async(
         self, name: str | None = None, *, traceid: str | None = None, parent_id: str | None = None, sampling: bool | None = None
-    ) -> AsyncSegmentContextManager:
-        """
-        Return a segment async context manager.
-
-        :param str name: the name of the segment
-        :param dict segment_kwargs: remaining arguments passed directly to `begin_segment`
-        """
-        ...
-    def in_subsegment_async(self, name: str | None = None, *, namespace: str = "local") -> AsyncSubsegmentContextManager:
-        """
-        Return a subsegment async context manager.
-
-        :param str name: the name of the segment
-        :param dict segment_kwargs: remaining arguments passed directly to `begin_segment`
-        """
-        ...
+    ) -> AsyncSegmentContextManager: ...
+    def in_subsegment_async(self, name: str | None = None, *, namespace: str = "local") -> AsyncSubsegmentContextManager: ...
     async def record_subsegment_async(
         self,
         wrapped: Callable[..., Awaitable[_T]],

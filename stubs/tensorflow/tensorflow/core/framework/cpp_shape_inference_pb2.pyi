@@ -39,12 +39,8 @@ class CppShapeInferenceResult(google.protobuf.message.Message):
             dtype: tensorflow.core.framework.types_pb2.DataType.ValueType | None = ...,
             type: tensorflow.core.framework.full_type_pb2.FullTypeDef | None = ...,
         ) -> None: ...
-        def HasField(self, field_name: typing.Literal["shape", b"shape", "type", b"type"]) -> builtins.bool:
-            """Checks if a message field is set."""
-            ...
-        def ClearField(self, field_name: typing.Literal["dtype", b"dtype", "shape", b"shape", "type", b"type"]) -> None:
-            """Clears a message field."""
-            ...
+        def HasField(self, field_name: typing.Literal["shape", b"shape", "type", b"type"]) -> builtins.bool: ...
+        def ClearField(self, field_name: typing.Literal["dtype", b"dtype", "shape", b"shape", "type", b"type"]) -> None: ...
 
     @typing.final
     class HandleData(google.protobuf.message.Message):
@@ -67,9 +63,7 @@ class CppShapeInferenceResult(google.protobuf.message.Message):
             is_set: builtins.bool | None = ...,
             shape_and_type: collections.abc.Iterable[global___CppShapeInferenceResult.HandleShapeAndType] | None = ...,
         ) -> None: ...
-        def ClearField(self, field_name: typing.Literal["is_set", b"is_set", "shape_and_type", b"shape_and_type"]) -> None:
-            """Clears a message field."""
-            ...
+        def ClearField(self, field_name: typing.Literal["is_set", b"is_set", "shape_and_type", b"shape_and_type"]) -> None: ...
 
     SHAPE_FIELD_NUMBER: builtins.int
     HANDLE_DATA_FIELD_NUMBER: builtins.int
@@ -83,12 +77,8 @@ class CppShapeInferenceResult(google.protobuf.message.Message):
         shape: tensorflow.core.framework.tensor_shape_pb2.TensorShapeProto | None = ...,
         handle_data: global___CppShapeInferenceResult.HandleData | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["handle_data", b"handle_data", "shape", b"shape"]) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
-    def ClearField(self, field_name: typing.Literal["handle_data", b"handle_data", "shape", b"shape"]) -> None:
-        """Clears a message field."""
-        ...
+    def HasField(self, field_name: typing.Literal["handle_data", b"handle_data", "shape", b"shape"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["handle_data", b"handle_data", "shape", b"shape"]) -> None: ...
 
 global___CppShapeInferenceResult = CppShapeInferenceResult
 
@@ -115,8 +105,6 @@ class CppShapeInferenceInputsNeeded(google.protobuf.message.Message):
         field_name: typing.Literal[
             "input_tensors_as_shapes_needed", b"input_tensors_as_shapes_needed", "input_tensors_needed", b"input_tensors_needed"
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___CppShapeInferenceInputsNeeded = CppShapeInferenceInputsNeeded

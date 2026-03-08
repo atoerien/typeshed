@@ -10,7 +10,6 @@ Please remove any references to `setuptools.command.test` in all supported versi
 """
 )
 class test(Command):
-    """Stub to warn when test command is referenced or used."""
     description: ClassVar[str]
     user_options: ClassVar[list[tuple[str, str, str]]]
     def initialize_options(self) -> None: ...

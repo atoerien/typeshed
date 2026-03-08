@@ -1,9 +1,3 @@
-"""
-click-shell
-
-An extension to click that easily turns your click app into a shell utility
-"""
-
 from typing import Final
 
 from .core import Shell as Shell, make_click_shell as make_click_shell

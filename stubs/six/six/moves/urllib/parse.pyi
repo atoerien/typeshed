@@ -5,9 +5,6 @@
 # from urllib.parse import splitquery as splitquery
 # from urllib.parse import splittag as splittag
 # from urllib.parse import splituser as splituser
-
-"""Lazy loading of moved objects in six.moves.urllib_parse"""
-
 from urllib.parse import (
     ParseResult as ParseResult,
     SplitResult as SplitResult,

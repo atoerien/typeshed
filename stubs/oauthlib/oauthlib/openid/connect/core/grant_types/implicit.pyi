@@ -1,8 +1,3 @@
-"""
-oauthlib.openid.connect.core.grant_types
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-"""
-
 from collections.abc import Iterable
 from logging import Logger
 
@@ -28,9 +23,4 @@ class ImplicitGrant(GrantTypeBase):
         **kwargs,
     ) -> None: ...
     def add_id_token(self, token, token_handler, request: Request): ...  # type: ignore[override]
-    def openid_authorization_validator(self, request: Request):
-        """
-        Additional validation when following the implicit flow.
-        
-        """
-        ...
+    def openid_authorization_validator(self, request: Request): ...

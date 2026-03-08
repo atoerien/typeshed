@@ -11,7 +11,6 @@ officens: str
 excelns: str
 
 class ShapeWriter:
-    """Create VML for comments"""
     vml: Incomplete
     vml_path: Incomplete
     comments: Incomplete

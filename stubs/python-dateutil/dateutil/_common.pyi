@@ -1,5 +1,3 @@
-"""Common code used in multiple modules."""
-
 from typing_extensions import Self
 
 class weekday:

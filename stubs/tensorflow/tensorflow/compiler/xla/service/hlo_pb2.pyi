@@ -46,9 +46,7 @@ class _CustomCallScheduleEnumTypeWrapper(
     SCHEDULE_LATEST: _CustomCallSchedule.ValueType  # 1
     SCHEDULE_EARLIEST: _CustomCallSchedule.ValueType  # 2
 
-class CustomCallSchedule(_CustomCallSchedule, metaclass=_CustomCallScheduleEnumTypeWrapper):
-    """A utility for finding the names of enum values."""
-    ...
+class CustomCallSchedule(_CustomCallSchedule, metaclass=_CustomCallScheduleEnumTypeWrapper): ...
 
 SCHEDULE_NONE: CustomCallSchedule.ValueType  # 0
 SCHEDULE_LATEST: CustomCallSchedule.ValueType  # 1
@@ -210,9 +208,7 @@ class _KindEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeW
     MUST_ALIAS: _Kind.ValueType  # 2
     """The buffers must alias at runtime."""
 
-class Kind(_Kind, metaclass=_KindEnumTypeWrapper):
-    """A utility for finding the names of enum values."""
-    ...
+class Kind(_Kind, metaclass=_KindEnumTypeWrapper): ...
 
 UNDEFINED_ALIAS: Kind.ValueType  # 0
 """Define a UNDEFINED_ALIAS equal to zero to get around the default-0 proto3
@@ -247,9 +243,7 @@ class HloInstructionProto(google.protobuf.message.Message):
         def __init__(
             self, *, start: builtins.int | None = ..., limit: builtins.int | None = ..., stride: builtins.int | None = ...
         ) -> None: ...
-        def ClearField(self, field_name: typing.Literal["limit", b"limit", "start", b"start", "stride", b"stride"]) -> None:
-            """Clears a message field."""
-            ...
+        def ClearField(self, field_name: typing.Literal["limit", b"limit", "start", b"start", "stride", b"stride"]) -> None: ...
 
     NAME_FIELD_NUMBER: builtins.int
     OPCODE_FIELD_NUMBER: builtins.int
@@ -716,9 +710,7 @@ class HloInstructionProto(google.protobuf.message.Message):
             "window",
             b"window",
         ],
-    ) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    ) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -873,14 +865,10 @@ class HloInstructionProto(google.protobuf.message.Message):
             "window",
             b"window",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
     def WhichOneof(
         self, oneof_group: typing.Literal["optional_cross_program_prefetch_index", b"optional_cross_program_prefetch_index"]
-    ) -> typing.Literal["cross_program_prefetch_index"] | None:
-        """Returns the name of the field set inside a oneof, or None if no field is set."""
-        ...
+    ) -> typing.Literal["cross_program_prefetch_index"] | None: ...
 
 global___HloInstructionProto = HloInstructionProto
 
@@ -930,9 +918,7 @@ class HloComputationProto(google.protobuf.message.Message):
         is_fusion_computation: builtins.bool | None = ...,
         execution_thread: builtins.str | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["program_shape", b"program_shape"]) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    def HasField(self, field_name: typing.Literal["program_shape", b"program_shape"]) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -951,9 +937,7 @@ class HloComputationProto(google.protobuf.message.Message):
             "root_id",
             b"root_id",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___HloComputationProto = HloComputationProto
 
@@ -973,9 +957,7 @@ class HloScheduleProto(google.protobuf.message.Message):
         @property
         def instruction_ids(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.int]: ...
         def __init__(self, *, instruction_ids: collections.abc.Iterable[builtins.int] | None = ...) -> None: ...
-        def ClearField(self, field_name: typing.Literal["instruction_ids", b"instruction_ids"]) -> None:
-            """Clears a message field."""
-            ...
+        def ClearField(self, field_name: typing.Literal["instruction_ids", b"instruction_ids"]) -> None: ...
 
     @typing.final
     class SequencesEntry(google.protobuf.message.Message):
@@ -989,12 +971,8 @@ class HloScheduleProto(google.protobuf.message.Message):
         def __init__(
             self, *, key: builtins.int | None = ..., value: global___HloScheduleProto.InstructionSequence | None = ...
         ) -> None: ...
-        def HasField(self, field_name: typing.Literal["value", b"value"]) -> builtins.bool:
-            """Checks if a message field is set."""
-            ...
-        def ClearField(self, field_name: typing.Literal["key", b"key", "value", b"value"]) -> None:
-            """Clears a message field."""
-            ...
+        def HasField(self, field_name: typing.Literal["value", b"value"]) -> builtins.bool: ...
+        def ClearField(self, field_name: typing.Literal["key", b"key", "value", b"value"]) -> None: ...
 
     SEQUENCES_FIELD_NUMBER: builtins.int
     @property
@@ -1006,9 +984,7 @@ class HloScheduleProto(google.protobuf.message.Message):
     def __init__(
         self, *, sequences: collections.abc.Mapping[builtins.int, global___HloScheduleProto.InstructionSequence] | None = ...
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["sequences", b"sequences"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["sequences", b"sequences"]) -> None: ...
 
 global___HloScheduleProto = HloScheduleProto
 
@@ -1071,9 +1047,7 @@ class HloInputOutputAliasProto(google.protobuf.message.Message):
                 "parameter_shape_index",
                 b"parameter_shape_index",
             ],
-        ) -> None:
-            """Clears a message field."""
-            ...
+        ) -> None: ...
 
     ENTRIES_FIELD_NUMBER: builtins.int
     @property
@@ -1085,9 +1059,7 @@ class HloInputOutputAliasProto(google.protobuf.message.Message):
     def __init__(
         self, *, entries: collections.abc.Iterable[global___HloInputOutputAliasProto.AliasEntryProto] | None = ...
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["entries", b"entries"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["entries", b"entries"]) -> None: ...
 
 global___HloInputOutputAliasProto = HloInputOutputAliasProto
 
@@ -1132,9 +1104,7 @@ class HloBufferDonorProto(google.protobuf.message.Message):
             field_name: typing.Literal[
                 "parameter_number", b"parameter_number", "parameter_shape_index", b"parameter_shape_index"
             ],
-        ) -> None:
-            """Clears a message field."""
-            ...
+        ) -> None: ...
 
     ENTRIES_FIELD_NUMBER: builtins.int
     @property
@@ -1146,9 +1116,7 @@ class HloBufferDonorProto(google.protobuf.message.Message):
     def __init__(
         self, *, entries: collections.abc.Iterable[global___HloBufferDonorProto.BufferDonorEntryProto] | None = ...
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["entries", b"entries"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["entries", b"entries"]) -> None: ...
 
 global___HloBufferDonorProto = HloBufferDonorProto
 
@@ -1172,9 +1140,7 @@ class CrossProgramPrefetch(google.protobuf.message.Message):
     ) -> None: ...
     def ClearField(
         self, field_name: typing.Literal["index", b"index", "offset", b"offset", "parameter", b"parameter"]
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___CrossProgramPrefetch = CrossProgramPrefetch
 
@@ -1224,9 +1190,7 @@ class StackFrameIndexProto(google.protobuf.message.Message):
             field_name: typing.Literal[
                 "column", b"column", "file_name_id", b"file_name_id", "function_name_id", b"function_name_id", "line", b"line"
             ],
-        ) -> None:
-            """Clears a message field."""
-            ...
+        ) -> None: ...
 
     @typing.final
     class StackFrame(google.protobuf.message.Message):
@@ -1245,9 +1209,7 @@ class StackFrameIndexProto(google.protobuf.message.Message):
         ) -> None: ...
         def ClearField(
             self, field_name: typing.Literal["file_location_id", b"file_location_id", "parent_frame_id", b"parent_frame_id"]
-        ) -> None:
-            """Clears a message field."""
-            ...
+        ) -> None: ...
 
     FILE_NAMES_FIELD_NUMBER: builtins.int
     FUNCTION_NAMES_FIELD_NUMBER: builtins.int
@@ -1293,9 +1255,7 @@ class StackFrameIndexProto(google.protobuf.message.Message):
             "stack_frames",
             b"stack_frames",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___StackFrameIndexProto = StackFrameIndexProto
 
@@ -1374,9 +1334,7 @@ class HloModuleProto(google.protobuf.message.Message):
                 "relative_speedup",
                 b"relative_speedup",
             ],
-        ) -> None:
-            """Clears a message field."""
-            ...
+        ) -> None: ...
 
     NAME_FIELD_NUMBER: builtins.int
     ENTRY_COMPUTATION_NAME_FIELD_NUMBER: builtins.int
@@ -1497,9 +1455,7 @@ class HloModuleProto(google.protobuf.message.Message):
             "stack_frame_index",
             b"stack_frame_index",
         ],
-    ) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    ) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -1540,9 +1496,7 @@ class HloModuleProto(google.protobuf.message.Message):
             "use_auto_spmd_partitioning",
             b"use_auto_spmd_partitioning",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___HloModuleProto = HloModuleProto
 
@@ -1580,9 +1534,7 @@ class LogicalBufferProto(google.protobuf.message.Message):
             field_name: typing.Literal[
                 "instruction_id", b"instruction_id", "instruction_name", b"instruction_name", "shape_index", b"shape_index"
             ],
-        ) -> None:
-            """Clears a message field."""
-            ...
+        ) -> None: ...
 
     ID_FIELD_NUMBER: builtins.int
     SIZE_FIELD_NUMBER: builtins.int
@@ -1603,14 +1555,10 @@ class LogicalBufferProto(google.protobuf.message.Message):
         defined_at: global___LogicalBufferProto.Location | None = ...,
         color: builtins.int | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["defined_at", b"defined_at"]) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    def HasField(self, field_name: typing.Literal["defined_at", b"defined_at"]) -> builtins.bool: ...
     def ClearField(
         self, field_name: typing.Literal["color", b"color", "defined_at", b"defined_at", "id", b"id", "size", b"size"]
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___LogicalBufferProto = LogicalBufferProto
 
@@ -1643,9 +1591,7 @@ class BufferAllocationProto(google.protobuf.message.Message):
         ) -> None: ...
         def ClearField(
             self, field_name: typing.Literal["logical_buffer_id", b"logical_buffer_id", "offset", b"offset", "size", b"size"]
-        ) -> None:
-            """Clears a message field."""
-            ...
+        ) -> None: ...
 
     INDEX_FIELD_NUMBER: builtins.int
     SIZE_FIELD_NUMBER: builtins.int
@@ -1714,9 +1660,7 @@ class BufferAllocationProto(google.protobuf.message.Message):
             "size",
             b"size",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___BufferAllocationProto = BufferAllocationProto
 
@@ -1754,9 +1698,7 @@ class HeapSimulatorTrace(google.protobuf.message.Message):
             canonical buffer is extended to the union of all lifetimes.
             """
 
-        class Kind(_Kind, metaclass=_KindEnumTypeWrapper):
-            """A utility for finding the names of enum values."""
-            ...
+        class Kind(_Kind, metaclass=_KindEnumTypeWrapper): ...
         ALLOC: HeapSimulatorTrace.Event.Kind.ValueType  # 0
         """A memory region was allocated for the buffer."""
         FREE: HeapSimulatorTrace.Event.Kind.ValueType  # 1
@@ -1810,9 +1752,7 @@ class HeapSimulatorTrace(google.protobuf.message.Message):
                 "share_with_canonical_id",
                 b"share_with_canonical_id",
             ],
-        ) -> None:
-            """Clears a message field."""
-            ...
+        ) -> None: ...
 
     EVENTS_FIELD_NUMBER: builtins.int
     WHOLE_MODULE_SIMULATION_FIELD_NUMBER: builtins.int
@@ -1840,9 +1780,7 @@ class HeapSimulatorTrace(google.protobuf.message.Message):
             "whole_module_simulation",
             b"whole_module_simulation",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___HeapSimulatorTrace = HeapSimulatorTrace
 
@@ -1862,9 +1800,7 @@ class HloModuleGroupProto(google.protobuf.message.Message):
     def __init__(
         self, *, name: builtins.str | None = ..., hlo_modules: collections.abc.Iterable[global___HloModuleProto] | None = ...
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["hlo_modules", b"hlo_modules", "name", b"name"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["hlo_modules", b"hlo_modules", "name", b"name"]) -> None: ...
 
 global___HloModuleGroupProto = HloModuleGroupProto
 
@@ -1890,14 +1826,10 @@ class BufferAssignmentProto(google.protobuf.message.Message):
         def __init__(
             self, *, source_buffer_id: builtins.int | None = ..., location: global___LogicalBufferProto.Location | None = ...
         ) -> None: ...
-        def HasField(self, field_name: typing.Literal["location", b"location"]) -> builtins.bool:
-            """Checks if a message field is set."""
-            ...
+        def HasField(self, field_name: typing.Literal["location", b"location"]) -> builtins.bool: ...
         def ClearField(
             self, field_name: typing.Literal["location", b"location", "source_buffer_id", b"source_buffer_id"]
-        ) -> None:
-            """Clears a message field."""
-            ...
+        ) -> None: ...
 
     LOGICAL_BUFFERS_FIELD_NUMBER: builtins.int
     BUFFER_ALIASES_FIELD_NUMBER: builtins.int
@@ -1939,9 +1871,7 @@ class BufferAssignmentProto(google.protobuf.message.Message):
             "logical_buffers",
             b"logical_buffers",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___BufferAssignmentProto = BufferAssignmentProto
 
@@ -1962,14 +1892,10 @@ class HloProto(google.protobuf.message.Message):
     ) -> None: ...
     def HasField(
         self, field_name: typing.Literal["buffer_assignment", b"buffer_assignment", "hlo_module", b"hlo_module"]
-    ) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    ) -> builtins.bool: ...
     def ClearField(
         self, field_name: typing.Literal["buffer_assignment", b"buffer_assignment", "hlo_module", b"hlo_module"]
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___HloProto = HloProto
 
@@ -2010,17 +1936,13 @@ class HloSnapshot(google.protobuf.message.Message):
         result: tensorflow.compiler.xla.xla_data_pb2.LiteralProto | None = ...,
         execution_platform: builtins.str | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["hlo", b"hlo", "result", b"result"]) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    def HasField(self, field_name: typing.Literal["hlo", b"hlo", "result", b"result"]) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
             "arguments", b"arguments", "execution_platform", b"execution_platform", "hlo", b"hlo", "result", b"result"
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___HloSnapshot = HloSnapshot
 
@@ -2083,9 +2005,7 @@ class HloModuleMetadataProto(google.protobuf.message.Message):
             "pass_metadata",
             b"pass_metadata",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___HloModuleMetadataProto = HloModuleMetadataProto
 
@@ -2163,9 +2083,7 @@ class HloPassMetadata(google.protobuf.message.Message):
         end_timestamp_usec: builtins.int | None = ...,
         custom_metadata: google.protobuf.any_pb2.Any | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["custom_metadata", b"custom_metadata"]) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    def HasField(self, field_name: typing.Literal["custom_metadata", b"custom_metadata"]) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -2190,8 +2108,6 @@ class HloPassMetadata(google.protobuf.message.Message):
             "start_timestamp_usec",
             b"start_timestamp_usec",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___HloPassMetadata = HloPassMetadata

@@ -1,10 +1,3 @@
-"""
-distutils.command
-
-Package containing implementation of all the standard Distutils
-commands.
-"""
-
 from . import (
     bdist as bdist,
     bdist_rpm as bdist_rpm,

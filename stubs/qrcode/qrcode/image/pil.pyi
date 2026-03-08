@@ -7,15 +7,12 @@ from .._types import Writeable
 from . import base
 
 class PilImage(base.BaseImage):
-    """PIL image builder, default format is PNG."""
     kind: Literal["PNG"]
     fill_color: str
     # the new_image and get_image methods accept arbitrary keyword arguments to
     # accommodate subclasses with additional arguments.
     def new_image(self, *, back_color: str = "white", fill_color: str = "black", **kwargs: Any) -> Image.Image: ...
-    def get_image(self, **kwargs: Any) -> Image.Image:
-        """Return the image class for further processing."""
-        ...
+    def get_image(self, **kwargs: Any) -> Image.Image: ...
     def drawrect(self, row: int, col: int) -> None: ...
     # kwargs are passed on to PIL.Image.save, which also accepts arbitrary keyword arguments.
     def save(  # type: ignore[override]

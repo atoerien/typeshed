@@ -11,14 +11,6 @@ from braintree.three_d_secure_info import ThreeDSecureInfo
 
 class CreditCardVerification(AttributeGetter):
     class Status:
-        """
-        Constants representing transaction statuses. Available statuses are:
-
-        * braintree.CreditCardVerification.Status.Failed
-        * braintree.CreditCardVerification.Status.GatewayRejected
-        * braintree.CreditCardVerification.Status.ProcessorDeclined
-        * braintree.CreditCardVerification.Status.Verified
-        """
         Failed: Final = "failed"
         GatewayRejected: Final = "gateway_rejected"
         ProcessorDeclined: Final = "processor_declined"

@@ -1,5 +1,3 @@
-"""ECDSA keys"""
-
 from _typeshed import FileDescriptorOrPath, ReadableBuffer
 from collections.abc import Callable, Sequence
 from typing import IO, Any
@@ -10,13 +8,6 @@ from paramiko.message import Message
 from paramiko.pkey import PKey
 
 class _ECDSACurve:
-    """
-    Represents a specific ECDSA Curve (nistp256, nistp384, etc).
-
-    Handles the generation of the key format identifier and the selection of
-    the proper hash function. Also grabs the proper curve from the 'ecdsa'
-    package.
-    """
     nist_name: str
     key_length: int
     key_format_identifier: str
@@ -25,11 +16,6 @@ class _ECDSACurve:
     def __init__(self, curve_class: type[EllipticCurve], nist_name: str) -> None: ...
 
 class _ECDSACurveSet:
-    """
-    A collection to hold the ECDSA curves. Allows querying by oid and by key
-    format identifier. The two ways in which ECDSAKey needs to be able to look
-    up curves.
-    """
     ecdsa_curves: Sequence[_ECDSACurve]
     def __init__(self, ecdsa_curves: Sequence[_ECDSACurve]) -> None: ...
     def get_key_format_identifier_list(self) -> list[str]: ...
@@ -38,10 +24,6 @@ class _ECDSACurveSet:
     def get_by_key_length(self, key_length: int) -> _ECDSACurve | None: ...
 
 class ECDSAKey(PKey):
-    """
-    Representation of an ECDSA key which can be used to sign and verify SSH2
-    data.
-    """
     verifying_key: EllipticCurvePublicKey
     signing_key: EllipticCurvePrivateKey
     public_blob: None
@@ -70,12 +52,4 @@ class ECDSAKey(PKey):
     @classmethod
     def generate(
         cls, curve: EllipticCurve = ..., progress_func: Callable[..., object] | None = None, bits: int | None = None
-    ) -> ECDSAKey:
-        """
-        Generate a new private ECDSA key.  This factory function can be used to
-        generate a new host key or authentication key.
-
-        :param progress_func: Not used for this type of key.
-        :returns: A new private key (`.ECDSAKey`) object
-        """
-        ...
+    ) -> ECDSAKey: ...

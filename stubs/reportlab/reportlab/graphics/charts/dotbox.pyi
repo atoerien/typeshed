@@ -5,7 +5,6 @@ from reportlab.lib.attrmap import *
 from reportlab.lib.validators import *
 
 class DotBox(Widget):
-    """Returns a dotbox widget."""
     xlabels: Incomplete
     ylabels: Incomplete
     labelFontName: str

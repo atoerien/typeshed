@@ -1,5 +1,3 @@
-"""A Python interface to Jsonnet."""
-
 from collections.abc import Callable
 from typing import Final
 
@@ -19,9 +17,7 @@ def evaluate_file(
     max_trace: int = 20,
     import_callback: Callable[[str, str], tuple[str, object | None]] = ...,
     native_callbacks: dict[str, tuple[tuple[str, ...], Callable[..., object]]] | None = ...,
-) -> str:
-    """Interpret the given Jsonnet file."""
-    ...
+) -> str: ...
 def evaluate_snippet(
     filename: str,
     src: str,
@@ -36,6 +32,4 @@ def evaluate_snippet(
     max_trace: int = 20,
     import_callback: Callable[[str, str], tuple[str, object | None]] = ...,
     native_callbacks: dict[str, tuple[tuple[str, ...], Callable[..., object]]] | None = ...,
-) -> str:
-    """Interpret the given Jsonnet code."""
-    ...
+) -> str: ...

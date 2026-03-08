@@ -58,10 +58,6 @@ class CryptographyAESKey(Key):
     def unwrap_key(self, wrapped_key): ...
 
 class CryptographyHMACKey(Key):
-    """
-    Performs signing and verification operations using HMAC
-    and the specified hash function.
-    """
     ALG_MAP: Any
     prepared_key: Any
     def __init__(self, key, algorithm) -> None: ...

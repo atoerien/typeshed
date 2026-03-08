@@ -3,10 +3,4 @@ from typing import TypeVar
 
 _IterableT = TypeVar("_IterableT", bound=Iterable[str])
 
-def consolidate_linker_args(args: _IterableT) -> _IterableT | str:
-    """
-    Ensure the return value is a string for backward compatibility.
-
-    Retain until at least 2025-04-31. See pypa/distutils#246
-    """
-    ...
+def consolidate_linker_args(args: _IterableT) -> _IterableT | str: ...

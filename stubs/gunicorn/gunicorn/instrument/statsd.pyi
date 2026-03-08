@@ -1,5 +1,3 @@
-"""Bare-bones implementation of statsD's protocol, client-side"""
-
 import logging
 import socket
 from collections.abc import Mapping
@@ -23,10 +21,6 @@ HISTOGRAM_TYPE: Final = "histogram"
 TIMER_TYPE: Final = "timer"
 
 class Statsd(Logger):
-    """
-    statsD-based instrumentation, that passes as a logger
-    
-    """
     prefix: str
     sock: socket.socket | None
     dogstatsd_tags: str | None
@@ -96,18 +90,8 @@ class Statsd(Logger):
         stack_info: bool = False,
         stacklevel: int = 1,
         extra: Mapping[str, object] | None = None,
-    ) -> None:
-        """
-        Log a given statistic if metric, value and type are present
-        
-        """
-        ...
-    def access(self, resp: Response, req: Request, environ: _EnvironType, request_time: timedelta) -> None:
-        """
-        Measure request duration
-        request_time is a datetime.timedelta
-        """
-        ...
+    ) -> None: ...
+    def access(self, resp: Response, req: Request, environ: _EnvironType, request_time: timedelta) -> None: ...
     def gauge(self, name: str, value: float) -> None: ...
     def increment(self, name: str, value: int, sampling_rate: float = 1.0) -> None: ...
     def decrement(self, name: str, value: int, sampling_rate: float = 1.0) -> None: ...

@@ -1,8 +1,3 @@
-"""
-Simplified Chinese language mappings for language-dependent features
-of Docutils.
-"""
-
 from typing import Final
 
 __docformat__: Final = "reStructuredText"

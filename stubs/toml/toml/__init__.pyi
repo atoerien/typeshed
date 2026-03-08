@@ -1,9 +1,3 @@
-"""
-Python module which parses and emits TOML.
-
-Released under the MIT license.
-"""
-
 from . import decoder as decoder, encoder as encoder
 from .decoder import (
     TomlDecodeError as TomlDecodeError,

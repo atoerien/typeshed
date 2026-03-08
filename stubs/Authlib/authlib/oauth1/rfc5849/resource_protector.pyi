@@ -4,12 +4,4 @@ from .wrapper import OAuth1Request
 
 class ResourceProtector(BaseServer):
     def validate_request(self, method, uri, body, headers) -> OAuth1Request: ...
-    def get_token_credential(self, request):
-        """
-        Fetch the token credential from data store like a database,
-        framework should implement this function.
-
-        :param request: OAuth1Request instance
-        :return: Token model instance
-        """
-        ...
+    def get_token_credential(self, request): ...

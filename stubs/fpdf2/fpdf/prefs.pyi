@@ -1,11 +1,8 @@
-"""Usage documentation at: <https://py-pdf.github.io/fpdf2/PageFormatAndOrientation.html#viewer-preferences>"""
-
 from typing import Literal
 
 from .enums import Duplex, PageBoundaries, PageMode, TextDirection
 
 class ViewerPreferences:
-    """Specifies the way the document shall be displayed on the screen"""
     hide_toolbar: bool
     hide_menubar: bool
     hide_window_u_i: bool

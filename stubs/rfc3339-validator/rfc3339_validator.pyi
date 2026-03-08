@@ -7,9 +7,4 @@ __email__: Final[str]
 RFC3339_REGEX_FLAGS: Final[int]
 RFC3339_REGEX: Final[re.Pattern[str]]
 
-def validate_rfc3339(date_string: str) -> bool:
-    """
-    Validates dates against RFC3339 datetime format
-    Leap seconds are no supported.
-    """
-    ...
+def validate_rfc3339(date_string: str) -> bool: ...

@@ -504,10 +504,6 @@ class ColorMapping(Serialisable):
     ) -> None: ...
 
 class ColorChoiceDescriptor(Typed[ColorChoice, Literal[True]]):
-    """
-    Objects can choose from 7 different kinds of color system.
-    Assume RGBHex if a string is passed in.
-    """
     expected_type: type[ColorChoice]
     allow_none: Literal[True]
     def __init__(self, name: str | None = None) -> None: ...

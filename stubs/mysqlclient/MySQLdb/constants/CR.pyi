@@ -1,10 +1,3 @@
-"""
-MySQL Connection Errors
-
-Nearly all of these raise OperationalError. COMMANDS_OUT_OF_SYNC
-raises ProgrammingError.
-"""
-
 ERROR_FIRST: int
 MIN_ERROR: int
 UNKNOWN_ERROR: int

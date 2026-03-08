@@ -13,7 +13,6 @@ else:
     from enum import Enum
 
     class ExchangeType(str, Enum):
-        """An enumeration."""
         direct = "direct"
         fanout = "fanout"
         headers = "headers"

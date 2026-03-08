@@ -6,24 +6,11 @@ from .timemachine import *
 
 DEBUG: Final[int]
 
-class XLRDError(Exception):
-    """An exception indicating problems reading data from an Excel file."""
-    ...
+class XLRDError(Exception): ...
 
 class BaseObject:
-    """
-    Parent of almost all other classes in the package. Defines a common
-    :meth:`dump` method for debugging.
-    """
     _repr_these: list[str]
-    def dump(self, f: TextIO | None = None, header: str | None = None, footer: str | None = None, indent: int = 0) -> None:
-        """
-        :param f: open file object, to which the dump is written
-        :param header: text to write before the dump
-        :param footer: text to write after the dump
-        :param indent: number of leading spaces (for recursive calls)
-        """
-        ...
+    def dump(self, f: TextIO | None = None, header: str | None = None, footer: str | None = None, indent: int = 0) -> None: ...
 
 FUN: Final[int]
 FDT: Final[int]
@@ -170,12 +157,8 @@ def unpack_string(data: bytes, pos: int, encoding: str, lenlen: int = 1) -> str:
 def unpack_string_update_pos(
     data: bytes, pos: int, encoding: str, lenlen: int = 1, known_len: int | None = None
 ) -> tuple[str, int]: ...
-def unpack_unicode(data: bytes, pos: int, lenlen: int = 2) -> str:
-    """Return unicode_strg"""
-    ...
-def unpack_unicode_update_pos(data: bytes, pos: int, lenlen: int = 2, known_len: int | None = None) -> tuple[str, int]:
-    """Return (unicode_strg, updated value of pos)"""
-    ...
+def unpack_unicode(data: bytes, pos: int, lenlen: int = 2) -> str: ...
+def unpack_unicode_update_pos(data: bytes, pos: int, lenlen: int = 2, known_len: int | None = None) -> tuple[str, int]: ...
 def unpack_cell_range_address_list_update_pos(
     output_list: list[tuple[int, int, int, int]], data: bytes, pos: int, biff_version: int, addr_size: int = 6
 ) -> int: ...

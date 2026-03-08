@@ -3,13 +3,7 @@ from typing import Literal
 
 from authlib.common.errors import AuthlibHTTPError
 
-def invalid_error_characters(text: str) -> list[str]:
-    """
-    Check whether the string only contains characters from the restricted ASCII set defined in RFC6749 for errors.
-
-    https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.2.1
-    """
-    ...
+def invalid_error_characters(text: str) -> list[str]: ...
 
 class OAuth2Error(AuthlibHTTPError):
     state: Incomplete
@@ -25,7 +19,5 @@ class OAuth2Error(AuthlibHTTPError):
         redirect_fragment: bool = False,
         error=None,
     ) -> None: ...
-    def get_body(self) -> list[tuple[Literal["error", "error_description", "error_uri"], str | None]]:
-        """Get a list of body."""
-        ...
+    def get_body(self) -> list[tuple[Literal["error", "error_description", "error_uri"], str | None]]: ...
     def __call__(self, uri: str | None = None): ...

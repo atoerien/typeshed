@@ -1,5 +1,3 @@
-"""Constants related to the hvac.Client class."""
-
 from hvac.utils import _DeprecateProperty
 
 DEPRECATED_PROPERTIES: dict[str, _DeprecateProperty]

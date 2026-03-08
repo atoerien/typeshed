@@ -176,9 +176,7 @@ def validate_bool(val: None) -> None: ...
 def validate_bool(val: Annotated[str, "Case-insensitive boolean string ('true'/'false' in any case)"]) -> bool: ...
 def validate_dict(val: dict[str, Any]) -> dict[str, Any]: ...
 def validate_pos_int(val: ConvertibleToInt) -> int: ...
-def validate_http2_frame_size(val: ConvertibleToInt) -> int:
-    """Validate HTTP/2 max frame size per RFC 7540."""
-    ...
+def validate_http2_frame_size(val: ConvertibleToInt) -> int: ...
 def validate_ssl_version(val: _SSLMethod) -> _SSLMethod: ...
 @overload
 def validate_string(val: str) -> str: ...
@@ -924,14 +922,7 @@ class NewSSLContext(Setting):
 
     def ssl_context(config: Config, default_ssl_context_factory: Callable[[], SSLContext]) -> SSLContext: ...  # type: ignore[misc] # pyright: ignore[reportGeneralTypeIssues]
 
-def validate_proxy_protocol(val: str | bool | None) -> str:
-    """
-    Validate proxy_protocol setting.
-
-    Accepts: off, false, v1, v2, auto, true
-    Returns normalized value: off, v1, v2, or auto
-    """
-    ...
+def validate_proxy_protocol(val: str | bool | None) -> str: ...
 
 class ProxyProtocol(Setting):
     name: ClassVar[str]
@@ -1041,15 +1032,7 @@ class Ciphers(Setting):
 VALID_HTTP_PROTOCOLS: Final[frozenset[str]]
 ALPN_PROTOCOL_MAP: Final[dict[str, str]]
 
-def validate_http_protocols(val: str | None) -> list[str]:
-    """
-    Validate http_protocols setting.
-
-    Accepts comma-separated list of protocol identifiers.
-    Valid values: h1 (HTTP/1.1), h2 (HTTP/2), h3 (HTTP/3 - future)
-    Order indicates preference (first = most preferred).
-    """
-    ...
+def validate_http_protocols(val: str | None) -> list[str]: ...
 
 class HTTPProtocols(Setting):
     name: ClassVar[str]

@@ -21,7 +21,6 @@ class _Environment(TypedDict):
     NO_PROXY: NotRequired[str]
 
 class ProxyConfig(dict[str, str]):
-    """Hold the client's proxy configuration"""
     @property
     def http(self) -> str | None: ...
     @property
@@ -31,24 +30,6 @@ class ProxyConfig(dict[str, str]):
     @property
     def no_proxy(self) -> str | None: ...
     @staticmethod
-    def from_dict(config: _ProxyConfigDict) -> ProxyConfig:
-        """
-        Instantiate a new ProxyConfig from a dictionary that represents a
-        client configuration, as described in `the documentation`_.
-
-        .. _the documentation:
-            https://docs.docker.com/network/proxy/#configure-the-docker-client
-        """
-        ...
-    def get_environment(self) -> _Environment:
-        """
-        Return a dictionary representing the environment variables used to
-        set the proxy settings.
-        """
-        ...
-    def inject_proxy_environment(self, environment: None | Sequence[str]) -> None | Sequence[str]:
-        """
-        Given a list of strings representing environment variables, prepend the
-        environment variables corresponding to the proxy settings.
-        """
-        ...
+    def from_dict(config: _ProxyConfigDict) -> ProxyConfig: ...
+    def get_environment(self) -> _Environment: ...
+    def inject_proxy_environment(self, environment: None | Sequence[str]) -> None | Sequence[str]: ...

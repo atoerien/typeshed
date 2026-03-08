@@ -22,7 +22,6 @@ _FontVertAlign: TypeAlias = Literal["superscript", "subscript", "baseline"]
 _FontScheme: TypeAlias = Literal["major", "minor"]
 
 class Font(Serialisable):
-    """Font options used in styles."""
     UNDERLINE_DOUBLE: Final = "double"
     UNDERLINE_DOUBLE_ACCOUNTING: Final = "doubleAccounting"
     UNDERLINE_SINGLE: Final = "single"
@@ -73,8 +72,6 @@ class Font(Serialisable):
         extend: _HasTagAndGet[_ConvertibleToBool | None] | _ConvertibleToBool | None = None,
     ) -> None: ...
     @classmethod
-    def from_tree(cls, node: _SupportsFindAndIterAndAttribAndText) -> Self:
-        """Set default value for underline if child element is present"""
-        ...
+    def from_tree(cls, node: _SupportsFindAndIterAndAttribAndText) -> Self: ...
 
 DEFAULT_FONT: Final[Font]

@@ -27,41 +27,6 @@ array_unsigned_codes: Final[dict[int, LiteralString]]
 struct_to_array_codes: Final[dict[str, LiteralString]]
 
 class Field:
-    """
-    Field objects represent the data fields of a Struct.
-
-    Field objects must have the following attributes:
-
-       name         -- the field name, or None
-       structcode   -- the struct codes representing this field
-       structvalues -- the number of values encodes by structcode
-
-    Additionally, these attributes should either be None or real methods:
-
-       check_value  -- check a value before it is converted to binary
-       parse_value  -- parse a value after it has been converted from binary
-
-    If one of these attributes are None, no check or additional
-    parsings will be done one values when converting to or from binary
-    form.  Otherwise, the methods should have the following behaviour:
-
-       newval = check_value(val)
-         Check that VAL is legal when converting to binary form.  The
-         value can also be converted to another Python value.  In any
-         case, return the possibly new value.  NEWVAL should be a
-         single Python value if structvalues is 1, a tuple of
-         structvalues elements otherwise.
-
-       newval = parse_value(val, display)
-         VAL is an unpacked Python value, which now can be further
-         refined.  DISPLAY is the current Display object.  Return the
-         new value.  VAL will be a single value if structvalues is 1,
-         a tuple of structvalues elements otherwise.
-
-    If `structcode' is None the Field must have the method
-    f.parse_binary_value() instead.  See its documentation string for
-    details.
-    """
     name: str
     default: int | None
     pack_value: Callable[[Any], tuple[Any, int | None, int | None]] | None
@@ -73,22 +38,7 @@ class Field:
 
     def parse_binary_value(
         self, data: SliceableBuffer, display: display.Display | None, length: int | None, format: int
-    ) -> tuple[Any, SliceableBuffer]:
-        """
-        value, remaindata = f.parse_binary_value(data, display, length, format)
-
-        Decode a value for this field from the binary string DATA.
-        If there are a LengthField and/or a FormatField connected to this
-        field, their values will be LENGTH and FORMAT, respectively.  If
-        there are no such fields the parameters will be None.
-
-        DISPLAY is the display involved, which is really only used by
-        the Resource fields.
-
-        The decoded value is returned as VALUE, and the remaining part
-        of DATA shold be returned as REMAINDATA.
-        """
-        ...
+    ) -> tuple[Any, SliceableBuffer]: ...
 
 class Pad(Field):
     size: int
@@ -109,30 +59,9 @@ class ReplyCode(ConstantField):
     def __init__(self) -> None: ...
 
 class LengthField(Field):
-    """
-    A LengthField stores the length of some other Field whose size
-    may vary, e.g. List and String8.
-
-    Its name should be the same as the name of the field whose size
-    it stores.  The other_fields attribute can be used to specify the
-    names of other fields whose sizes are stored by this field, so
-    a single length field can set the length of multiple fields.
-
-    The lf.get_binary_value() method of LengthFields is not used, instead
-    a lf.get_binary_length() should be provided.
-
-    Unless LengthField.get_binary_length() is overridden in child classes,
-    there should also be a lf.calc_length().
-    """
     structcode: str
     other_fields: list[str] | tuple[str, ...] | None
-    def calc_length(self, length: int) -> int:
-        """
-        newlen = lf.calc_length(length)
-
-        Return a new length NEWLEN based on the provided LENGTH.
-        """
-        ...
+    def calc_length(self, length: int) -> int: ...
 
 class TotalLengthField(LengthField): ...
 class RequestLength(TotalLengthField): ...
@@ -147,13 +76,6 @@ class OddLength(LengthField):
     def parse_value(self, value: int, display: Unused) -> Literal["even", "odd"]: ...  # type: ignore[override]
 
 class FormatField(Field):
-    """
-    A FormatField encodes the format of some other field, in a manner
-    similar to LengthFields.
-
-    The ff.get_binary_value() method is not used, replaced by
-    ff.get_binary_format().
-    """
     structcode: str
     def __init__(self, name: str, size: int) -> None: ...
 
@@ -272,21 +194,12 @@ class String16(ValueField):
     structcode: None
     pad: int
     def __init__(self, name: str, pad: int = 1) -> None: ...
-    def pack_value(self, val: Sequence[object]) -> tuple[bytes, int, None]:
-        """Convert 8-byte string into 16-byte list"""
-        ...
+    def pack_value(self, val: Sequence[object]) -> tuple[bytes, int, None]: ...  # type: ignore[override]  # Override Callable
     def parse_binary_value(  # type: ignore[override]  # length: None will error. See: https://github.com/python-xlib/python-xlib/pull/248
         self, data: SliceableBuffer, display: Unused, length: int | Literal["odd", "even"], format: Unused
     ) -> tuple[tuple[Any, ...], SliceableBuffer]: ...
 
 class List(ValueField):
-    """
-    The List, FixedList and Object fields store compound data objects.
-    The type of data objects must be provided as an object with the
-    following attributes and methods:
-
-    ...
-    """
     structcode: None
     type: Struct | ScalarObj | ResourceObj | ClassInfoClass | type[ValueField]
     pad: int
@@ -403,26 +316,6 @@ class StrClass:
 Str: StrClass
 
 class Struct:
-    """
-    Struct objects represents a binary data structure.  It can
-    contain both fields with static and dynamic sizes.  However, all
-    static fields must appear before all dynamic fields.
-
-    Fields are represented by various subclasses of the abstract base
-    class Field.  The fields of a structure are given as arguments
-    when instantiating a Struct object.
-
-    Struct objects have two public methods:
-
-      to_binary()    -- build a binary representation of the structure
-                        with the values given as arguments
-      parse_binary() -- convert a binary (string) representation into
-                        a Python dictionary or object.
-
-    These functions will be generated dynamically for each Struct
-    object to make conversion as fast as possible.  They are
-    generated the first time the methods are called.
-    """
     name: str
     check_value: Callable[[Any], Any] | None
     keyword_args: bool
@@ -435,85 +328,22 @@ class Struct:
     structcode: str | None
     structvalues: int
     def __init__(self, *fields: Field) -> None: ...
-    def to_binary(self, *varargs: object, **keys: object) -> bytes:
-        """
-        data = s.to_binary(...)
-
-        Convert Python values into the binary representation.  The
-        arguments will be all value fields with names, in the order
-        given when the Struct object was instantiated.  With one
-        exception: fields with default arguments will be last.
-
-        Returns the binary representation as the string DATA.
-        """
-        ...
-    def pack_value(self, value: tuple[object, ...] | dict[str, Any] | DictWrapper) -> bytes:
-        """
-        This function allows Struct objects to be used in List and
-        Object fields.  Each item represents the arguments to pass to
-        to_binary, either a tuple, a dictionary or a DictWrapper.
-        """
-        ...
+    def to_binary(self, *varargs: object, **keys: object) -> bytes: ...
+    def pack_value(self, value: tuple[object, ...] | dict[str, Any] | DictWrapper) -> bytes: ...
     @overload
-    def parse_value(self, val: SliceableBuffer, display: display.Display | None, rawdict: Literal[True]) -> dict[str, Any]:
-        """
-        This function is used by List and Object fields to convert
-        Struct objects with no var_fields into Python values.
-        """
-        ...
+    def parse_value(self, val: SliceableBuffer, display: display.Display | None, rawdict: Literal[True]) -> dict[str, Any]: ...
     @overload
     def parse_value(
         self, val: SliceableBuffer, display: display.Display | None, rawdict: Literal[False] = False
-    ) -> DictWrapper:
-        """
-        This function is used by List and Object fields to convert
-        Struct objects with no var_fields into Python values.
-        """
-        ...
+    ) -> DictWrapper: ...
     @overload
     def parse_binary(
         self, data: SliceableBuffer, display: display.Display | None, rawdict: Literal[True]
-    ) -> tuple[dict[str, Any], SliceableBuffer]:
-        """
-        values, remdata = s.parse_binary(data, display, rawdict = False)
-
-        Convert a binary representation of the structure into Python values.
-
-        DATA is a string or a buffer containing the binary data.
-        DISPLAY should be a Xlib.protocol.display.Display object if
-        there are any Resource fields or Lists with ResourceObjs.
-
-        The Python values are returned as VALUES.  If RAWDICT is true,
-        a Python dictionary is returned, where the keys are field
-        names and the values are the corresponding Python value.  If
-        RAWDICT is false, a DictWrapper will be returned where all
-        fields are available as attributes.
-
-        REMDATA are the remaining binary data, unused by the Struct object.
-        """
-        ...
+    ) -> tuple[dict[str, Any], SliceableBuffer]: ...
     @overload
     def parse_binary(
         self, data: SliceableBuffer, display: display.Display | None, rawdict: Literal[False] = False
-    ) -> tuple[DictWrapper, SliceableBuffer]:
-        """
-        values, remdata = s.parse_binary(data, display, rawdict = False)
-
-        Convert a binary representation of the structure into Python values.
-
-        DATA is a string or a buffer containing the binary data.
-        DISPLAY should be a Xlib.protocol.display.Display object if
-        there are any Resource fields or Lists with ResourceObjs.
-
-        The Python values are returned as VALUES.  If RAWDICT is true,
-        a Python dictionary is returned, where the keys are field
-        names and the values are the corresponding Python value.  If
-        RAWDICT is false, a DictWrapper will be returned where all
-        fields are available as attributes.
-
-        REMDATA are the remaining binary data, unused by the Struct object.
-        """
-        ...
+    ) -> tuple[DictWrapper, SliceableBuffer]: ...
     # Structs generate their attributes
     # TODO: Create a specific type-only class for all instances of `Struct`
     @type_check_only
@@ -535,9 +365,7 @@ class GetAttrData:
     # GetAttrData classes get their attributes dynamically
     # TODO: Complete all classes inheriting from GetAttrData
     def __getattr__(self, attr: str) -> Any: ...
-    def __setattr__(self, name: str, value: Any, /) -> None:
-        """Implement setattr(self, name, value)."""
-        ...
+    def __setattr__(self, name: str, value: Any, /) -> None: ...
 
 class DictWrapper(GetAttrData):
     def __init__(self, dict: dict[str, Any]) -> None: ...

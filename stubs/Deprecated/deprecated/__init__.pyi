@@ -1,10 +1,3 @@
-"""
-Deprecated Library
-==================
-
-Python ``@deprecated`` decorator to deprecate old python classes, functions or methods.
-"""
-
 from typing import Final
 
 from .classic import deprecated as deprecated

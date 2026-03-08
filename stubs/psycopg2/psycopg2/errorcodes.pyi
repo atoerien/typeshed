@@ -1,18 +1,6 @@
-"""
-Error codes for PostgreSQL
-
-This module contains symbolic names for all PostgreSQL error codes.
-"""
-
 from typing import Final
 
-def lookup(code: str, _cache: dict[str, str] = {}) -> str:
-    """
-    Lookup an error code or class code and return its symbolic name.
-
-    Raise `KeyError` if the code is not found.
-    """
-    ...
+def lookup(code: str, _cache: dict[str, str] = {}) -> str: ...
 
 CLASS_SUCCESSFUL_COMPLETION: Final[str]
 CLASS_WARNING: Final[str]

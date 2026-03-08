@@ -1,10 +1,3 @@
-"""
-Common objects shared by __init__.py and _ps*.py modules.
-
-Note: this module is imported by setup.py, so it should not import
-psutil or third-party modules.
-"""
-
 import enum
 import io
 import sys
@@ -59,7 +52,6 @@ CONN_CLOSING: Final = "CLOSING"
 CONN_NONE: Final = "NONE"
 
 class NicDuplex(enum.IntEnum):
-    """An enumeration."""
     NIC_DUPLEX_FULL = 2
     NIC_DUPLEX_HALF = 1
     NIC_DUPLEX_UNKNOWN = 0
@@ -69,7 +61,6 @@ NIC_DUPLEX_HALF: Final = NicDuplex.NIC_DUPLEX_HALF
 NIC_DUPLEX_UNKNOWN: Final = NicDuplex.NIC_DUPLEX_UNKNOWN
 
 class BatteryTime(enum.IntEnum):
-    """An enumeration."""
     POWER_TIME_UNKNOWN = -1
     POWER_TIME_UNLIMITED = -2
 
@@ -81,46 +72,25 @@ ENCODING_ERRS: Final[str]
 
 conn_tmap: dict[str, tuple[list[AddressFamily], list[SocketKind]]]
 
-class Error(Exception):
-    """
-    Base exception class. All other psutil exceptions inherit
-    from this one.
-    """
-    ...
+class Error(Exception): ...
 
 class NoSuchProcess(Error):
-    """
-    Exception raised when a process with a certain PID doesn't
-    or no longer exists.
-    """
     pid: int
     name: str | None
     msg: str
     def __init__(self, pid: int, name: str | None = None, msg: str | None = None) -> None: ...
 
 class ZombieProcess(NoSuchProcess):
-    """
-    Exception raised when querying a zombie process. This is
-    raised on macOS, BSD and Solaris only, and not always: depending
-    on the query the OS may be able to succeed anyway.
-    On Linux all zombie processes are querable (hence this is never
-    raised). Windows doesn't have zombie processes.
-    """
     ppid: int | None
     def __init__(self, pid: int, name: str | None = None, ppid: int | None = None, msg: str | None = None) -> None: ...
 
 class AccessDenied(Error):
-    """Exception raised when permission to perform an action is denied."""
     pid: int | None
     name: str | None
     msg: str
     def __init__(self, pid: int | None = None, name: str | None = None, msg: str | None = None) -> None: ...
 
 class TimeoutExpired(Error):
-    """
-    Raised on Process.wait(timeout) if timeout expires and process
-    is still alive.
-    """
     seconds: float
     pid: int | None
     name: str | None
@@ -131,98 +101,19 @@ _P = ParamSpec("_P")
 _R = TypeVar("_R")
 _T = TypeVar("_T")
 
-def usage_percent(used: ConvertibleToFloat, total: float, round_: SupportsIndex | None = None) -> float:
-    """Calculate percentage usage of 'used' against 'total'."""
-    ...
+def usage_percent(used: ConvertibleToFloat, total: float, round_: SupportsIndex | None = None) -> float: ...
 
 # returned function has `cache_clear()` attribute:
-def memoize(fun: Callable[_P, _R]) -> Callable[_P, _R]:
-    """
-    A simple memoize decorator for functions supporting (hashable)
-    positional arguments.
-    It also provides a cache_clear() function for clearing the cache:
-
-    >>> @memoize
-    ... def foo()
-    ...     return 1
-        ...
-    >>> foo()
-    1
-    >>> foo.cache_clear()
-    >>>
-
-    It supports:
-     - functions
-     - classes (acts as a @singleton)
-     - staticmethods
-     - classmethods
-
-    It does NOT support:
-     - methods
-    """
-    ...
+def memoize(fun: Callable[_P, _R]) -> Callable[_P, _R]: ...
 
 # returned function has `cache_activate(proc)` and `cache_deactivate(proc)` attributes:
-def memoize_when_activated(fun: Callable[_P, _R]) -> Callable[_P, _R]:
-    """
-    A memoize decorator which is disabled by default. It can be
-    activated and deactivated on request.
-    For efficiency reasons it can be used only against class methods
-    accepting no arguments.
-
-    >>> class Foo:
-    ...     @memoize
-    ...     def foo()
-    ...         print(1)
-    ...
-    >>> f = Foo()
-    >>> # deactivated (default)
-    >>> foo()
-    1
-    >>> foo()
-    1
-    >>>
-    >>> # activated
-    >>> foo.cache_activate(self)
-    >>> foo()
-    1
-    >>> foo()
-    >>> foo()
-    >>>
-    """
-    ...
-def isfile_strict(path: StrOrBytesPath) -> bool:
-    """
-    Same as os.path.isfile() but does not swallow EACCES / EPERM
-    exceptions, see:
-    http://mail.python.org/pipermail/python-dev/2012-June/120787.html.
-    """
-    ...
-def path_exists_strict(path: StrOrBytesPath) -> bool:
-    """
-    Same as os.path.exists() but does not swallow EACCES / EPERM
-    exceptions. See:
-    http://mail.python.org/pipermail/python-dev/2012-June/120787.html.
-    """
-    ...
-def supports_ipv6() -> bool:
-    """Return True if IPv6 is supported on this platform."""
-    ...
-def parse_environ_block(data: str) -> dict[str, str]:
-    """Parse a C environ block of environment variables into a dictionary."""
-    ...
-def sockfam_to_enum(num: int) -> AddressFamily:
-    """
-    Convert a numeric socket family value to an IntEnum member.
-    If it's not a known member, return the numeric value itself.
-    """
-    ...
-def socktype_to_enum(num: int) -> SocketKind:
-    """
-    Convert a numeric socket type value to an IntEnum member.
-    If it's not a known member, return the numeric value itself.
-    """
-    ...
+def memoize_when_activated(fun: Callable[_P, _R]) -> Callable[_P, _R]: ...
+def isfile_strict(path: StrOrBytesPath) -> bool: ...
+def path_exists_strict(path: StrOrBytesPath) -> bool: ...
+def supports_ipv6() -> bool: ...
+def parse_environ_block(data: str) -> dict[str, str]: ...
+def sockfam_to_enum(num: int) -> AddressFamily: ...
+def socktype_to_enum(num: int) -> SocketKind: ...
 @overload
 def conn_to_ntuple(
     fd: int,
@@ -233,9 +124,7 @@ def conn_to_ntuple(
     status: int | str,
     status_map: dict[int, str] | dict[str, str],
     pid: int,
-) -> ntp.sconn:
-    """Convert a raw connection tuple to a proper ntuple."""
-    ...
+) -> ntp.sconn: ...
 @overload
 def conn_to_ntuple(
     fd: int,
@@ -246,111 +135,45 @@ def conn_to_ntuple(
     status: int | str,
     status_map: dict[int, str] | dict[str, str],
     pid: None = None,
-) -> ntp.pconn:
-    """Convert a raw connection tuple to a proper ntuple."""
-    ...
-def deprecated_method(replacement: str) -> Callable[[Callable[_P, _R]], Callable[_P, _R]]:
-    """
-    A decorator which can be used to mark a method as deprecated
-    'replcement' is the method name which will be called instead.
-    """
-    ...
+) -> ntp.pconn: ...
+def deprecated_method(replacement: str) -> Callable[[Callable[_P, _R]], Callable[_P, _R]]: ...
 
 class _WrapNumbers:
-    """
-    Watches numbers so that they don't overflow and wrap
-    (reset to zero).
-    """
     lock: threading.Lock
     cache: dict[str, dict[str, tuple[int, ...]]]
     reminders: dict[str, defaultdict[Incomplete, int]]
     reminder_keys: dict[str, defaultdict[Incomplete, set[Incomplete]]]
     def __init__(self) -> None: ...
-    def run(self, input_dict: dict[str, tuple[int, ...]], name: str) -> dict[str, tuple[int, ...]]:
-        """
-        Cache dict and sum numbers which overflow and wrap.
-        Return an updated copy of `input_dict`.
-        """
-        ...
-    def cache_clear(self, name: str | None = None) -> None:
-        """Clear the internal cache, optionally only for function 'name'."""
-        ...
+    def run(self, input_dict: dict[str, tuple[int, ...]], name: str) -> dict[str, tuple[int, ...]]: ...
+    def cache_clear(self, name: str | None = None) -> None: ...
     def cache_info(
         self,
     ) -> tuple[
         dict[str, dict[str, tuple[int, ...]]],
         dict[str, defaultdict[Incomplete, int]],
         dict[str, defaultdict[Incomplete, set[Incomplete]]],
-    ]:
-        """Return internal cache dicts as a tuple of 3 elements."""
-        ...
+    ]: ...
 
-def wrap_numbers(input_dict: dict[str, tuple[int, ...]], name: str) -> dict[str, tuple[int, ...]]:
-    """
-    Given an `input_dict` and a function `name`, adjust the numbers
-    which "wrap" (restart from zero) across different calls by adding
-    "old value" to "new value" and return an updated dict.
-    """
-    ...
+def wrap_numbers(input_dict: dict[str, tuple[int, ...]], name: str) -> dict[str, tuple[int, ...]]: ...
 def open_binary(fname: FileDescriptorOrPath) -> BinaryIO: ...
-def open_text(fname: FileDescriptorOrPath) -> io.TextIOWrapper:
-    """
-    Open a file in text mode by using the proper FS encoding and
-    en/decoding error handlers.
-    """
-    ...
+def open_text(fname: FileDescriptorOrPath) -> io.TextIOWrapper: ...
 @overload
-def cat(fname: FileDescriptorOrPath, _open: Callable[[FileDescriptorOrPath], io.TextIOWrapper] = ...) -> str:
-    """
-    Read entire file content and return it as a string. File is
-    opened in text mode. If specified, `fallback` is the value
-    returned in case of error, either if the file does not exist or
-    it can't be read().
-    """
-    ...
+def cat(fname: FileDescriptorOrPath, _open: Callable[[FileDescriptorOrPath], io.TextIOWrapper] = ...) -> str: ...
 @overload
 def cat(
     fname: FileDescriptorOrPath, fallback: _T = ..., _open: Callable[[FileDescriptorOrPath], io.TextIOWrapper] = ...
-) -> str | _T:
-    """
-    Read entire file content and return it as a string. File is
-    opened in text mode. If specified, `fallback` is the value
-    returned in case of error, either if the file does not exist or
-    it can't be read().
-    """
-    ...
+) -> str | _T: ...
 @overload
-def bcat(fname: FileDescriptorOrPath) -> str:
-    """Same as above but opens file in binary mode."""
-    ...
+def bcat(fname: FileDescriptorOrPath) -> str: ...
 @overload
-def bcat(fname: FileDescriptorOrPath, fallback: _T = ...) -> str | _T:
-    """Same as above but opens file in binary mode."""
-    ...
-def bytes2human(n: int, format: str = "%(value).1f%(symbol)s") -> str:
-    """
-    Used by various scripts. See: https://code.activestate.com/recipes/578019-bytes-to-human-human-to-bytes-converter/?in=user-4178764.
-
-    >>> bytes2human(10000)
-    '9.8K'
-    >>> bytes2human(100001221)
-    '95.4M'
-    """
-    ...
-def get_procfs_path() -> str:
-    """Return updated psutil.PROCFS_PATH constant."""
-    ...
+def bcat(fname: FileDescriptorOrPath, fallback: _T = ...) -> str | _T: ...
+def bytes2human(n: int, format: str = "%(value).1f%(symbol)s") -> str: ...
+def get_procfs_path() -> str: ...
 def decode(s: bytes) -> str: ...
 def term_supports_colors(file: SupportsWrite[str] = sys.stdout) -> bool: ...
-def hilite(s: str, color: str | None = None, bold: bool = False) -> str:
-    """Return an highlighted version of 'string'."""
-    ...
-def print_color(s: str, color: str | None = None, bold: bool = False, file: SupportsWrite[str] = sys.stdout) -> None:
-    """Print a colorized version of string."""
-    ...
-def debug(msg: str | Exception) -> None:
-    """If PSUTIL_DEBUG env var is set, print a debug message to stderr."""
-    ...
+def hilite(s: str, color: str | None = None, bold: bool = False) -> str: ...
+def print_color(s: str, color: str | None = None, bold: bool = False, file: SupportsWrite[str] = sys.stdout) -> None: ...
+def debug(msg: str | Exception) -> None: ...
 
 __all__ = [
     # OS constants

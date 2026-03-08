@@ -1,11 +1,8 @@
-""""""
-
 from _typeshed import Incomplete
 
 from ..strategy.asynchronous import AsyncStrategy
 
 class AsyncStreamStrategy(AsyncStrategy):
-    """This strategy is asynchronous. It streams responses in a generator as they appear in the self._responses container"""
     can_stream: bool
     line_separator: Incomplete
     all_base64: bool

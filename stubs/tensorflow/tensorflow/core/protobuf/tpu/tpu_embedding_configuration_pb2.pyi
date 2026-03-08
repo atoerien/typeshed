@@ -114,9 +114,7 @@ class TPUEmbeddingConfiguration(google.protobuf.message.Message):
         ) -> None: ...
         def HasField(
             self, field_name: typing.Literal["optimization_parameters", b"optimization_parameters"]
-        ) -> builtins.bool:
-            """Checks if a message field is set."""
-            ...
+        ) -> builtins.bool: ...
         def ClearField(
             self,
             field_name: typing.Literal[
@@ -131,9 +129,7 @@ class TPUEmbeddingConfiguration(google.protobuf.message.Message):
                 "vocabulary_size",
                 b"vocabulary_size",
             ],
-        ) -> None:
-            """Clears a message field."""
-            ...
+        ) -> None: ...
 
     @typing.final
     class FeatureDescriptor(google.protobuf.message.Message):
@@ -168,9 +164,7 @@ class TPUEmbeddingConfiguration(google.protobuf.message.Message):
         ) -> None: ...
         def ClearField(
             self, field_name: typing.Literal["input_shape", b"input_shape", "name", b"name", "table_id", b"table_id"]
-        ) -> None:
-            """Clears a message field."""
-            ...
+        ) -> None: ...
 
     @typing.final
     class SpmdSharding(google.protobuf.message.Message):
@@ -191,9 +185,7 @@ class TPUEmbeddingConfiguration(google.protobuf.message.Message):
         def __init__(self, *, enabled: builtins.bool | None = ..., num_cores_per_replica: builtins.int | None = ...) -> None: ...
         def ClearField(
             self, field_name: typing.Literal["enabled", b"enabled", "num_cores_per_replica", b"num_cores_per_replica"]
-        ) -> None:
-            """Clears a message field."""
-            ...
+        ) -> None: ...
 
     TABLE_DESCRIPTOR_FIELD_NUMBER: builtins.int
     MODE_FIELD_NUMBER: builtins.int
@@ -292,9 +284,7 @@ class TPUEmbeddingConfiguration(google.protobuf.message.Message):
         feature_descriptor: collections.abc.Iterable[global___TPUEmbeddingConfiguration.FeatureDescriptor] | None = ...,
         spmd_sharding: global___TPUEmbeddingConfiguration.SpmdSharding | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["spmd_sharding", b"spmd_sharding"]) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    def HasField(self, field_name: typing.Literal["spmd_sharding", b"spmd_sharding"]) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -319,9 +309,7 @@ class TPUEmbeddingConfiguration(google.protobuf.message.Message):
             "table_descriptor",
             b"table_descriptor",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___TPUEmbeddingConfiguration = TPUEmbeddingConfiguration
 

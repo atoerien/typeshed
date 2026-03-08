@@ -1,5 +1,3 @@
-"""Collection of XML resources compatible across different Python versions"""
-
 from typing import Final
 
 def lxml_available() -> bool: ...

@@ -7,6 +7,5 @@ holidays: Final[dict[int, dict[str, list[tuple[int, int]]]]]
 workdays: Final[dict[int, dict[str, list[tuple[int, int]]]]]
 
 class China(ChineseNewYearCalendar):
-    """China"""
     extra_working_days: list[datetime.date]
     def __init__(self, *args, **kwargs) -> None: ...

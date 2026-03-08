@@ -3,20 +3,8 @@ from collections.abc import Callable
 from ..scope_manager import ScopeManager
 
 class ScopeCompatibilityCheckMixin:
-    """
-    A mixin class for validation that a given scope manager implementation
-    satisfies the requirements of the OpenTracing API.
-    """
     def scope_manager(self) -> ScopeManager: ...
-    def run_test(self, test_fn: Callable[[], object]) -> None:
-        """
-        Utility method that can be optionally defined by ScopeManager
-        implementers to run the passed test_fn() function
-        in a given environment, such as a coroutine or greenlet.
-        By default, it simply runs the passed test_fn() function
-        in the current thread.
-        """
-        ...
+    def run_test(self, test_fn: Callable[[], object]) -> None: ...
     def test_missing_active_external(self) -> None: ...
     def test_missing_active(self) -> None: ...
     def test_activate(self) -> None: ...

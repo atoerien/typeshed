@@ -1,9 +1,3 @@
-"""
-WebSocket protocol handler for ASGI.
-
-Implements RFC 6455 WebSocket protocol for ASGI applications.
-"""
-
 import asyncio
 from typing import Final
 
@@ -31,7 +25,6 @@ CLOSE_INTERNAL_ERROR: Final = 1011
 WS_GUID: Final = b"258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 
 class WebSocketProtocol:
-    """WebSocket connection handler for ASGI applications."""
     transport: asyncio.Transport
     reader: asyncio.StreamReader
     scope: _ScopeType
@@ -44,18 +37,5 @@ class WebSocketProtocol:
 
     def __init__(
         self, transport: asyncio.Transport, reader: asyncio.StreamReader, scope: _ScopeType, app: _ASGIAppType, log: GLogger
-    ) -> None:
-        """
-        Initialize WebSocket protocol handler.
-
-        Args:
-            transport: asyncio transport for writing
-            reader: asyncio StreamReader for reading
-            scope: ASGI WebSocket scope dict
-            app: ASGI application callable
-            log: Logger instance
-        """
-        ...
-    async def run(self) -> None:
-        """Run the WebSocket ASGI application."""
-        ...
+    ) -> None: ...
+    async def run(self) -> None: ...

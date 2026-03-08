@@ -29,18 +29,15 @@ else:
     _MouseEventType: TypeAlias = Literal["up", "down"]
 
 class ButtonEvent(NamedTuple):
-    """ButtonEvent(event_type, button, time)"""
     event_type: _MouseEventType
     button: _MouseButton
     time: float
 
 class WheelEvent(NamedTuple):
-    """WheelEvent(delta, time)"""
     delta: int
     time: float
 
 class MoveEvent(NamedTuple):
-    """MoveEvent(x, y, time)"""
     x: int
     y: int
     time: float

@@ -1,9 +1,3 @@
-"""
-Directives for additional body elements.
-
-See `docutils.parsers.rst.directives` for API details.
-"""
-
 from collections.abc import Callable
 from typing import ClassVar, Final
 from typing_extensions import TypeAlias
@@ -16,7 +10,6 @@ __docformat__: Final = "reStructuredText"
 _DirectiveFn: TypeAlias = Callable[[str], str | list[str]]
 
 class BasePseudoSection(Directive):
-    """Base class for Topic and Sidebar."""
     option_spec: ClassVar[dict[str, _DirectiveFn]]
     node_class: ClassVar[type[nodes.Node] | None]
     invalid_parents: ClassVar[
@@ -40,12 +33,6 @@ class Sidebar(BasePseudoSection):
     def run(self): ...
 
 class LineBlock(Directive):
-    """
-    Legacy directive for line blocks.
-
-    Use is deprecated in favour of the line block syntax,
-    cf. `parsers.rst.states.Body.line_block()`.
-    """
     option_spec: ClassVar[dict[str, _DirectiveFn]]
     def run(self): ...
 
@@ -54,13 +41,6 @@ class ParsedLiteral(Directive):
     def run(self): ...
 
 class CodeBlock(Directive):
-    """
-    Parse and mark up content of a code block.
-
-    Configuration setting: syntax_highlight
-       Highlight Code content with Pygments?
-       Possible values: ('long', 'short', 'none')
-    """
     option_spec: ClassVar[dict[str, _DirectiveFn]]
     def run(self): ...
 

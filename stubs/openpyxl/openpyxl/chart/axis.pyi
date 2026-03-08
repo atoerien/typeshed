@@ -197,9 +197,7 @@ class NumericAxis(_BaseAxis):
         **kw,
     ) -> None: ...
     @classmethod
-    def from_tree(cls, node: _SupportsFindAndIterAndAttribAndText) -> Self:
-        """Special case value axes with no gridlines"""
-        ...
+    def from_tree(cls, node: _SupportsFindAndIterAndAttribAndText) -> Self: ...
 
 class TextAxis(_BaseAxis):
     tagname: ClassVar[str]

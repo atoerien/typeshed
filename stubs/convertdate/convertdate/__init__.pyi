@@ -1,18 +1,3 @@
-"""
-The Convertdate library contains methods and functions for converting dates between
-different calendar systems.
-
-It was originally developed as as `Python Date Util <(http://sourceforge.net/projects/pythondateutil/>`__
-by Phil Schwartz. It has been significantly updated and expanded.
-
-Most of the original code is ported from
-`Fourmilab's calendar converter <http://www.fourmilab.ch/documents/calendar/>`__,
-which was developed by John Walker.
-
-The algorithms are believed to be derived from: Meeus, Jean. `Astronomical Algorithms`,
-Richmond: Willmann-Bell, 1991 (ISBN 0-943396-35-2)
-"""
-
 from typing import Final
 
 from . import (

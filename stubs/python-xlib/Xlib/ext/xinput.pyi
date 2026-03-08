@@ -1,5 +1,3 @@
-"""A very incomplete implementation of the XInput extension."""
-
 from _typeshed import ConvertibleToFloat, SliceableBuffer, Unused
 from collections.abc import Iterable, Sequence
 from typing import Final, TypeVar
@@ -137,16 +135,7 @@ EventMask: rq.Struct
 
 class XISelectEvents(rq.Request): ...
 
-def select_events(self: drawable.Window, event_masks: Sequence[tuple[int, Sequence[int]]]) -> XISelectEvents:
-    """
-    select_events(event_masks)
-
-    event_masks:
-      Sequence of (deviceid, mask) pairs, where deviceid is a numerical device
-      ID, or AllDevices or AllMasterDevices, and mask is either an unsigned
-      integer or sequence of 32 bits unsigned values
-    """
-    ...
+def select_events(self: drawable.Window, event_masks: Sequence[tuple[int, Sequence[int]]]) -> XISelectEvents: ...
 
 AnyInfo: rq.Struct
 

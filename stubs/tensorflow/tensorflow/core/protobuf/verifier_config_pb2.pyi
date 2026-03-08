@@ -36,9 +36,7 @@ class VerifierConfig(google.protobuf.message.Message):
         ON: VerifierConfig._Toggle.ValueType  # 1
         OFF: VerifierConfig._Toggle.ValueType  # 2
 
-    class Toggle(_Toggle, metaclass=_ToggleEnumTypeWrapper):
-        """A utility for finding the names of enum values."""
-        ...
+    class Toggle(_Toggle, metaclass=_ToggleEnumTypeWrapper): ...
     DEFAULT: VerifierConfig.Toggle.ValueType  # 0
     ON: VerifierConfig.Toggle.ValueType  # 1
     OFF: VerifierConfig.Toggle.ValueType  # 2
@@ -62,8 +60,6 @@ class VerifierConfig(google.protobuf.message.Message):
         field_name: typing.Literal[
             "structure_verifier", b"structure_verifier", "verification_timeout_in_ms", b"verification_timeout_in_ms"
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___VerifierConfig = VerifierConfig

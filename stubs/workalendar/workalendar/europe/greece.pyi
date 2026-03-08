@@ -1,5 +1,3 @@
 from ..core import OrthodoxCalendar
 
-class Greece(OrthodoxCalendar):
-    """Greece"""
-    ...
+class Greece(OrthodoxCalendar): ...

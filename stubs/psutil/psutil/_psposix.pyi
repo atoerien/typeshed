@@ -1,5 +1,3 @@
-"""Routines common to all posix systems."""
-
 import enum
 import sys
 from _typeshed import FileDescriptorOrPath, Incomplete, StrOrBytesPath, Unused
@@ -7,13 +5,10 @@ from collections.abc import Callable
 
 from . import _ntuples as ntp
 
-def pid_exists(pid: int) -> bool:
-    """Check whether pid exists in the current process table."""
-    ...
+def pid_exists(pid: int) -> bool: ...
 
 # Sync with `signal.Signals`, but with opposite values:
 class Negsignal(enum.IntEnum):
-    """An enumeration."""
     SIGABRT = -6
     SIGFPE = -8
     SIGILL = -4
@@ -62,12 +57,8 @@ class Negsignal(enum.IntEnum):
             if sys.version_info >= (3, 11):
                 SIGSTKFLT = -16
 
-def negsig_to_enum(num: int) -> int:
-    """Convert a negative signal value to an enum."""
-    ...
-def convert_exit_code(status: int) -> int:
-    """Convert a os.waitpid() status to an exit code."""
-    ...
+def negsig_to_enum(num: int) -> int: ...
+def convert_exit_code(status: int) -> int: ...
 def wait_pid_posix(
     pid: int,
     timeout: float | None = None,
@@ -76,83 +67,19 @@ def wait_pid_posix(
     _min: Callable[..., Incomplete] = ...,
     _sleep: Callable[[float], None] = ...,
     _pid_exists: Callable[[int], bool] = ...,
-) -> int | None:
-    """
-    Wait for a process PID to terminate.
-
-    If the process terminated normally by calling exit(3) or _exit(2),
-    or by returning from main(), the return value is the positive integer
-    passed to *exit().
-
-    If it was terminated by a signal it returns the negated value of the
-    signal which caused the termination (e.g. -SIGTERM).
-
-    If PID is not a children of os.getpid() (current process) just
-    wait until the process disappears and return None.
-
-    If PID does not exist at all return None immediately.
-
-    If timeout is specified and process is still alive raise
-    TimeoutExpired.
-
-    If timeout=0 either return immediately or raise TimeoutExpired
-    (non-blocking).
-    """
-    ...
-def wait_pid_pidfd_open(pid: int, timeout: float | None = None) -> int | None:
-    """
-    Wait for PID to terminate using pidfd_open() + poll(). Linux >=
-    5.3 + Python >= 3.9 only.
-    """
-    ...
-def wait_pid_kqueue(pid: int, timeout: float | None = None) -> int | None:
-    """Wait for PID to terminate using kqueue(). macOS and BSD only."""
-    ...
+) -> int | None: ...
+def wait_pid_pidfd_open(pid: int, timeout: float | None = None) -> int | None: ...
+def wait_pid_kqueue(pid: int, timeout: float | None = None) -> int | None: ...
 def can_use_pidfd_open() -> bool: ...
 def can_use_kqueue() -> bool: ...
-def wait_pid(pid: int, timeout: float | None = None) -> int | None:
-    """
-    Wait for a process PID to terminate.
-
-    If the process terminated normally by calling exit(3) or _exit(2),
-    or by returning from main(), the return value is the positive integer
-    passed to *exit().
-
-    If it was terminated by a signal it returns the negated value of the
-    signal which caused the termination (e.g. -SIGTERM).
-
-    If PID is not a children of os.getpid() (current process) just
-    wait until the process disappears and return None.
-
-    If PID does not exist at all return None immediately.
-
-    If timeout is specified and process is still alive raise
-    TimeoutExpired.
-
-    If timeout=0 either return immediately or raise TimeoutExpired
-    (non-blocking).
-    """
-    ...
+def wait_pid(pid: int, timeout: float | None = None) -> int | None: ...
 
 if sys.platform == "darwin":
     def disk_usage(path: StrOrBytesPath) -> ntp.sdiskusage: ...
 
 else:
-    def disk_usage(path: FileDescriptorOrPath) -> ntp.sdiskusage:
-        """
-        Return disk usage associated with path.
-        Note: UNIX usually reserves 5% disk space which is not accessible
-        by user. In this function "total" and "used" values reflect the
-        total and used disk space whereas "free" and "percent" represent
-        the "free" and "used percent" user disk space.
-        """
-        ...
+    def disk_usage(path: FileDescriptorOrPath) -> ntp.sdiskusage: ...
 
-def get_terminal_map() -> dict[int, str]:
-    """
-    Get a map of device-id -> path as a dict.
-    Used by Process.terminal().
-    """
-    ...
+def get_terminal_map() -> dict[int, str]: ...
 
 __all__ = ["pid_exists", "wait_pid", "disk_usage", "get_terminal_map"]

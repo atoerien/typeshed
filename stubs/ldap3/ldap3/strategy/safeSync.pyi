@@ -1,5 +1,3 @@
-""""""
-
 from .sync import SyncStrategy
 
 class SafeSyncStrategy(SyncStrategy):

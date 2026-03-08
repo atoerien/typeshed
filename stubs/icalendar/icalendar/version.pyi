@@ -1,5 +1,3 @@
-"""Version file as a stable interface for the generated _version.py file."""
-
 __all__ = ["__version__", "version", "__version_tuple__", "version_tuple"]
 
 from typing import Final

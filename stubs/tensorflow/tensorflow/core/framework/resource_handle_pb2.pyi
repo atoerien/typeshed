@@ -44,12 +44,8 @@ class ResourceHandleProto(google.protobuf.message.Message):
             dtype: tensorflow.core.framework.types_pb2.DataType.ValueType | None = ...,
             shape: tensorflow.core.framework.tensor_shape_pb2.TensorShapeProto | None = ...,
         ) -> None: ...
-        def HasField(self, field_name: typing.Literal["shape", b"shape"]) -> builtins.bool:
-            """Checks if a message field is set."""
-            ...
-        def ClearField(self, field_name: typing.Literal["dtype", b"dtype", "shape", b"shape"]) -> None:
-            """Clears a message field."""
-            ...
+        def HasField(self, field_name: typing.Literal["shape", b"shape"]) -> builtins.bool: ...
+        def ClearField(self, field_name: typing.Literal["dtype", b"dtype", "shape", b"shape"]) -> None: ...
 
     DEVICE_FIELD_NUMBER: builtins.int
     CONTAINER_FIELD_NUMBER: builtins.int
@@ -103,8 +99,6 @@ class ResourceHandleProto(google.protobuf.message.Message):
             "name",
             b"name",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___ResourceHandleProto = ResourceHandleProto

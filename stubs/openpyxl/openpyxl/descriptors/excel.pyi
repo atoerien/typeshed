@@ -1,5 +1,3 @@
-"""Excel specific descriptors"""
-
 from _typeshed import Incomplete
 from typing import ClassVar, Literal
 
@@ -14,10 +12,6 @@ class UniversalMeasure(MatchPattern[str, Incomplete]):
     pattern: str
 
 class TextPoint(MinMax[_M, _N]):
-    """
-    Size in hundredths of points.
-    In theory other units of measurement can be used but these are unbounded
-    """
     expected_type: type[_M]
     min: float
     max: float

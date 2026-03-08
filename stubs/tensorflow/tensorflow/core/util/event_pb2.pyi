@@ -168,9 +168,7 @@ class Event(google.protobuf.message.Message):
             "what",
             b"what",
         ],
-    ) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    ) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -197,9 +195,7 @@ class Event(google.protobuf.message.Message):
             "what",
             b"what",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
     def WhichOneof(
         self, oneof_group: typing.Literal["what", b"what"]
     ) -> (
@@ -207,9 +203,7 @@ class Event(google.protobuf.message.Message):
             "file_version", "graph_def", "summary", "log_message", "session_log", "tagged_run_metadata", "meta_graph_def"
         ]
         | None
-    ):
-        """Returns the name of the field set inside a oneof, or None if no field is set."""
-        ...
+    ): ...
 
 global___Event = Event
 
@@ -225,9 +219,7 @@ class SourceMetadata(google.protobuf.message.Message):
     `tensorflow.core.util.events_writer`.
     """
     def __init__(self, *, writer: builtins.str | None = ...) -> None: ...
-    def ClearField(self, field_name: typing.Literal["writer", b"writer"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["writer", b"writer"]) -> None: ...
 
 global___SourceMetadata = SourceMetadata
 
@@ -261,9 +253,7 @@ class LogMessage(google.protobuf.message.Message):
         ERROR: LogMessage._Level.ValueType  # 40
         FATAL: LogMessage._Level.ValueType  # 50
 
-    class Level(_Level, metaclass=_LevelEnumTypeWrapper):
-        """A utility for finding the names of enum values."""
-        ...
+    class Level(_Level, metaclass=_LevelEnumTypeWrapper): ...
     UNKNOWN: LogMessage.Level.ValueType  # 0
     DEBUGGING: LogMessage.Level.ValueType  # 10
     """Note: The logging level 10 cannot be named DEBUG. Some software
@@ -283,9 +273,7 @@ class LogMessage(google.protobuf.message.Message):
     def __init__(
         self, *, level: global___LogMessage.Level.ValueType | None = ..., message: builtins.str | None = ...
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["level", b"level", "message", b"message"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["level", b"level", "message", b"message"]) -> None: ...
 
 global___LogMessage = LogMessage
 
@@ -308,9 +296,7 @@ class SessionLog(google.protobuf.message.Message):
         STOP: SessionLog._SessionStatus.ValueType  # 2
         CHECKPOINT: SessionLog._SessionStatus.ValueType  # 3
 
-    class SessionStatus(_SessionStatus, metaclass=_SessionStatusEnumTypeWrapper):
-        """A utility for finding the names of enum values."""
-        ...
+    class SessionStatus(_SessionStatus, metaclass=_SessionStatusEnumTypeWrapper): ...
     STATUS_UNSPECIFIED: SessionLog.SessionStatus.ValueType  # 0
     START: SessionLog.SessionStatus.ValueType  # 1
     STOP: SessionLog.SessionStatus.ValueType  # 2
@@ -332,9 +318,7 @@ class SessionLog(google.protobuf.message.Message):
     ) -> None: ...
     def ClearField(
         self, field_name: typing.Literal["checkpoint_path", b"checkpoint_path", "msg", b"msg", "status", b"status"]
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___SessionLog = SessionLog
 
@@ -353,9 +337,7 @@ class TaggedRunMetadata(google.protobuf.message.Message):
     deserialization.
     """
     def __init__(self, *, tag: builtins.str | None = ..., run_metadata: builtins.bytes | None = ...) -> None: ...
-    def ClearField(self, field_name: typing.Literal["run_metadata", b"run_metadata", "tag", b"tag"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["run_metadata", b"run_metadata", "tag", b"tag"]) -> None: ...
 
 global___TaggedRunMetadata = TaggedRunMetadata
 
@@ -366,9 +348,7 @@ class WatchdogConfig(google.protobuf.message.Message):
     TIMEOUT_MS_FIELD_NUMBER: builtins.int
     timeout_ms: builtins.int
     def __init__(self, *, timeout_ms: builtins.int | None = ...) -> None: ...
-    def ClearField(self, field_name: typing.Literal["timeout_ms", b"timeout_ms"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["timeout_ms", b"timeout_ms"]) -> None: ...
 
 global___WatchdogConfig = WatchdogConfig
 
@@ -379,9 +359,7 @@ class RequestedExitCode(google.protobuf.message.Message):
     EXIT_CODE_FIELD_NUMBER: builtins.int
     exit_code: builtins.int
     def __init__(self, *, exit_code: builtins.int | None = ...) -> None: ...
-    def ClearField(self, field_name: typing.Literal["exit_code", b"exit_code"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["exit_code", b"exit_code"]) -> None: ...
 
 global___RequestedExitCode = RequestedExitCode
 
@@ -406,17 +384,13 @@ class WorkerHeartbeatRequest(google.protobuf.message.Message):
     ) -> None: ...
     def HasField(
         self, field_name: typing.Literal["exit_code", b"exit_code", "watchdog_config", b"watchdog_config"]
-    ) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    ) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
             "exit_code", b"exit_code", "shutdown_mode", b"shutdown_mode", "watchdog_config", b"watchdog_config"
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___WorkerHeartbeatRequest = WorkerHeartbeatRequest
 
@@ -440,8 +414,6 @@ class WorkerHeartbeatResponse(google.protobuf.message.Message):
     ) -> None: ...
     def ClearField(
         self, field_name: typing.Literal["health_status", b"health_status", "hostname", b"hostname", "worker_log", b"worker_log"]
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___WorkerHeartbeatResponse = WorkerHeartbeatResponse

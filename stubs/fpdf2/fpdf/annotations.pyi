@@ -1,5 +1,3 @@
-"""Usage documentation at: <https://py-pdf.github.io/fpdf2/Annotations.html>"""
-
 from _typeshed import Incomplete
 from datetime import datetime
 from typing import NamedTuple
@@ -54,12 +52,9 @@ class AnnotationMixin:
         default_appearance: str | None = None,
     ) -> None: ...
 
-class PDFAnnotation(AnnotationMixin, PDFObject):
-    """A PDF annotation that get serialized as an obj<</>>endobj block"""
-    ...
+class PDFAnnotation(AnnotationMixin, PDFObject): ...
 
 class AnnotationDict(AnnotationMixin):
-    """A PDF annotation that get serialized as an inline <<dictionary>>"""
     __slots__ = (
         "type",
         "subtype",
@@ -101,7 +96,6 @@ class PDFEmbeddedFile(PDFContentStream):
     def file_spec(self) -> FileSpec: ...
 
 class FileSpec(NamedTuple):
-    """FileSpec(embedded_file, basename, desc)"""
     embedded_file: PDFEmbeddedFile
     basename: str
     desc: str

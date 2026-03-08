@@ -1,9 +1,6 @@
-"""AsyncIO version of Channelz servicer."""
-
 from grpc_channelz.v1 import channelz_pb2, channelz_pb2_grpc
 
 class ChannelzServicer(channelz_pb2_grpc.ChannelzServicer):
-    """AsyncIO servicer for handling RPCs for service statuses."""
     @staticmethod
     async def GetTopChannels(request: channelz_pb2.GetTopChannelsRequest, context) -> channelz_pb2.GetTopChannelsResponse: ...
     @staticmethod

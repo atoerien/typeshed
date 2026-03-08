@@ -2,7 +2,6 @@ from dataclasses import dataclass
 
 @dataclass
 class VersionMatchingError(Exception):
-    """VersionMatchingError(line_number: int, line: str, how_to_fix: str = 'Please fix the version matching error.', description: str = 'There is a version matching error in the file.')"""
     line_number: int
     line: str
     how_to_fix: str = ...

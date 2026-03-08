@@ -46,9 +46,7 @@ class ErrorSourceProto(google.protobuf.message.Message):
         EAGER_REMOTE_MGR: ErrorSourceProto._ErrorSource.ValueType  # 5
         """eager::RemoteMgr."""
 
-    class ErrorSource(_ErrorSource, metaclass=_ErrorSourceEnumTypeWrapper):
-        """A utility for finding the names of enum values."""
-        ...
+    class ErrorSource(_ErrorSource, metaclass=_ErrorSourceEnumTypeWrapper): ...
     UNKNOWN: ErrorSourceProto.ErrorSource.ValueType  # 0
     TPU_COMPILE_OP: ErrorSourceProto.ErrorSource.ValueType  # 1
     TF_XLA_BRIDGE: ErrorSourceProto.ErrorSource.ValueType  # 2
@@ -63,8 +61,6 @@ class ErrorSourceProto(google.protobuf.message.Message):
     ERROR_SOURCE_FIELD_NUMBER: builtins.int
     error_source: global___ErrorSourceProto.ErrorSource.ValueType
     def __init__(self, *, error_source: global___ErrorSourceProto.ErrorSource.ValueType | None = ...) -> None: ...
-    def ClearField(self, field_name: typing.Literal["error_source", b"error_source"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["error_source", b"error_source"]) -> None: ...
 
 global___ErrorSourceProto = ErrorSourceProto

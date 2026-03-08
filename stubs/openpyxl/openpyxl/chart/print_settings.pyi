@@ -7,7 +7,6 @@ from openpyxl.worksheet.header_footer import HeaderFooter
 from openpyxl.worksheet.page import PrintPageSetup
 
 class PageMargins(Serialisable):
-    """Identical to openpyxl.worksheet.page.Pagemargins but element names are different :-/"""
     tagname: ClassVar[str]
     l: Float[Literal[False]]
     left: Alias

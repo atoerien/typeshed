@@ -94,9 +94,7 @@ class DebugTensorWatch(google.protobuf.message.Message):
             "tolerate_debug_op_creation_failures",
             b"tolerate_debug_op_creation_failures",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___DebugTensorWatch = DebugTensorWatch
 
@@ -143,9 +141,7 @@ class DebugOptions(google.protobuf.message.Message):
             "reset_disk_byte_usage",
             b"reset_disk_byte_usage",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___DebugOptions = DebugOptions
 
@@ -184,9 +180,7 @@ class DebuggedSourceFile(google.protobuf.message.Message):
         field_name: typing.Literal[
             "bytes", b"bytes", "file_path", b"file_path", "host", b"host", "last_modified", b"last_modified", "lines", b"lines"
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___DebuggedSourceFile = DebuggedSourceFile
 
@@ -200,8 +194,6 @@ class DebuggedSourceFiles(google.protobuf.message.Message):
         """A collection of source code files."""
 
     def __init__(self, *, source_files: collections.abc.Iterable[global___DebuggedSourceFile] | None = ...) -> None: ...
-    def ClearField(self, field_name: typing.Literal["source_files", b"source_files"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["source_files", b"source_files"]) -> None: ...
 
 global___DebuggedSourceFiles = DebuggedSourceFiles

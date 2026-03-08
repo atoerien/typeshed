@@ -1,5 +1,3 @@
-"""Read worksheets on-demand"""
-
 from _typeshed import SupportsGetItem
 from collections.abc import Generator
 
@@ -17,23 +15,11 @@ class ReadOnlyWorksheet:
     # Same as Worksheet.values
     # https://github.com/python/mypy/issues/6700
     @property
-    def values(self) -> Generator[tuple[_CellGetValue, ...], None, None]:
-        """
-        Produces all cell values in the worksheet, by row
-
-        :type: generator
-        """
-        ...
+    def values(self) -> Generator[tuple[_CellGetValue, ...], None, None]: ...
     # Same as Worksheet.rows
     # https://github.com/python/mypy/issues/6700
     @property
-    def rows(self) -> Generator[tuple[_CellOrMergedCell, ...], None, None]:
-        """
-        Produces all cells in the worksheet, by row (see :func:`iter_rows`)
-
-        :type: generator
-        """
-        ...
+    def rows(self) -> Generator[tuple[_CellOrMergedCell, ...], None, None]: ...
     __getitem__ = Worksheet.__getitem__
     __iter__ = Worksheet.__iter__
     parent: Workbook
@@ -43,13 +29,7 @@ class ReadOnlyWorksheet:
         self, parent_workbook: Workbook, title: str, worksheet_path, shared_strings: SupportsGetItem[int, str]
     ) -> None: ...
     def calculate_dimension(self, force: bool = False): ...
-    def reset_dimensions(self) -> None:
-        """
-        Remove worksheet dimensions if these are incorrect in the worksheet source.
-        NB. This probably indicates a bug in the library or application that created
-        the workbook.
-        """
-        ...
+    def reset_dimensions(self) -> None: ...
     @property
     def min_row(self) -> int: ...
     @property

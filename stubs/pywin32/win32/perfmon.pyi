@@ -1,5 +1,3 @@
-"""Contains functions and objects wrapping the Performance Monitor APIs"""
-
 import _win32typing
 
 def LoadPerfCounterTextStrings(commandLine: str, /) -> None: ...

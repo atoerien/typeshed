@@ -6,6 +6,4 @@ def SeriesFactory(
     zvalues: Reference | str | None = None,
     title: object = None,
     title_from_data: bool = False,
-):
-    """Convenience Factory for creating chart data series."""
-    ...
+): ...

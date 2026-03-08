@@ -1,8 +1,3 @@
-"""
-I/O classes provide a uniform API for low-level input and output.  Subclasses
-exist for a variety of input/output mechanisms.
-"""
-
 from _typeshed import (
     Incomplete,
     OpenBinaryModeReading,
@@ -23,38 +18,12 @@ __docformat__: Final = "reStructuredText"
 class InputError(OSError): ...
 class OutputError(OSError): ...
 
-def check_encoding(stream: TextIO, encoding: str) -> bool | None:
-    """
-    Test, whether the encoding of `stream` matches `encoding`.
-
-    Returns
-
-    :None:  if `encoding` or `stream.encoding` are not a valid encoding
-            argument (e.g. ``None``) or `stream.encoding is missing.
-    :True:  if the encoding argument resolves to the same value as `encoding`,
-    :False: if the encodings differ.
-    """
-    ...
-def error_string(err: BaseException) -> str:
-    """
-    Return string representation of Exception `err`.
-    
-    """
-    ...
+def check_encoding(stream: TextIO, encoding: str) -> bool | None: ...
+def error_string(err: BaseException) -> str: ...
 
 _S = TypeVar("_S")
 
 class Input(TransformSpec, Generic[_S]):
-    """
-    Abstract base class for input wrappers.
-
-    Docutils input objects must provide a `read()` method that
-    returns the source, typically as `str` instance.
-
-    Inheriting `TransformSpec` allows input objects to add "transforms" to
-    the "Transformer".  (Since Docutils 0.19, input objects are no longer
-    required to be `TransformSpec` instances.)
-    """
     component_type: ClassVar[str]
     default_source_path: ClassVar[str | None]
     encoding: str | None
@@ -69,53 +38,15 @@ class Input(TransformSpec, Generic[_S]):
         encoding: str | None = "utf-8",
         error_handler: str = "strict",
     ) -> None: ...
-    def read(self) -> str:
-        """Return input as `str`. Define in subclasses."""
-        ...
-    def decode(self, data: str | bytes | bytearray) -> str:
-        """
-        Decode `data` if required.
-
-        Return Unicode `str` instances unchanged (nothing to decode).
-
-        If `self.encoding` is None, determine encoding from data
-        or try UTF-8 and the locale's preferred encoding.
-        The client application should call ``locale.setlocale()`` at the
-        beginning of processing::
-
-            locale.setlocale(locale.LC_ALL, '')
-
-        Raise UnicodeError if unsuccessful.
-
-        Provisional: encoding detection will be removed in Docutils 1.0.
-        """
-        ...
+    def read(self) -> str: ...
+    def decode(self, data: str | bytes | bytearray) -> str: ...
     coding_slug: ClassVar[Pattern[bytes]]
     byte_order_marks: ClassVar[tuple[tuple[bytes, str], ...]]
     @deprecated("Deprecated and will be removed in Docutils 1.0.")
-    def determine_encoding_from_data(self, data: str | bytes | bytearray) -> str | None:
-        """
-        Try to determine the encoding of `data` by looking *in* `data`.
-        Check for a byte order mark (BOM) or an encoding declaration.
-
-        Deprecated. Will be removed in Docutils 1.0.
-        """
-        ...
-    def isatty(self) -> bool:
-        """Return True, if the input source is connected to a TTY device."""
-        ...
+    def determine_encoding_from_data(self, data: str | bytes | bytearray) -> str | None: ...
+    def isatty(self) -> bool: ...
 
 class Output(TransformSpec):
-    """
-    Abstract base class for output wrappers.
-
-    Docutils output objects must provide a `write()` method that
-    expects and handles one argument (the output).
-
-    Inheriting `TransformSpec` allows output objects to add "transforms" to
-    the "Transformer".  (Since Docutils 0.19, output objects are no longer
-    required to be `TransformSpec` instances.)
-    """
     component_type: ClassVar[str]
     default_destination_path: ClassVar[str | None]
     encoding: Incomplete
@@ -125,26 +56,10 @@ class Output(TransformSpec):
     def __init__(
         self, destination=None, destination_path=None, encoding: str | None = None, error_handler: str = "strict"
     ) -> None: ...
-    def write(self, data: str) -> Any:
-        """Write `data`. Define in subclasses."""
-        ...
-    def encode(self, data: str) -> Any:
-        """
-        Encode and return `data`.
-
-        If `data` is a `bytes` instance, it is returned unchanged.
-        Otherwise it is encoded with `self.encoding`.
-
-        Provisional: If `self.encoding` is set to the pseudo encoding name
-        "unicode", `data` must be a `str` instance and is returned unchanged.
-        """
-        ...
+    def write(self, data: str) -> Any: ...  # returns bytes or str
+    def encode(self, data: str) -> Any: ...  # returns bytes or str
 
 class ErrorOutput:
-    """
-    Wrapper class for file-like error streams with
-    failsafe de- and encoding of `str`, `bytes`, and `Exception` instances.
-    """
     destination: Incomplete
     encoding: Incomplete
     encoding_errors: Incomplete
@@ -155,38 +70,12 @@ class ErrorOutput:
         encoding: str | None = None,
         encoding_errors: str = "backslashreplace",
         decoding_errors: str = "replace",
-    ) -> None:
-        """
-        :Parameters:
-            - `destination`: a file-like object,
-                        a string (path to a file),
-                        `None` (write to `sys.stderr`, default), or
-                        evaluating to `False` (write() requests are ignored).
-            - `encoding`: `destination` text encoding. Guessed if None.
-            - `encoding_errors`: how to treat encoding errors.
-        """
-        ...
-    def write(self, data: str | bytes | Exception) -> None:
-        """
-        Write `data` to self.destination. Ignore, if self.destination is False.
-
-        `data` can be a `bytes`, `str`, or `Exception` instance.
-        """
-        ...
-    def close(self) -> None:
-        """
-        Close the error-output stream.
-
-        Ignored if the destination is` sys.stderr` or `sys.stdout` or has no
-        close() method.
-        """
-        ...
-    def isatty(self) -> bool:
-        """Return True, if the destination is connected to a TTY device."""
-        ...
+    ) -> None: ...
+    def write(self, data: str | bytes | Exception) -> None: ...
+    def close(self) -> None: ...
+    def isatty(self) -> bool: ...
 
 class FileInput(Input[IO[str]]):
-    """Input for single, simple file-like objects."""
     autoclose: bool
     def __init__(
         self,
@@ -196,30 +85,12 @@ class FileInput(Input[IO[str]]):
         error_handler: str = "strict",
         autoclose: bool = True,
         mode: OpenTextModeReading | OpenBinaryModeReading = "r",
-    ) -> None:
-        """
-        :Parameters:
-            - `source`: either a file-like object (which is read directly), or
-              `None` (which implies `sys.stdin` if no `source_path` given).
-            - `source_path`: a path to a file, which is opened for reading.
-            - `encoding`: the expected text encoding of the input file.
-            - `error_handler`: the encoding error handler to use.
-            - `autoclose`: close automatically after read (except when
-              `sys.stdin` is the source).
-            - `mode`: how the file is to be opened (see standard function
-              `open`). The default is read only ('r').
-        """
-        ...
-    def read(self) -> str:
-        """Read and decode a single file, return as `str`."""
-        ...
-    def readlines(self) -> list[str]:
-        """Return lines of a single file as list of strings."""
-        ...
+    ) -> None: ...
+    def read(self) -> str: ...
+    def readlines(self) -> list[str]: ...
     def close(self) -> None: ...
 
 class FileOutput(Output):
-    """Output for single, simple file-like objects."""
     default_destination_path: ClassVar[str]
     mode: ClassVar[OpenTextModeWriting | OpenBinaryModeWriting]
     opened: bool
@@ -235,106 +106,31 @@ class FileOutput(Output):
         autoclose: bool = True,
         handle_io_errors=None,
         mode=None,
-    ) -> None:
-        """
-        :Parameters:
-            - `destination`: either a file-like object (which is written
-              directly) or `None` (which implies `sys.stdout` if no
-              `destination_path` given).
-            - `destination_path`: a path to a file, which is opened and then
-              written.
-            - `encoding`: the text encoding of the output file.
-            - `error_handler`: the encoding error handler to use.
-            - `autoclose`: close automatically after write (except when
-              `sys.stdout` or `sys.stderr` is the destination).
-            - `handle_io_errors`: ignored, deprecated, will be removed.
-            - `mode`: how the file is to be opened (see standard function
-              `open`). The default is 'w', providing universal newline
-              support for text files.
-        """
-        ...
+    ) -> None: ...
     def open(self) -> None: ...
-    def write(self, data):
-        """
-        Write `data` to a single file, also return it.
-
-        `data` can be a `str` or `bytes` instance.
-        If writing `bytes` fails, an attempt is made to write to
-        the low-level interface ``self.destination.buffer``.
-
-        If `data` is a `str` instance and `self.encoding` and
-        `self.destination.encoding` are  set to different values, `data`
-        is encoded to a `bytes` instance using `self.encoding`.
-
-        Provisional: future versions may raise an error if `self.encoding`
-        and `self.destination.encoding` are set to different values.
-        """
-        ...
+    def write(self, data): ...
     def close(self) -> None: ...
 
 @deprecated("The `BinaryFileOutput` is deprecated by `FileOutput` and will be removed in Docutils 0.24.")
-class BinaryFileOutput(FileOutput):
-    'A version of docutils.io.FileOutput which writes to a binary file.\n\nDeprecated. Use `FileOutput` (works with `bytes` since Docutils\xa00.20).\nWill be removed in Docutils 0.24.'
-    ...
+class BinaryFileOutput(FileOutput): ...
 
 class StringInput(Input[str]):
-    """Input from a `str` or `bytes` instance."""
     default_source_path: ClassVar[str]
-    def read(self):
-        """
-        Return the source as `str` instance.
-
-        Decode, if required (see `Input.decode`).
-        """
-        ...
+    def read(self): ...
 
 class StringOutput(Output):
-    """
-    Output to a `bytes` or `str` instance.
-
-    Provisional.
-    """
     default_destination_path: ClassVar[str]
     destination: str | bytes  # only defined after call to write()
-    def write(self, data):
-        """
-        Store `data` in `self.destination`, and return it.
-
-        If `self.encoding` is set to the pseudo encoding name "unicode",
-        `data` must be a `str` instance and is stored/returned unchanged
-        (cf. `Output.encode`).
-
-        Otherwise, `data` can be a `bytes` or `str` instance and is
-        stored/returned as a `bytes` instance
-        (`str` data is encoded with `self.encode()`).
-
-        Attention: the `output_encoding`_ setting may affect the content
-        of the output (e.g. an encoding declaration in HTML or XML or the
-        representation of characters as LaTeX macro vs. literal character).
-        """
-        ...
+    def write(self, data): ...
 
 class NullInput(Input[Any]):
-    """Degenerate input: read nothing."""
     default_source_path: ClassVar[str]
-    def read(self) -> str:
-        """Return an empty string."""
-        ...
+    def read(self) -> str: ...
 
 class NullOutput(Output):
-    """Degenerate output: write nothing."""
     default_destination_path: ClassVar[str]
-    def write(self, data: Unused) -> None:
-        """Do nothing, return None."""
-        ...
+    def write(self, data: Unused) -> None: ...
 
 class DocTreeInput(Input[nodes.document]):
-    """
-    Adapter for document tree input.
-
-    The document tree must be passed in the ``source`` parameter.
-    """
     default_source_path: ClassVar[str]
-    def read(self):
-        """Return the document tree."""
-        ...
+    def read(self): ...

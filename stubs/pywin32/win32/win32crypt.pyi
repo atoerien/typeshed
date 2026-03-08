@@ -1,5 +1,3 @@
-"""Support for Windows cryptography functions"""
-
 from _typeshed import Incomplete
 
 import _win32typing

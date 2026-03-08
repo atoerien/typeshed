@@ -1,10 +1,3 @@
-"""
-MySQL ER Constants
-
-These constants are error codes for the bulk of the error conditions
-that may occur.
-"""
-
 ERROR_FIRST: int
 NO: int
 YES: int

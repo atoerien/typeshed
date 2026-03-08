@@ -1,10 +1,3 @@
-"""
-authlib.openid.connect.core.tokens
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This module contains methods for adding JWT tokens to requests.
-"""
-
 from collections.abc import Callable
 
 from oauthlib.common import Request
@@ -25,8 +18,6 @@ class JWTToken(TokenBase):
         expires_in: int | Callable[[Request], int] | None = None,
         refresh_token_generator: Callable[[Request], str] | None = None,
     ) -> None: ...
-    def create_token(self, request: Request, refresh_token: bool = False):
-        """Create a JWT Token, using requestvalidator method."""
-        ...
+    def create_token(self, request: Request, refresh_token: bool = False): ...
     def validate_request(self, request: Request): ...
     def estimate_type(self, request: Request): ...

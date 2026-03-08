@@ -1,5 +1,3 @@
-"""Implements the bdist_msi command."""
-
 import sys
 from _typeshed import Incomplete
 from typing import ClassVar, Literal

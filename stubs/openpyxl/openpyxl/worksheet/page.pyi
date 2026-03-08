@@ -12,7 +12,6 @@ _PrintPageSetupCellComments: TypeAlias = Literal["asDisplayed", "atEnd"]
 _PrintPageSetupErrors: TypeAlias = Literal["displayed", "blank", "dash", "NA"]
 
 class PrintPageSetup(Serialisable):
-    """Worksheet print page setup """
     tagname: ClassVar[str]
     orientation: NoneSet[_PrintPageSetupOrientation]
     paperSize: Integer[Literal[True]]
@@ -58,9 +57,7 @@ class PrintPageSetup(Serialisable):
     ) -> None: ...
     def __bool__(self) -> bool: ...
     @property
-    def sheet_properties(self) -> PageSetupProperties | None:
-        """Proxy property"""
-        ...
+    def sheet_properties(self) -> PageSetupProperties | None: ...
     @property
     def fitToPage(self) -> bool | None: ...
     @fitToPage.setter
@@ -73,7 +70,6 @@ class PrintPageSetup(Serialisable):
     def from_tree(cls, node: _ChildSerialisableTreeElement) -> Self: ...
 
 class PrintOptions(Serialisable):
-    """Worksheet print options """
     tagname: ClassVar[str]
     horizontalCentered: Bool[Literal[True]]
     verticalCentered: Bool[Literal[True]]
@@ -91,13 +87,6 @@ class PrintOptions(Serialisable):
     def __bool__(self) -> bool: ...
 
 class PageMargins(Serialisable):
-    """
-    Information about page margins for view/print layouts.
-    Standard values (in inches)
-    left, right = 0.75
-    top, bottom = 1
-    header, footer = 0.5
-    """
     tagname: ClassVar[str]
     left: Float[Literal[False]]
     right: Float[Literal[False]]

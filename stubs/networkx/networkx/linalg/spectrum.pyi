@@ -1,5 +1,3 @@
-"""Eigenvalue spectrum of graphs."""
-
 import numpy as np
 from networkx._typing import Array1D
 from networkx.classes.graph import Graph, _Node
@@ -14,154 +12,12 @@ __all__ = [
 ]
 
 @_dispatchable
-def laplacian_spectrum(G: Graph[_Node], weight: str | None = "weight") -> Array1D[np.float64]:
-    """
-    Returns eigenvalues of the Laplacian of G
-
-    Parameters
-    ----------
-    G : graph
-       A NetworkX graph
-
-    weight : string or None, optional (default='weight')
-       The edge data key used to compute each value in the matrix.
-       If None, then each edge has weight 1.
-
-    Returns
-    -------
-    evals : NumPy array
-      Eigenvalues
-
-    Notes
-    -----
-    For MultiGraph/MultiDiGraph, the edges weights are summed.
-    See :func:`~networkx.convert_matrix.to_numpy_array` for other options.
-
-    See Also
-    --------
-    laplacian_matrix
-
-    Examples
-    --------
-    The multiplicity of 0 as an eigenvalue of the laplacian matrix is equal
-    to the number of connected components of G.
-
-    >>> G = nx.Graph()  # Create a graph with 5 nodes and 3 connected components
-    >>> G.add_nodes_from(range(5))
-    >>> G.add_edges_from([(0, 2), (3, 4)])
-    >>> nx.laplacian_spectrum(G)
-    array([0., 0., 0., 2., 2.])
-    """
-    ...
+def laplacian_spectrum(G: Graph[_Node], weight: str | None = "weight") -> Array1D[np.float64]: ...
 @_dispatchable
-def normalized_laplacian_spectrum(G: Graph[_Node], weight: str | None = "weight") -> Array1D[np.float64]:
-    """
-    Return eigenvalues of the normalized Laplacian of G
-
-    Parameters
-    ----------
-    G : graph
-       A NetworkX graph
-
-    weight : string or None, optional (default='weight')
-       The edge data key used to compute each value in the matrix.
-       If None, then each edge has weight 1.
-
-    Returns
-    -------
-    evals : NumPy array
-      Eigenvalues
-
-    Notes
-    -----
-    For MultiGraph/MultiDiGraph, the edges weights are summed.
-    See to_numpy_array for other options.
-
-    See Also
-    --------
-    normalized_laplacian_matrix
-    """
-    ...
+def normalized_laplacian_spectrum(G: Graph[_Node], weight: str | None = "weight") -> Array1D[np.float64]: ...
 @_dispatchable
-def adjacency_spectrum(G: Graph[_Node], weight: str | None = "weight") -> Array1D[np.complex128]:
-    """
-    Returns eigenvalues of the adjacency matrix of G.
-
-    Parameters
-    ----------
-    G : graph
-       A NetworkX graph
-
-    weight : string or None, optional (default='weight')
-       The edge data key used to compute each value in the matrix.
-       If None, then each edge has weight 1.
-
-    Returns
-    -------
-    evals : NumPy array
-      Eigenvalues
-
-    Notes
-    -----
-    For MultiGraph/MultiDiGraph, the edges weights are summed.
-    See to_numpy_array for other options.
-
-    See Also
-    --------
-    adjacency_matrix
-    """
-    ...
+def adjacency_spectrum(G: Graph[_Node], weight: str | None = "weight") -> Array1D[np.complex128]: ...
 @_dispatchable
-def modularity_spectrum(G: Graph[_Node]) -> Array1D[np.complex128]:
-    """
-    Returns eigenvalues of the modularity matrix of G.
-
-    Parameters
-    ----------
-    G : Graph
-       A NetworkX Graph or DiGraph
-
-    Returns
-    -------
-    evals : NumPy array
-      Eigenvalues
-
-    See Also
-    --------
-    modularity_matrix
-
-    References
-    ----------
-    .. [1] M. E. J. Newman, "Modularity and community structure in networks",
-       Proc. Natl. Acad. Sci. USA, vol. 103, pp. 8577-8582, 2006.
-    """
-    ...
+def modularity_spectrum(G: Graph[_Node]) -> Array1D[np.complex128]: ...
 @_dispatchable
-def bethe_hessian_spectrum(G: Graph[_Node], r: float | None = None) -> Array1D[np.float64]:
-    """
-    Returns eigenvalues of the Bethe Hessian matrix of G.
-
-    Parameters
-    ----------
-    G : Graph
-       A NetworkX Graph or DiGraph
-
-    r : float
-       Regularizer parameter
-
-    Returns
-    -------
-    evals : NumPy array
-      Eigenvalues
-
-    See Also
-    --------
-    bethe_hessian_matrix
-
-    References
-    ----------
-    .. [1] A. Saade, F. Krzakala and L. Zdeborová
-       "Spectral clustering of graphs with the bethe hessian",
-       Advances in Neural Information Processing Systems. 2014.
-    """
-    ...
+def bethe_hessian_spectrum(G: Graph[_Node], r: float | None = None) -> Array1D[np.float64]: ...

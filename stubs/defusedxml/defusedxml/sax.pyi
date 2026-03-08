@@ -1,5 +1,3 @@
-"""Defused xml.sax"""
-
 from _typeshed import ReadableBuffer, Unused
 from typing import Final
 from xml.sax import ErrorHandler as _ErrorHandler, _Source, xmlreader

@@ -1,5 +1,3 @@
-"""Defused xml.etree.ElementTree facade"""
-
 from _typeshed import ReadableBuffer
 from collections.abc import Sequence
 from typing import Final

@@ -1,5 +1,3 @@
-""""""
-
 from pyasn1.type.namedtype import NamedTypes
 from pyasn1.type.namedval import NamedValues
 from pyasn1.type.univ import Enumerated, Sequence

@@ -1,5 +1,3 @@
 from ..core import WesternCalendar
 
-class Monaco(WesternCalendar):
-    """Monaco"""
-    ...
+class Monaco(WesternCalendar): ...

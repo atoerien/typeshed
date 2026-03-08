@@ -115,9 +115,7 @@ class AttrValue(google.protobuf.message.Message):
                 "type",
                 b"type",
             ],
-        ) -> None:
-            """Clears a message field."""
-            ...
+        ) -> None: ...
 
     S_FIELD_NUMBER: builtins.int
     I_FIELD_NUMBER: builtins.int
@@ -208,9 +206,7 @@ class AttrValue(google.protobuf.message.Message):
             "value",
             b"value",
         ],
-    ) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    ) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -237,14 +233,10 @@ class AttrValue(google.protobuf.message.Message):
             "value",
             b"value",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
     def WhichOneof(
         self, oneof_group: typing.Literal["value", b"value"]
-    ) -> typing.Literal["s", "i", "f", "b", "type", "shape", "tensor", "list", "func", "placeholder"] | None:
-        """Returns the name of the field set inside a oneof, or None if no field is set."""
-        ...
+    ) -> typing.Literal["s", "i", "f", "b", "type", "shape", "tensor", "list", "func", "placeholder"] | None: ...
 
 global___AttrValue = AttrValue
 
@@ -266,12 +258,8 @@ class NameAttrList(google.protobuf.message.Message):
         @property
         def value(self) -> global___AttrValue: ...
         def __init__(self, *, key: builtins.str | None = ..., value: global___AttrValue | None = ...) -> None: ...
-        def HasField(self, field_name: typing.Literal["value", b"value"]) -> builtins.bool:
-            """Checks if a message field is set."""
-            ...
-        def ClearField(self, field_name: typing.Literal["key", b"key", "value", b"value"]) -> None:
-            """Clears a message field."""
-            ...
+        def HasField(self, field_name: typing.Literal["value", b"value"]) -> builtins.bool: ...
+        def ClearField(self, field_name: typing.Literal["key", b"key", "value", b"value"]) -> None: ...
 
     NAME_FIELD_NUMBER: builtins.int
     ATTR_FIELD_NUMBER: builtins.int
@@ -281,8 +269,6 @@ class NameAttrList(google.protobuf.message.Message):
     def __init__(
         self, *, name: builtins.str | None = ..., attr: collections.abc.Mapping[builtins.str, global___AttrValue] | None = ...
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["attr", b"attr", "name", b"name"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["attr", b"attr", "name", b"name"]) -> None: ...
 
 global___NameAttrList = NameAttrList

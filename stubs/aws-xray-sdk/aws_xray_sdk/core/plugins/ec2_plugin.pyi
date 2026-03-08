@@ -7,19 +7,8 @@ SERVICE_NAME: Final = "ec2"
 ORIGIN: Final = "AWS::EC2::Instance"
 IMDS_URL: Final = "http://169.254.169.254/latest/"
 
-def initialize() -> None:
-    """
-    Try to get EC2 instance-id and AZ if running on EC2
-    by querying http://169.254.169.254/latest/meta-data/.
-    If not continue.
-    """
-    ...
-def get_token() -> str | None:
-    """
-    Get the session token for IMDSv2 endpoint valid for 60 seconds
-    by specifying the X-aws-ec2-metadata-token-ttl-seconds header.
-    """
-    ...
+def initialize() -> None: ...
+def get_token() -> str | None: ...
 def get_metadata(token: str | None = None) -> dict[str, Any]: ...  # result of parse_metadata_json()
 def parse_metadata_json(json_str: str | bytes | bytearray) -> dict[str, Any]: ...  # result of json.loads()
 @overload

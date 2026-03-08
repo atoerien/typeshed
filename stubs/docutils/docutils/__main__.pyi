@@ -1,10 +1,3 @@
-"""
-Generic command line interface for the `docutils` package.
-
-See also
-https://docs.python.org/3/library/__main__.html#main-py-in-python-packages
-"""
-
 from typing import ClassVar, Final
 
 import docutils
@@ -12,13 +5,7 @@ import docutils
 __docformat__: Final = "reStructuredText"
 
 class CliSettingsSpec(docutils.SettingsSpec):
-    'Runtime settings & command-line options for the generic CLI.\n\nConfigurable reader, parser, and writer components.\n\nThe "--writer" default will change to \'html\' in Docutils\xa02.0\nwhen \'html\' becomes an alias for the current value \'html5\'.'
     config_section: ClassVar[str]
     config_section_dependencies: ClassVar[tuple[str, ...]]
 
-def main() -> None:
-    """
-    Generic command line interface for the Docutils Publisher.
-    
-    """
-    ...
+def main() -> None: ...

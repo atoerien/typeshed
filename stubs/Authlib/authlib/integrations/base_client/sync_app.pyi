@@ -7,51 +7,11 @@ class BaseApp:
     client_cls: Incomplete
     OAUTH_APP_CONFIG: Incomplete
     def request(self, method, url, token=None, **kwargs): ...
-    def get(self, url, **kwargs):
-        """
-        Invoke GET http request.
-
-        If ``api_base_url`` configured, shortcut is available::
-
-            client.get("users/lepture")
-        """
-        ...
-    def post(self, url, **kwargs):
-        """
-        Invoke POST http request.
-
-        If ``api_base_url`` configured, shortcut is available::
-
-            client.post("timeline", json={"text": "Hi"})
-        """
-        ...
-    def patch(self, url, **kwargs):
-        """
-        Invoke PATCH http request.
-
-        If ``api_base_url`` configured, shortcut is available::
-
-            client.patch("profile", json={"name": "Hsiaoming Yang"})
-        """
-        ...
-    def put(self, url, **kwargs):
-        """
-        Invoke PUT http request.
-
-        If ``api_base_url`` configured, shortcut is available::
-
-            client.put("profile", json={"name": "Hsiaoming Yang"})
-        """
-        ...
-    def delete(self, url, **kwargs):
-        """
-        Invoke DELETE http request.
-
-        If ``api_base_url`` configured, shortcut is available::
-
-            client.delete("posts/123")
-        """
-        ...
+    def get(self, url, **kwargs): ...
+    def post(self, url, **kwargs): ...
+    def patch(self, url, **kwargs): ...
+    def put(self, url, **kwargs): ...
+    def delete(self, url, **kwargs): ...
 
 class _RequestMixin: ...
 
@@ -90,24 +50,8 @@ class OAuth1Base:
 
 class OAuth1Mixin(_RequestMixin, OAuth1Base):
     def request(self, method, url, token=None, **kwargs): ...
-    def create_authorization_url(self, redirect_uri=None, **kwargs) -> dict[Incomplete, Incomplete]:
-        """
-        Generate the authorization url and state for HTTP redirect.
-
-        :param redirect_uri: Callback or redirect URI for authorization.
-        :param kwargs: Extra parameters to include.
-        :return: dict
-        """
-        ...
-    def fetch_access_token(self, request_token=None, **kwargs):
-        """
-        Fetch access token in one step.
-
-        :param request_token: A previous request token for OAuth 1.
-        :param kwargs: Extra parameters to fetch access token.
-        :return: A token dict.
-        """
-        ...
+    def create_authorization_url(self, redirect_uri=None, **kwargs) -> dict[Incomplete, Incomplete]: ...
+    def fetch_access_token(self, request_token=None, **kwargs): ...
 
 class OAuth2Base:
     client_cls: Incomplete
@@ -148,22 +92,5 @@ class OAuth2Base:
 class OAuth2Mixin(_RequestMixin, OAuth2Base):
     def request(self, method, url, token=None, **kwargs): ...
     def load_server_metadata(self) -> dict[Incomplete, Incomplete]: ...
-    def create_authorization_url(self, redirect_uri=None, **kwargs) -> dict[Incomplete, Incomplete]:
-        """
-        Generate the authorization url and state for HTTP redirect.
-
-        :param redirect_uri: Callback or redirect URI for authorization.
-        :param kwargs: Extra parameters to include.
-        :return: dict
-        """
-        ...
-    def fetch_access_token(self, redirect_uri=None, **kwargs):
-        """
-        Fetch access token in the final step.
-
-        :param redirect_uri: Callback or Redirect URI that is used in
-                             previous :meth:`authorize_redirect`.
-        :param kwargs: Extra parameters to fetch access token.
-        :return: A token dict.
-        """
-        ...
+    def create_authorization_url(self, redirect_uri=None, **kwargs) -> dict[Incomplete, Incomplete]: ...
+    def fetch_access_token(self, redirect_uri=None, **kwargs): ...

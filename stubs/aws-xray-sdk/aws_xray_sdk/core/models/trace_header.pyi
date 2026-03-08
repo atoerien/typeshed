@@ -16,56 +16,21 @@ SELF: Final = "Self"
 HEADER_DELIMITER: Final = ";"
 
 class TraceHeader:
-    """
-    The sampling decision and trace ID are added to HTTP requests in
-    tracing headers named ``X-Amzn-Trace-Id``. The first X-Ray-integrated
-    service that the request hits adds a tracing header, which is read
-    by the X-Ray SDK and included in the response. Learn more about
-    `Tracing Header <http://docs.aws.amazon.com/xray/latest/devguide/xray-concepts.html#xray-concepts-tracingheader>`_.
-    """
     def __init__(
         self,
         root: str | None = None,
         parent: str | None = None,
         sampled: _Sampled | None = None,
         data: dict[str, Incomplete] | None = None,
-    ) -> None:
-        """
-        :param str root: trace id
-        :param str parent: parent id
-        :param int sampled: 0 means not sampled, 1 means sampled
-        :param dict data: arbitrary data fields
-        """
-        ...
+    ) -> None: ...
     @classmethod
-    def from_header_str(cls, header: str | None) -> Self:
-        """
-        Create a TraceHeader object from a tracing header string
-        extracted from a http request headers.
-        """
-        ...
-    def to_header_str(self) -> str:
-        """
-        Convert to a tracing header string that can be injected to
-        outgoing http request headers.
-        """
-        ...
+    def from_header_str(cls, header: str | None) -> Self: ...
+    def to_header_str(self) -> str: ...
     @property
-    def root(self) -> str | None:
-        """Return trace id of the header"""
-        ...
+    def root(self) -> str | None: ...
     @property
-    def parent(self) -> str | None:
-        """Return the parent segment id in the header"""
-        ...
+    def parent(self) -> str | None: ...
     @property
-    def sampled(self) -> Literal[1, 0, "?"] | None:
-        """
-        Return the sampling decision in the header.
-        It's 0 or 1 or '?'.
-        """
-        ...
+    def sampled(self) -> Literal[1, 0, "?"] | None: ...
     @property
-    def data(self) -> dict[str, Incomplete]:
-        """Return the arbitrary fields in the trace header."""
-        ...
+    def data(self) -> dict[str, Incomplete]: ...

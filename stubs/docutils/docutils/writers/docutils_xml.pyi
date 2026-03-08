@@ -1,8 +1,3 @@
-"""
-Simple document tree Writer, writes Docutils XML according to
-https://docutils.sourceforge.io/docs/ref/docutils.dtd.
-"""
-
 from collections.abc import Callable
 from typing import ClassVar, Final
 from xml.sax.handler import ContentHandler
@@ -39,12 +34,8 @@ class XMLTranslator(nodes.GenericNodeVisitor):
     the_handle: TestXml
     def __init__(self, document: nodes.document) -> None: ...
     simple_nodes: ClassVar[tuple[type[nodes.Element], ...]]
-    def default_visit(self, node: nodes.Element) -> None:
-        """Default node visit method."""
-        ...
-    def default_departure(self, node: nodes.Element) -> None:
-        """Default node depart method."""
-        ...
+    def default_visit(self, node: nodes.Element) -> None: ...  # type: ignore[override]
+    def default_departure(self, node: nodes.Element) -> None: ...  # type: ignore[override]
     def visit_Text(self, node: nodes.Text) -> None: ...
     def depart_Text(self, node: nodes.Text) -> None: ...
     def visit_raw(self, node: nodes.raw) -> None: ...

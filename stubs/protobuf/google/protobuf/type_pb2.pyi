@@ -127,9 +127,7 @@ class Type(google.protobuf.message.Message):
         syntax: global___Syntax.ValueType | None = ...,
         edition: builtins.str | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["source_context", b"source_context"]) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    def HasField(self, field_name: typing.Literal["source_context", b"source_context"]) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -148,9 +146,7 @@ class Type(google.protobuf.message.Message):
             "syntax",
             b"syntax",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___Type = Type
 
@@ -356,9 +352,7 @@ class Field(google.protobuf.message.Message):
             "type_url",
             b"type_url",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___Field = Field
 
@@ -408,9 +402,7 @@ class Enum(google.protobuf.message.Message):
         syntax: global___Syntax.ValueType | None = ...,
         edition: builtins.str | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["source_context", b"source_context"]) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    def HasField(self, field_name: typing.Literal["source_context", b"source_context"]) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -427,9 +419,7 @@ class Enum(google.protobuf.message.Message):
             "syntax",
             b"syntax",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___Enum = Enum
 
@@ -463,9 +453,7 @@ class EnumValue(google.protobuf.message.Message):
         number: builtins.int | None = ...,
         options: collections.abc.Iterable[global___Option] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["name", b"name", "number", b"number", "options", b"options"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["name", b"name", "number", b"number", "options", b"options"]) -> None: ...
 
 global___EnumValue = EnumValue
 
@@ -498,11 +486,7 @@ class Option(google.protobuf.message.Message):
         """
 
     def __init__(self, *, name: builtins.str | None = ..., value: google.protobuf.any_pb2.Any | None = ...) -> None: ...
-    def HasField(self, field_name: typing.Literal["value", b"value"]) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
-    def ClearField(self, field_name: typing.Literal["name", b"name", "value", b"value"]) -> None:
-        """Clears a message field."""
-        ...
+    def HasField(self, field_name: typing.Literal["value", b"value"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["name", b"name", "value", b"value"]) -> None: ...
 
 global___Option = Option

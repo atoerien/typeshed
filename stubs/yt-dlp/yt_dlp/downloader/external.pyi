@@ -8,7 +8,6 @@ from ..extractor.common import _InfoDict
 from .fragment import FragmentFD
 
 class Features(enum.Enum):
-    """An enumeration."""
     TO_STDOUT = 1
     MULTIPLE_FORMATS = 2
 
@@ -53,13 +52,9 @@ class FFmpegFD(ExternalFD):
     SUPPORTED_FEATURES: tuple[Features, ...]
     @classmethod
     def available(cls, path: str | None = None) -> bool: ...  # type: ignore[override]
-    def on_process_started(self, proc: Unused, stdin: Unused) -> None:
-        """Override this in subclasses  """
-        ...
+    def on_process_started(self, proc: Unused, stdin: Unused) -> None: ...
     @classmethod
     def can_merge_formats(cls, info_dict: _InfoDict, params: Mapping[str, Any]) -> bool: ...
 
 def list_external_downloaders() -> list[str]: ...
-def get_external_downloader(external_downloader: str) -> type[ExternalFD]:
-    """Given the name of the executable, see whether we support the given downloader """
-    ...
+def get_external_downloader(external_downloader: str) -> type[ExternalFD]: ...

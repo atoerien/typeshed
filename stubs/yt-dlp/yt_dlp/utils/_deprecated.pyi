@@ -1,5 +1,3 @@
-"""Deprecated - New code should avoid these"""
-
 import re
 from collections.abc import Mapping
 from typing import Any

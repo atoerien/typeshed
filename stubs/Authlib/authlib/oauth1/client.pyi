@@ -31,60 +31,10 @@ class OAuth1Client:
     def token(self) -> dict[Incomplete, Incomplete]: ...
     @token.setter
     def token(self, token) -> None: ...
-    def create_authorization_url(self, url, request_token=None, **kwargs) -> str:
-        """
-        Create an authorization URL by appending request_token and optional
-        kwargs to url.
-
-        This is the second step in the OAuth 1 workflow. The user should be
-        redirected to this authorization URL, grant access to you, and then
-        be redirected back to you. The redirection back can either be specified
-        during client registration or by supplying a callback URI per request.
-
-        :param url: The authorization endpoint URL.
-        :param request_token: The previously obtained request token.
-        :param kwargs: Optional parameters to append to the URL.
-        :returns: The authorization URL with new parameters embedded.
-        """
-        ...
-    def fetch_request_token(self, url: str, **kwargs) -> dict[str, Any]:
-        """
-        Method for fetching an access token from the token endpoint.
-
-        This is the first step in the OAuth 1 workflow. A request token is
-        obtained by making a signed post request to url. The token is then
-        parsed from the application/x-www-form-urlencoded response and ready
-        to be used to construct an authorization url.
-
-        :param url: Request Token endpoint.
-        :param kwargs: Extra parameters to include for fetching token.
-        :return: A Request Token dict.
-        """
-        ...
-    def fetch_access_token(self, url, verifier=None, **kwargs):
-        """
-        Method for fetching an access token from the token endpoint.
-
-        This is the final step in the OAuth 1 workflow. An access token is
-        obtained using all previously obtained credentials, including the
-        verifier from the authorization step.
-
-        :param url: Access Token endpoint.
-        :param verifier: A verifier string to prove authorization was granted.
-        :param kwargs: Extra parameters to include for fetching access token.
-        :return: A token dict.
-        """
-        ...
-    def parse_authorization_response(self, url: str) -> dict[str, str]:
-        """
-        Extract parameters from the post authorization redirect
-        response URL.
-
-        :param url: The full URL that resulted from the user being redirected
-                    back from the OAuth provider to you, the client.
-        :returns: A dict of parameters extracted from the URL.
-        """
-        ...
+    def create_authorization_url(self, url, request_token=None, **kwargs) -> str: ...
+    def fetch_request_token(self, url: str, **kwargs) -> dict[str, Any]: ...
+    def fetch_access_token(self, url, verifier=None, **kwargs): ...
+    def parse_authorization_response(self, url: str) -> dict[str, str]: ...
     def parse_response_token(self, status_code: int, text: str): ...
     @staticmethod
     def handle_error(error_type: str, error_description: str) -> NoReturn: ...

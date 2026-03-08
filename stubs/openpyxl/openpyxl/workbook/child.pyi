@@ -8,13 +8,7 @@ from openpyxl.worksheet.header_footer import HeaderFooter, HeaderFooterItem
 
 INVALID_TITLE_REGEX: Final[Pattern[str]]
 
-def avoid_duplicate_name(names: Iterable[str], value: str) -> str:
-    """
-    Naive check to see whether name already exists.
-    If name does exist suggest a name using an incrementer
-    Duplicates are case insensitive
-    """
-    ...
+def avoid_duplicate_name(names: Iterable[str], value: str) -> str: ...
 
 class _WorkbookChild:
     HeaderFooter: HeaderFooter

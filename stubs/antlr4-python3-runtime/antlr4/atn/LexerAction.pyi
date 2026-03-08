@@ -4,7 +4,6 @@ from enum import IntEnum
 Lexer: Incomplete
 
 class LexerActionType(IntEnum):
-    """An enumeration."""
     CHANNEL = 0
     CUSTOM = 1
     MODE = 2

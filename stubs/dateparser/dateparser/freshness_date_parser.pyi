@@ -10,7 +10,6 @@ from dateparser.date import DateData
 PATTERN: Final[re.Pattern[str]]
 
 class FreshnessDateDataParser:
-    """Parses date string like "1 year, 2 months ago" and "3 hours, 50 minutes ago" """
     def get_local_tz(self) -> ZoneInfo: ...
     def parse(self, date_string: str, settings: Settings) -> tuple[datetime | None, str | None]: ...
     def get_kwargs(

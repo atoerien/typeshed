@@ -1,5 +1,3 @@
 from ..core import WesternCalendar
 
-class Madagascar(WesternCalendar):
-    """Madagascar"""
-    ...
+class Madagascar(WesternCalendar): ...

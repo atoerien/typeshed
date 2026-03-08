@@ -1,21 +1,3 @@
-"""
-The Bahá'í (Badí) calendar is a solar calendar with 19 months of 19 days.
-
-Every four years, an intercalary period, Ayyam-i-Há, occurs between the 18th and 19th
-months. Dates in this period are returned as month 19, and the month of ‘Alá is always
-reported as month 20.
-
-.. code-block:: python
-
-   from convertdate import bahai
-   # the first day of Ayyam-i-Ha:
-   bahai.to_gregorian(175, 19, 1)
-   # (2019, 2, 26)
-   # The first day of 'Ala:
-   bahai.to_gregorian(175, 20, 1)
-   # (2019, 3, 2)
-"""
-
 from typing import Final
 
 EPOCH: Final = 2394646.5
@@ -45,22 +27,11 @@ MULK: Final = 18
 AYYAMIHA: Final = 19
 ALA: Final = 20
 
-def gregorian_nawruz(year: int) -> tuple[int, int]:
-    """
-    Return Nawruz in the Gregorian calendar.
-    Returns a tuple (month, day), where month is always 3
-    """
-    ...
-def to_jd(year: int, month: int, day: int) -> float:
-    """Determine Julian day from Bahai date"""
-    ...
-def from_jd(jd: float) -> tuple[int, int, int]:
-    """Calculate Bahai date from Julian day"""
-    ...
+def gregorian_nawruz(year: int) -> tuple[int, int]: ...
+def to_jd(year: int, month: int, day: int) -> float: ...
+def from_jd(jd: float) -> tuple[int, int, int]: ...
 def from_gregorian(year: int, month: int, day: int) -> tuple[int, int, int]: ...
 def to_gregorian(year: int, month: int, day: int) -> tuple[int, int, int]: ...
 def month_length(year: int, month: int) -> int: ...
 def monthcalendar(year: int, month: int) -> list[list[int | None]]: ...
-def format(year: int, month: int, day: int, lang: str | None = None) -> str:
-    """Convert a Baha'i date into a string with the format DD MONTH YYYY."""
-    ...
+def format(year: int, month: int, day: int, lang: str | None = None) -> str: ...

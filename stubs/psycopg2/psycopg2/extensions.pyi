@@ -1,17 +1,3 @@
-"""
-psycopg extensions to the DBAPI-2.0
-
-This module holds all the extensions to the DBAPI-2.0 provided by psycopg.
-
-- `connection` -- the new-type inheritable connection class
-- `cursor` -- the new-type inheritable cursor class
-- `lobject` -- the new-type inheritable large object class
-- `adapt()` -- exposes the PEP-246_ compatible adapting mechanism used
-  by psycopg to adapt Python types to PostgreSQL ones
-
-.. _PEP-246: https://www.python.org/dev/peps/pep-0246/
-"""
-
 from _typeshed import Unused
 from collections.abc import Callable, Iterable
 from typing import Any, TypeVar, overload
@@ -115,38 +101,23 @@ TRANSACTION_STATUS_UNKNOWN: int
 
 _T = TypeVar("_T")
 
-def register_adapter(typ: type[_T], callable: Callable[[_T], _ISQLQuoteProto]) -> None:
-    """Register 'callable' as an ISQLQuote adapter for type 'typ'."""
-    ...
+def register_adapter(typ: type[_T], callable: Callable[[_T], _ISQLQuoteProto]) -> None: ...
 
 class SQL_IN:
-    """Adapt any iterable to an SQL quotable object."""
     def __init__(self, seq: Iterable[object]) -> None: ...
     def prepare(self, conn: connection | None) -> None: ...
     def getquoted(self) -> bytes: ...
 
 class NoneAdapter:
-    """
-    Adapt None to NULL.
-
-    This adapter is not used normally as a fast path in mogrify uses NULL,
-    but it makes easier to adapt composite types.
-    """
     def __init__(self, obj: Unused) -> None: ...
     def getquoted(self, _null: bytes = b"NULL") -> bytes: ...
 
 @overload
-def make_dsn(dsn: bytes) -> bytes:
-    """Convert a set of keywords into a connection strings."""
-    ...
+def make_dsn(dsn: bytes) -> bytes: ...  # type: ignore[overload-overlap]
 @overload
-def make_dsn(dsn: None = None) -> str:
-    """Convert a set of keywords into a connection strings."""
-    ...
+def make_dsn(dsn: None = None) -> str: ...
 @overload
-def make_dsn(dsn: str | bytes | None = None, **kwargs: Any) -> str:
-    """Convert a set of keywords into a connection strings."""
-    ...
+def make_dsn(dsn: str | bytes | None = None, **kwargs: Any) -> str: ...
 
 JSON: _type
 JSONARRAY: _type | None

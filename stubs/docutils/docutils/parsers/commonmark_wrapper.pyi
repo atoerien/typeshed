@@ -1,20 +1,3 @@
-"""
-An interface for parsing CommonMark input.
-
-Select a locally installed parser from the following 3rd-party
-parser packages:
-
-:pycmark:       https://pypi.org/project/pycmark/
-:myst:          https://pypi.org/project/myst-docutils/
-:recommonmark:  https://pypi.org/project/recommonmark/ (deprecated)
-
-The first parser class that can be successfully imported is mapped to
-`commonmark_wrapper.Parser`.
-
-This module is provisional:
-the API is not settled and may change with any minor Docutils version.
-"""
-
 from typing import Literal
 from typing_extensions import TypeAlias
 

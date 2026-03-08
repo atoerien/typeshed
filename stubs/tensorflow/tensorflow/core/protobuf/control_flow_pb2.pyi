@@ -31,9 +31,7 @@ class ValuesDef(google.protobuf.message.Message):
         key: builtins.str
         value: builtins.str
         def __init__(self, *, key: builtins.str | None = ..., value: builtins.str | None = ...) -> None: ...
-        def ClearField(self, field_name: typing.Literal["key", b"key", "value", b"value"]) -> None:
-            """Clears a message field."""
-            ...
+        def ClearField(self, field_name: typing.Literal["key", b"key", "value", b"value"]) -> None: ...
 
     VALUES_FIELD_NUMBER: builtins.int
     EXTERNAL_VALUES_FIELD_NUMBER: builtins.int
@@ -51,9 +49,7 @@ class ValuesDef(google.protobuf.message.Message):
         values: collections.abc.Iterable[builtins.str] | None = ...,
         external_values: collections.abc.Mapping[builtins.str, builtins.str] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["external_values", b"external_values", "values", b"values"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["external_values", b"external_values", "values", b"values"]) -> None: ...
 
 global___ValuesDef = ValuesDef
 
@@ -76,17 +72,11 @@ class ControlFlowContextDef(google.protobuf.message.Message):
     ) -> None: ...
     def HasField(
         self, field_name: typing.Literal["cond_ctxt", b"cond_ctxt", "ctxt", b"ctxt", "while_ctxt", b"while_ctxt"]
-    ) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    ) -> builtins.bool: ...
     def ClearField(
         self, field_name: typing.Literal["cond_ctxt", b"cond_ctxt", "ctxt", b"ctxt", "while_ctxt", b"while_ctxt"]
-    ) -> None:
-        """Clears a message field."""
-        ...
-    def WhichOneof(self, oneof_group: typing.Literal["ctxt", b"ctxt"]) -> typing.Literal["cond_ctxt", "while_ctxt"] | None:
-        """Returns the name of the field set inside a oneof, or None if no field is set."""
-        ...
+    ) -> None: ...
+    def WhichOneof(self, oneof_group: typing.Literal["ctxt", b"ctxt"]) -> typing.Literal["cond_ctxt", "while_ctxt"] | None: ...
 
 global___ControlFlowContextDef = ControlFlowContextDef
 
@@ -130,9 +120,7 @@ class CondContextDef(google.protobuf.message.Message):
         values_def: global___ValuesDef | None = ...,
         nested_contexts: collections.abc.Iterable[global___ControlFlowContextDef] | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["values_def", b"values_def"]) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    def HasField(self, field_name: typing.Literal["values_def", b"values_def"]) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -149,9 +137,7 @@ class CondContextDef(google.protobuf.message.Message):
             "values_def",
             b"values_def",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___CondContextDef = CondContextDef
 
@@ -223,9 +209,7 @@ class WhileContextDef(google.protobuf.message.Message):
         maximum_iterations_name: builtins.str | None = ...,
         nested_contexts: collections.abc.Iterable[global___ControlFlowContextDef] | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["values_def", b"values_def"]) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    def HasField(self, field_name: typing.Literal["values_def", b"values_def"]) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -254,8 +238,6 @@ class WhileContextDef(google.protobuf.message.Message):
             "values_def",
             b"values_def",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___WhileContextDef = WhileContextDef

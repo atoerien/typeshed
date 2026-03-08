@@ -1,5 +1,3 @@
-"""Standalone file Reader for the reStructuredText markup syntax."""
-
 from typing import ClassVar, Final, TypeVar
 
 from docutils import nodes, readers

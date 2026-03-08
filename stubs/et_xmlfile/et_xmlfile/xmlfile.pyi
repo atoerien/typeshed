@@ -8,7 +8,6 @@ from typing import Any
 class LxmlSyntaxError(Exception): ...
 
 class _IncrementalFileWriter:
-    """Replacement for _IncrementalFileWriter of lxml"""
     global_nsmap: dict[str, str]
     is_html: bool
     def __init__(self, output_file: ET._FileWrite) -> None: ...
@@ -19,19 +18,14 @@ class _IncrementalFileWriter:
         attrib: dict[str, str] | None = None,
         nsmap: dict[str, str] | None = None,
         **_extra: str,
-    ) -> Generator[None]:
-        """Create a new xml element using a context manager."""
-        ...
-    def write(self, arg: str | ET.Element[Any]) -> None:
-        """Write a string or subelement."""
-        ...
+    ) -> Generator[None]: ...
+    def write(self, arg: str | ET.Element[Any]) -> None: ...
     def __enter__(self) -> None: ...
     def __exit__(
         self, type: type[BaseException] | None, value: BaseException | None, traceback: types.TracebackType | None
     ) -> None: ...
 
 class xmlfile:
-    """Context manager that can replace lxml.etree.xmlfile."""
     encoding: str
     writer_cm: Incomplete
     def __init__(

@@ -5,6 +5,4 @@ from hvac.api.vault_api_base import VaultApiBase
 
 logger: logging.Logger
 
-class SystemBackendMixin(VaultApiBase, metaclass=ABCMeta):
-    """Base class for System Backend API endpoints."""
-    ...
+class SystemBackendMixin(VaultApiBase, metaclass=ABCMeta): ...

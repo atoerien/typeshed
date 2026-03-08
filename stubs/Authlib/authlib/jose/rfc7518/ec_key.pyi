@@ -4,7 +4,6 @@ from authlib.jose.rfc7517 import AsymmetricKey
 from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey, EllipticCurvePublicKey
 
 class ECKey(AsymmetricKey):
-    """Key class of the ``EC`` key type."""
     kty: str
     DSS_CURVES: dict[str, type]
     CURVES_DSS: dict[property, str]

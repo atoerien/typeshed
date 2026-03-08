@@ -1,5 +1,3 @@
-"""Defused xml.etree.cElementTree"""
-
 from typing import Final
 
 from .ElementTree import (

@@ -146,9 +146,7 @@ class ProcessingModeDef(google.protobuf.message.Message):
     SHARDING_POLICY_FIELD_NUMBER: builtins.int
     sharding_policy: global___ProcessingModeDef.ShardingPolicy.ValueType
     def __init__(self, *, sharding_policy: global___ProcessingModeDef.ShardingPolicy.ValueType | None = ...) -> None: ...
-    def ClearField(self, field_name: typing.Literal["sharding_policy", b"sharding_policy"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["sharding_policy", b"sharding_policy"]) -> None: ...
 
 global___ProcessingModeDef = ProcessingModeDef
 
@@ -174,9 +172,7 @@ class DataServiceMetadata(google.protobuf.message.Message):
         COMPRESSION_SNAPPY: DataServiceMetadata._Compression.ValueType  # 2
         """Snappy compression as defined in tensorflow/core/platform/snappy.h."""
 
-    class Compression(_Compression, metaclass=_CompressionEnumTypeWrapper):
-        """A utility for finding the names of enum values."""
-        ...
+    class Compression(_Compression, metaclass=_CompressionEnumTypeWrapper): ...
     COMPRESSION_UNSPECIFIED: DataServiceMetadata.Compression.ValueType  # 0
     COMPRESSION_OFF: DataServiceMetadata.Compression.ValueType  # 1
     """No compression."""
@@ -200,9 +196,7 @@ class DataServiceMetadata(google.protobuf.message.Message):
     ) -> None: ...
     def HasField(
         self, field_name: typing.Literal["element_spec", b"element_spec", "optional_element_spec", b"optional_element_spec"]
-    ) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    ) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -215,14 +209,10 @@ class DataServiceMetadata(google.protobuf.message.Message):
             "optional_element_spec",
             b"optional_element_spec",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
     def WhichOneof(
         self, oneof_group: typing.Literal["optional_element_spec", b"optional_element_spec"]
-    ) -> typing.Literal["element_spec"] | None:
-        """Returns the name of the field set inside a oneof, or None if no field is set."""
-        ...
+    ) -> typing.Literal["element_spec"] | None: ...
 
 global___DataServiceMetadata = DataServiceMetadata
 
@@ -233,9 +223,7 @@ class CrossTrainerCacheOptions(google.protobuf.message.Message):
     TRAINER_ID_FIELD_NUMBER: builtins.int
     trainer_id: builtins.str
     def __init__(self, *, trainer_id: builtins.str | None = ...) -> None: ...
-    def ClearField(self, field_name: typing.Literal["trainer_id", b"trainer_id"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["trainer_id", b"trainer_id"]) -> None: ...
 
 global___CrossTrainerCacheOptions = CrossTrainerCacheOptions
 
@@ -250,8 +238,6 @@ class DataServiceConfig(google.protobuf.message.Message):
     DEPLOYMENT_MODE_FIELD_NUMBER: builtins.int
     deployment_mode: global___DeploymentMode.ValueType
     def __init__(self, *, deployment_mode: global___DeploymentMode.ValueType | None = ...) -> None: ...
-    def ClearField(self, field_name: typing.Literal["deployment_mode", b"deployment_mode"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["deployment_mode", b"deployment_mode"]) -> None: ...
 
 global___DataServiceConfig = DataServiceConfig

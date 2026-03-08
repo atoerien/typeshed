@@ -1,5 +1,3 @@
-"""Collection of utility primitives for charts."""
-
 from _typeshed import ConvertibleToInt, Incomplete, Unused
 from typing import ClassVar, Literal, NoReturn, overload
 
@@ -17,7 +15,6 @@ class NumFmt(Serialisable):
     def __init__(self, formatCode: str, sourceLinked: _ConvertibleToBool = False) -> None: ...
 
 class NumberValueDescriptor(NestedText[Incomplete, Incomplete]):
-    """Data should be numerical but isn't always :-/"""
     allow_none: bool
     expected_type: type[Incomplete]
     def __set__(self, instance: Serialisable | Strict, value) -> None: ...  # type: ignore[override]

@@ -1,5 +1,3 @@
-"""Some (initially private) typing helpers for jsonschema's types."""
-
 from collections.abc import Callable, Iterable
 from typing import Any, Protocol
 from typing_extensions import TypeAlias

@@ -1,5 +1,3 @@
-"""This modules defines a collection of markers used in charts."""
-
 from _typeshed import Incomplete
 from typing import Final
 
@@ -9,7 +7,6 @@ from reportlab.lib.validators import Validator
 __version__: Final[str]
 
 class Marker(Widget):
-    """A polymorphic class of markers"""
     def __init__(self, *args, **kw) -> None: ...
     def clone(self, **kwds): ...
     def draw(self): ...

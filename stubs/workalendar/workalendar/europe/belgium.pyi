@@ -1,5 +1,3 @@
 from ..core import WesternCalendar
 
-class Belgium(WesternCalendar):
-    """Belgium"""
-    ...
+class Belgium(WesternCalendar): ...

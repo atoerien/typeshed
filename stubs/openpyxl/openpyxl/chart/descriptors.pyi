@@ -16,7 +16,6 @@ class NestedOverlap(NestedMinMax[float, bool]):
     max: float
 
 class NumberFormatDescriptor(Typed[NumFmt, Literal[True]]):
-    """Allow direct assignment of format code"""
     expected_type: type[NumFmt]
     allow_none: Literal[True]
     def __set__(self, instance: Serialisable | Strict, value) -> None: ...

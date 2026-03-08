@@ -41,6 +41,5 @@ class PyWSGIHandler(pywsgi.WSGIHandler):
 class PyWSGIServer(pywsgi.WSGIServer): ...
 
 class GeventPyWSGIWorker(GeventWorker):
-    """The Gevent StreamServer based workers."""
     server_class: ClassVar[type[PyWSGIServer] | None]
     wsgi_handler: ClassVar[type[PyWSGIHandler] | None]

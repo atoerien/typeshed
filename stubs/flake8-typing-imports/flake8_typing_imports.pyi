@@ -5,7 +5,6 @@ from typing import Any, Final, NamedTuple
 from typing_extensions import Self
 
 class Version(NamedTuple):
-    """Version(major, minor, patch)"""
     major: int = 0
     minor: int = 0
     patch: int = 0

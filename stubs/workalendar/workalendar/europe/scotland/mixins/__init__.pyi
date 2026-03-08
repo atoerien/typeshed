@@ -1,10 +1,3 @@
-"""
-Scotland calendar mixins.
-
-There are so many of them that it became necessary to move them to a different
-module.
-"""
-
 import datetime
 
 from .autumn_holiday import (
@@ -36,14 +29,10 @@ from .victoria_day import (
 )
 
 class LateSummer:
-    def get_variable_days(self, year: int) -> list[tuple[datetime.date, str]]:
-        """Add Late Summer holiday (First Monday of September)"""
-        ...
+    def get_variable_days(self, year: int) -> list[tuple[datetime.date, str]]: ...
 
 class BattleStirlingBridge:
-    def get_variable_days(self, year: int) -> list[tuple[datetime.date, str]]:
-        """Add Battle of Stirling Bridge holiday (Second Monday of September)"""
-        ...
+    def get_variable_days(self, year: int) -> list[tuple[datetime.date, str]]: ...
 
 class AyrGoldCup:
     def get_variable_days(self, year: int) -> list[tuple[datetime.date, str]]: ...

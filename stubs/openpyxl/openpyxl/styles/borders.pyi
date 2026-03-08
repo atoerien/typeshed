@@ -39,11 +39,6 @@ BORDER_THICK: Final = "thick"
 BORDER_THIN: Final = "thin"
 
 class Side(Serialisable):
-    """
-    Border options for use in styles.
-    Caution: if you do not specify a border_style, other attributes will
-    have no effect !
-    """
     color: ColorDescriptor[Literal[True]]
     style: NoneSet[_SideStyle]
     border_style: Alias
@@ -52,7 +47,6 @@ class Side(Serialisable):
     ) -> None: ...
 
 class Border(Serialisable):
-    """Border positioning for use in styles."""
     tagname: ClassVar[str]
     __elements__: ClassVar[tuple[str, ...]]
     start: Typed[Side, Literal[True]]

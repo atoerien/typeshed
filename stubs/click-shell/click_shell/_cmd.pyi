@@ -1,9 +1,3 @@
-"""
-click_shell._cmd
-
-This module overrides the builtin python cmd module
-"""
-
 from cmd import Cmd
 from collections.abc import Callable
 from typing import Any, ClassVar, TextIO
@@ -11,13 +5,6 @@ from typing import Any, ClassVar, TextIO
 import click
 
 class ClickCmd(Cmd):
-    """
-    A simple wrapper around the builtin python cmd module that:
-    1) makes completion work on OSX
-    2) uses a history file
-    3) uses click.echo instead of std*.write()
-    4) turns Cmd into a new-style python object :)
-    """
     nocommand: ClassVar[str]
     def __init__(
         self,

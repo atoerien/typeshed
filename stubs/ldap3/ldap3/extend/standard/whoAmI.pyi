@@ -1,5 +1,3 @@
-""""""
-
 from ...extend.operation import ExtendedOperation
 
 class WhoAmI(ExtendedOperation):

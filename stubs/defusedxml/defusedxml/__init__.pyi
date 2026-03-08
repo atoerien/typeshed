@@ -1,5 +1,3 @@
-"""Defuse XML bomb denial of service vulnerabilities"""
-
 from .common import (
     DefusedXmlException as DefusedXmlException,
     DTDForbidden as DTDForbidden,

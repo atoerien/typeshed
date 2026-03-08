@@ -1,5 +1,3 @@
-""""""
-
 from pyasn1.type.namedtype import NamedTypes
 from pyasn1.type.tag import TagSet
 from pyasn1.type.univ import Integer, OctetString, Sequence, SequenceOf

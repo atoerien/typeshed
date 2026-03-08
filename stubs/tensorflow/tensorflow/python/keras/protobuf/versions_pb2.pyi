@@ -58,8 +58,6 @@ class VersionDef(google.protobuf.message.Message):
     def ClearField(
         self,
         field_name: typing.Literal["bad_consumers", b"bad_consumers", "min_consumer", b"min_consumer", "producer", b"producer"],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___VersionDef = VersionDef

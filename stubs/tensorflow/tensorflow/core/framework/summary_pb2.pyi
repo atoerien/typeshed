@@ -48,9 +48,7 @@ class _DataClassEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._Enum
     have `tensor` set to a rank-1 tensor of bytestring dtype.
     """
 
-class DataClass(_DataClass, metaclass=_DataClassEnumTypeWrapper):
-    """A utility for finding the names of enum values."""
-    ...
+class DataClass(_DataClass, metaclass=_DataClassEnumTypeWrapper): ...
 
 DATA_CLASS_UNKNOWN: DataClass.ValueType  # 0
 """Unknown data class, used (implicitly) for legacy data. Will not be
@@ -84,9 +82,7 @@ class SummaryDescription(google.protobuf.message.Message):
     Supported values include "scalar", "histogram", "image", "audio"
     """
     def __init__(self, *, type_hint: builtins.str | None = ...) -> None: ...
-    def ClearField(self, field_name: typing.Literal["type_hint", b"type_hint"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["type_hint", b"type_hint"]) -> None: ...
 
 global___SummaryDescription = SummaryDescription
 
@@ -111,9 +107,7 @@ class SummaryMetadata(google.protobuf.message.Message):
         a binary serialized protocol buffer.
         """
         def __init__(self, *, plugin_name: builtins.str | None = ..., content: builtins.bytes | None = ...) -> None: ...
-        def ClearField(self, field_name: typing.Literal["content", b"content", "plugin_name", b"plugin_name"]) -> None:
-            """Clears a message field."""
-            ...
+        def ClearField(self, field_name: typing.Literal["content", b"content", "plugin_name", b"plugin_name"]) -> None: ...
 
     PLUGIN_DATA_FIELD_NUMBER: builtins.int
     DISPLAY_NAME_FIELD_NUMBER: builtins.int
@@ -141,9 +135,7 @@ class SummaryMetadata(google.protobuf.message.Message):
         summary_description: builtins.str | None = ...,
         data_class: global___DataClass.ValueType | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["plugin_data", b"plugin_data"]) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    def HasField(self, field_name: typing.Literal["plugin_data", b"plugin_data"]) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -156,9 +148,7 @@ class SummaryMetadata(google.protobuf.message.Message):
             "summary_description",
             b"summary_description",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___SummaryMetadata = SummaryMetadata
 
@@ -218,9 +208,7 @@ class Summary(google.protobuf.message.Message):
                 "width",
                 b"width",
             ],
-        ) -> None:
-            """Clears a message field."""
-            ...
+        ) -> None: ...
 
     @typing.final
     class Audio(google.protobuf.message.Message):
@@ -265,9 +253,7 @@ class Summary(google.protobuf.message.Message):
                 "sample_rate",
                 b"sample_rate",
             ],
-        ) -> None:
-            """Clears a message field."""
-            ...
+        ) -> None: ...
 
     @typing.final
     class Value(google.protobuf.message.Message):
@@ -341,9 +327,7 @@ class Summary(google.protobuf.message.Message):
                 "value",
                 b"value",
             ],
-        ) -> builtins.bool:
-            """Checks if a message field is set."""
-            ...
+        ) -> builtins.bool: ...
         def ClearField(
             self,
             field_name: typing.Literal[
@@ -368,14 +352,10 @@ class Summary(google.protobuf.message.Message):
                 "value",
                 b"value",
             ],
-        ) -> None:
-            """Clears a message field."""
-            ...
+        ) -> None: ...
         def WhichOneof(
             self, oneof_group: typing.Literal["value", b"value"]
-        ) -> typing.Literal["simple_value", "obsolete_old_style_histogram", "image", "histo", "audio", "tensor"] | None:
-            """Returns the name of the field set inside a oneof, or None if no field is set."""
-            ...
+        ) -> typing.Literal["simple_value", "obsolete_old_style_histogram", "image", "histo", "audio", "tensor"] | None: ...
 
     VALUE_FIELD_NUMBER: builtins.int
     @property
@@ -383,8 +363,6 @@ class Summary(google.protobuf.message.Message):
         """Set of values for the summary."""
 
     def __init__(self, *, value: collections.abc.Iterable[global___Summary.Value] | None = ...) -> None: ...
-    def ClearField(self, field_name: typing.Literal["value", b"value"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["value", b"value"]) -> None: ...
 
 global___Summary = Summary

@@ -11,16 +11,7 @@ class OAuth2Payload:
     @property
     def datalist(self) -> dict[str, list[Incomplete]]: ...
     @property
-    def client_id(self) -> str:
-        """
-        The authorization server issues the registered client a client
-        identifier -- a unique string representing the registration
-        information provided by the client. The value is extracted from
-        request.
-
-        :return: string
-        """
-        ...
+    def client_id(self) -> str: ...
     @property
     def response_type(self) -> str: ...
     @property

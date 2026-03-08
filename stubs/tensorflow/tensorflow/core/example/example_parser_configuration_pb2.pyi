@@ -48,9 +48,7 @@ class VarLenFeatureProto(google.protobuf.message.Message):
             "values_output_tensor_name",
             b"values_output_tensor_name",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___VarLenFeatureProto = VarLenFeatureProto
 
@@ -76,9 +74,7 @@ class FixedLenFeatureProto(google.protobuf.message.Message):
         default_value: tensorflow.core.framework.tensor_pb2.TensorProto | None = ...,
         values_output_tensor_name: builtins.str | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["default_value", b"default_value", "shape", b"shape"]) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    def HasField(self, field_name: typing.Literal["default_value", b"default_value", "shape", b"shape"]) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -91,9 +87,7 @@ class FixedLenFeatureProto(google.protobuf.message.Message):
             "values_output_tensor_name",
             b"values_output_tensor_name",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___FixedLenFeatureProto = FixedLenFeatureProto
 
@@ -118,22 +112,16 @@ class FeatureConfiguration(google.protobuf.message.Message):
         field_name: typing.Literal[
             "config", b"config", "fixed_len_feature", b"fixed_len_feature", "var_len_feature", b"var_len_feature"
         ],
-    ) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    ) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
             "config", b"config", "fixed_len_feature", b"fixed_len_feature", "var_len_feature", b"var_len_feature"
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
     def WhichOneof(
         self, oneof_group: typing.Literal["config", b"config"]
-    ) -> typing.Literal["fixed_len_feature", "var_len_feature"] | None:
-        """Returns the name of the field set inside a oneof, or None if no field is set."""
-        ...
+    ) -> typing.Literal["fixed_len_feature", "var_len_feature"] | None: ...
 
 global___FeatureConfiguration = FeatureConfiguration
 
@@ -151,12 +139,8 @@ class ExampleParserConfiguration(google.protobuf.message.Message):
         @property
         def value(self) -> global___FeatureConfiguration: ...
         def __init__(self, *, key: builtins.str | None = ..., value: global___FeatureConfiguration | None = ...) -> None: ...
-        def HasField(self, field_name: typing.Literal["value", b"value"]) -> builtins.bool:
-            """Checks if a message field is set."""
-            ...
-        def ClearField(self, field_name: typing.Literal["key", b"key", "value", b"value"]) -> None:
-            """Clears a message field."""
-            ...
+        def HasField(self, field_name: typing.Literal["value", b"value"]) -> builtins.bool: ...
+        def ClearField(self, field_name: typing.Literal["key", b"key", "value", b"value"]) -> None: ...
 
     FEATURE_MAP_FIELD_NUMBER: builtins.int
     @property
@@ -164,8 +148,6 @@ class ExampleParserConfiguration(google.protobuf.message.Message):
     def __init__(
         self, *, feature_map: collections.abc.Mapping[builtins.str, global___FeatureConfiguration] | None = ...
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["feature_map", b"feature_map"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["feature_map", b"feature_map"]) -> None: ...
 
 global___ExampleParserConfiguration = ExampleParserConfiguration

@@ -40,14 +40,10 @@ class TensorDescription(google.protobuf.message.Message):
     ) -> None: ...
     def HasField(
         self, field_name: typing.Literal["allocation_description", b"allocation_description", "shape", b"shape"]
-    ) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    ) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal["allocation_description", b"allocation_description", "dtype", b"dtype", "shape", b"shape"],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___TensorDescription = TensorDescription

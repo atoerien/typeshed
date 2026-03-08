@@ -1,21 +1,3 @@
-"""
-Support for dynamic COM client support.
-
-Introduction
- Dynamic COM client support is the ability to use a COM server without
- prior knowledge of the server.  This can be used to talk to almost all
- COM servers, including much of MS Office.
-
- In general, you should not use this module directly - see below.
-
-Example
- >>> import win32com.client
- >>> xl = win32com.client.Dispatch("Excel.Application")
- # The line above invokes the functionality of this class.
- # xl is now an object we can use to talk to Excel.
- >>> xl.Visible = 1 # The Excel window becomes visible.
-"""
-
 from _typeshed import Incomplete
 from typing import Any, Protocol, TypeVar, overload
 from typing_extensions import TypeAlias
@@ -67,15 +49,11 @@ def Dispatch(
     clsctx: int = ...,
 ) -> CDispatch: ...
 def MakeOleRepr(IDispatch, typeinfo, typecomp): ...
-def DumbDispatch(IDispatch, userName: Incomplete | None = ..., createClass: Incomplete | None = ..., clsctx=...):
-    """Dispatch with no type info"""
-    ...
+def DumbDispatch(IDispatch, userName: Incomplete | None = ..., createClass: Incomplete | None = ..., clsctx=...): ...
 
 class CDispatch:
     def __init__(self, IDispatch, olerepr, userName: Incomplete | None = ..., lazydata: Incomplete | None = ...) -> None: ...
-    def __call__(self, *args):
-        """Provide 'default dispatch' COM functionality - allow instance to be called"""
-        ...
+    def __call__(self, *args): ...
     def __bool__(self) -> bool: ...
     def __dir__(self): ...
     def __eq__(self, other): ...

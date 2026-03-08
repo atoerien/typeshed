@@ -31,9 +31,7 @@ class AutoParallelOptions(google.protobuf.message.Message):
     enable: builtins.bool
     num_replicas: builtins.int
     def __init__(self, *, enable: builtins.bool | None = ..., num_replicas: builtins.int | None = ...) -> None: ...
-    def ClearField(self, field_name: typing.Literal["enable", b"enable", "num_replicas", b"num_replicas"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["enable", b"enable", "num_replicas", b"num_replicas"]) -> None: ...
 
 global___AutoParallelOptions = AutoParallelOptions
 
@@ -47,9 +45,7 @@ class ScopedAllocatorOptions(google.protobuf.message.Message):
         """If present, only perform optimization for these ops."""
 
     def __init__(self, *, enable_op: collections.abc.Iterable[builtins.str] | None = ...) -> None: ...
-    def ClearField(self, field_name: typing.Literal["enable_op", b"enable_op"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["enable_op", b"enable_op"]) -> None: ...
 
 global___ScopedAllocatorOptions = ScopedAllocatorOptions
 
@@ -185,9 +181,7 @@ class RewriterConfig(google.protobuf.message.Message):
         HEURISTICS: RewriterConfig._MemOptType.ValueType  # 3
         """Use any combination of swapping and recomputation heuristics."""
 
-    class MemOptType(_MemOptType, metaclass=_MemOptTypeEnumTypeWrapper):
-        """A utility for finding the names of enum values."""
-        ...
+    class MemOptType(_MemOptType, metaclass=_MemOptTypeEnumTypeWrapper): ...
     DEFAULT_MEM_OPT: RewriterConfig.MemOptType.ValueType  # 0
     """The default setting (SCHEDULING and SWAPPING HEURISTICS only)"""
     NO_MEM_OPT: RewriterConfig.MemOptType.ValueType  # 1
@@ -232,12 +226,8 @@ class RewriterConfig(google.protobuf.message.Message):
             def __init__(
                 self, *, key: builtins.str | None = ..., value: tensorflow.core.framework.attr_value_pb2.AttrValue | None = ...
             ) -> None: ...
-            def HasField(self, field_name: typing.Literal["value", b"value"]) -> builtins.bool:
-                """Checks if a message field is set."""
-                ...
-            def ClearField(self, field_name: typing.Literal["key", b"key", "value", b"value"]) -> None:
-                """Clears a message field."""
-                ...
+            def HasField(self, field_name: typing.Literal["value", b"value"]) -> builtins.bool: ...
+            def ClearField(self, field_name: typing.Literal["key", b"key", "value", b"value"]) -> None: ...
 
         NAME_FIELD_NUMBER: builtins.int
         PARAMETER_MAP_FIELD_NUMBER: builtins.int
@@ -252,9 +242,7 @@ class RewriterConfig(google.protobuf.message.Message):
             name: builtins.str | None = ...,
             parameter_map: collections.abc.Mapping[builtins.str, tensorflow.core.framework.attr_value_pb2.AttrValue] | None = ...,
         ) -> None: ...
-        def ClearField(self, field_name: typing.Literal["name", b"name", "parameter_map", b"parameter_map"]) -> None:
-            """Clears a message field."""
-            ...
+        def ClearField(self, field_name: typing.Literal["name", b"name", "parameter_map", b"parameter_map"]) -> None: ...
 
     CPU_LAYOUT_CONVERSION_FIELD_NUMBER: builtins.int
     LAYOUT_OPTIMIZER_FIELD_NUMBER: builtins.int
@@ -516,9 +504,7 @@ class RewriterConfig(google.protobuf.message.Message):
             "scoped_allocator_opts",
             b"scoped_allocator_opts",
         ],
-    ) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    ) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -597,8 +583,6 @@ class RewriterConfig(google.protobuf.message.Message):
             "use_plugin_optimizers",
             b"use_plugin_optimizers",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___RewriterConfig = RewriterConfig

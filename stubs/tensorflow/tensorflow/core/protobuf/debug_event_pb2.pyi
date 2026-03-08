@@ -235,9 +235,7 @@ class DebugEvent(google.protobuf.message.Message):
             "what",
             b"what",
         ],
-    ) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    ) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -266,9 +264,7 @@ class DebugEvent(google.protobuf.message.Message):
             "what",
             b"what",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
     def WhichOneof(
         self, oneof_group: typing.Literal["what", b"what"]
     ) -> (
@@ -284,9 +280,7 @@ class DebugEvent(google.protobuf.message.Message):
             "debugged_device",
         ]
         | None
-    ):
-        """Returns the name of the field set inside a oneof, or None if no field is set."""
-        ...
+    ): ...
 
 global___DebugEvent = DebugEvent
 
@@ -323,9 +317,7 @@ class DebugMetadata(google.protobuf.message.Message):
         field_name: typing.Literal[
             "file_version", b"file_version", "tensorflow_version", b"tensorflow_version", "tfdbg_run_id", b"tfdbg_run_id"
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___DebugMetadata = DebugMetadata
 
@@ -357,9 +349,7 @@ class SourceFile(google.protobuf.message.Message):
     ) -> None: ...
     def ClearField(
         self, field_name: typing.Literal["file_path", b"file_path", "host_name", b"host_name", "lines", b"lines"]
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___SourceFile = SourceFile
 
@@ -386,12 +376,8 @@ class StackFrameWithId(google.protobuf.message.Message):
         id: builtins.str | None = ...,
         file_line_col: tensorflow.core.framework.graph_debug_info_pb2.GraphDebugInfo.FileLineCol | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["file_line_col", b"file_line_col"]) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
-    def ClearField(self, field_name: typing.Literal["file_line_col", b"file_line_col", "id", b"id"]) -> None:
-        """Clears a message field."""
-        ...
+    def HasField(self, field_name: typing.Literal["file_line_col", b"file_line_col"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["file_line_col", b"file_line_col", "id", b"id"]) -> None: ...
 
 global___StackFrameWithId = StackFrameWithId
 
@@ -420,9 +406,7 @@ class CodeLocation(google.protobuf.message.Message):
     ) -> None: ...
     def ClearField(
         self, field_name: typing.Literal["host_name", b"host_name", "stack_frame_ids", b"stack_frame_ids"]
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___CodeLocation = CodeLocation
 
@@ -480,9 +464,7 @@ class GraphOpCreation(google.protobuf.message.Message):
         code_location: global___CodeLocation | None = ...,
         output_tensor_ids: collections.abc.Iterable[builtins.int] | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["code_location", b"code_location"]) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    def HasField(self, field_name: typing.Literal["code_location", b"code_location"]) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -505,9 +487,7 @@ class GraphOpCreation(google.protobuf.message.Message):
             "output_tensor_ids",
             b"output_tensor_ids",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___GraphOpCreation = GraphOpCreation
 
@@ -569,9 +549,7 @@ class DebuggedGraph(google.protobuf.message.Message):
             "outer_context_id",
             b"outer_context_id",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___DebuggedGraph = DebuggedGraph
 
@@ -592,9 +570,7 @@ class DebuggedDevice(google.protobuf.message.Message):
     TODO(cais): Test the uniqueness guarantee in multi-host settings.
     """
     def __init__(self, *, device_name: builtins.str | None = ..., device_id: builtins.int | None = ...) -> None: ...
-    def ClearField(self, field_name: typing.Literal["device_id", b"device_id", "device_name", b"device_name"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["device_id", b"device_id", "device_name", b"device_name"]) -> None: ...
 
 global___DebuggedDevice = DebuggedDevice
 
@@ -670,9 +646,7 @@ class Execution(google.protobuf.message.Message):
         code_location: global___CodeLocation | None = ...,
         output_tensor_device_ids: collections.abc.Iterable[builtins.int] | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["code_location", b"code_location"]) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    def HasField(self, field_name: typing.Literal["code_location", b"code_location"]) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -695,9 +669,7 @@ class Execution(google.protobuf.message.Message):
             "tensor_protos",
             b"tensor_protos",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___Execution = Execution
 
@@ -752,9 +724,7 @@ class GraphExecutionTrace(google.protobuf.message.Message):
         tensor_proto: tensorflow.core.framework.tensor_pb2.TensorProto | None = ...,
         device_name: builtins.str | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["tensor_proto", b"tensor_proto"]) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    def HasField(self, field_name: typing.Literal["tensor_proto", b"tensor_proto"]) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -771,8 +741,6 @@ class GraphExecutionTrace(google.protobuf.message.Message):
             "tfdbg_context_id",
             b"tfdbg_context_id",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___GraphExecutionTrace = GraphExecutionTrace

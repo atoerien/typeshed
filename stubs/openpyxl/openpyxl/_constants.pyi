@@ -1,5 +1,3 @@
-"""Package metadata"""
-
 __author__: str
 __author_email__: str
 __license__: str

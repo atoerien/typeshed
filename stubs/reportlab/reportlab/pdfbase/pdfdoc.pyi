@@ -1,16 +1,3 @@
-"""
-The module pdfdoc.py handles the 'outer structure' of PDF documents, ensuring that
-all objects are properly cross-referenced and indexed to the nearest byte.  The
-'inner structure' - the page descriptions - are presumed to be generated before
-each page is saved.
-pdfgen.py calls this and provides a 'canvas' object to handle page marking operators.
-piddlePDF calls pdfgen and offers a high-level interface.
-
-The classes within this generally mirror structures in the PDF file
-and are not part of any public interface.  Instead, canvas and font
-classes are made available elsewhere for users to manipulate.
-"""
-
 from _typeshed import Incomplete
 from abc import abstractmethod
 from collections.abc import Callable, Iterable, Mapping
@@ -31,21 +18,13 @@ PDF_VERSION_DEFAULT: Final[tuple[int, int]]
 PDF_SUPPORT_VERSION: Final[Mapping[str, tuple[int, int]]]
 
 def pdfdocEnc(x: str | _T) -> bytes | _T: ...
-def format(element, document, toplevel: bool | Literal[0, 1] = 0):
-    """
-    Indirection step for formatting.
-    Ensures that document parameters alter behaviour
-    of formatting for all elements.
-    """
-    ...
+def format(element, document, toplevel: bool | Literal[0, 1] = 0): ...
 def xObjectName(externalname: str) -> str: ...
 
 formName = xObjectName
 
 class NoEncryption:
-    def encode(self, t):
-        """encode a string, stream, text"""
-        ...
+    def encode(self, t): ...
     def prepare(self, document) -> None: ...
     def register(self, objnum, version) -> None: ...
     def info(self) -> None: ...
@@ -53,7 +32,6 @@ class NoEncryption:
 class PDFObject: ...
 
 class DummyDoc(PDFObject):
-    """used to bypass encryption when required"""
     encrypt: NoEncryption
 
 class PDFDocument(PDFObject):
@@ -84,79 +62,37 @@ class PDFDocument(PDFObject):
     ) -> None: ...
     compression: bool | Literal[0, 1] | None
     def setCompression(self, onoff: bool | Literal[0, 1] | None) -> None: ...
-    def ensureMinPdfVersion(self, *keys: str) -> None:
-        """Ensure that the pdf version is greater than or equal to that specified by the keys"""
-        ...
-    def updateSignature(self, thing) -> None:
-        """add information to the signature"""
-        ...
-    def ID(self) -> bytes:
-        """A unique fingerprint for the file (unless in invariant mode)"""
-        ...
+    def ensureMinPdfVersion(self, *keys: str) -> None: ...
+    def updateSignature(self, thing) -> None: ...
+    def ID(self) -> bytes: ...
     def SaveToFile(self, filename, canvas) -> None: ...
     def GetPDFData(self, canvas) -> bytes: ...
-    def inPage(self) -> None:
-        """specify the current object as a page (enables reference binding and other page features)"""
-        ...
-    def inForm(self) -> None:
-        """specify that we are in a form xobject (disable page features, etc)"""
-        ...
+    def inPage(self) -> None: ...
+    def inForm(self) -> None: ...
     def getInternalFontName(self, psfontname: str): ...
     def thisPageName(self) -> str: ...
     def thisPageRef(self) -> PDFObjectReference: ...
     def addPage(self, page) -> None: ...
-    def addForm(self, name, form) -> None:
-        """add a Form XObject."""
-        ...
+    def addForm(self, name, form) -> None: ...
     def annotationName(self, externalname) -> str: ...
     def addAnnotation(self, name, annotation) -> None: ...
     def refAnnotation(self, name) -> PDFObjectReference: ...
     def addShading(self, shading) -> str: ...
     def addColor(self, cmyk) -> tuple[Incomplete, Incomplete]: ...
-    def setTitle(self, title) -> None:
-        """embeds in PDF file"""
-        ...
-    def setAuthor(self, author) -> None:
-        """embedded in PDF file"""
-        ...
-    def setSubject(self, subject) -> None:
-        """embeds in PDF file"""
-        ...
-    def setCreator(self, creator) -> None:
-        """embeds in PDF file"""
-        ...
-    def setProducer(self, producer) -> None:
-        """embeds in PDF file"""
-        ...
-    def setKeywords(self, keywords) -> None:
-        """embeds a string containing keywords in PDF file"""
-        ...
+    def setTitle(self, title) -> None: ...
+    def setAuthor(self, author) -> None: ...
+    def setSubject(self, subject) -> None: ...
+    def setCreator(self, creator) -> None: ...
+    def setProducer(self, producer) -> None: ...
+    def setKeywords(self, keywords) -> None: ...
     def setDateFormatter(self, dateFormatter) -> None: ...
     def getAvailableFonts(self) -> list[Incomplete]: ...
     __accum__: PDFFile
     def format(self) -> bytes: ...
-    def hasForm(self, name: str) -> bool:
-        """test for existence of named form"""
-        ...
-    def getFormBBox(self, name: str, boxType: str = "MediaBox"):
-        """
-        get the declared bounding box of the form as a list.
-        If you specify a different PDF box definition (e.g. the
-        ArtBox) and it has one, that's what you'll get.
-        """
-        ...
-    def getXObjectName(self, name: str) -> str:
-        """
-        Lets canvas find out what form is called internally.
-        Never mind whether it is defined yet or not.
-        """
-        ...
-    def xobjDict(self, formnames: Iterable[str]) -> PDFDictionary:
-        """
-        construct an xobject dict (for inclusion in a resource dict, usually)
-        from a list of form names (images not yet supported)
-        """
-        ...
+    def hasForm(self, name: str) -> bool: ...
+    def getFormBBox(self, name: str, boxType: str = "MediaBox"): ...
+    def getXObjectName(self, name: str) -> str: ...
+    def xobjDict(self, formnames: Iterable[str]) -> PDFDictionary: ...
     def Reference(self, obj, name=None): ...
 
 PDFtrue: Final = "true"
@@ -176,16 +112,7 @@ class PDFString(PDFObject):
     s: str | bytes
     escape: int
     enc: str
-    def __init__(self, s: str | bytes | PDFString, escape: int = 1, enc: str = "auto") -> None:
-        """
-        s can be unicode/utf8 or a PDFString
-        if escape is true then the output will be passed through escape
-        if enc is raw then bytes will be left alone
-        if enc is auto we'll try and automatically adapt to utf_16_be/utf_16_le if the
-        effective string is not entirely in pdfdoc
-        if self.unicodeEncValid unicode will use the specifed encoding
-        """
-        ...
+    def __init__(self, s: str | bytes | PDFString, escape: int = 1, enc: str = "auto") -> None: ...
     def format(self, document) -> bytes: ...
 
 def PDFName(data, lo="!", hi="~") -> str: ...
@@ -193,9 +120,7 @@ def PDFName(data, lo="!", hi="~") -> str: ...
 class PDFDictionary(PDFObject):
     multiline: bool
     dict: Incomplete
-    def __init__(self, dict=None) -> None:
-        """dict should be namestring to value eg "a": 122 NOT pdfname to value NOT "/a":122"""
-        ...
+    def __init__(self, dict=None) -> None: ...
     def __setitem__(self, name, value) -> None: ...
     def __getitem__(self, a): ...
     def __contains__(self, a) -> bool: ...
@@ -239,7 +164,6 @@ class PDFStreamFilterBase85Encode:
 PDFBase85Encode: PDFStreamFilterBase85Encode
 
 class PDFStream(PDFObject):
-    """set dictionary elements explicitly stream.dictionary[name]=value"""
     __RefOnly__: int
     dictionary: Incomplete
     content: Incomplete
@@ -255,9 +179,7 @@ class PDFArray(PDFObject):
     multiline: bool
     sequence: list[Incomplete]
     def __init__(self, sequence) -> None: ...
-    def References(self, document) -> None:
-        """make all objects in sequence references"""
-        ...
+    def References(self, document) -> None: ...
     def format(self, document, IND: bytes = b"\n ") -> bytes: ...
 
 class PDFArrayCompact(PDFArray):
@@ -281,18 +203,14 @@ class PDFFile(PDFObject):
     offset: int
     def __init__(self, pdfVersion: tuple[int, int] = (1, 3)) -> None: ...
     def closeOrReset(self) -> None: ...
-    def add(self, s) -> int:
-        """should be constructed as late as possible, return position where placed"""
-        ...
+    def add(self, s) -> int: ...
     def format(self, document) -> bytes: ...
 
 class PDFCrossReferenceSubsection(PDFObject):
     firstentrynumber: Incomplete
     idsequence: Incomplete
     def __init__(self, firstentrynumber, idsequence) -> None: ...
-    def format(self, document) -> bytes:
-        """id sequence should represent contiguous object nums else error. free numbers not supported (yet)"""
-        ...
+    def format(self, document) -> bytes: ...
 
 class PDFCrossReferenceTable(PDFObject):
     sections: list[PDFCrossReferenceSubsection]
@@ -318,12 +236,9 @@ class PDFCatalog(PDFObject):
     def setPageLayout(self, layout) -> None: ...
     PageMode: Incomplete
     def setPageMode(self, mode) -> None: ...
-    def check_format(self, document) -> None:
-        """for use in subclasses"""
-        ...
+    def check_format(self, document) -> None: ...
 
 class PDFPages(PDFCatalog):
-    """PAGES TREE WITH ONE INTERNAL NODE, FOR "BALANCING" CHANGE IMPLEMENTATION"""
     __Comment__: str
     __RefOnly__: int
     __Defaults__: Incomplete
@@ -372,22 +287,7 @@ class PDFPageLabels(PDFCatalog):
     __Refs__: Incomplete
     labels: Incomplete
     def __init__(self) -> None: ...
-    def addPageLabel(self, page, label) -> None:
-        """
-        Adds a new PDFPageLabel to this catalog.
-        The 'page' argument, an integer, is the page number in the PDF document
-        with which the 'label' should be associated. Page numbering in the PDF
-        starts at zero! Thus, to change the label on the first page, '0' should be
-        provided as an argument, and to change the 6th page, '5' should be provided
-        as the argument.
-
-        The 'label' argument should be a PDFPageLabel instance, which describes the
-        format of the labels starting on page 'page' in the PDF and continuing
-        until the next encounter of a PDFPageLabel.
-
-        The order in which labels are added is not important.
-        """
-        ...
+    def addPageLabel(self, page, label) -> None: ...
     Nums: Incomplete
     def format(self, document) -> bytes: ...
 
@@ -405,56 +305,7 @@ class PDFPageLabel(PDFCatalog):
     S: Incomplete
     St: Incomplete
     P: Incomplete
-    def __init__(self, style=None, start=None, prefix=None) -> None:
-        """
-        A PDFPageLabel changes the style of page numbering as displayed in a PDF
-        viewer. PDF page labels have nothing to do with 'physical' page numbers
-        printed on a canvas, but instead influence the 'logical' page numbers
-        displayed by PDF viewers. However, when using roman numerals (i, ii,
-        iii...) or page prefixes for appendecies (A.1, A.2...) on the physical
-        pages PDF page labels are necessary to change the logical page numbers
-        displayed by the PDF viewer to match up with the physical numbers. A
-        PDFPageLabel changes the properties of numbering at the page on which it
-        appears (see the class 'PDFPageLabels' for specifying where a PDFPageLabel
-        is associated) and all subsequent pages, until a new PDFPageLabel is
-        encountered.
-
-        The arguments to this initialiser determine the properties of all
-        subsequent page labels. 'style' determines the numberings style, arabic,
-        roman, letters; 'start' specifies the starting number; and 'prefix' any
-        prefix to be applied to the page numbers. All these arguments can be left
-        out or set to None.
-
-        * style:
-
-            - None:                       No numbering, can be used to display the prefix only.
-            - PDFPageLabel.ARABIC:        Use arabic numbers: 1, 2, 3, 4...
-            - PDFPageLabel.ROMAN_UPPER:   Use upper case roman numerals: I, II, III...
-            - PDFPageLabel.ROMAN_LOWER:   Use lower case roman numerals: i, ii, iii...
-            - PDFPageLabel.LETTERS_UPPER: Use upper case letters: A, B, C, D...
-            - PDFPageLabel.LETTERS_LOWER: Use lower case letters: a, b, c, d...
-
-        * start:
-
-            -   An integer specifying the starting number for this PDFPageLabel. This
-                can be used when numbering style changes to reset the page number back
-                to one, ie from roman to arabic, or from arabic to appendecies. Can be
-                any positive integer or None. I'm not sure what the effect of
-                specifying None is, probably that page numbering continues with the
-                current sequence, I'd have to check the spec to clarify though.
-
-        * prefix:
-
-            -   A string which is prefixed to the page numbers. Can be used to display
-                appendecies in the format: A.1, A.2, ..., B.1, B.2, ... where a
-                PDFPageLabel is used to set the properties for the first page of each
-                appendix to restart the page numbering at one and set the prefix to the
-                appropriate letter for current appendix. The prefix can also be used to
-                display text only, if the 'style' is set to None. This can be used to
-                display strings such as 'Front', 'Back', or 'Cover' for the covers on
-                books.
-        """
-        ...
+    def __init__(self, style=None, start=None, prefix=None) -> None: ...
     def __lt__(self, oth): ...
 
 def testpage(document) -> None: ...
@@ -468,7 +319,6 @@ class PDFOutlines0(PDFObject):
     def format(self, document) -> bytes: ...
 
 class OutlineEntryObject(PDFObject):
-    """an entry in an outline"""
     Title: Incomplete
     Dest: Incomplete
     Parent: Incomplete
@@ -480,23 +330,6 @@ class OutlineEntryObject(PDFObject):
     def format(self, document) -> bytes: ...
 
 class PDFOutlines(PDFObject):
-    """
-    takes a recursive list of outline destinations like::
-
-        out = PDFOutline1()
-        out.setNames(canvas, # requires canvas for name resolution
-        "chapter1dest",
-        ("chapter2dest",
-        ["chapter2section1dest",
-        "chapter2section2dest",
-        "chapter2conclusiondest"]
-        ), # end of chapter2 description
-        "chapter3dest",
-        ("chapter4dest", ["c4s1", "c4s2"])
-        )
-
-    Higher layers may build this structure incrementally. KISS at base level.
-    """
     mydestinations: Incomplete
     ready: int | None
     counter: int
@@ -507,38 +340,23 @@ class PDFOutlines(PDFObject):
     buildtree: Incomplete
     closedict: Incomplete
     def __init__(self) -> None: ...
-    def addOutlineEntry(self, destinationname, level: int = 0, title=None, closed=None) -> None:
-        """destinationname of None means "close the tree" """
-        ...
+    def addOutlineEntry(self, destinationname, level: int = 0, title=None, closed=None) -> None: ...
     def setDestinations(self, destinationtree) -> None: ...
     def format(self, document) -> bytes: ...
     def setNames(self, canvas, *nametree) -> None: ...
-    def setNameList(self, canvas, nametree) -> None:
-        """Explicit list so I don't need to do in the caller"""
-        ...
-    def translateNames(self, canvas, object):
-        """recursively translate tree of names into tree of destinations"""
-        ...
+    def setNameList(self, canvas, nametree) -> None: ...
+    def translateNames(self, canvas, object): ...
     first: Incomplete
     last: Incomplete
     count: int
-    def prepare(self, document, canvas) -> None:
-        """prepare all data structures required for save operation (create related objects)"""
-        ...
+    def prepare(self, document, canvas) -> None: ...
     def maketree(
         self, document, destinationtree, Parent=None, toplevel: bool | Literal[0, 1] = 0
     ) -> tuple[Incomplete, Incomplete]: ...
 
-def count(tree, closedict=None) -> int:
-    """utility for outline: recursively count leaves in a tuple/list tree"""
-    ...
+def count(tree, closedict=None) -> int: ...
 
 class PDFInfo(PDFObject):
-    """
-    PDF documents can have basic information embedded, viewable from
-    File | Document Info in Acrobat Reader.  If this is wrong, you get
-    Postscript errors while printing, even though it does not print.
-    """
     producer: Incomplete
     creator: str
     title: str
@@ -549,18 +367,13 @@ class PDFInfo(PDFObject):
     def __init__(self) -> None: ...
     def digest(self, md5object) -> None: ...
     def format(self, document) -> bytes: ...
-    def copy(self):
-        """shallow copy - useful in pagecatchering"""
-        ...
+    def copy(self): ...
 
 class Annotation(PDFObject):
-    """superclass for all annotations."""
     defaults: Incomplete
     required: tuple[str, ...]
     permitted: tuple[str, ...]
-    def cvtdict(self, d: dict[str, Incomplete], escape: int = 1) -> dict[str, Incomplete]:
-        """transform dict args from python form to pdf string rep as needed"""
-        ...
+    def cvtdict(self, d: dict[str, Incomplete], escape: int = 1) -> dict[str, Incomplete]: ...
     def AnnotationDict(self, **kw) -> PDFDictionary: ...
     @abstractmethod
     def Dict(self) -> PDFDictionary: ...
@@ -587,14 +400,6 @@ class LinkAnnotation(Annotation):
     def Dict(self) -> PDFDictionary: ...
 
 class HighlightAnnotation(Annotation):
-    """
-    HighlightAnnotation is an annotation that highlights the selected area.
-
-    Rect is the mouseover area that will show the contents.
-
-    QuadPoints is a list of points to highlight, you can have many groups of
-    four QuadPoints to allow highlighting many lines.
-    """
     permitted: tuple[str, ...]
     Rect: Incomplete
     Contents: Incomplete
@@ -602,9 +407,7 @@ class HighlightAnnotation(Annotation):
     QuadPoints: Incomplete
     Color: Incomplete
     def __init__(self, Rect, Contents, QuadPoints, Color=[0.83, 0.89, 0.95], **kw) -> None: ...
-    def cvtdict(self, d: dict[str, Incomplete], escape: int = 1) -> dict[str, Incomplete]:
-        """transform dict args from python form to pdf string rep as needed"""
-        ...
+    def cvtdict(self, d: dict[str, Incomplete], escape: int = 1) -> dict[str, Incomplete]: ...
     def Dict(self) -> PDFDictionary: ...
 
 class TextAnnotation(HighlightAnnotation):
@@ -612,9 +415,7 @@ class TextAnnotation(HighlightAnnotation):
     def __init__(self, Rect, Contents, **kw) -> None: ...
     def Dict(self) -> PDFDictionary: ...
 
-def rect_to_quad(Rect) -> list[Incomplete]:
-    """Utility method to convert a Rect to a QuadPoint"""
-    ...
+def rect_to_quad(Rect) -> list[Incomplete]: ...
 
 class PDFRectangle(PDFObject):
     def __init__(self, llx, lly, urx, ury) -> None: ...
@@ -626,21 +427,6 @@ class PDFDate(PDFObject):
     def format(self, doc) -> bytes: ...
 
 class Destination(PDFObject):
-    """
-    not a PDFObject!  This is a placeholder that can delegates
-    to a pdf object only after it has been defined by the methods
-    below.
-
-    EG a Destination can refer to Appendix A before it has been
-    defined, but only if Appendix A is explicitly noted as a destination
-    and resolved before the document is generated...
-
-    For example the following sequence causes resolution before doc generation.
-        d = Destination()
-        d.fit() # or other format defining method call
-        d.setPage(p)
-        (at present setPageRef is called on generation of the page).
-    """
     representation: None
     page: None
     name: Incomplete
@@ -706,7 +492,6 @@ class PDFDestinationFitR(PDFObject):
     def format(self, document) -> bytes: ...
 
 class PDFResourceDictionary(PDFObject):
-    """each element *could* be reset to a reference if desired"""
     ProcSet: Incomplete
     def __init__(self, **kwds) -> None: ...
     stdprocs: Incomplete
@@ -720,7 +505,6 @@ class PDFResourceDictionary(PDFObject):
     def format(self, document) -> bytes: ...
 
 class PDFType1Font(PDFObject):
-    """no init: set attributes explicitly"""
     __RefOnly__: int
     name_attributes: Incomplete
     Type: str
@@ -747,13 +531,10 @@ class PDFFormXObject(PDFObject):
     uppery: Incomplete
     def __init__(self, lowerx, lowery, upperx, uppery) -> None: ...
     def setStreamList(self, data) -> None: ...
-    def BBoxList(self) -> list[Incomplete]:
-        """get the declared bounding box for the form as a list"""
-        ...
+    def BBoxList(self) -> list[Incomplete]: ...
     def format(self, document) -> bytes: ...
 
 class PDFPostScriptXObject(PDFObject):
-    """For embedding PD (e.g. tray commands) in PDF"""
     content: Incomplete
     def __init__(self, content=None) -> None: ...
     def format(self, document) -> bytes: ...
@@ -770,9 +551,7 @@ class PDFImageXObject(PDFObject):
     def loadImageFromA85(self, source) -> None: ...
     def loadImageFromJPEG(self, imageFile) -> bool: ...
     def loadImageFromRaw(self, source) -> None: ...
-    def loadImageFromSRC(self, im) -> None:
-        """Extracts the stream, width and height"""
-        ...
+    def loadImageFromSRC(self, im) -> None: ...
     def format(self, document) -> bytes: ...
 
 class PDFSeparationCMYKColor:
@@ -781,7 +560,6 @@ class PDFSeparationCMYKColor:
     def value(self) -> PDFArrayCompact: ...
 
 class PDFFunction(PDFObject):
-    """superclass for all function types."""
     defaults: Incomplete
     required: tuple[str, ...]
     permitted: tuple[str, ...]
@@ -812,7 +590,6 @@ class PDFStitchingFunction(PDFFunction):
     def Dict(self, document) -> PDFDictionary: ...
 
 class PDFShading(PDFObject):
-    """superclass for all shading types."""
     required: tuple[str, ...]
     permitted: tuple[str, ...]
     def ShadingDict(self, **kw) -> PDFDictionary: ...

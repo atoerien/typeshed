@@ -171,12 +171,9 @@ class CustomFilter(Serialisable):
     val: String[Literal[False]]
     operator: Set[_CustomFilterOperator]
     def __init__(self, operator: _CustomFilterOperator = "equal", val: str | None = None) -> None: ...
-    def convert(self) -> BlankFilter | NumberFilter | StringFilter:
-        """Convert to more specific filter"""
-        ...
+    def convert(self) -> BlankFilter | NumberFilter | StringFilter: ...
 
 class BlankFilter(CustomFilter):
-    """Exclude blanks"""
     def __init__(self, **kw: Unused) -> None: ...
     @property
     def operator(self) -> Literal["notEqual"]: ...  # type: ignore[override]
@@ -315,25 +312,5 @@ class AutoFilter(Serialisable):
     __elements__: ClassVar[tuple[str, ...]]
     def __init__(self, ref=None, filterColumn=(), sortState: SortState | None = None, extLst: Unused = None) -> None: ...
     def __bool__(self) -> bool: ...
-    def add_filter_column(self, col_id, vals, blank: bool = False) -> None:
-        """
-        Add row filter for specified column.
-
-        :param col_id: Zero-origin column id. 0 means first column.
-        :type  col_id: int
-        :param vals: Value list to show.
-        :type  vals: str[]
-        :param blank: Show rows that have blank cell if True (default=``False``)
-        :type  blank: bool
-        """
-        ...
-    def add_sort_condition(self, ref, descending: bool = False) -> None:
-        """
-        Add sort condition for cpecified range of cells.
-
-        :param ref: range of the cells (e.g. 'A2:A150')
-        :type  ref: string, is the same as that of the filter
-        :param descending: Descending sort order (default=``False``)
-        :type  descending: bool
-        """
-        ...
+    def add_filter_column(self, col_id, vals, blank: bool = False) -> None: ...
+    def add_sort_condition(self, ref, descending: bool = False) -> None: ...

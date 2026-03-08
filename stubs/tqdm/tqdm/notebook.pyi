@@ -1,13 +1,3 @@
-"""
-IPython/Jupyter Notebook progressbar decorator for iterators.
-Includes a default `range` iterator printing to `stderr`.
-
-Usage:
->>> from tqdm.notebook import trange, tqdm
->>> for i in trange(10):
-...     ...
-"""
-
 from _typeshed import Incomplete, SupportsWrite
 from collections.abc import Iterable, Iterator, Mapping
 from typing import NoReturn, TypeVar, overload
@@ -19,13 +9,10 @@ __all__ = ["tqdm_notebook", "tnrange", "tqdm", "trange"]
 _T = TypeVar("_T")
 
 class tqdm_notebook(std_tqdm[_T]):
-    """Experimental IPython/Jupyter Notebook widget using tqdm!"""
     @staticmethod
     def status_printer(
         _: SupportsWrite[str] | None, total: float | None = None, desc: str | None = None, ncols: int | None = None
-    ):
-        """Manage the printing of an IPython/Jupyter Notebook progress bar widget."""
-        ...
+    ): ...
     displayed: bool
     def display(
         self,
@@ -72,16 +59,7 @@ class tqdm_notebook(std_tqdm[_T]):
         delay: float | None = ...,
         display: bool = ...,
         **kwargs,
-    ) -> None:
-        """
-        Supports the usual `tqdm.tqdm` parameters as well as those listed below.
-
-        Parameters
-        ----------
-        display  : Whether to call `display(self.container)` immediately
-            [default: True].
-        """
-        ...
+    ) -> None: ...
     @overload
     def __init__(
         self: tqdm_notebook[NoReturn],
@@ -112,31 +90,12 @@ class tqdm_notebook(std_tqdm[_T]):
         delay: float | None = ...,
         display: bool = ...,
         **kwargs,
-    ) -> None:
-        """
-        Supports the usual `tqdm.tqdm` parameters as well as those listed below.
-
-        Parameters
-        ----------
-        display  : Whether to call `display(self.container)` immediately
-            [default: True].
-        """
-        ...
+    ) -> None: ...
     def __iter__(self) -> Iterator[_T]: ...
     def update(self, n: int = 1): ...  # type: ignore[override]
     def close(self) -> None: ...
     def clear(self, *_, **__) -> None: ...
-    def reset(self, total: float | None = None):
-        """
-        Resets to 0 iterations for repeated use.
-
-        Consider combining with `leave=True`.
-
-        Parameters
-        ----------
-        total  : int or float, optional. Total to use for the new bar.
-        """
-        ...
+    def reset(self, total: float | None = None): ...
 
 tqdm = tqdm_notebook
 tnrange = trange

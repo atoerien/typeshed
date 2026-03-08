@@ -7,7 +7,6 @@ from typing import Any, NamedTuple
 # it was decided to store the correct named tuples inside platform-specific files.
 
 class sswap(NamedTuple):
-    """sswap(total, used, free, percent, sin, sout)"""
     total: int
     used: int
     free: int
@@ -16,7 +15,6 @@ class sswap(NamedTuple):
     sout: int
 
 class sdiskusage(NamedTuple):
-    """sdiskusage(total, used, free, percent)"""
     total: int
     used: int
     free: int
@@ -25,7 +23,6 @@ class sdiskusage(NamedTuple):
 # redefine for linux:
 if sys.platform != "linux":
     class sdiskio(NamedTuple):
-        """sdiskio(read_count, write_count, read_bytes, write_bytes, read_time, write_time, read_merged_count, write_merged_count, busy_time)"""
         read_count: int
         write_count: int
         read_bytes: int
@@ -34,14 +31,12 @@ if sys.platform != "linux":
         write_time: int
 
 class sdiskpart(NamedTuple):
-    """sdiskpart(device, mountpoint, fstype, opts)"""
     device: str
     mountpoint: str
     fstype: str
     opts: str
 
 class snetio(NamedTuple):
-    """snetio(bytes_sent, bytes_recv, packets_sent, packets_recv, errin, errout, dropin, dropout)"""
     bytes_sent: int
     bytes_recv: int
     packets_sent: int
@@ -52,7 +47,6 @@ class snetio(NamedTuple):
     dropout: int
 
 class suser(NamedTuple):
-    """suser(name, terminal, host, started, pid)"""
     name: str
     terminal: str | None
     host: str | None
@@ -60,7 +54,6 @@ class suser(NamedTuple):
     pid: str
 
 class sconn(NamedTuple):
-    """sconn(fd, family, type, laddr, raddr, status, pid)"""
     fd: int
     family: AddressFamily
     type: SocketKind
@@ -70,7 +63,6 @@ class sconn(NamedTuple):
     pid: int | None
 
 class snicaddr(NamedTuple):
-    """snicaddr(family, address, netmask, broadcast, ptp)"""
     family: AddressFamily
     address: str
     netmask: str | None
@@ -78,7 +70,6 @@ class snicaddr(NamedTuple):
     ptp: str | None
 
 class snicstats(NamedTuple):
-    """snicstats(isup, duplex, speed, mtu, flags)"""
     isup: bool
     duplex: int
     speed: int
@@ -86,33 +77,28 @@ class snicstats(NamedTuple):
     flags: str
 
 class scpustats(NamedTuple):
-    """scpustats(ctx_switches, interrupts, soft_interrupts, syscalls)"""
     ctx_switches: int
     interrupts: int
     soft_interrupts: int
     syscalls: int
 
 class scpufreq(NamedTuple):
-    """scpufreq(current, min, max)"""
     current: float
     min: float
     max: float
 
 class shwtemp(NamedTuple):
-    """shwtemp(label, current, high, critical)"""
     label: str
     current: float
     high: float | None
     critical: float | None
 
 class sbattery(NamedTuple):
-    """sbattery(percent, secsleft, power_plugged)"""
     percent: int
     secsleft: int
     power_plugged: bool
 
 class sfan(NamedTuple):
-    """sfan(label, current)"""
     label: str
     current: int
 
@@ -125,38 +111,32 @@ if sys.platform == "win32":
 else:
     # if LINUX or MACOS or BSD:
     class pheap(NamedTuple):
-        """pheap(heap_used, mmap_used)"""
         heap_used: Incomplete
         mmap_used: Incomplete
 
 # redefine for linux:
 if sys.platform != "linux":
     class pcputimes(NamedTuple):
-        """pcputimes(user, system, children_user, children_system, iowait)"""
         user: float
         system: float
         children_user: float
         children_system: float
 
     class popenfile(NamedTuple):
-        """popenfile(path, fd, position, mode, flags)"""
         path: str
         fd: int
 
 class pthread(NamedTuple):
-    """pthread(id, user_time, system_time)"""
     id: int
     user_time: float
     system_time: float
 
 class puids(NamedTuple):
-    """puids(real, effective, saved)"""
     real: int
     effective: int
     saved: int
 
 class pgids(NamedTuple):
-    """pgids(real, effective, saved)"""
     real: int
     effective: int
     saved: int
@@ -164,24 +144,20 @@ class pgids(NamedTuple):
 # redefine for linux and windows:
 if sys.platform != "linux" and sys.platform != "win32":
     class pio(NamedTuple):
-        """pio(read_count, write_count, read_bytes, write_bytes, read_chars, write_chars)"""
         read_count: int
         write_count: int
         read_bytes: int
         write_bytes: int
 
 class pionice(NamedTuple):
-    """pionice(ioclass, value)"""
     ioclass: int
     value: int
 
 class pctxsw(NamedTuple):
-    """pctxsw(voluntary, involuntary)"""
     voluntary: int
     involuntary: int
 
 class pconn(NamedTuple):
-    """pconn(fd, family, type, laddr, raddr, status)"""
     fd: int
     family: AddressFamily
     type: SocketKind
@@ -190,7 +166,6 @@ class pconn(NamedTuple):
     status: str
 
 class addr(NamedTuple):
-    """addr(ip, port)"""
     ip: str
     port: int
 
@@ -404,12 +379,6 @@ else:
 
     scputimes = Incomplete
 
-    class pmem(Any):
-        """pmem(rss, vms, shared, text, lib, data, dirty)"""
-        ...
-    class pfullmem(Any):
-        """pfullmem(rss, vms, shared, text, lib, data, dirty, uss, pss, swap)"""
-        ...
-    class svmem(Any):
-        """svmem(total, available, percent, used, free, active, inactive, buffers, cached, shared, slab)"""
-        ...
+    class pmem(Any): ...
+    class pfullmem(Any): ...
+    class svmem(Any): ...

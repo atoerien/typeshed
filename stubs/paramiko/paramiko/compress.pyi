@@ -1,5 +1,3 @@
-"""Compression implementations for a Transport."""
-
 from _typeshed import ReadableBuffer
 from zlib import _Compress, _Decompress
 

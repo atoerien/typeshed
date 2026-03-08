@@ -22,9 +22,7 @@ class _GuessesResult(TypedDict):
     guesses_log10: float
     sequence: list[_Match]
 
-def nCk(n: int, k: int) -> float:
-    """http://blog.plover.com/math/choose.html"""
-    ...
+def nCk(n: int, k: int) -> float: ...
 def most_guessable_match_sequence(
     password: str, matches: Iterable[_Match], _exclude_additive: bool = False
 ) -> _GuessesResult: ...

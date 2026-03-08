@@ -1,5 +1,3 @@
-"""Unidiff parsing library."""
-
 from unidiff.patch import (
     DEFAULT_ENCODING as DEFAULT_ENCODING,
     LINE_TYPE_ADDED as LINE_TYPE_ADDED,

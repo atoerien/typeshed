@@ -1,9 +1,6 @@
-""""""
-
 from _typeshed import Incomplete
 
 class ConnectionUsage:
-    """Collect statistics on connection usage"""
     open_sockets: int
     closed_sockets: int
     wrapped_sockets: int

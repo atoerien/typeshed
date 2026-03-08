@@ -50,17 +50,13 @@ class CompressedComponentMetadata(google.protobuf.message.Message):
         tensor_shape: tensorflow.core.framework.tensor_shape_pb2.TensorShapeProto | None = ...,
         uncompressed_bytes: collections.abc.Iterable[builtins.int] | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["tensor_shape", b"tensor_shape"]) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    def HasField(self, field_name: typing.Literal["tensor_shape", b"tensor_shape"]) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
             "dtype", b"dtype", "tensor_shape", b"tensor_shape", "uncompressed_bytes", b"uncompressed_bytes"
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___CompressedComponentMetadata = CompressedComponentMetadata
 
@@ -95,9 +91,7 @@ class CompressedElement(google.protobuf.message.Message):
     ) -> None: ...
     def ClearField(
         self, field_name: typing.Literal["component_metadata", b"component_metadata", "data", b"data", "version", b"version"]
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___CompressedElement = CompressedElement
 
@@ -117,8 +111,6 @@ class UncompressedElement(google.protobuf.message.Message):
     def __init__(
         self, *, components: collections.abc.Iterable[tensorflow.core.framework.tensor_pb2.TensorProto] | None = ...
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["components", b"components"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["components", b"components"]) -> None: ...
 
 global___UncompressedElement = UncompressedElement

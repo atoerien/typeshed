@@ -1,5 +1,3 @@
-""""""
-
 from ...protocol.novell import ReplicaInfoRequestValue
 from ..operation import ExtendedOperation
 

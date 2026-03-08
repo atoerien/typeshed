@@ -1,11 +1,3 @@
-"""
-oauthlib.oauth2
-~~~~~~~~~~~~~~
-
-This module is a wrapper for the most recent implementation of OAuth 2.0 Client
-and Server classes.
-"""
-
 from .rfc6749.clients import (
     BackendApplicationClient as BackendApplicationClient,
     Client as Client,

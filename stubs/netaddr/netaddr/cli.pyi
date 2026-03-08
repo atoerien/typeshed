@@ -1,5 +1,3 @@
-"""an interactive shell for the netaddr library"""
-
 from typing import Any
 
 SHELL_NAMESPACE: dict[str, Any]

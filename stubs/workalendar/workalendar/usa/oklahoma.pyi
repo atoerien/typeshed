@@ -1,5 +1,3 @@
 from .core import UnitedStates
 
-class Oklahoma(UnitedStates):
-    """Oklahoma"""
-    ...
+class Oklahoma(UnitedStates): ...

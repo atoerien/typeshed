@@ -1,5 +1,3 @@
-"""This includes some demos of platypus for use in the API proposal"""
-
 from _typeshed import Incomplete
 from typing import Final
 
@@ -48,22 +46,13 @@ class Figure(Flowable):
     def wrap(self, availWidth, availHeight): ...
     def draw(self) -> None: ...
     def drawBorder(self) -> None: ...
-    def drawBackground(self) -> None:
-        """
-        For use when using a figure on a differently coloured background.
-        Allows you to specify a colour to be used as a background for the figure.
-        """
-        ...
+    def drawBackground(self) -> None: ...
     def drawCaption(self) -> None: ...
     def drawFigure(self) -> None: ...
 
 def drawPage(canvas, x, y, width, height) -> None: ...
 
 class PageFigure(Figure):
-    """
-    Shows a blank page in a frame, and draws on that.  Used in
-    illustrations of how PLATYPUS works.
-    """
     caption: str
     captionStyle: Incomplete
     background: Incomplete
@@ -72,13 +61,11 @@ class PageFigure(Figure):
     def drawFigure(self) -> None: ...
 
 class PlatPropFigure1(PageFigure):
-    """This shows a page with a frame on it"""
     caption: str
     def __init__(self) -> None: ...
     def drawVirtualPage(self) -> None: ...
 
 class FlexFigure(Figure):
-    """Base for a figure class with a caption. Can grow or shrink in proportion"""
     shrinkToFit: Incomplete
     growToFit: Incomplete
     scaleFactor: Incomplete
@@ -107,13 +94,11 @@ class FlexFigure(Figure):
     def split(self, availWidth, availHeight): ...
 
 class ImageFigure(FlexFigure):
-    """Image with a caption below it"""
     filename: Incomplete
     def __init__(self, filename, caption, background=None, scaleFactor=None, hAlign: str = "CENTER", border=None) -> None: ...
     def drawFigure(self) -> None: ...
 
 class DrawingFigure(FlexFigure):
-    """Drawing with a caption below it.  Clunky, scaling fails."""
     drawing: Incomplete
     growToFit: int
     def __init__(self, modulename, classname, caption, baseDir=None, background=None) -> None: ...

@@ -1,5 +1,3 @@
-"""Python Enhancement Proposal (PEP) Reader."""
-
 from typing import ClassVar, Final, TypeVar
 
 from docutils.parsers.rst import states

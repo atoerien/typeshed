@@ -1,8 +1,3 @@
-"""
-Useful base classes for watchers. The available
-watchers will depend on the specific event loop.
-"""
-
 from _typeshed import FileDescriptor, StrOrBytesPath
 from collections.abc import Callable
 from types import TracebackType
@@ -14,14 +9,6 @@ from gevent._types import _Loop, _StatResult
 _Ts = TypeVarTuple("_Ts")
 
 class AbstractWatcherType(type):
-    """
-    Base metaclass for watchers.
-
-    To use, you will:
-
-    - subclass the watcher class defined from this type.
-    - optionally subclass this type
-    """
     def new_handle(cls, obj: object) -> int: ...
     def new(cls, kind: object) -> Any: ...
 
@@ -77,14 +64,7 @@ class ForkMixin: ...
 
 class AsyncMixin:
     def send(self) -> None: ...
-    def send_ignoring_arg(self, _ignored: object) -> None:
-        """
-        Calling compatibility with ``greenlet.switch(arg)``
-        as used by waiters that have ``rawlink``.
-
-        This is an advanced method, not usually needed.
-        """
-        ...
+    def send_ignoring_arg(self, _ignored: object) -> None: ...
     @property
     def pending(self) -> bool: ...
 

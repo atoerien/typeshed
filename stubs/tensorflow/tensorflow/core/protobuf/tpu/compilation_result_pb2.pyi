@@ -42,9 +42,7 @@ class CompilationResultProto(google.protobuf.message.Message):
         UNKNOWN: CompilationResultProto._ErrorCode.ValueType  # 0
         OUT_OF_MEMORY: CompilationResultProto._ErrorCode.ValueType  # 1
 
-    class ErrorCode(_ErrorCode, metaclass=_ErrorCodeEnumTypeWrapper):
-        """A utility for finding the names of enum values."""
-        ...
+    class ErrorCode(_ErrorCode, metaclass=_ErrorCodeEnumTypeWrapper): ...
     UNKNOWN: CompilationResultProto.ErrorCode.ValueType  # 0
     OUT_OF_MEMORY: CompilationResultProto.ErrorCode.ValueType  # 1
 
@@ -82,8 +80,6 @@ class CompilationResultProto(google.protobuf.message.Message):
             "status_error_message",
             b"status_error_message",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___CompilationResultProto = CompilationResultProto

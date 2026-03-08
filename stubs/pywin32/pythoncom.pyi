@@ -1,5 +1,3 @@
-"""A module, encapsulating the OLE automation API"""
-
 from _typeshed import Incomplete, Unused
 from abc import abstractmethod
 from collections.abc import Sequence

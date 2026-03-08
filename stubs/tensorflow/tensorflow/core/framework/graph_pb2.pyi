@@ -89,16 +89,12 @@ class GraphDef(google.protobuf.message.Message):
     ) -> None: ...
     def HasField(
         self, field_name: typing.Literal["debug_info", b"debug_info", "library", b"library", "versions", b"versions"]
-    ) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    ) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
             "debug_info", b"debug_info", "library", b"library", "node", b"node", "version", b"version", "versions", b"versions"
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___GraphDef = GraphDef

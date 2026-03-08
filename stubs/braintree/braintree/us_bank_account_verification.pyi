@@ -8,16 +8,6 @@ from braintree.us_bank_account import UsBankAccount
 
 class UsBankAccountVerification(AttributeGetter):
     class Status:
-        """
-        Constants representing transaction statuses. Available statuses are:
-
-        * braintree.UsBankAccountVerification.Status.Failed
-        * braintree.UsBankAccountVerification.Status.GatewayRejected
-        * braintree.UsBankAccountVerification.Status.ProcessorDeclined
-        * braintree.UsBankAccountVerification.Status.Unrecognized
-        * braintree.UsBankAccountVerification.Status.Verified
-        * braintree.UsBankAccountVerification.Status.Pending
-        """
         Failed: Final = "failed"
         GatewayRejected: Final = "gateway_rejected"
         ProcessorDeclined: Final = "processor_declined"
@@ -26,15 +16,6 @@ class UsBankAccountVerification(AttributeGetter):
         Pending: Final = "pending"
 
     class VerificationMethod:
-        """
-        Constants representing verification types. Available types are:
-
-        * braintree.UsBankAccountVerification.VerificationMethod.NetworkCheck
-        * braintree.UsBankAccountVerification.VerificationMethod.IndependentCheck
-        * braintree.UsBankAccountVerification.VerificationMethod.InstantVerificationAccountValidation
-        * braintree.UsBankAccountVerification.VerificationMethod.TokenizedCheck
-        * braintree.UsBankAccountVerification.VerificationMethod.MicroTransfers
-        """
         NetworkCheck: Final = "network_check"
         IndependentCheck: Final = "independent_check"
         InstantVerificationAccountValidation: Final = "instant_verification_account_validation"
@@ -42,11 +23,6 @@ class UsBankAccountVerification(AttributeGetter):
         MicroTransfers: Final = "micro_transfers"
 
     class VerificationAddOns:
-        """
-        Constants representing verification add on types. Available statuses are:
-
-        * braintree.UsBankAccountVerification.VerificationAddOns.CustomerVerification
-        """
         CustomerVerification: Final = "customer_verification"
 
     us_bank_account: UsBankAccount | None

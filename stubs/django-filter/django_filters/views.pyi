@@ -10,19 +10,12 @@ from .constants import ALL_FIELDS
 from .filterset import FilterSet
 
 class FilterMixin:
-    """A mixin that provides a way to show and handle a FilterSet in a request."""
     filterset_class: type[FilterSet] | None
     filterset_fields = ALL_FIELDS
     strict: bool
-    def get_filterset_class(self) -> type[FilterSet] | None:
-        """Returns the filterset class to use in this view"""
-        ...
-    def get_filterset(self, filterset_class: type[FilterSet]) -> FilterSet:
-        """Returns an instance of the filterset to be used in this view."""
-        ...
-    def get_filterset_kwargs(self, filterset_class: type[FilterSet]) -> dict[str, Any]:
-        """Returns the keyword arguments for instantiating the filterset."""
-        ...
+    def get_filterset_class(self) -> type[FilterSet] | None: ...
+    def get_filterset(self, filterset_class: type[FilterSet]) -> FilterSet: ...
+    def get_filterset_kwargs(self, filterset_class: type[FilterSet]) -> dict[str, Any]: ...  # Filterset init params vary
     def get_strict(self) -> bool: ...
 
 class BaseFilterView(FilterMixin, MultipleObjectMixin[Any], View):  # Generic model type
@@ -32,11 +25,6 @@ class BaseFilterView(FilterMixin, MultipleObjectMixin[Any], View):  # Generic mo
     def get(self, request: HttpRequest, *args: Unused, **kwargs: Unused) -> HttpResponse: ...
 
 class FilterView(MultipleObjectTemplateResponseMixin, BaseFilterView):
-    """
-    Render some list of objects with filter, set by `self.model` or
-    `self.queryset`.
-    `self.queryset` can actually be any iterable of items, not just a queryset.
-    """
     template_name_suffix: str
 
 def object_filter(

@@ -5,12 +5,7 @@ from .syntax import PDFObject
 
 class Action(ABC):
     next: PDFObject | str | None
-    def __init__(self, next_action: PDFObject | str | None = None) -> None:
-        """
-        Args:
-            next (PDFObject | str): optional reference to another Action to trigger after this one
-        """
-        ...
+    def __init__(self, next_action: PDFObject | str | None = None) -> None: ...
     @abstractmethod
     def serialize(self) -> str: ...
 
@@ -25,7 +20,6 @@ class NamedAction(Action):
     def serialize(self) -> str: ...
 
 class GoToAction(Action):
-    """As of 2022, this does not seem honored by neither Adobe Acrobat nor Sumatra readers."""
     dest: Incomplete
     def __init__(self, dest, next_action: PDFObject | str | None = None) -> None: ...
     def serialize(self) -> str: ...
@@ -37,7 +31,6 @@ class GoToRemoteAction(Action):
     def serialize(self) -> str: ...
 
 class LaunchAction(Action):
-    """As of 2022, this does not seem honored by neither Adobe Acrobat nor Sumatra readers."""
     file: str
     def __init__(self, file: str, next_action: PDFObject | str | None = None) -> None: ...
     def serialize(self) -> str: ...

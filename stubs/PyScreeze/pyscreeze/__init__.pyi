@@ -27,46 +27,24 @@ GRAYSCALE_DEFAULT: bool
 USE_IMAGE_NOT_FOUND_EXCEPTION: bool
 
 class Box(NamedTuple):
-    """Box(left, top, width, height)"""
     left: int
     top: int
     width: int
     height: int
 
 class Point(NamedTuple):
-    """Point(x, y)"""
     x: int
     y: int
 
 class RGB(NamedTuple):
-    """RGB(red, green, blue)"""
     red: int
     green: int
     blue: int
 
-class PyScreezeException(Exception):
-    """
-    PyScreezeException is a generic exception class raised when a
-    PyScreeze-related error happens. If a PyScreeze function raises an
-    exception that isn't PyScreezeException or a subclass, assume it is
-    a bug in PyScreeze.
-    """
-    ...
-class ImageNotFoundException(PyScreezeException):
-    """
-    ImageNotFoundException is an exception class raised when the
-    locate functions fail to locate an image. You must set
-    pyscreeze.USE_IMAGE_NOT_FOUND_EXCEPTION to True to enable this feature.
-    Otherwise, the locate functions will return None.
-    """
-    ...
+class PyScreezeException(Exception): ...
+class ImageNotFoundException(PyScreezeException): ...
 
-def requiresPyGetWindow(wrappedFunction: Callable[_P, _R]) -> Callable[_P, _R]:
-    """
-    A decorator that marks a function as requiring PyGetWindow to be installed.
-    This raises PyScreezeException if Pillow wasn't imported.
-    """
-    ...
+def requiresPyGetWindow(wrappedFunction: Callable[_P, _R]) -> Callable[_P, _R]: ...
 
 # _locateAll_opencv
 @overload
@@ -79,9 +57,7 @@ def locate(
     region: tuple[int, int, int, int] | None = None,
     step: int = 1,
     confidence: ConvertibleToFloat = 0.999,
-) -> Box | None:
-    """TODO"""
-    ...
+) -> Box | None: ...
 
 # _locateAll_pillow
 @overload
@@ -94,9 +70,7 @@ def locate(
     region: tuple[int, int, int, int] | None = None,
     step: int = 1,
     confidence: None = None,
-) -> Box | None:
-    """TODO"""
-    ...
+) -> Box | None: ...
 
 # _locateAll_opencv
 @overload
@@ -109,14 +83,7 @@ def locateOnScreen(
     region: tuple[int, int, int, int] | None = None,
     step: int = 1,
     confidence: ConvertibleToFloat = 0.999,
-) -> Box | None:
-    """
-    TODO - rewrite this
-    minSearchTime - amount of time in seconds to repeat taking
-    screenshots and trying to locate a match.  The default of 0 performs
-    a single search.
-    """
-    ...
+) -> Box | None: ...
 
 # _locateAll_pillow
 @overload
@@ -129,14 +96,7 @@ def locateOnScreen(
     region: tuple[int, int, int, int] | None = None,
     step: int = 1,
     confidence: None = None,
-) -> Box | None:
-    """
-    TODO - rewrite this
-    minSearchTime - amount of time in seconds to repeat taking
-    screenshots and trying to locate a match.  The default of 0 performs
-    a single search.
-    """
-    ...
+) -> Box | None: ...
 
 # _locateAll_opencv
 @overload
@@ -148,9 +108,7 @@ def locateAllOnScreen(
     region: tuple[int, int, int, int] | None = None,
     step: int = 1,
     confidence: ConvertibleToFloat = 0.999,
-) -> Generator[Box, None, None]:
-    """TODO"""
-    ...
+) -> Generator[Box, None, None]: ...
 
 # _locateAll_pillow
 @overload
@@ -162,9 +120,7 @@ def locateAllOnScreen(
     region: tuple[int, int, int, int] | None = None,
     step: int = 1,
     confidence: None = None,
-) -> Generator[Box, None, None]:
-    """TODO"""
-    ...
+) -> Generator[Box, None, None]: ...
 
 # _locateAll_opencv
 @overload
@@ -177,9 +133,7 @@ def locateCenterOnScreen(
     region: tuple[int, int, int, int] | None = None,
     step: int = 1,
     confidence: ConvertibleToFloat = 0.999,
-) -> Point | None:
-    """TODO"""
-    ...
+) -> Point | None: ...
 
 # _locateAll_pillow
 @overload
@@ -192,15 +146,9 @@ def locateCenterOnScreen(
     region: tuple[int, int, int, int] | None = None,
     step: int = 1,
     confidence: None = None,
-) -> Point | None:
-    """TODO"""
-    ...
-def locateOnScreenNear(image: str | Image.Image | _MatLike, x: int, y: int) -> Box:
-    """TODO"""
-    ...
-def locateCenterOnScreenNear(image: str | Image.Image | _MatLike, x: int, y: int) -> Point | None:
-    """TODO"""
-    ...
+) -> Point | None: ...
+def locateOnScreenNear(image: str | Image.Image | _MatLike, x: int, y: int) -> Box: ...
+def locateCenterOnScreenNear(image: str | Image.Image | _MatLike, x: int, y: int) -> Point | None: ...
 
 # _locateAll_opencv
 @overload
@@ -212,9 +160,7 @@ def locateOnWindow(
     limit: Unused = 1,
     step: int = 1,
     confidence: ConvertibleToFloat = 0.999,
-) -> Box | None:
-    """TODO"""
-    ...
+) -> Box | None: ...
 
 # _locateAll_pillow
 @overload
@@ -226,41 +172,15 @@ def locateOnWindow(
     limit: Unused = 1,
     step: int = 1,
     confidence: None = None,
-) -> Box | None:
-    """TODO"""
-    ...
+) -> Box | None: ...
 def showRegionOnScreen(
     region: tuple[int, int, int, int], outlineColor: str = "red", filename: str = "_showRegionOnScreen.png"
-) -> None:
-    """TODO"""
-    ...
-def center(coords: tuple[int, int, int, int]) -> Point:
-    """
-    Returns a `Point` object with the x and y set to an integer determined by the format of `coords`.
-
-    The `coords` argument is a 4-integer tuple of (left, top, width, height).
-
-    For example:
-
-    >>> center((10, 10, 6, 8))
-    Point(x=13, y=14)
-    >>> center((10, 10, 7, 9))
-    Point(x=13, y=14)
-    >>> center((10, 10, 8, 10))
-    Point(x=14, y=15)
-    """
-    ...
+) -> None: ...
+def center(coords: tuple[int, int, int, int]) -> Point: ...
 def pixelMatchesColor(
     x: int, y: int, expectedRGBColor: tuple[int, int, int] | tuple[int, int, int, int], tolerance: int = 0
-) -> bool:
-    """
-    Return True if the pixel at x, y is matches the expected color of the RGB
-    tuple, each color represented from 0 to 255, within an optional tolerance.
-    """
-    ...
-def pixel(x: int, y: int) -> tuple[int, int, int]:
-    """Returns the color of the screen pixel at x, y as an RGB tuple, each color represented from 0 to 255."""
-    ...
+) -> bool: ...
+def pixel(x: int, y: int) -> tuple[int, int, int]: ...
 
 if sys.platform == "win32":
     def screenshot(
@@ -270,9 +190,7 @@ if sys.platform == "win32":
 else:
     def screenshot(
         imageFilename: StrOrBytesPath | None = None, region: tuple[int, int, int, int] | None = None
-    ) -> Image.Image:
-        """TODO"""
-        ...
+    ) -> Image.Image: ...
 
 # _locateAll_opencv
 @overload
@@ -284,9 +202,7 @@ def locateAll(
     region: tuple[int, int, int, int] | None = None,
     step: int = 1,
     confidence: ConvertibleToFloat = 0.999,
-) -> Generator[Box, None, None]:
-    """TODO"""
-    ...
+) -> Generator[Box, None, None]: ...
 
 # _locateAll_pillow
 @overload
@@ -298,6 +214,4 @@ def locateAll(
     region: tuple[int, int, int, int] | None = None,
     step: int = 1,
     confidence: None = None,
-) -> Generator[Box, None, None]:
-    """TODO"""
-    ...
+) -> Generator[Box, None, None]: ...

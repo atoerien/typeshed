@@ -1,5 +1,3 @@
-"""Utility functions"""
-
 from _typeshed import Unused
 from _typeshed.wsgi import StartResponse
 from collections.abc import Iterable, Iterator, Mapping, Sequence
@@ -9,9 +7,7 @@ from re import Match, Pattern
 logger: Logger
 queue_logger: Logger
 
-def find_double_newline(s: bytes) -> int:
-    """Returns the position just after a double newline in the given string."""
-    ...
+def find_double_newline(s: bytes) -> int: ...
 def concat(*args: str) -> str: ...
 def join(seq: Iterable[str], field: str = " ") -> str: ...
 def group(s: object) -> str: ...

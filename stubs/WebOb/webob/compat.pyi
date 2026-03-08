@@ -11,13 +11,7 @@ if sys.version_info >= (3, 13):
         file: IO[bytes]
         def make_file(self) -> TextIOWrapper | FileIO: ...
 
-    def parse_header(line: str) -> tuple[str, dict[str, str]]:
-        """
-        Parse a Content-type like header.
-
-        Return the main content-type and a dictionary of options.
-        """
-        ...
+    def parse_header(line: str) -> tuple[str, dict[str, str]]: ...
 
 else:
     from cgi import FieldStorage as _cgi_FieldStorage, parse_header as parse_header

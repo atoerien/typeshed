@@ -2,9 +2,6 @@
 #
 # Note: Commented out items means they weren't implemented at the time.
 # Uncomment them when the modules have been added to the typeshed.
-
-"""Lazy loading of moved objects"""
-
 import importlib
 import shlex
 from builtins import filter as filter, input as input, map as map, range as range, zip as zip

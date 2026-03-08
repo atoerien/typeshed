@@ -1,5 +1,3 @@
-"""Error classes for PostgreSQL error codes"""
-
 from psycopg2._psycopg import (
     DatabaseError as DatabaseError,
     DataError as DataError,
@@ -268,10 +266,4 @@ class TransactionRollback(TransactionRollbackError): ...
 class IdleSessionTimeout(OperationalError): ...
 class SqlJsonItemCannotBeCastToTargetType(DataError): ...
 
-def lookup(code: str) -> type[Error]:
-    """
-    Lookup an error code and return its exception class.
-
-    Raise `!KeyError` if the code is not found.
-    """
-    ...
+def lookup(code: str) -> type[Error]: ...

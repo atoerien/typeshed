@@ -21,13 +21,7 @@ class AbstractPayloadDecoder:
         decodeFun: Callable[..., Incomplete] | None = None,
         substrateFun: Callable[..., Incomplete] | None = None,
         **options,
-    ) -> None:
-        """
-        Decode value with fixed byte length.
-
-        The decoder is allowed to consume as many bytes as necessary.
-        """
-        ...
+    ) -> None: ...
     # Abstract, but implementation is optional
     def indefLenValueDecoder(
         self,
@@ -39,13 +33,7 @@ class AbstractPayloadDecoder:
         decodeFun: Callable[..., Incomplete] | None = None,
         substrateFun: Callable[..., Incomplete] | None = None,
         **options,
-    ) -> None:
-        """
-        Decode value with undefined length.
-
-        The decoder is allowed to consume as many bytes as necessary.
-        """
-        ...
+    ) -> None: ...
 
 class AbstractSimplePayloadDecoder(AbstractPayloadDecoder, metaclass=ABCMeta):
     @staticmethod
@@ -356,21 +344,13 @@ class SingleItemDecoder:
 decode: Decoder
 
 class StreamingDecoder:
-    "Create an iterator that turns BER/CER/DER byte stream into ASN.1 objects.\n\nOn each iteration, consume whatever BER/CER/DER serialization is\navailable in the `substrate` stream-like object and turns it into\none or more, possibly nested, ASN.1 objects.\n\nParameters\n----------\nsubstrate: :py:class:`file`, :py:class:`io.BytesIO`\n    BER/CER/DER serialization in form of a byte stream\n\nKeyword Args\n------------\nasn1Spec: :py:class:`~pyasn1.type.base.PyAsn1Item`\n    A pyasn1 type object to act as a template guiding the decoder.\n    Depending on the ASN.1 structure being decoded, `asn1Spec` may\n    or may not be required. One of the reasons why `asn1Spec` may\n    me required is that ASN.1 structure is encoded in the *IMPLICIT*\n    tagging mode.\n\nYields\n------\n: :py:class:`~pyasn1.type.base.PyAsn1Item`, :py:class:`~pyasn1.error.SubstrateUnderrunError`\n    Decoded ASN.1 object (possibly, nested) or\n    :py:class:`~pyasn1.error.SubstrateUnderrunError` object indicating\n    insufficient BER/CER/DER serialization on input to fully recover ASN.1\n    objects from it.\n\n    In the latter case the caller is advised to ensure some more data in\n    the input stream, then call the iterator again. The decoder will resume\n    the decoding process using the newly arrived data.\n\n    The `context` property of :py:class:`~pyasn1.error.SubstrateUnderrunError`\n    object might hold a reference to the partially populated ASN.1 object\n    being reconstructed.\n\nRaises\n------\n~pyasn1.error.PyAsn1Error, ~pyasn1.error.EndOfStreamError\n    `PyAsn1Error` on deserialization error, `EndOfStreamError` on\n     premature stream closure.\n\nExamples\n--------\nDecode BER serialisation without ASN.1 schema\n\n.. code-block:: pycon\n\n    >>> stream = io.BytesIO(\n    ...    b'0      \x02\x01\x01\x02\x01\x02\x02\x01\x03')\n    >>>\n    >>> for asn1Object in StreamingDecoder(stream):\n    ...     print(asn1Object)\n    >>>\n    SequenceOf:\n     1 2 3\n\nDecode BER serialisation with ASN.1 schema\n\n.. code-block:: pycon\n\n    >>> stream = io.BytesIO(\n    ...    b'0      \x02\x01\x01\x02\x01\x02\x02\x01\x03')\n    >>>\n    >>> schema = SequenceOf(componentType=Integer())\n    >>>\n    >>> decoder = StreamingDecoder(stream, asn1Spec=schema)\n    >>> for asn1Object in decoder:\n    ...     print(asn1Object)\n    >>>\n    SequenceOf:\n     1 2 3"
     SINGLE_ITEM_DECODER: type[SingleItemDecoder]
 
     def __init__(self, substrate, asn1Spec=None, *, tagMap=..., typeMap=..., **ignored: Unused) -> None: ...
     def __iter__(self): ...
 
 class Decoder:
-    """
-    Create a BER decoder object.
-
-    Parse BER/CER/DER octet-stream into one, possibly nested, ASN.1 object.
-    """
     STREAMING_DECODER: type[StreamingDecoder]
 
     @classmethod
-    def __call__(cls, substrate, asn1Spec=None, *, tagMap=..., typeMap=..., **ignored: Unused):
-        "Turns BER/CER/DER octet stream into an ASN.1 object.\n\nTakes BER/CER/DER octet-stream in form of :py:class:`bytes`\nand decode it into an ASN.1 object\n(e.g. :py:class:`~pyasn1.type.base.PyAsn1Item` derivative) which\nmay be a scalar or an arbitrary nested structure.\n\nParameters\n----------\nsubstrate: :py:class:`bytes`\n    BER/CER/DER octet-stream to parse\n\nKeyword Args\n------------\nasn1Spec: :py:class:`~pyasn1.type.base.PyAsn1Item`\n    A pyasn1 type object (:py:class:`~pyasn1.type.base.PyAsn1Item`\n    derivative) to act as a template guiding the decoder.\n    Depending on the ASN.1 structure being decoded, `asn1Spec` may or\n    may not be required. Most common reason for it to require is that\n    ASN.1 structure is encoded in *IMPLICIT* tagging mode.\n\nsubstrateFun: :py:class:`Union[\n        Callable[[pyasn1.type.base.PyAsn1Item, bytes, int],\n                 Tuple[pyasn1.type.base.PyAsn1Item, bytes]],\n        Callable[[pyasn1.type.base.PyAsn1Item, io.BytesIO, int, dict],\n                 Generator[Union[pyasn1.type.base.PyAsn1Item,\n                                 pyasn1.error.SubstrateUnderrunError],\n                           None, None]]\n    ]`\n    User callback meant to generalize special use cases like non-recursive or\n    partial decoding. A 3-arg non-streaming variant is supported for backwards\n    compatiblilty in addition to the newer 4-arg streaming variant.\n    The callback will receive the uninitialized object recovered from substrate\n    as 1st argument, the uninterpreted payload as 2nd argument, and the length\n    of the uninterpreted payload as 3rd argument. The streaming variant will\n    additionally receive the decode(..., **options) kwargs as 4th argument.\n    The non-streaming variant shall return an object that will be propagated\n    as decode() return value as 1st item, and the remainig payload for further\n    decode passes as 2nd item.\n    The streaming variant shall yield an object that will be propagated as\n    decode() return value, and leave the remaining payload in the stream.\n\nReturns\n-------\n: :py:class:`tuple`\n    A tuple of :py:class:`~pyasn1.type.base.PyAsn1Item` object\n    recovered from BER/CER/DER substrate and the unprocessed trailing\n    portion of the `substrate` (may be empty)\n\nRaises\n------\n: :py:class:`~pyasn1.error.PyAsn1Error`\n    :py:class:`~pyasn1.error.SubstrateUnderrunError` on insufficient\n    input or :py:class:`~pyasn1.error.PyAsn1Error` on decoding error.\n\nExamples\n--------\nDecode BER/CER/DER serialisation without ASN.1 schema\n\n.. code-block:: pycon\n\n   >>> s, unprocessed = decode(b'0      \x02\x01\x01\x02\x01\x02\x02\x01\x03')\n   >>> str(s)\n   SequenceOf:\n    1 2 3\n\nDecode BER/CER/DER serialisation with ASN.1 schema\n\n.. code-block:: pycon\n\n   >>> seq = SequenceOf(componentType=Integer())\n   >>> s, unprocessed = decode(\n        b'0     \x02\x01\x01\x02\x01\x02\x02\x01\x03', asn1Spec=seq)\n   >>> str(s)\n   SequenceOf:\n    1 2 3"
-        ...
+    def __call__(cls, substrate, asn1Spec=None, *, tagMap=..., typeMap=..., **ignored: Unused): ...

@@ -1,5 +1,3 @@
 from ..core import WesternCalendar
 
-class Panama(WesternCalendar):
-    """Panama"""
-    ...
+class Panama(WesternCalendar): ...

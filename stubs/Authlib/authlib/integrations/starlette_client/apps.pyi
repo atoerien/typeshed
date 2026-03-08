@@ -5,16 +5,7 @@ from ..httpx_client import AsyncOAuth1Client, AsyncOAuth2Client
 
 class StarletteAppMixin:
     async def save_authorize_data(self, request, **kwargs) -> None: ...
-    async def authorize_redirect(self, request, redirect_uri=None, **kwargs):
-        """
-        Create a HTTP Redirect for Authorization Endpoint.
-
-        :param request: HTTP request instance from Starlette view.
-        :param redirect_uri: Callback or redirect URI for authorization.
-        :param kwargs: Extra parameters to include.
-        :return: A HTTP redirect response.
-        """
-        ...
+    async def authorize_redirect(self, request, redirect_uri=None, **kwargs): ...
 
 class StarletteOAuth1App(StarletteAppMixin, AsyncOAuth1Mixin, BaseApp):
     client_cls = AsyncOAuth1Client

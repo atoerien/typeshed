@@ -54,8 +54,6 @@ class SourceContext(google.protobuf.message.Message):
     protobuf element.  For example: `"google/protobuf/source_context.proto"`.
     """
     def __init__(self, *, file_name: builtins.str | None = ...) -> None: ...
-    def ClearField(self, field_name: typing.Literal["file_name", b"file_name"]) -> None:
-        """Clears a message field."""
-        ...
+    def ClearField(self, field_name: typing.Literal["file_name", b"file_name"]) -> None: ...
 
 global___SourceContext = SourceContext

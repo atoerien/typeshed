@@ -1,8 +1,3 @@
-"""
-oauthlib.openid.connect.core.grant_types
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-"""
-
 from .authorization_code import AuthorizationCodeGrant as AuthorizationCodeGrant
 from .base import GrantTypeBase as GrantTypeBase
 from .dispatchers import (

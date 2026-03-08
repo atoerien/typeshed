@@ -5,21 +5,11 @@ from docker.models.containers import Container
 from docker.models.images import Image
 from requests import HTTPError, Response
 
-class DockerException(Exception):
-    """
-    A base class from which all other exceptions inherit.
+class DockerException(Exception): ...
 
-    If you want to catch all errors that the Docker SDK might raise,
-    catch this base exception.
-    """
-    ...
-
-def create_api_error_from_http_exception(e: HTTPError) -> NoReturn:
-    """Create a suitable APIError from requests.exceptions.HTTPError."""
-    ...
+def create_api_error_from_http_exception(e: HTTPError) -> NoReturn: ...
 
 class APIError(HTTPError, DockerException):
-    """An HTTP error from the API."""
     response: Response | None
     explanation: str | None
     def __init__(self, message: str, response: Response | None = None, explanation: str | None = None) -> None: ...
@@ -44,7 +34,6 @@ class TLSParameterError(DockerException):
 class NullResource(DockerException, ValueError): ...
 
 class ContainerError(DockerException):
-    """Represents a container that has exited with a non-zero exit code."""
     container: Container
     exit_status: int
     command: str | list[str] | None

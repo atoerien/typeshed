@@ -5,7 +5,6 @@ from typing import Final
 
 @dataclass(frozen=True)
 class JsRuntimeInfo:
-    """JsRuntimeInfo(name: 'str', path: 'str', version: 'str', version_tuple: 'tuple[int, ...]', supported: 'bool' = True)"""
     name: str
     path: str
     version: str

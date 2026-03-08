@@ -1,5 +1,3 @@
-"""Functions for communicating with Pageant, the basic windows ssh agent program."""
-
 import ctypes
 import sys
 from _typeshed import Incomplete

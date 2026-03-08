@@ -46,21 +46,9 @@ __all__ = [
 ]
 
 class error(Exception):
-    """
-    Exception raised for invalid regular expressions.
-
-    Attributes:
-
-        msg: The unformatted error message
-        pattern: The regular expression pattern
-        pos: The position in the pattern where compilation failed, or None
-        lineno: The line number where compilation failed, unless pos is None
-        colno: The column number where compilation failed, unless pos is None
-    """
     def __init__(self, message: str, pattern: AnyStr | None = None, pos: int | None = None) -> None: ...
 
 class RegexFlag(enum.IntFlag):
-    """An enumeration."""
     A = 0x80
     ASCII = A
     B = 0x1000

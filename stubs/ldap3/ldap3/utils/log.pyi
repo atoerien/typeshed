@@ -1,5 +1,3 @@
-""""""
-
 from _typeshed import Incomplete
 from logging import NullHandler as NullHandler
 

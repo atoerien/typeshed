@@ -1,5 +1,3 @@
-""""""
-
 from _typeshed import Incomplete
 
 repr_encoding: Incomplete

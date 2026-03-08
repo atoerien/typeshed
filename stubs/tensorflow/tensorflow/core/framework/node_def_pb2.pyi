@@ -31,12 +31,8 @@ class NodeDef(google.protobuf.message.Message):
         def __init__(
             self, *, key: builtins.str | None = ..., value: tensorflow.core.framework.attr_value_pb2.AttrValue | None = ...
         ) -> None: ...
-        def HasField(self, field_name: typing.Literal["value", b"value"]) -> builtins.bool:
-            """Checks if a message field is set."""
-            ...
-        def ClearField(self, field_name: typing.Literal["key", b"key", "value", b"value"]) -> None:
-            """Clears a message field."""
-            ...
+        def HasField(self, field_name: typing.Literal["value", b"value"]) -> builtins.bool: ...
+        def ClearField(self, field_name: typing.Literal["key", b"key", "value", b"value"]) -> None: ...
 
     @typing.final
     class ExperimentalDebugInfo(google.protobuf.message.Message):
@@ -77,9 +73,7 @@ class NodeDef(google.protobuf.message.Message):
             field_name: typing.Literal[
                 "original_func_names", b"original_func_names", "original_node_names", b"original_node_names"
             ],
-        ) -> None:
-            """Clears a message field."""
-            ...
+        ) -> None: ...
 
     NAME_FIELD_NUMBER: builtins.int
     OP_FIELD_NUMBER: builtins.int
@@ -174,9 +168,7 @@ class NodeDef(google.protobuf.message.Message):
         field_name: typing.Literal[
             "experimental_debug_info", b"experimental_debug_info", "experimental_type", b"experimental_type"
         ],
-    ) -> builtins.bool:
-        """Checks if a message field is set."""
-        ...
+    ) -> builtins.bool: ...
     def ClearField(
         self,
         field_name: typing.Literal[
@@ -195,8 +187,6 @@ class NodeDef(google.protobuf.message.Message):
             "op",
             b"op",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___NodeDef = NodeDef

@@ -46,8 +46,6 @@ class SavedModel(google.protobuf.message.Message):
     def ClearField(
         self,
         field_name: typing.Literal["meta_graphs", b"meta_graphs", "saved_model_schema_version", b"saved_model_schema_version"],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
 
 global___SavedModel = SavedModel

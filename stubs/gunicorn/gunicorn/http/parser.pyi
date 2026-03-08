@@ -19,15 +19,7 @@ class Parser:
 
     def __init__(self, cfg: Config, source: socket.socket | Iterable[bytes], source_addr: _AddressType) -> None: ...
     def __iter__(self) -> Iterator[Request]: ...
-    def finish_body(self) -> None:
-        """
-        Discard any unread body of the current message.
-
-        This should be called before returning a keepalive connection to
-        the poller to ensure the socket doesn't appear readable due to
-        leftover body bytes.
-        """
-        ...
+    def finish_body(self) -> None: ...
     def __next__(self) -> Request: ...
 
     next: Callable[[Parser], Request]

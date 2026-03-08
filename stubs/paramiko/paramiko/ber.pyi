@@ -4,7 +4,6 @@ from typing import Any
 class BERException(Exception): ...
 
 class BER:
-    """Robey's tiny little attempt at a BER decoder."""
     content: bytes
     idx: int
     def __init__(self, content: bytes = b"") -> None: ...

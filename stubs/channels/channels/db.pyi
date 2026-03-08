@@ -12,7 +12,6 @@ _P = ParamSpec("_P")
 _R = TypeVar("_R")
 
 class DatabaseSyncToAsync(SyncToAsync[_P, _R]):
-    """SyncToAsync version that cleans up old database connections when it exits."""
     def thread_handler(
         self,
         loop: BaseEventLoop,

@@ -1,5 +1,3 @@
-"""Represents the Cache-Control header"""
-
 from _typeshed import SupportsItems
 from collections.abc import Callable
 from typing import Any, Generic, Literal, overload
@@ -12,15 +10,10 @@ _ScopeT = TypeVar("_ScopeT", Literal["request"], Literal["response"], None, defa
 _ScopeT2 = TypeVar("_ScopeT2", Literal["request"], Literal["response"], None)
 
 class UpdateDict(dict[str, Any]):
-    """Dict that has a callback on all updates"""
     updated: Callable[..., Any] | None
     updated_args: tuple[Any, ...] | None
 
 class exists_property(Generic[_ScopeT]):
-    """
-    Represents a property that either is listed in the Cache-Control
-    header, or is not listed (has no value)
-    """
     @overload
     def __init__(self: exists_property[None], prop: str) -> None: ...
     @overload
@@ -41,11 +34,6 @@ class exists_property(Generic[_ScopeT]):
     def __delete__(self, obj: CacheControl[_ScopeT]) -> None: ...
 
 class value_property(Generic[_T, _DefaultT, _NoneLiteral, _ScopeT]):
-    """
-    Represents a property that has a value in the Cache-Control header.
-
-    When no value is actually given, the value of self.none is returned.
-    """
     def __init__(self, prop: str, default: _DefaultT = None, none: _NoneLiteral = None, type: _ScopeT = None) -> None: ...  # type: ignore[assignment]
     @overload
     def __get__(self, obj: None, type: type[CacheControl[Any]] | None = None) -> Self: ...
@@ -73,13 +61,6 @@ class value_property(Generic[_T, _DefaultT, _NoneLiteral, _ScopeT]):
     def __delete__(self, obj: CacheControl[_ScopeT]) -> None: ...
 
 class CacheControl(Generic[_ScopeT]):
-    """
-    Represents the Cache-Control header.
-
-    By giving a type of ``'request'`` or ``'response'`` you can
-    control what attributes are allowed (some Cache-Control values
-    only apply to requests or responses).
-    """
     header_value: str
     update_dict: type[UpdateDict]
     properties: dict[str, Any]
@@ -89,36 +70,15 @@ class CacheControl(Generic[_ScopeT]):
     @classmethod
     def parse(
         cls, header: str, updates_to: Callable[[dict[str, Any]], Any] | None = None, type: None = None
-    ) -> CacheControl[None]:
-        """
-        Parse the header, returning a CacheControl object.
-
-        The object is bound to the request or response object
-        ``updates_to``, if that is given.
-        """
-        ...
+    ) -> CacheControl[None]: ...
     @overload
     @classmethod
-    def parse(cls, header: str, updates_to: Callable[[dict[str, Any]], Any] | None, type: _ScopeT2) -> CacheControl[_ScopeT2]:
-        """
-        Parse the header, returning a CacheControl object.
-
-        The object is bound to the request or response object
-        ``updates_to``, if that is given.
-        """
-        ...
+    def parse(cls, header: str, updates_to: Callable[[dict[str, Any]], Any] | None, type: _ScopeT2) -> CacheControl[_ScopeT2]: ...
     @overload
     @classmethod
     def parse(
         cls, header: str, updates_to: Callable[[dict[str, Any]], Any] | None = None, *, type: _ScopeT2
-    ) -> CacheControl[_ScopeT2]:
-        """
-        Parse the header, returning a CacheControl object.
-
-        The object is bound to the request or response object
-        ``updates_to``, if that is given.
-        """
-        ...
+    ) -> CacheControl[_ScopeT2]: ...
     max_stale: value_property[int, None, Literal["*"], Literal["request"]]
     min_fresh: value_property[int, None, None, Literal["request"]]
     only_if_cached: exists_property[Literal["request"]]
@@ -134,8 +94,6 @@ class CacheControl(Generic[_ScopeT]):
     s_max_age = s_maxage
     stale_while_revalidate: value_property[int, None, None, Literal["response"]]
     stale_if_error: value_property[int, None, None, Literal["response"]]
-    def copy(self) -> Self:
-        """Returns a copy of this object."""
-        ...
+    def copy(self) -> Self: ...
 
 def serialize_cache_control(properties: SupportsItems[str, Any] | CacheControl[Any]) -> str: ...

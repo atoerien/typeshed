@@ -5,7 +5,6 @@ from reportlab.lib.attrmap import *
 from reportlab.lib.validators import *
 
 class SlideBox(Widget):
-    """Returns a slidebox widget"""
     labelFontName: str
     labelFontSize: int
     labelStrokeColor: Incomplete

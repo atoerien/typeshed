@@ -1,5 +1,3 @@
 from ..core import IslamicCalendar
 
-class Algeria(IslamicCalendar):
-    """Algeria"""
-    ...
+class Algeria(IslamicCalendar): ...

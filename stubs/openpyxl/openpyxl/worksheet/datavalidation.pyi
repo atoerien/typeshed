@@ -40,25 +40,8 @@ _DataValidationOperator: TypeAlias = Literal[
 class _HasCoordinate(Protocol):
     coordinate: str | CellRange
 
-def collapse_cell_addresses(cells, input_ranges=()):
-    """
-    Collapse a collection of cell co-ordinates down into an optimal
-    range or collection of ranges.
-
-    E.g. Cells A1, A2, A3, B1, B2 and B3 should have the data-validation
-    object applied, attempt to collapse down to a single range, A1:B3.
-
-    Currently only collapsing contiguous vertical ranges (i.e. above
-    example results in A1:A3 B1:B3).
-    """
-    ...
-def expand_cell_ranges(range_string):
-    """
-    Expand cell ranges to a sequence of addresses.
-    Reverse of collapse_cell_addresses
-    Eg. converts "A1:A2 B1:B2" to (A1, A2, B1, B2)
-    """
-    ...
+def collapse_cell_addresses(cells, input_ranges=()): ...
+def expand_cell_ranges(range_string): ...
 
 class DataValidation(Serialisable):
     tagname: ClassVar[str]
@@ -101,9 +84,7 @@ class DataValidation(Serialisable):
         operator: _DataValidationOperator | Literal["none"] | None = None,
         allow_blank: _ConvertibleToBool | None = None,
     ) -> None: ...
-    def add(self, cell) -> None:
-        """Adds a cell or cell coordinate to this validator"""
-        ...
+    def add(self, cell) -> None: ...
     def __contains__(self, cell: _HasCoordinate | str | CellRange) -> bool: ...
 
 class DataValidationList(Serialisable):
@@ -126,6 +107,4 @@ class DataValidationList(Serialisable):
     def count(self) -> int: ...
     def __len__(self) -> int: ...
     def append(self, dv) -> None: ...
-    def to_tree(self, tagname: str | None = None) -> Element:
-        """Need to skip validations that have no cell ranges"""
-        ...
+    def to_tree(self, tagname: str | None = None) -> Element: ...  # type: ignore[override]
