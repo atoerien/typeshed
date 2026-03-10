@@ -180,6 +180,7 @@ colorful==0.5.*
 requests[socks]~=2.32.4
 toposort==1.10
 click-default-group==1.2.*
+resampy==0.4.*
 passpy==1.0.*
 fanstatic==1.6.*
 pep8-naming==0.15.*
