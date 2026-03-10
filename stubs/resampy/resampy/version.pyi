@@ -1,3 +1,5 @@
+"""Version info"""
+
 from typing import Final
 
 short_version: Final[str]
