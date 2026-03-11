@@ -150,7 +150,7 @@ waitress~=3.0.1
 python-xlib==0.33.*
 django-import-export==4.4.*
 jmespath==1.1.*
-geopandas==1.1.2
+geopandas==1.1.3
 xmldiff==2.7.*
 nanoleafapi==2.1.*
 netifaces==0.11.*
