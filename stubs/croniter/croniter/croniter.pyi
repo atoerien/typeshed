@@ -1,7 +1,6 @@
 import datetime
 from _typeshed import Unused
-from collections import OrderedDict
-from collections.abc import Generator
+from collections.abc import Generator, Iterable
 from re import Match, Pattern
 from typing import Any, Final, Generic, Literal, Protocol, TypeVar, overload, type_check_only
 from typing_extensions import Never, Self, TypeAlias
@@ -9,6 +8,7 @@ from typing_extensions import Never, Self, TypeAlias
 _R_co = TypeVar("_R_co", float, datetime.datetime, default=float, covariant=True)
 _R2_co = TypeVar("_R2_co", float, datetime.datetime, covariant=True)
 _Expressions: TypeAlias = list[str]  # fixed-length list of 5 or 6 strings
+ExpandedExpression: TypeAlias = list[int | Literal["*", "l"]]
 
 @type_check_only
 class _AllIter(Protocol[_R_co]):
@@ -51,10 +51,12 @@ YEAR_FIELDS: Final[tuple[int, int, int, int, int, int, int]]
 step_search_re: Final[Pattern[str]]
 only_int_re: Final[Pattern[str]]
 
+DAYS: Final[tuple[int, int, int, int, int, int, int, int, int, int, int, int]]
 WEEKDAYS: Final[str]
 MONTHS: Final[str]
 star_or_int_re: Final[Pattern[str]]
 special_dow_re: Final[Pattern[str]]
+nearest_weekday_re: Final[Pattern[str]]
 re_star: Final[Pattern[str]]
 hash_expression_re: Final[Pattern[str]]
 
@@ -63,11 +65,8 @@ UNIX_CRON_LEN: Final = 5
 SECOND_CRON_LEN: Final = 6
 YEAR_CRON_LEN: Final = 7
 VALID_LEN_EXPRESSION: Final[set[int]]
-TIMESTAMP_TO_DT_CACHE: Final[dict[tuple[float, str], datetime.datetime]]
-EXPRESSIONS: dict[tuple[str, bytes], _Expressions]
 MARKER: object
 
-def timedelta_to_seconds(td: datetime.timedelta) -> float: ...
 def datetime_to_timestamp(d: datetime.datetime) -> float: ...
 
 class CroniterError(ValueError):
@@ -94,22 +93,6 @@ class croniter(Generic[_R_co]):
     RANGES: Final[
         tuple[
             tuple[int, int], tuple[int, int], tuple[int, int], tuple[int, int], tuple[int, int], tuple[int, int], tuple[int, int]
-        ]
-    ]
-    DAYS: Final[
-        tuple[
-            Literal[31],
-            Literal[28],
-            Literal[31],
-            Literal[30],
-            Literal[31],
-            Literal[30],
-            Literal[31],
-            Literal[31],
-            Literal[30],
-            Literal[31],
-            Literal[30],
-            Literal[31],
         ]
     ]
     ALPHACONV: Final[
@@ -139,15 +122,15 @@ class croniter(Generic[_R_co]):
     second_at_beginning: bool
     tzinfo: datetime.tzinfo | None
 
-    # Initialized to None, but immediately set to a float.
     start_time: float
     dst_start_time: float
     cur: float
 
     expanded: list[list[str]]
     nth_weekday_of_month: dict[str, set[int]]
-    fields: tuple[int, ...]
     expressions: _Expressions
+    nearest_weekday: set[int]
+    fields: tuple[int, ...]
 
     @overload
     def __new__(
@@ -160,7 +143,7 @@ class croniter(Generic[_R_co]):
         is_prev: bool = False,
         hash_id: str | bytes | None = None,
         implement_cron_bug: bool = False,
-        second_at_beginning: bool | None = None,
+        second_at_beginning: bool = False,
         expand_from_start_time: bool = False,
     ) -> croniter[float]: ...
     @overload
@@ -174,7 +157,7 @@ class croniter(Generic[_R_co]):
         is_prev: bool = False,
         hash_id: str | bytes | None = None,
         implement_cron_bug: bool = False,
-        second_at_beginning: bool | None = None,
+        second_at_beginning: bool = False,
         expand_from_start_time: bool = False,
     ) -> croniter[datetime.datetime]: ...
     @overload
@@ -188,7 +171,7 @@ class croniter(Generic[_R_co]):
         is_prev: bool = False,
         hash_id: str | bytes | None = None,
         implement_cron_bug: bool = False,
-        second_at_beginning: bool | None = None,
+        second_at_beginning: bool = False,
         expand_from_start_time: bool = False,
     ) -> croniter[datetime.datetime]: ...
     def __init__(
@@ -201,7 +184,7 @@ class croniter(Generic[_R_co]):
         is_prev: bool = False,
         hash_id: str | bytes | None = None,
         implement_cron_bug: bool = False,
-        second_at_beginning: bool | None = None,
+        second_at_beginning: bool = False,
         expand_from_start_time: bool = False,
     ) -> None: ...
     @overload
@@ -226,21 +209,8 @@ class croniter(Generic[_R_co]):
     def get_current(self, ret_type: None = None) -> _R_co: ...
     def set_current(self, start_time: float | datetime.datetime | None, force: bool = True) -> float: ...
     @staticmethod
-    def datetime_to_timestamp(d: datetime.datetime) -> float:
-        """Converts a `datetime` object `d` into a UNIX timestamp."""
-        ...
-    def timestamp_to_datetime(self, timestamp: float, tzinfo: datetime.tzinfo | None = ...) -> datetime.datetime:
-        """Converts a UNIX `timestamp` into a `datetime` object."""
-        ...
-    @staticmethod
-    def timedelta_to_seconds(td: datetime.timedelta) -> float:
-        """
-        Converts a 'datetime.timedelta' object `td` into seconds contained in
-        the duration.
-        Note: We cannot use `timedelta.total_seconds()` because this is not
-        supported by Python 2.6.
-        """
-        ...
+    def datetime_to_timestamp(d: datetime.datetime) -> float: ...
+    def timestamp_to_datetime(self, timestamp: float, tzinfo: datetime.tzinfo | None = ...) -> datetime.datetime: ...
     @overload
     def all_next(
         self, ret_type: type[_R2_co], start_time: float | datetime.datetime | None = None, update_current: bool | None = None
@@ -294,8 +264,6 @@ class croniter(Generic[_R_co]):
         update_current: bool | None = None,
     ) -> _R_co: ...
     __next__ = next
-    @staticmethod
-    def is_leap(year: int) -> bool: ...
     @classmethod
     def value_alias(
         cls,
@@ -303,6 +271,7 @@ class croniter(Generic[_R_co]):
         field_index: Literal[0, 1, 2, 3, 4, 5, 6],
         len_expressions: int | list[Any] | dict[Any, Any] | tuple[Any, ...] | set[Any] = 5,
     ) -> int: ...
+    DAYS_IN_MONTH: Final[dict[int, int]]
     @classmethod
     def expand(
         cls,
@@ -310,49 +279,18 @@ class croniter(Generic[_R_co]):
         hash_id: bytes | None = None,
         second_at_beginning: bool = False,
         from_timestamp: float | None = None,
-    ) -> tuple[list[list[str]], dict[str, set[int]]]:
-        """
-        Expand a cron expression format into a noramlized format of
-        list[list[int | 'l' | '*']]. The first list representing each element
-        of the epxression, and each sub-list representing the allowed values
-        for that expression component.
-
-        A tuple is returned, the first value being the expanded epxression
-        list, and the second being a `nth_weekday_of_month` mapping.
-
-        Examples:
-
-        # Every minute
-        >>> croniter.expand('* * * * *')
-        ([['*'], ['*'], ['*'], ['*'], ['*']], {})
-
-        # On the hour
-        >>> croniter.expand('0 0 * * *')
-        ([[0], [0], ['*'], ['*'], ['*']], {})
-
-        # Hours 0-5 and 10 monday through friday
-        >>> croniter.expand('0-5,10 * * * mon-fri')
-        ([[0, 1, 2, 3, 4, 5, 10], ['*'], ['*'], ['*'], [1, 2, 3, 4, 5]], {})
-
-        Note that some special values such as nth day of week are expanded to a
-        special mapping format for later processing:
-
-        # Every minute on the 3rd tuesday of the month
-        >>> croniter.expand('* * * * 2#3')
-        ([['*'], ['*'], ['*'], ['*'], [2]], {2: {3}})
-
-        # Every hour on the last day of the month
-        >>> croniter.expand('0 * l * *')
-        ([[0], ['*'], ['l'], ['*'], ['*']], {})
-
-        # On the hour every 15 seconds
-        >>> croniter.expand('0 0 * * * */15')
-        ([[0], [0], ['*'], ['*'], ['*'], [0, 15, 30, 45]], {})
-        """
-        ...
+        strict: bool = False,
+        strict_year: int | Iterable[int] | None = None,
+    ) -> tuple[list[ExpandedExpression], dict[str, set[int]]]: ...
     @classmethod
     def is_valid(
-        cls, expression: str, hash_id: bytes | None = None, encoding: str = "UTF-8", second_at_beginning: bool = False
+        cls,
+        expression: str,
+        hash_id: bytes | None = None,
+        encoding: str = "UTF-8",
+        second_at_beginning: bool = False,
+        strict: bool = False,
+        strict_year: int | Iterable[int] | None = None,
     ) -> bool: ...
     @classmethod
     def match(
@@ -361,6 +299,7 @@ class croniter(Generic[_R_co]):
         testdate: float | datetime.datetime | None,
         day_or: bool = True,
         second_at_beginning: bool = False,
+        precision_in_seconds: int | None = None,
     ) -> bool: ...
     @classmethod
     def match_range(
@@ -370,6 +309,7 @@ class croniter(Generic[_R_co]):
         to_datetime: datetime.datetime,
         day_or: bool = True,
         second_at_beginning: bool = False,
+        precision_in_seconds: int | None = None,
     ) -> bool: ...
 
 @overload
@@ -475,4 +415,4 @@ class HashExpander:
         """Expand a hashed/random expression to its normal representation"""
         ...
 
-EXPANDERS: OrderedDict[str, HashExpander]
+EXPANDERS: dict[str, type[HashExpander]]
