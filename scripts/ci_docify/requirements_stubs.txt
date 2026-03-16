@@ -169,7 +169,7 @@ pytz==2026.1.post1
 flake8-builtins==3.1.*
 pyfarmhash==0.4.*
 mock==5.2.*
-croniter==6.0.0
+croniter==6.2.2
 yt-dlp==2026.3.13
 google-cloud-ndb==2.4.*
 decorator==5.2.*
