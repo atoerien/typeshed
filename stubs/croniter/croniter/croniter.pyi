@@ -24,7 +24,6 @@ class _AllIter(Protocol[_R_co]):
 def is_32bit() -> bool:
     """
     Detect if Python is running in 32-bit mode.
-    Compatible with Python 2.6 and later versions.
     Returns True if running on 32-bit Python, False for 64-bit.
     """
     ...
@@ -209,8 +208,12 @@ class croniter(Generic[_R_co]):
     def get_current(self, ret_type: None = None) -> _R_co: ...
     def set_current(self, start_time: float | datetime.datetime | None, force: bool = True) -> float: ...
     @staticmethod
-    def datetime_to_timestamp(d: datetime.datetime) -> float: ...
-    def timestamp_to_datetime(self, timestamp: float, tzinfo: datetime.tzinfo | None = ...) -> datetime.datetime: ...
+    def datetime_to_timestamp(d: datetime.datetime) -> float:
+        """Converts a `datetime` object `d` into a UNIX timestamp."""
+        ...
+    def timestamp_to_datetime(self, timestamp: float, tzinfo: datetime.tzinfo | None = ...) -> datetime.datetime:
+        """Converts a UNIX `timestamp` into a `datetime` object."""
+        ...
     @overload
     def all_next(
         self, ret_type: type[_R2_co], start_time: float | datetime.datetime | None = None, update_current: bool | None = None
@@ -281,7 +284,46 @@ class croniter(Generic[_R_co]):
         from_timestamp: float | None = None,
         strict: bool = False,
         strict_year: int | Iterable[int] | None = None,
-    ) -> tuple[list[ExpandedExpression], dict[str, set[int]]]: ...
+    ) -> tuple[list[ExpandedExpression], dict[str, set[int]]]:
+        """
+        Expand a cron expression format into a noramlized format of
+        list[list[int | 'l' | '*']]. The first list representing each element
+        of the epxression, and each sub-list representing the allowed values
+        for that expression component.
+
+        A tuple is returned, the first value being the expanded epxression
+        list, and the second being a `nth_weekday_of_month` mapping.
+
+        Examples:
+
+        # Every minute
+        >>> croniter.expand('* * * * *')
+        ([['*'], ['*'], ['*'], ['*'], ['*']], {})
+
+        # On the hour
+        >>> croniter.expand('0 0 * * *')
+        ([[0], [0], ['*'], ['*'], ['*']], {})
+
+        # Hours 0-5 and 10 monday through friday
+        >>> croniter.expand('0-5,10 * * * mon-fri')
+        ([[0, 1, 2, 3, 4, 5, 10], ['*'], ['*'], ['*'], [1, 2, 3, 4, 5]], {})
+
+        Note that some special values such as nth day of week are expanded to a
+        special mapping format for later processing:
+
+        # Every minute on the 3rd tuesday of the month
+        >>> croniter.expand('* * * * 2#3')
+        ([['*'], ['*'], ['*'], ['*'], [2]], {2: {3}})
+
+        # Every hour on the last day of the month
+        >>> croniter.expand('0 * l * *')
+        ([[0], ['*'], ['l'], ['*'], ['*']], {})
+
+        # On the hour every 15 seconds
+        >>> croniter.expand('0 0 * * * */15')
+        ([[0], [0], ['*'], ['*'], ['*'], [0, 15, 30, 45]], {})
+        """
+        ...
     @classmethod
     def is_valid(
         cls,
