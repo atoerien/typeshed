@@ -5,9 +5,9 @@
 
 import _win32typing
 
-def GetStackAddress(*args): ...  # incomplete
-def GetThreadStateHandle(*args): ...  # incomplete
-def SetThreadStateTrace(*args): ...  # incomplete
+def GetStackAddress() -> int: ...
+def GetThreadStateHandle() -> int: ...
+def SetThreadStateTrace(handle: int, func, /) -> None: ...
 
 APPBREAKFLAG_DEBUGGER_BLOCK: int
 APPBREAKFLAG_DEBUGGER_HALT: int
