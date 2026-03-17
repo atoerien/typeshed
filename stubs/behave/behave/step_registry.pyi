@@ -1,3 +1,9 @@
+"""
+Provides a step registry and step decorators.
+The step registry allows to match steps (model elements) with
+step implementations (step definitions). This is necessary to execute steps.
+"""
+
 from _typeshed import Incomplete
 from collections.abc import Callable
 from typing import Concatenate, TypeVar
