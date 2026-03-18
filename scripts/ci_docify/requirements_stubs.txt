@@ -171,7 +171,7 @@ flake8-builtins==3.1.*
 pyfarmhash==0.4.*
 mock==5.2.*
 croniter==6.2.2
-yt-dlp==2026.3.13
+yt-dlp==2026.3.17
 google-cloud-ndb==2.4.*
 decorator==5.2.*
 defusedxml==0.7.*
