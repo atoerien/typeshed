@@ -728,48 +728,13 @@ class Enumerated(Integer):
     namedValues: namedval.NamedValues
 
 class SequenceOfAndSetOfBase(base.ConstructedAsn1Type):
-    """
-    Create |ASN.1| schema or value object.
-
-    |ASN.1| class is based on :class:`~pyasn1.type.base.ConstructedAsn1Type`,
-    its objects are mutable and duck-type Python :class:`list` objects.
-
-    Keyword Args
-    ------------
-    componentType : :py:class:`~pyasn1.type.base.PyAsn1Item` derivative
-        A pyasn1 object representing ASN.1 type allowed within |ASN.1| type
-
-    tagSet: :py:class:`~pyasn1.type.tag.TagSet`
-        Object representing non-default ASN.1 tag(s)
-
-    subtypeSpec: :py:class:`~pyasn1.type.constraint.ConstraintsIntersection`
-        Object representing non-default ASN.1 subtype constraint(s). Constraints
-        verification for |ASN.1| type can only occur on explicit
-        `.isInconsistent` call.
-
-    Examples
-    --------
-
-    .. code-block:: python
-
-        class LotteryDraw(SequenceOf):  #  SetOf is similar
-            '''
-            ASN.1 specification:
-
-            LotteryDraw ::= SEQUENCE OF INTEGER
-            '''
-            componentType = Integer()
-
-        lotteryDraw = LotteryDraw()
-        lotteryDraw.extend([123, 456, 789])
-    """
-    componentType: namedtype.NamedTypes | None
+    componentType: base.Asn1Type | None
     tagSet: TagSet
     subtypeSpec: constraint.ConstraintsIntersection
     def __init__(
         self,
         *args,
-        componentType: namedtype.NamedTypes | None = ...,
+        componentType: base.Asn1Type | None = ...,
         tagSet: TagSet = ...,
         subtypeSpec: constraint.ConstraintsIntersection = ...,
     ) -> None: ...
