@@ -183,7 +183,7 @@ toposort==1.10
 click-default-group==1.2.*
 resampy==0.4.*
 passpy==1.0.*
-fanstatic==1.6.*
+fanstatic==1.7.*
 pep8-naming==0.15.*
 keyboard==0.13.*
 pexpect==4.9.*
