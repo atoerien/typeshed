@@ -5,27 +5,14 @@ from collections.abc import Iterable
 from hashlib import _Hash
 from logging import Logger, LogRecord
 from types import TracebackType
-from typing import IO, AnyStr, Protocol
+from typing import IO, AnyStr
 from typing_extensions import Self
 
 from paramiko.config import SSHConfig, SSHConfigDict
 from paramiko.hostkeys import HostKeys
 
-class SupportsClose(Protocol):
-    def close(self) -> None: ...
-
-def inflate_long(s: bytes | bytearray, always_positive: bool = False) -> int:
-    """
-    turns a normalized byte string into a long-int
-    (adapted from Crypto.Util.number)
-    """
-    ...
-def deflate_long(n: int, add_sign_padding: bool = True) -> bytes:
-    """
-    turns a long-int into a normalized byte string
-    (adapted from Crypto.Util.number)
-    """
-    ...
+def inflate_long(s: bytes | bytearray, always_positive: bool = False) -> int: ...
+def deflate_long(n: int, add_sign_padding: bool = True) -> bytes: ...
 def format_binary(data: bytes | bytearray, prefix: str = "") -> list[str]: ...
 def format_binary_line(data: bytes | bytearray) -> str: ...
 def safe_string(s: Iterable[int | str]) -> bytes: ...

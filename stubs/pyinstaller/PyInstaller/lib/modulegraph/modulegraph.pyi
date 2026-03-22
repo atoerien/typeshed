@@ -14,8 +14,9 @@ imports are done in the right way.
 """
 
 from types import CodeType
-from typing import Protocol
+from typing import Protocol, type_check_only
 
+@type_check_only
 class _SupportsGraphident(Protocol):
     graphident: str
 
