@@ -72,8 +72,43 @@ class GraphicsStateDictRegistry(OrderedDict[Raw, Name]):
     """A container providing deduplication of graphics state dictionaries across a PDF."""
     def register_style(self, style: GraphicsStyle) -> Name | None: ...
 
-def number_to_str(number: Number) -> str: ...
-def render_pdf_primitive(primitive: _Primitive) -> Raw: ...
+def number_to_str(number: Number) -> str:
+    """
+    Convert a decimal number to a minimal string representation (no trailing 0 or .).
+
+    Args:
+        number (Number): the number to be converted to a string.
+
+    Returns:
+        The number's string representation.
+    """
+    ...
+def render_pdf_primitive(primitive: _Primitive) -> Raw:
+    """
+    Render a Python value as a PDF primitive type.
+
+    Container types (tuples/lists and dicts) are rendered recursively. This supports
+    values of the type Name, str, bytes, numbers, booleans, list/tuple, and dict.
+
+    Any custom type can be passed in as long as it provides a `serialize` method that
+    takes no arguments and returns a string. The primitive object is returned directly
+    if it is an instance of the `Raw` class. Otherwise, The existence of the `serialize`
+    method is checked before any other type checking is performed, so, for example, a
+    `dict` subclass with a `serialize` method would be converted using its `pdf_repr`
+    method rather than the built-in `dict` conversion process.
+
+    Args:
+        primitive: the primitive value to convert to its PDF representation.
+
+    Returns:
+        Raw-wrapped str of the PDF representation.
+
+    Raises:
+        ValueError: if a dictionary key is not a Name.
+        TypeError: if `primitive` does not have a known conversion to a PDF
+            representation.
+    """
+    ...
 @type_check_only
 class _DeviceRGBBase(NamedTuple):
     r: Number

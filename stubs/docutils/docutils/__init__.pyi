@@ -1,3 +1,51 @@
+"""
+This is the Docutils (Python Documentation Utilities) package.
+
+Package Structure
+=================
+
+Modules:
+
+- __init__.py: Contains component base classes, exception classes, and
+  Docutils version information.
+
+- core.py: Contains the ``Publisher`` class and ``publish_*()`` convenience
+  functions.
+
+- frontend.py: Runtime settings (command-line interface, configuration files)
+  processing, for Docutils front-ends.
+
+- io.py: Provides a uniform API for low-level input and output.
+
+- nodes.py: Docutils document tree (doctree) node class library.
+
+- statemachine.py: A finite state machine specialized for
+  regular-expression-based text filters.
+
+Subpackages:
+
+- languages: Language-specific mappings of terms.
+
+- parsers: Syntax-specific input parser modules or packages.
+
+- readers: Context-specific input handlers which understand the data
+  source and manage a parser.
+
+- transforms: Modules used by readers and writers to modify
+  the Docutils document tree.
+
+- utils: Contains the ``Reporter`` system warning class and miscellaneous
+  utilities used by readers, writers, and transforms.
+
+  utils/urischemes.py: Contains a complete mapping of known URI addressing
+  scheme names to descriptions.
+
+- utils/math: Contains functions for conversion of mathematical notation
+  between different formats (LaTeX, MathML, text, ...).
+
+- writers: Format-specific output translators.
+"""
+
 from typing import Any, ClassVar, Final, NamedTuple, type_check_only
 from typing_extensions import Self
 
