@@ -82,7 +82,19 @@ regPolicy: str
 regDispatcher: str
 regAddnPath: str
 
-def CreateInstance(clsid, reqIID: _win32typing.PyIID) -> _win32typing.PyIUnknown: ...
+def CreateInstance(clsid, reqIID: _win32typing.PyIID) -> _win32typing.PyIUnknown:
+    """
+    Create a new instance of the specified IID
+
+    The COM framework **always** calls this function to create a new
+    instance for the specified CLSID.  This function looks up the
+    registry for the name of a policy, creates the policy, and asks the
+    policy to create the specified object by calling the _CreateInstance_ method.
+
+    Exactly how the policy creates the instance is up to the policy.  See the
+    specific policy documentation for more details.
+    """
+    ...
 
 class BasicWrapPolicy(ABC):
     """
@@ -240,10 +252,23 @@ class DynamicPolicy(BasicWrapPolicy):
 DefaultPolicy = DesignatedWrapPolicy
 
 # Imports an arbitrary object by it's fully-qualified name.
-def resolve_func(spec: str) -> Any: ...
+def resolve_func(spec: str) -> Any:
+    """
+    Resolve a function by name
+
+    Given a function specified by 'module.function', return a callable object
+    (ie, the function itself)
+    """
+    ...
 
 # Imports and calls an arbitrary callable by it's fully-qualified name.
-def call_func(spec: str, *args: Any) -> Any: ...
+def call_func(spec: str, *args: Any) -> Any:
+    """
+    Call a function specified by name.
+
+    Call a function specified by 'module.function' and return the result.
+    """
+    ...
 
 DISPATCH_METHOD: int
 DISPATCH_PROPERTYGET: int
