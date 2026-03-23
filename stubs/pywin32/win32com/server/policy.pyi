@@ -69,8 +69,12 @@ Error Handling
 
 from _typeshed import Incomplete
 from abc import ABC, abstractmethod
+from typing import Any, Final
 
-S_OK: int
+import _win32typing
+
+__author__: Final[str]
+S_OK: Final = 0
 IDispatchType: Incomplete
 IUnknownType: Incomplete
 regSpec: str
@@ -78,19 +82,7 @@ regPolicy: str
 regDispatcher: str
 regAddnPath: str
 
-def CreateInstance(clsid, reqIID):
-    """
-    Create a new instance of the specified IID
-
-    The COM framework **always** calls this function to create a new
-    instance for the specified CLSID.  This function looks up the
-    registry for the name of a policy, creates the policy, and asks the
-    policy to create the specified object by calling the _CreateInstance_ method.
-
-    Exactly how the policy creates the instance is up to the policy.  See the
-    specific policy documentation for more details.
-    """
-    ...
+def CreateInstance(clsid, reqIID: _win32typing.PyIID) -> _win32typing.PyIUnknown: ...
 
 class BasicWrapPolicy(ABC):
     """
@@ -247,21 +239,11 @@ class DynamicPolicy(BasicWrapPolicy):
 
 DefaultPolicy = DesignatedWrapPolicy
 
-def resolve_func(spec):
-    """
-    Resolve a function by name
+# Imports an arbitrary object by it's fully-qualified name.
+def resolve_func(spec: str) -> Any: ...
 
-    Given a function specified by 'module.function', return a callable object
-    (ie, the function itself)
-    """
-    ...
-def call_func(spec, *args):
-    """
-    Call a function specified by name.
-
-    Call a function specified by 'module.function' and return the result.
-    """
-    ...
+# Imports and calls an arbitrary callable by it's fully-qualified name.
+def call_func(spec: str, *args: Any) -> Any: ...
 
 DISPATCH_METHOD: int
 DISPATCH_PROPERTYGET: int

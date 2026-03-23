@@ -1,31 +1,63 @@
-"""
-Manages the cache of generated Python code.
+from _typeshed import Incomplete, Unused
+from collections.abc import Generator
+from contextlib import contextmanager
+from types import ModuleType
+from typing import Literal, NoReturn
 
-Description
-  This file manages the cache of generated Python code.  When run from the
-  command line, it also provides a number of options for managing that cache.
-
-Implementation
-  Each typelib is generated into a filename of format "{guid}x{lcid}x{major}x{minor}.py"
-
-  An external persistant dictionary maps from all known IIDs in all known type libraries
-  to the type library itself.
-
-  Thus, whenever Python code knows the IID of an object, it can find the IID, LCID and version of
-  the type library which supports it.  Given this information, it can find the Python module
-  with the support.
-
-  If necessary, this support can be generated on the fly.
-
-Hacks, to do, etc
-  Currently just uses a pickled dictionary, but should used some sort of indexed file.
-  Maybe an OLE2 compound file, or a bsddb file?
-"""
-
+from win32.lib.pywintypes import IIDType
 from win32com.client import dynamic
 
+bForDemandDefault: int
+clsidToTypelib: dict[str, tuple[str, int, int, int]]
+versionRedirectMap: dict[tuple[str, int, int, int], ModuleType | None]
+is_readonly: bool
+is_zip: bool
+demandGeneratedTypeLibraries: dict[tuple[str, int, int, int], Incomplete]
+
+def __init__() -> None: ...
+
+pickleVersion: int
+
+@contextmanager
+def ModuleMutex(module_name: str) -> Generator[None]: ...
+def GetGeneratedFileName(clsid, lcid, major, minor) -> str: ...
+def SplitGeneratedFileName(fname: str) -> tuple[str, ...]: ...
+def GetGeneratePath() -> str: ...
+def GetClassForProgID(progid: str) -> type | None: ...
+def GetClassForCLSID(clsid) -> type | None: ...
+def GetModuleForProgID(progid: str) -> ModuleType | None: ...
+def GetModuleForCLSID(clsid) -> ModuleType | None: ...
+def GetModuleForTypelib(typelibCLSID, lcid, major, minor) -> ModuleType: ...
+def MakeModuleForTypelib(
+    typelibCLSID,
+    lcid,
+    major,
+    minor,
+    progressInstance=None,
+    bForDemand: bool | Literal[0, 1] = ...,
+    bBuildHidden: bool | Literal[0, 1] = 1,
+) -> ModuleType: ...
+def MakeModuleForTypelibInterface(
+    typelib_ob, progressInstance=None, bForDemand: bool | Literal[0, 1] = ..., bBuildHidden: bool | Literal[0, 1] = 1
+) -> ModuleType | None: ...
+def EnsureModuleForTypelibInterface(
+    typelib_ob, progressInstance=None, bForDemand: bool | Literal[0, 1] = ..., bBuildHidden: bool | Literal[0, 1] = 1
+) -> ModuleType | None: ...
+def ForgetAboutTypelibInterface(typelib_ob) -> None: ...
+def EnsureModule(
+    typelibCLSID,
+    lcid,
+    major,
+    minor,
+    progressInstance=None,
+    bValidateFile: bool | Literal[0, 1] = ...,
+    bForDemand: bool | Literal[0, 1] = ...,
+    bBuildHidden: bool | Literal[0, 1] = 1,
+) -> ModuleType | None: ...
 def EnsureDispatch(
-    prog_id: str | dynamic.PyIDispatchType | dynamic._GoodDispatchTypes | dynamic.PyIUnknownType, bForDemand: int = ...
-) -> dynamic.CDispatch:
-    """Given a COM prog_id, return an object that is using makepy support, building if necessary"""
-    ...
+    prog_id: str | dynamic.PyIDispatchType | IIDType | dynamic.PyIUnknownType, bForDemand: bool | Literal[0, 1] = 1
+) -> dynamic.CDispatch: ...
+def AddModuleToCache(typelibclsid, lcid, major, minor, verbose: Unused = 1, bFlushNow: bool | Literal[0, 1] = ...) -> None: ...
+def GetGeneratedInfos() -> list[tuple[Incomplete, Incomplete, Incomplete, Incomplete]]: ...
+def Rebuild(verbose: bool | Literal[0, 1] = 1) -> None: ...
+def usage() -> NoReturn: ...
