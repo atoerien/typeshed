@@ -9,6 +9,7 @@ from typing_extensions import Never, TypeAlias
 NSIG: int
 
 class Signals(IntEnum):
+    """An enumeration."""
     SIGFPE = 8
     SIGILL = 4
     SIGINT = 2

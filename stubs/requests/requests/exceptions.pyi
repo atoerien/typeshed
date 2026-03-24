@@ -1,3 +1,10 @@
+"""
+requests.exceptions
+~~~~~~~~~~~~~~~~~~~
+
+This module contains the set of Requests' exceptions.
+"""
+
 from typing import Any
 
 from urllib3.exceptions import HTTPError as BaseHTTPError

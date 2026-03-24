@@ -1,3 +1,9 @@
+"""
+Implements signals based on blinker if available, otherwise
+falls silently back to a noop. Shamelessly stolen from flask.signals:
+https://github.com/mitsuhiko/flask/blob/master/flask/signals.py
+"""
+
 from _typeshed import Incomplete
 
 signals_available: bool
