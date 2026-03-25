@@ -5,6 +5,7 @@ from typing import Any, Literal, TypeVar, overload
 _T = TypeVar("_T")
 
 class URIDict(MutableMapping[str, MutableMapping[str, Any]]):
+    """Dictionary which uses normalized URIs as keys."""
     def normalize(self, uri: str) -> str: ...
     store: dict[str, MutableMapping[str, Any]]
     def __init__(
