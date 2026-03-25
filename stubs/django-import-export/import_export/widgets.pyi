@@ -154,53 +154,17 @@ class JSONWidget(Widget):
 _ModelT = TypeVar("_ModelT", bound=Model)
 
 class ForeignKeyWidget(Widget, Generic[_ModelT]):
-    """
-    Widget for a ``ForeignKey`` field which looks up a related model using
-    either the PK or a user specified field that uniquely identifies the
-    instance in both export and import.
-
-    The lookup field defaults to using the primary key (``pk``) as lookup
-    criterion but can be customized to use any field on the related model.
-
-    Unlike specifying a related field in your resource like so…
-
-    ::
-
-        class Meta:
-            fields = ('author__name',)
-
-    …using a :class:`~import_export.widgets.ForeignKeyWidget` has the
-    advantage that it can not only be used for exporting, but also importing
-    data with foreign key relationships.
-
-    Here's an example on how to use
-    :class:`~import_export.widgets.ForeignKeyWidget` to lookup related objects
-    using ``Author.name`` instead of ``Author.pk``::
-
-        from import_export import fields, resources
-        from import_export.widgets import ForeignKeyWidget
-
-        class BookResource(resources.ModelResource):
-            author = fields.Field(
-                column_name='author',
-                attribute='author',
-                widget=ForeignKeyWidget(Author, 'name'))
-
-            class Meta:
-                fields = ('author',)
-
-    :param model: The Model the ForeignKey refers to (required).
-    :param field: A field on the related model used for looking up a particular
-        object.
-    :param use_natural_foreign_keys: Use natural key functions to identify
-        related object, default to False
-    """
-    model: _ModelT
+    model: type[_ModelT]
     field: str
     key_is_id: bool
     use_natural_foreign_keys: bool
     def __init__(
-        self, model: _ModelT, field: str = "pk", use_natural_foreign_keys: bool = False, key_is_id: bool = False, **kwargs: Any
+        self,
+        model: type[_ModelT],
+        field: str = "pk",
+        use_natural_foreign_keys: bool = False,
+        key_is_id: bool = False,
+        **kwargs: Any,
     ) -> None: ...
     def get_queryset(self, value: Any, row: Mapping[str, Any], *args: Any, **kwargs: Any) -> QuerySet[_ModelT]:
         r"""
