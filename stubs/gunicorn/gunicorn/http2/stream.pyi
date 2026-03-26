@@ -149,40 +149,10 @@ class HTTP2Stream:
         ...
     def update_priority(
         self, weight: int | None = None, depends_on: int | None = None, exclusive: bool | None = None
-    ) -> None:
-        """
-        Update stream priority from PRIORITY frame.
-
-        Args:
-            weight: Priority weight (1-256), higher = more resources
-            depends_on: Stream ID this stream depends on
-            exclusive: Whether this is an exclusive dependency
-        """
-        ...
-    def get_request_body(self) -> bytes:
-        """
-        Get the complete request body.
-
-        Returns:
-            bytes: The request body data
-        """
-        ...
-    def get_pseudo_headers(self) -> dict[str, Incomplete]:
-        """
-        Extract HTTP/2 pseudo-headers from request headers.
-
-        Returns:
-            dict: Mapping of pseudo-header names to values
-                  (e.g., {':method': 'GET', ':path': '/'})
-        """
-        ...
-    def get_regular_headers(self) -> list[tuple[str, Incomplete]]:
-        """
-        Get regular (non-pseudo) headers from request.
-
-        Returns:
-            list: List of (name, value) tuples for regular headers
-        """
-        ...
+    ) -> None: ...
+    def get_request_body(self) -> bytes: ...
+    async def read_body_chunk(self) -> bytes | None: ...
+    def get_pseudo_headers(self) -> dict[str, Incomplete]: ...
+    def get_regular_headers(self) -> list[tuple[str, Incomplete]]: ...
 
 __all__ = ["HTTP2Stream", "StreamState"]
