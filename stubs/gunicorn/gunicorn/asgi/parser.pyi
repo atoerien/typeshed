@@ -1,18 +1,53 @@
+"""
+HTTP parser for ASGI workers.
+
+Provides callback-based parsing using either the fast C parser (gunicorn_h1c)
+or the pure Python PythonProtocol fallback.
+"""
+
 from collections.abc import Callable, Iterable
 from typing import Any, Literal, SupportsIndex
 from typing_extensions import Self, TypeAlias
 
 _H1CProtocol: TypeAlias = Any  # gunicorn_h1c H1CProtocol class
 
-class ParseError(Exception): ...
-class LimitRequestLine(ParseError): ...
-class LimitRequestHeaders(ParseError): ...
-class InvalidRequestMethod(ParseError): ...
-class InvalidHTTPVersion(ParseError): ...
-class InvalidHeaderName(ParseError): ...
-class InvalidHeader(ParseError): ...
+class ParseError(Exception):
+    """Base error raised during HTTP parsing."""
+    ...
+class LimitRequestLine(ParseError):
+    """Request line exceeds configured limit."""
+    ...
+class LimitRequestHeaders(ParseError):
+    """Too many headers or header field too large."""
+    ...
+class InvalidRequestMethod(ParseError):
+    """Invalid HTTP method."""
+    ...
+class InvalidHTTPVersion(ParseError):
+    """Invalid HTTP version."""
+    ...
+class InvalidHeaderName(ParseError):
+    """Invalid header name."""
+    ...
+class InvalidHeader(ParseError):
+    """Invalid header value."""
+    ...
 
 class PythonProtocol:
+    """
+    Callback-based HTTP/1.1 parser (pure Python fallback).
+
+    Mirrors H1CProtocol interface for seamless switching between
+    the C extension and pure Python implementations.
+
+    Callbacks:
+        on_message_begin: () -> None - Called when request starts
+        on_url: (url: bytes) -> None - Called with request URL/path
+        on_header: (name: bytes, value: bytes) -> None - Called for each header
+        on_headers_complete: () -> bool - Called when headers done (return True to skip body)
+        on_body: (chunk: bytes) -> None - Called with body data chunks
+        on_message_complete: () -> None - Called when request is complete
+    """
     __slots__ = (
         "_on_message_begin",
         "_on_url",
@@ -66,10 +101,27 @@ class PythonProtocol:
         permit_unconventional_http_method: bool = False,
         permit_unconventional_http_version: bool = False,
     ) -> None: ...
-    def feed(self, data: Iterable[SupportsIndex]) -> None: ...
-    def reset(self) -> None: ...
+    def feed(self, data: Iterable[SupportsIndex]) -> None:
+        """
+        Process data, fire callbacks synchronously.
+
+        Args:
+            data: bytes or bytearray of incoming data
+
+        Raises:
+            ParseError: If the HTTP request is malformed
+        """
+        ...
+    def reset(self) -> None:
+        """Reset for next request (keepalive)."""
+        ...
 
 class CallbackRequest:
+    """
+    Request object built from callback parser state.
+
+    Works with both H1CProtocol (C extension) and PythonProtocol.
+    """
     __slots__ = (
         "method",
         "uri",
@@ -104,6 +156,21 @@ class CallbackRequest:
 
     def __init__(self) -> None: ...
     @classmethod
-    def from_parser(cls, parser: _H1CProtocol | PythonProtocol, is_ssl: bool = False) -> Self: ...
-    def should_close(self) -> bool: ...
-    def get_header(self, name: str) -> str | None: ...
+    def from_parser(cls, parser: _H1CProtocol | PythonProtocol, is_ssl: bool = False) -> Self:
+        """
+        Build request from callback parser state.
+
+        Args:
+            parser: H1CProtocol or PythonProtocol instance
+            is_ssl: Whether connection is SSL/TLS
+
+        Returns:
+            CallbackRequest instance
+        """
+        ...
+    def should_close(self) -> bool:
+        """Check if connection should be closed after this request."""
+        ...
+    def get_header(self, name: str) -> str | None:
+        """Get a header value by name (case-insensitive)."""
+        ...

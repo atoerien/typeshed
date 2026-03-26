@@ -1175,7 +1175,13 @@ class HeaderMap(Setting):
 
 def validate_asgi_loop(val: str | None) -> str: ...
 def validate_asgi_lifespan(val: str | None) -> str: ...
-def validate_http_parser(val: str | None) -> str: ...
+def validate_http_parser(val: str | None) -> str:
+    """
+    Validate http_parser setting.
+
+    Accepts: auto, fast, python
+    """
+    ...
 
 class ASGILoop(Setting):
     name: ClassVar[str]

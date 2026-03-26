@@ -31,7 +31,12 @@ CLOSE_INTERNAL_ERROR: Final = 1011
 WS_GUID: Final = b"258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 
 class WebSocketProtocol:
-    """WebSocket connection handler for ASGI applications."""
+    """
+    WebSocket connection handler for ASGI applications.
+
+    Uses callback-based data feeding instead of StreamReader for efficiency.
+    Data is fed via feed_data() from the parent protocol's data_received().
+    """
     transport: asyncio.Transport
     scope: _ScopeType
     app: _ASGIAppType
@@ -41,7 +46,28 @@ class WebSocketProtocol:
     close_code: int | None
     close_reason: str | None
 
-    def __init__(self, transport: asyncio.Transport, scope: _ScopeType, app: _ASGIAppType, log: GLogger) -> None: ...
-    def feed_data(self, data: bytes) -> None: ...
-    def feed_eof(self) -> None: ...
-    async def run(self) -> None: ...
+    def __init__(self, transport: asyncio.Transport, scope: _ScopeType, app: _ASGIAppType, log: GLogger) -> None:
+        """
+        Initialize WebSocket protocol handler.
+
+        Args:
+            transport: asyncio transport for writing
+            scope: ASGI WebSocket scope dict
+            app: ASGI application callable
+            log: Logger instance
+        """
+        ...
+    def feed_data(self, data: bytes) -> None:
+        """
+        Feed incoming data from the parent protocol's data_received().
+
+        Args:
+            data: bytes received on the connection
+        """
+        ...
+    def feed_eof(self) -> None:
+        """Signal that the connection has been closed."""
+        ...
+    async def run(self) -> None:
+        """Run the WebSocket ASGI application."""
+        ...

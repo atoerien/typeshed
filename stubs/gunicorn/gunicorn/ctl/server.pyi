@@ -3,6 +3,12 @@ Control Socket Server
 
 Runs in the arbiter process and accepts commands via Unix socket.
 Uses asyncio in a background thread to handle client connections.
+
+Fork Safety:
+    This server uses os.register_at_fork() to properly handle fork() calls.
+    Before fork: the asyncio thread is stopped to prevent lock issues.
+    After fork in parent: the server is restarted.
+    After fork in child: references are cleared (workers don't need the control server).
 """
 
 from gunicorn.arbiter import Arbiter
@@ -14,6 +20,9 @@ class ControlSocketServer:
 
     The server runs an asyncio event loop in a background thread,
     accepting connections and dispatching commands to handlers.
+
+    Fork safety is handled via os.register_at_fork() - the server
+    automatically stops before fork and restarts after in the parent.
     """
     arbiter: Arbiter
     socket_path: str

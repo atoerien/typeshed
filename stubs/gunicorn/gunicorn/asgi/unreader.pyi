@@ -14,6 +14,9 @@ class AsyncUnreader:
 
     This class wraps an asyncio StreamReader and provides the ability
     to "unread" data back into a buffer for re-parsing.
+
+    Performance optimization: Reuses BytesIO buffer with truncate/seek
+    instead of creating new objects to reduce GC pressure.
     """
     reader: asyncio.StreamReader
     buf: io.BytesIO
@@ -46,6 +49,8 @@ class AsyncUnreader:
 
         Args:
             data: bytes to push back
+
+        Note: This prepends data to the buffer so it will be read first.
         """
         ...
     def has_buffered_data(self) -> bool:
