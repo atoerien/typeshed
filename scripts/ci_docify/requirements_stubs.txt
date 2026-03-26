@@ -4,7 +4,7 @@ typing-extensions==4.15.0
 
 whatthepatch==1.0.*
 pyaudio==0.2.*
-gunicorn==25.1.0
+gunicorn==25.2.0
 xlrd==2.0.*
 hdbcli==2.25.*
 ibm-db==3.2.8
