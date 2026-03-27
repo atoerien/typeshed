@@ -145,10 +145,10 @@ ConfigParser -- responsible for parsing a list of
 """
 
 import sys
-from _typeshed import MaybeNone, StrOrBytesPath, SupportsWrite
+from _typeshed import BytesPath, GenericPath, MaybeNone, StrOrBytesPath, StrPath, SupportsWrite
 from collections.abc import Callable, ItemsView, Iterable, Iterator, Mapping, MutableMapping, Sequence
 from re import Pattern
-from typing import Any, ClassVar, Final, Literal, TypeVar, overload, type_check_only
+from typing import Any, AnyStr, ClassVar, Final, Literal, TypeVar, overload, type_check_only
 from typing_extensions import TypeAlias, deprecated
 
 if sys.version_info >= (3, 14):
@@ -437,76 +437,22 @@ class RawConfigParser(_Parser):
     def __iter__(self) -> Iterator[str]: ...
     def __contains__(self, key: object) -> bool: ...
     def defaults(self) -> _Section: ...
-    def sections(self) -> _SectionNameList:
-        """Return a list of section names, excluding [DEFAULT]"""
-        ...
-    def add_section(self, section: _SectionName) -> None:
-        """
-        Create a new section in the configuration.
-
-        Raise DuplicateSectionError if a section by the specified name
-        already exists. Raise ValueError if name is DEFAULT.
-        """
-        ...
-    def has_section(self, section: _SectionName) -> bool:
-        """
-        Indicate whether the named section is present in the configuration.
-
-        The DEFAULT section is not acknowledged.
-        """
-        ...
-    def options(self, section: _SectionName) -> list[str]:
-        """Return a list of option names for the given section name."""
-        ...
-    def has_option(self, section: _SectionName, option: str) -> bool:
-        """
-        Check for the existence of a given option in a given section.
-        If the specified `section` is None or an empty string, DEFAULT is
-        assumed. If the specified `section` does not exist, returns False.
-        """
-        ...
-    def read(self, filenames: StrOrBytesPath | Iterable[StrOrBytesPath], encoding: str | None = None) -> list[str]:
-        """
-        Read and parse a filename or an iterable of filenames.
-
-        Files that cannot be opened are silently ignored; this is
-        designed so that you can specify an iterable of potential
-        configuration file locations (e.g. current directory, user's
-        home directory, systemwide directory), and all existing
-        configuration files in the iterable will be read.  A single
-        filename may also be given.
-
-        Return list of successfully read files.
-        """
-        ...
-    def read_file(self, f: Iterable[str], source: str | None = None) -> None:
-        """
-        Like read() but the argument must be a file-like object.
-
-        The `f` argument must be iterable, returning one line at a time.
-        Optional second argument is the `source` specifying the name of the
-        file being read. If not given, it is taken from f.name. If `f` has no
-        `name` attribute, `<???>` is used.
-        """
-        ...
-    def read_string(self, string: str, source: str = "<string>") -> None:
-        """Read configuration from a given string."""
-        ...
-    def read_dict(self, dictionary: Mapping[str, Mapping[str, Any]], source: str = "<dict>") -> None:
-        """
-        Read configuration from a dictionary.
-
-        Keys are section names, values are dictionaries with keys and values
-        that should be present in the section. If the used dictionary type
-        preserves order, sections and their keys will be added in order.
-
-        All types held in the dictionary are converted to strings during
-        reading, including section names, option names and keys.
-
-        Optional second argument is the `source` specifying the name of the
-        dictionary being read.
-        """
-        ...
+    def sections(self) -> _SectionNameList: ...
+    def add_section(self, section: _SectionName) -> None: ...
+    def has_section(self, section: _SectionName) -> bool: ...
+    def options(self, section: _SectionName) -> list[str]: ...
+    def has_option(self, section: _SectionName, option: str) -> bool: ...
+    @overload
+    def read(self, filenames: GenericPath[AnyStr], encoding: str | None = None) -> list[AnyStr]: ...
+    @overload
+    def read(self, filenames: Iterable[StrPath], encoding: str | None = None) -> list[str]: ...
+    @overload
+    def read(self, filenames: Iterable[BytesPath], encoding: str | None = None) -> list[bytes]: ...
+    @overload
+    def read(self, filenames: Iterable[StrOrBytesPath], encoding: str | None = None) -> list[str | bytes]: ...
+    def read_file(self, f: Iterable[str], source: str | None = None) -> None: ...
+    def read_string(self, string: str, source: str = "<string>") -> None: ...
+    def read_dict(self, dictionary: Mapping[str, Mapping[str, Any]], source: str = "<dict>") -> None: ...
     if sys.version_info < (3, 12):
         @deprecated("Deprecated since Python 3.2; removed in Python 3.12. Use `parser.read_file()` instead.")
         def readfp(self, fp: Iterable[str], filename: str | None = None) -> None:
