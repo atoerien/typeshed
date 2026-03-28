@@ -69,6 +69,7 @@ class ChunkMissingTerminator(IOError):
     def __init__(self, term: bytes) -> None: ...
 
 class InvalidChunkExtension(IOError):
+    """Invalid chunk extension per RFC 9112."""
     reason: str
     def __init__(self, reason: str) -> None: ...
 

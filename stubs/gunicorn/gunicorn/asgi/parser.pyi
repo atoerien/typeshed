@@ -12,37 +12,66 @@ from typing_extensions import Self, TypeAlias
 
 _H1CProtocol: TypeAlias = Any  # gunicorn_h1c H1CProtocol class
 
-class ParseError(Exception): ...
-class InvalidProxyLine(ParseError): ...
-class InvalidProxyHeader(ParseError): ...
+class ParseError(Exception):
+    """Base error raised during HTTP parsing."""
+    ...
+class InvalidProxyLine(ParseError):
+    """Invalid PROXY protocol v1 line."""
+    ...
+class InvalidProxyHeader(ParseError):
+    """Invalid PROXY protocol v2 header."""
+    ...
 
 PP_V2_SIGNATURE: Final[bytes]
 
 class PPCommand(IntEnum):
+    """PROXY protocol v2 commands."""
     LOCAL = 0x0
     PROXY = 0x1
 
 class PPFamily(IntEnum):
+    """PROXY protocol v2 address families."""
     UNSPEC = 0x0
     INET = 0x1
     INET6 = 0x2
     UNIX = 0x3
 
 class PPProtocol(IntEnum):
+    """PROXY protocol v2 transport protocols."""
     UNSPEC = 0x0
     STREAM = 0x1
     DGRAM = 0x2
 
-class LimitRequestLine(ParseError): ...
-class InvalidRequestLine(ParseError): ...
-class LimitRequestHeaders(ParseError): ...
-class InvalidRequestMethod(ParseError): ...
-class InvalidHTTPVersion(ParseError): ...
-class InvalidHeaderName(ParseError): ...
-class InvalidHeader(ParseError): ...
-class UnsupportedTransferCoding(ParseError): ...
-class InvalidChunkSize(ParseError): ...
-class InvalidChunkExtension(ParseError): ...
+class LimitRequestLine(ParseError):
+    """Request line exceeds configured limit."""
+    ...
+class InvalidRequestLine(ParseError):
+    """Invalid request line."""
+    ...
+class LimitRequestHeaders(ParseError):
+    """Too many headers or header field too large."""
+    ...
+class InvalidRequestMethod(ParseError):
+    """Invalid HTTP method."""
+    ...
+class InvalidHTTPVersion(ParseError):
+    """Invalid HTTP version."""
+    ...
+class InvalidHeaderName(ParseError):
+    """Invalid header name."""
+    ...
+class InvalidHeader(ParseError):
+    """Invalid header value."""
+    ...
+class UnsupportedTransferCoding(ParseError):
+    """Unsupported Transfer-Encoding value."""
+    ...
+class InvalidChunkSize(ParseError):
+    """Invalid chunk size in chunked transfer encoding."""
+    ...
+class InvalidChunkExtension(ParseError):
+    """Invalid chunk extension per RFC 9112."""
+    ...
 
 @type_check_only
 class _ProxyProtocolInfo(TypedDict):
@@ -132,11 +161,32 @@ class PythonProtocol:
         permit_unconventional_http_version: bool = False,
         proxy_protocol: Literal["off", "v1", "v2", "auto"] = "off",
     ) -> None: ...
-    def feed(self, data: Iterable[SupportsIndex]) -> None: ...
+    def feed(self, data: Iterable[SupportsIndex]) -> None:
+        """
+        Process data, fire callbacks synchronously.
+
+        Args:
+            data: bytes or bytearray of incoming data
+
+        Raises:
+            ParseError: If the HTTP request is malformed
+        """
+        ...
     @property
-    def proxy_protocol_info(self) -> _ProxyProtocolInfo | _ProxyProtocolInfoUnknown | None: ...
-    def reset(self) -> None: ...
-    def finish(self) -> None: ...
+    def proxy_protocol_info(self) -> _ProxyProtocolInfo | _ProxyProtocolInfoUnknown | None:
+        """Return proxy protocol info if parsed."""
+        ...
+    def reset(self) -> None:
+        """Reset for next request (keepalive)."""
+        ...
+    def finish(self) -> None:
+        """
+        Mark parsing complete for EOF handling.
+
+        Call when no more data will be received. Handles edge cases like
+        chunked encoding without final trailer CRLF.
+        """
+        ...
 
 class CallbackRequest:
     """

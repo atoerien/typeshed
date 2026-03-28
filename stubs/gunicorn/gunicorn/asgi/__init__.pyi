@@ -6,7 +6,6 @@ HTTP parsing infrastructure adapted for async I/O.
 
 Components:
 - AsyncUnreader: Async socket reading with pushback buffer
-- AsyncRequest: Async HTTP request parser
 - ASGIProtocol: asyncio.Protocol implementation for HTTP handling
 - WebSocketProtocol: WebSocket protocol handler (RFC 6455)
 - LifespanManager: ASGI lifespan protocol support
