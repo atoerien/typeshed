@@ -368,7 +368,16 @@ if sys.version_info < (3, 12):
         "Deprecated since Python 3.10; removed in Python 3.12. "
         "Open database in URI mode using `cache=shared` parameter instead."
     )
-    def enable_shared_cache(do_enable: int) -> None: ...  # undocumented
+    def enable_shared_cache(do_enable: int) -> None:
+        """
+        Enable or disable shared cache mode for the calling thread.
+
+        This method is deprecated and will be removed in Python 3.12.
+        Shared cache is strongly discouraged by the SQLite 3 documentation.
+        If shared cache must be used, open the database in URI mode using
+        the cache=shared query parameter.
+        """
+        ...
 
 if sys.version_info >= (3, 10):
     def register_adapter(type: type[_T], adapter: _Adapter[_T], /) -> None:
