@@ -19,7 +19,7 @@ from sqlite3 import (
     _IsolationLevel,
 )
 from typing import Any, Final, Literal, TypeVar, overload
-from typing_extensions import TypeAlias
+from typing_extensions import TypeAlias, deprecated
 
 if sys.version_info >= (3, 11):
     from sqlite3 import Blob as Blob
@@ -364,16 +364,11 @@ def enable_callback_tracebacks(enable: bool, /) -> None:
 
 if sys.version_info < (3, 12):
     # takes a pos-or-keyword argument because there is a C wrapper
-    def enable_shared_cache(do_enable: int) -> None:
-        """
-        Enable or disable shared cache mode for the calling thread.
-
-        This method is deprecated and will be removed in Python 3.12.
-        Shared cache is strongly discouraged by the SQLite 3 documentation.
-        If shared cache must be used, open the database in URI mode using
-        the cache=shared query parameter.
-        """
-        ...
+    @deprecated(
+        "Deprecated since Python 3.10; removed in Python 3.12. "
+        "Open database in URI mode using `cache=shared` parameter instead."
+    )
+    def enable_shared_cache(do_enable: int) -> None: ...  # undocumented
 
 if sys.version_info >= (3, 10):
     def register_adapter(type: type[_T], adapter: _Adapter[_T], /) -> None:
@@ -400,4 +395,4 @@ else:
         ...
 
 if sys.version_info < (3, 10):
-    OptimizedUnicode = str
+    OptimizedUnicode = str  # undocumented
