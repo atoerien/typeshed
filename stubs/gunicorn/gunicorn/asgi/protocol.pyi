@@ -6,9 +6,9 @@ and dispatch to ASGI applications.
 """
 
 import asyncio
-from _typeshed import Incomplete
 from collections.abc import Iterable
-from typing import Final
+from typing import Final, Literal, TypedDict, type_check_only
+from typing_extensions import NotRequired
 
 from gunicorn.asgi.parser import CallbackRequest
 from gunicorn.config import Config
@@ -47,6 +47,12 @@ class ASGIResponseInfo:
 
     def __init__(self, status: str | int, headers: Iterable[tuple[str | bytes, str | bytes]], sent: int) -> None: ...
 
+@type_check_only
+class _BodyReceieverReceiveReturnType(TypedDict):
+    type: Literal["http.disconnect", "http.request"]
+    body: NotRequired[bytes]
+    more_body: NotRequired[bool]
+
 class BodyReceiver:
     """
     Body receiver for callback-based parsers.
@@ -59,18 +65,10 @@ class BodyReceiver:
     protocol: ASGIProtocol
 
     def __init__(self, request: CallbackRequest, protocol: ASGIProtocol) -> None: ...
-    def feed(self, chunk: bytes) -> None:
-        """Feed a body chunk directly (called by parser callback)."""
-        ...
-    def set_complete(self) -> None:
-        """Mark body as complete (called when message ends)."""
-        ...
-    def signal_disconnect(self) -> None:
-        """Signal that connection has been lost."""
-        ...
-    async def receive(self) -> dict[str, Incomplete]:
-        """ASGI receive callable - returns body chunks or disconnect."""
-        ...
+    def feed(self, chunk: bytes) -> None: ...
+    def set_complete(self) -> None: ...
+    def signal_disconnect(self) -> None: ...
+    async def receive(self) -> _BodyReceieverReceiveReturnType: ...
 
 class ASGIProtocol(asyncio.Protocol):
     """
