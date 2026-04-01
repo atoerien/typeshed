@@ -5,7 +5,7 @@ import sys
 from _thread import _ExceptHookArgs, get_native_id as get_native_id
 from _typeshed import ProfileFunction, TraceFunction
 from collections.abc import Callable, Iterable, Mapping
-from contextvars import ContextVar
+from contextvars import Context
 from types import TracebackType
 from typing import Any, Final, TypeVar, final
 from typing_extensions import deprecated
@@ -208,38 +208,8 @@ class Thread:
             kwargs: Mapping[str, Any] | None = None,
             *,
             daemon: bool | None = None,
-            context: ContextVar[Any] | None = None,
-        ) -> None:
-            """
-            This constructor should always be called with keyword arguments. Arguments are:
-
-            *group* should be None; reserved for future extension when a ThreadGroup
-            class is implemented.
-
-            *target* is the callable object to be invoked by the run()
-            method. Defaults to None, meaning nothing is called.
-
-            *name* is the thread name. By default, a unique name is constructed of
-            the form "Thread-N" where N is a small decimal number.
-
-            *args* is a list or tuple of arguments for the target invocation. Defaults to ().
-
-            *kwargs* is a dictionary of keyword arguments for the target
-            invocation. Defaults to {}.
-
-            *context* is the contextvars.Context value to use for the thread.
-            The default value is None, which means to check
-            sys.flags.thread_inherit_context.  If that flag is true, use a copy
-            of the context of the caller.  If false, use an empty context.  To
-            explicitly start with an empty context, pass a new instance of
-            contextvars.Context().  To explicitly start with a copy of the current
-            context, pass the value from contextvars.copy_context().
-
-            If a subclass overrides the constructor, it must make sure to invoke
-            the base class constructor (Thread.__init__()) before doing anything
-            else to the thread.
-            """
-            ...
+            context: Context | None = None,
+        ) -> None: ...
     else:
         def __init__(
             self,
