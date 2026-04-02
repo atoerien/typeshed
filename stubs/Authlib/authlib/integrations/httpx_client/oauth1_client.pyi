@@ -13,7 +13,7 @@ _Request: TypeAlias = Incomplete  # actual type is httpx.Request
 class OAuth1Auth(ClientAuth):
     """Signs the httpx request using OAuth 1 (RFC5849)."""
     requires_request_body: bool
-    def auth_flow(self, request: _Request) -> Generator[_Request, _Response, None]: ...
+    def auth_flow(self, request: _Request) -> Generator[_Request, _Response]: ...
 
 # Inherits from httpx.AsyncClient
 class AsyncOAuth1Client(_OAuth1Client):

@@ -148,9 +148,7 @@ def locateAllOnScreen(
     region: tuple[int, int, int, int] | None = None,
     step: int = 1,
     confidence: ConvertibleToFloat = 0.999,
-) -> Generator[Box, None, None]:
-    """TODO"""
-    ...
+) -> Generator[Box]: ...
 
 # _locateAll_pillow
 @overload
@@ -162,9 +160,7 @@ def locateAllOnScreen(
     region: tuple[int, int, int, int] | None = None,
     step: int = 1,
     confidence: None = None,
-) -> Generator[Box, None, None]:
-    """TODO"""
-    ...
+) -> Generator[Box]: ...
 
 # _locateAll_opencv
 @overload
@@ -284,9 +280,7 @@ def locateAll(
     region: tuple[int, int, int, int] | None = None,
     step: int = 1,
     confidence: ConvertibleToFloat = 0.999,
-) -> Generator[Box, None, None]:
-    """TODO"""
-    ...
+) -> Generator[Box]: ...
 
 # _locateAll_pillow
 @overload
@@ -298,6 +292,4 @@ def locateAll(
     region: tuple[int, int, int, int] | None = None,
     step: int = 1,
     confidence: None = None,
-) -> Generator[Box, None, None]:
-    """TODO"""
-    ...
+) -> Generator[Box]: ...

@@ -24,7 +24,7 @@ def create_temporary_file(suffix: str = "") -> str: ...
 class WorksheetWriter:
     ws: Worksheet | WriteOnlyWorksheet
     out: _OutType
-    xf: Generator[Incomplete | None, Incomplete, None]
+    xf: Generator[Incomplete | None, Incomplete]
     def __init__(self, ws: Worksheet | WriteOnlyWorksheet, out: _OutType | None = None) -> None: ...
     def write_properties(self) -> None: ...
     def write_dimensions(self) -> None:
@@ -74,51 +74,9 @@ class WorksheetWriter:
         """
         ...
     def write_tables(self) -> None: ...
-    def get_stream(self) -> Generator[Incomplete | None, bool | None, None]: ...
-    def write_tail(self) -> None:
-        """
-        Write all elements after the rows
-        calc properties
-        protection
-        protected ranges #
-        scenarios
-        filters
-        sorts # always ignored
-        data consolidation #
-        custom views #
-        merged cells
-        phonetic properties #
-        conditional formatting
-        data validation
-        hyperlinks
-        print options
-        page margins
-        page setup
-        header
-        row breaks
-        col breaks
-        custom properties #
-        cell watches #
-        ignored errors #
-        smart tags #
-        drawing
-        drawingHF #
-        background #
-        OLE objects #
-        controls #
-        web publishing #
-        tables
-        """
-        ...
-    def write(self) -> None:
-        """High level"""
-        ...
-    def close(self) -> None:
-        """Close the context manager"""
-        ...
-    def read(self) -> bytes:
-        """Close the context manager and return serialised XML"""
-        ...
-    def cleanup(self) -> None:
-        """Remove tempfile"""
-        ...
+    def get_stream(self) -> Generator[Incomplete | None, bool | None]: ...
+    def write_tail(self) -> None: ...
+    def write(self) -> None: ...
+    def close(self) -> None: ...
+    def read(self) -> bytes: ...
+    def cleanup(self) -> None: ...

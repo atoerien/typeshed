@@ -141,19 +141,8 @@ class _SafeQueue(Queue[Future[Any]]):
 
     def _on_queue_feeder_error(self, e: Exception, obj: _CallItem) -> None: ...
 
-def _get_chunks(*iterables: Any, chunksize: int) -> Generator[tuple[Any, ...], None, None]:
-    """Iterates over zip()ed iterables in chunks. """
-    ...
-def _process_chunk(fn: Callable[..., _T], chunk: Iterable[tuple[Any, ...]]) -> list[_T]:
-    """
-    Processes a chunk of an iterable passed to map.
-
-    Runs the function passed to map() on a chunk of the
-    iterable passed to map.
-
-    This function is run in a separate process.
-    """
-    ...
+def _get_chunks(*iterables: Any, chunksize: int) -> Generator[tuple[Any, ...]]: ...
+def _process_chunk(fn: Callable[..., _T], chunk: Iterable[tuple[Any, ...]]) -> list[_T]: ...
 
 if sys.version_info >= (3, 11):
     def _sendback_result(

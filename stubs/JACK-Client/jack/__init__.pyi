@@ -1692,103 +1692,11 @@ class OwnMidiPort(MidiPort, OwnPort):
         """
         ...
     @property
-    def lost_midi_events(self) -> int:
-        """
-        Get the number of events that could not be written to the port.
-
-        This being a non-zero value implies that the port is full.
-        Currently the only way this can happen is if events are lost on
-        port mixdown.
-        """
-        ...
-    def incoming_midi_events(self) -> Generator[tuple[int, _CBufferType], None, None]:
-        """
-        Return generator for incoming MIDI events.
-
-        JACK MIDI is normalised, the MIDI events yielded by this
-        generator are guaranteed to be complete MIDI events (the status
-        byte will always be present, and no realtime events will be
-        interspersed with the events).
-
-        Yields
-        ------
-        time : int
-            Time (in samples) relative to the beginning of the current
-            audio block.
-        event : buffer
-            The actual MIDI event data.
-
-            .. warning:: The buffer is re-used (and therefore
-               overwritten) between iterations.  If you want to keep the
-               data beyond the current iteration, please make a copy.
-        """
-        ...
-    def clear_buffer(self) -> None:
-        """
-        Clear an event buffer.
-
-        This should be called at the beginning of each process cycle
-        before calling `reserve_midi_event()` or `write_midi_event()`.
-        This function may not be called on an input port.
-        """
-        ...
-    def write_midi_event(self, time: int, event: bytes | Sequence[int] | _CBufferType) -> None:
-        """
-        Create an outgoing MIDI event.
-
-        Clients must write normalised MIDI data to the port - no running
-        status and no (one-byte) realtime messages interspersed with
-        other messages (realtime messages are fine when they occur on
-        their own, like other messages).
-
-        Events must be written in order, sorted by their sample offsets.
-        JACK will not sort the events for you, and will refuse to store
-        out-of-order events.
-
-        Parameters
-        ----------
-        time : int
-            Time (in samples) relative to the beginning of the current
-            audio block.
-        event : bytes or buffer or sequence of int
-            The actual MIDI event data.
-
-            .. note:: Buffer objects are only supported for CFFI >= 0.9.
-
-        Raises
-        ------
-        JackError
-            If MIDI event couldn't be written.
-        """
-        ...
-    def reserve_midi_event(self, time: int, size: int) -> _CBufferType:
-        """
-        Get a buffer where an outgoing MIDI event can be written to.
-
-        Clients must write normalised MIDI data to the port - no running
-        status and no (one-byte) realtime messages interspersed with
-        other messages (realtime messages are fine when they occur on
-        their own, like other messages).
-
-        Events must be written in order, sorted by their sample offsets.
-        JACK will not sort the events for you, and will refuse to store
-        out-of-order events.
-
-        Parameters
-        ----------
-        time : int
-            Time (in samples) relative to the beginning of the current
-            audio block.
-        size : int
-            Number of bytes to reserve.
-
-        Returns
-        -------
-        buffer
-            A buffer object where MIDI data bytes can be written to.
-            If no space could be reserved, an empty buffer is returned.
-        """
-        ...
+    def lost_midi_events(self) -> int: ...
+    def incoming_midi_events(self) -> Generator[tuple[int, _CBufferType]]: ...
+    def clear_buffer(self) -> None: ...
+    def write_midi_event(self, time: int, event: bytes | Sequence[int] | _CBufferType) -> None: ...
+    def reserve_midi_event(self, time: int, size: int) -> _CBufferType: ...
 
 class Ports:
     """

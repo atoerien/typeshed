@@ -500,13 +500,9 @@ class LegacyRequest(BaseRequest):
         """upath_property('SCRIPT_NAME')"""
         ...
     @uscript_name.setter
-    def uscript_name(self, value: str) -> None:
-        """upath_property('SCRIPT_NAME')"""
-        ...
-    @property  # type:ignore[override]
-    def upath_info(self) -> str:
-        """upath_property('PATH_INFO')"""
-        ...
+    def uscript_name(self, value: str) -> None: ...
+    @property  # type: ignore[override]
+    def upath_info(self) -> str: ...
     @upath_info.setter
     def upath_info(self, value: str) -> None:
         """upath_property('PATH_INFO')"""

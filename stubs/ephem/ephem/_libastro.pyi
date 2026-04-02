@@ -2,7 +2,7 @@
 
 from _typeshed import Unused
 from datetime import datetime as _datetime
-from typing import Final, NoReturn, Protocol, TypedDict, overload, type_check_only
+from typing import Final, NoReturn, TypedDict, overload, type_check_only
 from typing_extensions import Self, TypeAlias, deprecated, disjoint_base
 
 _DateInitType: TypeAlias = (
@@ -129,8 +129,7 @@ class Observer:
         ...
 
 @disjoint_base
-class Body(Protocol):
-    """A celestial body, that can compute() its sky position"""
+class Body:
     @property
     def name(self) -> str | None:
         """object name (read-only string)"""
@@ -245,8 +244,7 @@ class Body(Protocol):
         """return the parallactic angle to the body; an Observer must have been provided to the most recent compute() call, because a parallactic angle is always measured with respect to a specfic observer"""
         ...
 
-class Planet(Body, Protocol):
-    """A celestial body, that can compute() its sky position"""
+class Planet(Body):
     @property
     def hlon(self) -> Angle:
         """heliocentric longitude (but Sun().hlon means the hlon of Earth) as a float giving radians, or a string giving degrees:minutes:seconds"""
@@ -327,8 +325,7 @@ class Saturn(Planet):
         ...
 
 @disjoint_base
-class PlanetMoon(Protocol):
-    """A celestial body, that can compute() its sky position"""
+class PlanetMoon:
     @property
     def name(self) -> str:
         """object name (read-only string)"""

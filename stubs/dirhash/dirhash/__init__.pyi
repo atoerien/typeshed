@@ -252,31 +252,8 @@ class Filter:
     @property
     def match_patterns(self) -> tuple[str, ...]: ...
     def include(self, recursion_path: _RecursionPath) -> bool: ...
-    def match_file(self, filepath: str | PathLike[str]) -> bool:
-        """
-        Match file against match patterns.
-
-        NOTE: only match patterns are considered, not the `linked_files` argument of
-        this class.
-
-        # Arguments:
-            filepath (str): the path to match.
-
-        # Returns:
-            Boolean, whether the path is a match or not.
-        """
-        ...
-    def __call__(self, paths: Iterable[_RP]) -> Generator[_RP, None, None]:
-        """
-        Filter recursion paths.
-
-        # Arguments:
-            paths ([RecursionPath]): The recursion paths to filter.
-
-        # Returns:
-            A generator of (filtered) recursion paths.
-        """
-        ...
+    def match_file(self, filepath: str | PathLike[str]) -> bool: ...
+    def __call__(self, paths: Iterable[_RP]) -> Generator[_RP]: ...
 
 def get_match_patterns(
     match: Iterable[str] | None = None,

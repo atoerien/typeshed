@@ -59,25 +59,17 @@ from google.protobuf.message import Message
 _Decoder: TypeAlias = Callable[[str, int, int, Message, dict[FieldDescriptor, Any]], int]
 _NewDefault: TypeAlias = Callable[[Message], Message]
 
-def ReadTag(buffer, pos):
-    """
-    Read a tag from the memoryview, and return a (tag_bytes, new_pos) tuple.
-
-    We return the raw bytes of the tag rather than decoding them.  The raw
-    bytes can then be used to look up the proper decoder.  This effectively allows
-    us to trade some work that would be done in pure-python (decoding a varint)
-    for work that is done in C (searching for a byte string in a hash table).
-    In a low-level language it would be much cheaper to decode the varint and
-    use that, but not in Python.
-
-    Args:
-      buffer: memoryview object of the encoded bytes
-      pos: int of the current position to start from
-
-    Returns:
-      Tuple[bytes, int] of the tag data and new position.
-    """
-    ...
+def IsDefaultScalarValue(value: Any) -> bool: ...
+def ReadTag(buffer: bytes, pos: int) -> tuple[bytes, int]: ...
+def DecodeTag(tag_bytes: bytes) -> tuple[int, int]: ...
+def EnumDecoder(
+    field_number: int,
+    is_repeated: bool,
+    is_packed: bool,
+    key: FieldDescriptor,
+    new_default: _NewDefault,
+    clear_if_default: bool = False,
+) -> _Decoder: ...
 
 Int32Decoder: _Decoder
 Int64Decoder: _Decoder
@@ -93,16 +85,6 @@ FloatDecoder: _Decoder
 DoubleDecoder: _Decoder
 BoolDecoder: _Decoder
 
-def EnumDecoder(
-    field_number: int,
-    is_repeated: bool,
-    is_packed: bool,
-    key: FieldDescriptor,
-    new_default: _NewDefault,
-    clear_if_default: bool = False,
-) -> _Decoder:
-    """Returns a decoder for enum field."""
-    ...
 def StringDecoder(
     field_number: int,
     is_repeated: bool,
@@ -136,21 +118,10 @@ def MessageDecoder(
 
 MESSAGE_SET_ITEM_TAG: bytes
 
-def MessageSetItemDecoder(descriptor: Descriptor) -> _Decoder:
-    """
-    Returns a decoder for a MessageSet item.
+def MessageSetItemDecoder(descriptor: Descriptor) -> _Decoder: ...
+def UnknownMessageSetItemDecoder() -> _Decoder: ...
+def MapDecoder(field_descriptor: FieldDescriptor, new_default: _NewDefault, is_message_map: bool) -> _Decoder: ...
 
-    The parameter is the message Descriptor.
+DEFAULT_RECURSION_LIMIT: int
 
-    The message set message looks like this:
-      message MessageSet {
-        repeated group Item = 1 {
-          required int32 type_id = 2;
-          required string message = 3;
-        }
-      }
-    """
-    ...
-def MapDecoder(field_descriptor, new_default, is_message_map) -> _Decoder:
-    """Returns a decoder for a map field."""
-    ...
+def SetRecursionLimit(new_limit: int) -> None: ...

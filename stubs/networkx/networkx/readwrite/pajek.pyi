@@ -21,50 +21,8 @@ from networkx.utils.backends import _dispatchable
 
 __all__ = ["read_pajek", "parse_pajek", "generate_pajek", "write_pajek"]
 
-def generate_pajek(G: Graph[_Node]) -> Generator[Incomplete, None, None]:
-    """
-    Generate lines in Pajek graph format.
-
-    Parameters
-    ----------
-    G : graph
-       A Networkx graph
-
-    References
-    ----------
-    See http://vlado.fmf.uni-lj.si/pub/networks/pajek/doc/draweps.htm
-    for format information.
-    """
-    ...
-def write_pajek(G: Graph[_Node], path, encoding: str = "UTF-8") -> None:
-    """
-    Write graph in Pajek format to path.
-
-    Parameters
-    ----------
-    G : graph
-       A Networkx graph
-    path : file or string
-       File or filename to write.
-       Filenames ending in .gz or .bz2 will be compressed.
-
-    Examples
-    --------
-    >>> G = nx.path_graph(4)
-    >>> nx.write_pajek(G, "test.netP4")
-
-    Warnings
-    --------
-    Optional node attributes and edge attributes must be non-empty strings.
-    Otherwise it will not be written into the file. You will need to
-    convert those attributes to strings if you want to keep them.
-
-    References
-    ----------
-    See http://vlado.fmf.uni-lj.si/pub/networks/pajek/doc/draweps.htm
-    for format information.
-    """
-    ...
+def generate_pajek(G: Graph[_Node]) -> Generator[Incomplete]: ...
+def write_pajek(G: Graph[_Node], path, encoding: str = "UTF-8") -> None: ...
 @_dispatchable
 def read_pajek(path, encoding: str = "UTF-8"):
     """

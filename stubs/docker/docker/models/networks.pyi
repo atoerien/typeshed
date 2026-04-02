@@ -75,7 +75,7 @@ class Network(Model):
 class NetworkCollection(Collection[Network]):
     """Networks on the Docker server."""
     model: type[Network]
-    def create(  # type:ignore[override]
+    def create(  # type: ignore[override]
         self,
         name: str,
         driver: str | None = None,
@@ -146,65 +146,6 @@ class NetworkCollection(Collection[Network]):
         ...
     def get(
         self, network_id: str, verbose: bool | None = None, scope: Literal["local", "global", "swarm"] | None = None
-    ) -> Network:
-        """
-        Get a network by its ID.
-
-        Args:
-            network_id (str): The ID of the network.
-            verbose (bool): Retrieve the service details across the cluster in
-                swarm mode.
-            scope (str): Filter the network by scope (``swarm``, ``global``
-                or ``local``).
-
-        Returns:
-            (:py:class:`Network`) The network.
-
-        Raises:
-            :py:class:`docker.errors.NotFound`
-                If the network does not exist.
-
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def list(self, *args, **kwargs) -> list[Network]:
-        """
-        List networks. Similar to the ``docker network ls`` command.
-
-        Args:
-            names (:py:class:`list`): List of names to filter by.
-            ids (:py:class:`list`): List of ids to filter by.
-            filters (dict): Filters to be processed on the network list.
-                Available filters:
-                - ``driver=[<driver-name>]`` Matches a network's driver.
-                - `label` (str|list): format either ``"key"``, ``"key=value"``
-                    or a list of such.
-                - ``type=["custom"|"builtin"]`` Filters networks by type.
-            greedy (bool): Fetch more details for each network individually.
-                You might want this to get the containers attached to them.
-
-        Returns:
-            (list of :py:class:`Network`) The networks on the server.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def prune(self, filters: dict[str, Any] | None = None) -> dict[str, Any]:
-        """
-        Delete unused networks
-
-        Args:
-            filters (dict): Filters to process on the prune list.
-
-        Returns:
-            (dict): A dict containing a list of deleted network names and
-                the amount of disk space reclaimed in bytes.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
+    ) -> Network: ...  # type: ignore[override]
+    def list(self, *args, **kwargs) -> list[Network]: ...
+    def prune(self, filters: dict[str, Any] | None = None) -> dict[str, Any]: ...

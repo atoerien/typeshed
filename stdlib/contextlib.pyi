@@ -406,22 +406,16 @@ class _BaseExitStack(Generic[_ExitT_co]):
         """Preserve the context stack by transferring it to a new instance."""
         ...
 
-# In reality this is a subclass of `AbstractContextManager`;
-# see #7961 for why we don't do that in the stub
-class ExitStack(_BaseExitStack[_ExitT_co], metaclass=abc.ABCMeta):
-    """
-    Context manager for dynamic management of a stack of exit callbacks.
+# this class is to avoid putting `metaclass=abc.ABCMeta` on the implementations directly, as this would make them
+# appear explicitly abstract to some tools. this is due to the implementations not subclassing `AbstractContextManager`
+#  see note on the subclasses
+@type_check_only
+class _BaseExitStackAbstract(_BaseExitStack[_ExitT_co], metaclass=abc.ABCMeta): ...
 
-    For example:
-        with ExitStack() as stack:
-            files = [stack.enter_context(open(fname)) for fname in filenames]
-            # All opened files will automatically be closed at the end of
-            # the with statement, even if attempts to open files later
-            # in the list raise an exception.
-    """
-    def close(self) -> None:
-        """Immediately unwind the context stack."""
-        ...
+# In reality this is a subclass of `AbstractContextManager`, but we can't provide `Self` as the argument for `__enter__`
+#  https://discuss.python.org/t/self-as-typevar-default/90939
+class ExitStack(_BaseExitStackAbstract[_ExitT_co]):
+    def close(self) -> None: ...
     def __enter__(self) -> Self: ...
     def __exit__(
         self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None, /
@@ -432,39 +426,11 @@ _ExitCoroFunc: TypeAlias = Callable[
 ]
 _ACM_EF = TypeVar("_ACM_EF", bound=AbstractAsyncContextManager[Any, Any] | _ExitCoroFunc)
 
-# In reality this is a subclass of `AbstractAsyncContextManager`;
-# see #7961 for why we don't do that in the stub
-class AsyncExitStack(_BaseExitStack[_ExitT_co], metaclass=abc.ABCMeta):
-    """
-    Async context manager for dynamic management of a stack of exit
-    callbacks.
-
-    For example:
-        async with AsyncExitStack() as stack:
-            connections = [await stack.enter_async_context(get_connection())
-                for i in range(5)]
-            # All opened connections will automatically be released at the
-            # end of the async with statement, even if attempts to open a
-            # connection later in the list raise an exception.
-    """
-    async def enter_async_context(self, cm: AbstractAsyncContextManager[_T, _ExitT_co]) -> _T:
-        """
-        Enters the supplied async context manager.
-
-        If successful, also pushes its __aexit__ method as a callback and
-        returns the result of the __aenter__ method.
-        """
-        ...
-    def push_async_exit(self, exit: _ACM_EF) -> _ACM_EF:
-        """
-        Registers a coroutine function with the standard __aexit__ method
-        signature.
-
-        Can suppress exceptions the same way __aexit__ method can.
-        Also accepts any object with an __aexit__ method (registering a call
-        to the method instead of the object itself).
-        """
-        ...
+# In reality this is a subclass of `AbstractContextManager`, but we can't provide `Self` as the argument for `__enter__`
+#  https://discuss.python.org/t/self-as-typevar-default/90939
+class AsyncExitStack(_BaseExitStackAbstract[_ExitT_co]):
+    async def enter_async_context(self, cm: AbstractAsyncContextManager[_T, _ExitT_co]) -> _T: ...
+    def push_async_exit(self, exit: _ACM_EF) -> _ACM_EF: ...
     def push_async_callback(
         self, callback: Callable[_P, Awaitable[_T]], /, *args: _P.args, **kwds: _P.kwargs
     ) -> Callable[_P, Awaitable[_T]]:

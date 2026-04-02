@@ -21,9 +21,7 @@ def pycodestyle_logical(
     previous_unindented_logical_line: Any,
     tokens: Any,
     verbose: Any,
-) -> Generator[tuple[int, str], None, None]:
-    """Run pycodestyle logical checks."""
-    ...
+) -> Generator[tuple[int, str]]: ...
 def pycodestyle_physical(
     indent_char: Any,
     line_number: Any,
@@ -33,6 +31,4 @@ def pycodestyle_physical(
     noqa: Any,
     physical_line: Any,
     total_lines: Any,
-) -> Generator[tuple[int, str], None, None]:
-    """Run pycodestyle physical checks."""
-    ...
+) -> Generator[tuple[int, str]]: ...

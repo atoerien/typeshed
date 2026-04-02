@@ -436,33 +436,11 @@ class Path(PurePath):
             """
             ...
     elif sys.version_info >= (3, 12):
-        def glob(self, pattern: str, *, case_sensitive: bool | None = None) -> Generator[Self, None, None]:
-            """
-            Iterate over this subtree and yield all existing files (of any
-            kind, including directories) matching the given relative pattern.
-            """
-            ...
-        def rglob(self, pattern: str, *, case_sensitive: bool | None = None) -> Generator[Self, None, None]:
-            """
-            Recursively yield all existing files (of any kind, including
-            directories) matching the given relative pattern, anywhere in
-            this subtree.
-            """
-            ...
+        def glob(self, pattern: str, *, case_sensitive: bool | None = None) -> Generator[Self]: ...
+        def rglob(self, pattern: str, *, case_sensitive: bool | None = None) -> Generator[Self]: ...
     else:
-        def glob(self, pattern: str) -> Generator[Self, None, None]:
-            """
-            Iterate over this subtree and yield all existing files (of any
-            kind, including directories) matching the given relative pattern.
-            """
-            ...
-        def rglob(self, pattern: str) -> Generator[Self, None, None]:
-            """
-            Recursively yield all existing files (of any kind, including
-            directories) matching the given relative pattern, anywhere in
-            this subtree.
-            """
-            ...
+        def glob(self, pattern: str) -> Generator[Self]: ...
+        def rglob(self, pattern: str) -> Generator[Self]: ...
 
     if sys.version_info >= (3, 12):
         def exists(self, *, follow_symlinks: bool = True) -> bool:
@@ -498,29 +476,10 @@ class Path(PurePath):
             """Whether this path is a junction."""
             ...
 
-    def iterdir(self) -> Generator[Self, None, None]:
-        """
-        Yield path objects of the directory contents.
-
-        The children are yielded in arbitrary order, and the
-        special entries '.' and '..' are not included.
-        """
-        ...
-    def lchmod(self, mode: int) -> None:
-        """
-        Like chmod(), except if the path points to a symlink, the symlink's
-        permissions are changed, rather than its target's.
-        """
-        ...
-    def lstat(self) -> stat_result:
-        """
-        Like stat(), except if the path points to a symlink, the symlink's
-        status information is returned, rather than its target's.
-        """
-        ...
-    def mkdir(self, mode: int = 0o777, parents: bool = False, exist_ok: bool = False) -> None:
-        """Create a new directory at this given path."""
-        ...
+    def iterdir(self) -> Generator[Self]: ...
+    def lchmod(self, mode: int) -> None: ...
+    def lstat(self) -> stat_result: ...
+    def mkdir(self, mode: int = 0o777, parents: bool = False, exist_ok: bool = False) -> None: ...
 
     if sys.version_info >= (3, 14):
         @property

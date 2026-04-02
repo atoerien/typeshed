@@ -56,91 +56,16 @@ class MenuComponent:
         """:obj:`consolemenu.format.MenuPadding`: The padding for this component."""
         ...
     @property
-    def border_style(self) -> MenuBorderStyle:
-        """:obj:`consolemenu.format.MenuBorderStyle`: The border style for this component."""
-        ...
-    def calculate_border_width(self) -> int:
-        """
-        Calculate the width of the menu border. This will be the width of the maximum allowable
-        dimensions (usually the screen size), minus the left and right margins and the newline character.
-        For example, given a maximum width of 80 characters, with left and right margins both
-        set to 1, the border width would be 77 (80 - 1 - 1 - 1 = 77).
-
-        Returns:
-            int: the menu border width in columns.
-        """
-        ...
-    def calculate_content_width(self) -> int:
-        """
-        Calculate the width of inner content of the border.  This will be the width of the menu borders,
-        minus the left and right padding, and minus the two vertical border characters.
-        For example, given a border width of 77, with left and right margins each set to 2, the content
-        width would be 71 (77 - 2 - 2 - 2 = 71).
-
-        Returns:
-            int: the inner content width in columns.
-        """
-        ...
-    def generate(self) -> Generator[str, None, None]:
-        """
-        Generate this component.
-
-        Yields:
-            str: The next string of characters for drawing this component.
-        """
-        ...
-    def inner_horizontals(self) -> str:
-        """
-        The string of inner horizontal border characters of the required length for this component (not including
-        the menu margins or verticals).
-
-        Returns:
-            str: The inner horizontal characters.
-        """
-        ...
-    def inner_horizontal_border(self) -> str:
-        """
-        The complete inner horizontal border section, including the left and right border verticals.
-
-        Returns:
-            str: The complete inner horizontal border.
-        """
-        ...
-    def outer_horizontals(self) -> str:
-        """
-        The string of outer horizontal border characters of the required length for this component (not including
-        the menu margins or verticals).
-
-        Returns:
-            str: The outer horizontal characters.
-        """
-        ...
-    def outer_horizontal_border_bottom(self) -> str:
-        """
-        The complete outer bottom horizontal border section, including left and right margins.
-
-        Returns:
-            str: The bottom menu border.
-        """
-        ...
-    def outer_horizontal_border_top(self) -> str:
-        """
-        The complete outer top horizontal border section, including left and right margins.
-
-        Returns:
-            str: The top menu border.
-        """
-        ...
-    def row(self, content: str = "", align: str = "left", indent_len: int = 0) -> str:
-        """
-        A row of the menu, which comprises the left and right verticals plus the given content.
-        If the content is larger than the alloted space for a single row, the content is wrapped
-        onto multiple lines, while also respecting user-included newline characters.
-
-        Returns:
-            str: One or more rows of this menu component with the specified content.
-        """
-        ...
+    def border_style(self) -> MenuBorderStyle: ...
+    def calculate_border_width(self) -> int: ...
+    def calculate_content_width(self) -> int: ...
+    def generate(self) -> Generator[str]: ...
+    def inner_horizontals(self) -> str: ...
+    def inner_horizontal_border(self) -> str: ...
+    def outer_horizontals(self) -> str: ...
+    def outer_horizontal_border_bottom(self) -> str: ...
+    def outer_horizontal_border_top(self) -> str: ...
+    def row(self, content: str = "", align: str = "left", indent_len: int = 0) -> str: ...
 
 class MenuHeader(MenuComponent):
     """
@@ -163,7 +88,7 @@ class MenuHeader(MenuComponent):
         subtitle_align: str = "left",
         show_bottom_border: bool = False,
     ) -> None: ...
-    def generate(self) -> Generator[str, None, None]: ...
+    def generate(self) -> Generator[str]: ...
 
 class MenuTextSection(MenuComponent):
     """
@@ -183,7 +108,7 @@ class MenuTextSection(MenuComponent):
         show_top_border: bool = False,
         show_bottom_border: bool = False,
     ) -> None: ...
-    def generate(self) -> Generator[str, None, None]: ...
+    def generate(self) -> Generator[str]: ...
 
 class MenuItemsSection(MenuComponent):
     """The menu section for displaying the menu items."""
@@ -207,34 +132,13 @@ class MenuItemsSection(MenuComponent):
         """
         ...
     @property
-    def items_with_top_border(self) -> list[str]:
-        """
-        Return a list of the names (the item text property) of all items that should show a top border.
-        :return: a list of item names that should show a top border.
-        """
-        ...
-    def show_item_bottom_border(self, item_text: str, flag: bool) -> None:
-        """
-        Sets a flag that will show a bottom border for an item with the specified text.
-        :param item_text: the text property of the item
-        :param flag: boolean specifying if the border should be shown.
-        """
-        ...
-    def show_item_top_border(self, item_text: str, flag: bool) -> None:
-        """
-        Sets a flag that will show a top border for an item with the specified text.
-        :param item_text: the text property of the item
-        :param flag: boolean specifying if the border should be shown.
-        """
-        ...
-    def generate(self) -> Generator[str, None, None]: ...
+    def items_with_top_border(self) -> list[str]: ...
+    def show_item_bottom_border(self, item_text: str, flag: bool) -> None: ...
+    def show_item_top_border(self, item_text: str, flag: bool) -> None: ...
+    def generate(self) -> Generator[str]: ...
 
 class MenuFooter(MenuComponent):
-    """
-    The menu footer section.
-    The menu footer contains the menu bottom, bottom padding verticals, and bottom margin.
-    """
-    def generate(self) -> Generator[str, None, None]: ...
+    def generate(self) -> Generator[str]: ...
 
 class MenuPrompt(MenuComponent):
     """A string representing the menu prompt for user input."""
@@ -243,4 +147,4 @@ class MenuPrompt(MenuComponent):
     def prompt(self) -> str: ...
     @prompt.setter
     def prompt(self, prompt: str) -> None: ...
-    def generate(self) -> Generator[str, None, None]: ...
+    def generate(self) -> Generator[str]: ...

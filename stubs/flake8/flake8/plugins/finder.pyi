@@ -41,12 +41,8 @@ class Plugins(NamedTuple):
     checkers: Checkers
     reporters: dict[str, LoadedPlugin]
     disabled: list[LoadedPlugin]
-    def all_plugins(self) -> Generator[LoadedPlugin, None, None]:
-        """Return an iterator over all :class:`LoadedPlugin`s."""
-        ...
-    def versions_str(self) -> str:
-        """Return a user-displayed list of plugin versions."""
-        ...
+    def all_plugins(self) -> Generator[LoadedPlugin]: ...
+    def versions_str(self) -> str: ...
 
 class PluginOptions(NamedTuple):
     """Options related to plugin loading."""

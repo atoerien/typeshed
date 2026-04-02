@@ -32,172 +32,22 @@ def dict_to_sequence(d):
     """Returns an internal sequence dictionary update."""
     ...
 def super_len(o): ...
-def get_netrc_auth(url: _Uri, raise_errors: bool = False) -> tuple[str, str] | None:
-    """Returns the Requests tuple auth for a given url from netrc."""
-    ...
-def guess_filename(obj):
-    """Tries to guess the filename of the given object."""
-    ...
-def extract_zipped_paths(path):
-    """
-    Replace nonexistent paths that look like they refer to a member of a zip
-    archive with the location of an extracted copy of the target, or else
-    just return the provided path unchanged.
-    """
-    ...
-def atomic_open(filename: StrOrBytesPath) -> _GeneratorContextManager[BufferedWriter]:
-    """Write a file to the disk in an atomic fashion"""
-    ...
-def from_key_val_list(value):
-    """
-    Take an object and test to see if it can be represented as a
-    dictionary. Unless it can not be represented as such, return an
-    OrderedDict, e.g.,
-
-    ::
-
-        >>> from_key_val_list([('key', 'val')])
-        OrderedDict([('key', 'val')])
-        >>> from_key_val_list('string')
-        Traceback (most recent call last):
-        ...
-        ValueError: cannot encode objects that are not 2-tuples
-        >>> from_key_val_list({'key': 'val'})
-        OrderedDict([('key', 'val')])
-
-    :rtype: OrderedDict
-    """
-    ...
-def to_key_val_list(value):
-    """
-    Take an object and test to see if it can be represented as a
-    dictionary. If it can be, return a list of tuples, e.g.,
-
-    ::
-
-        >>> to_key_val_list([('key', 'val')])
-        [('key', 'val')]
-        >>> to_key_val_list({'key': 'val'})
-        [('key', 'val')]
-        >>> to_key_val_list('string')
-        Traceback (most recent call last):
-        ...
-        ValueError: cannot encode objects that are not 2-tuples
-
-    :rtype: list
-    """
-    ...
-def parse_list_header(value):
-    """
-    Parse lists as described by RFC 2068 Section 2.
-
-    In particular, parse comma-separated lists where the elements of
-    the list may include quoted-strings.  A quoted-string could
-    contain a comma.  A non-quoted string could have quotes in the
-    middle.  Quotes are removed automatically after parsing.
-
-    It basically works like :func:`parse_set_header` just that items
-    may appear multiple times and case sensitivity is preserved.
-
-    The return value is a standard :class:`list`:
-
-    >>> parse_list_header('token, "quoted value"')
-    ['token', 'quoted value']
-
-    To create a header from the :class:`list` again, use the
-    :func:`dump_header` function.
-
-    :param value: a string with a list header.
-    :return: :class:`list`
-    :rtype: list
-    """
-    ...
-def parse_dict_header(value):
-    """
-    Parse lists of key, value pairs as described by RFC 2068 Section 2 and
-    convert them into a python dict:
-
-    >>> d = parse_dict_header('foo="is a fish", bar="as well"')
-    >>> type(d) is dict
-    True
-    >>> sorted(d.items())
-    [('bar', 'as well'), ('foo', 'is a fish')]
-
-    If there is no value for a key it will be `None`:
-
-    >>> parse_dict_header('key_without_value')
-    {'key_without_value': None}
-
-    To create a header from the :class:`dict` again, use the
-    :func:`dump_header` function.
-
-    :param value: a string with a dict header.
-    :return: :class:`dict`
-    :rtype: dict
-    """
-    ...
-def unquote_header_value(value, is_filename: bool = False):
-    """
-    Unquotes a header value.  (Reversal of :func:`quote_header_value`).
-    This does not use the real unquoting but what browsers are actually
-    using for quoting.
-
-    :param value: the header value to unquote.
-    :rtype: str
-    """
-    ...
-def dict_from_cookiejar(cj):
-    """
-    Returns a key/value dictionary from a CookieJar.
-
-    :param cj: CookieJar object to extract cookies from.
-    :rtype: dict
-    """
-    ...
-def add_dict_to_cookiejar(cj, cookie_dict):
-    """
-    Returns a CookieJar from a key/value dictionary.
-
-    :param cj: CookieJar to insert cookies into.
-    :param cookie_dict: Dict of key/values to insert into CookieJar.
-    :rtype: CookieJar
-    """
-    ...
-def get_encodings_from_content(content):
-    """
-    Returns encodings from given content string.
-
-    :param content: bytestring to extract encodings from.
-    """
-    ...
-def get_encoding_from_headers(headers: Mapping[str, str]) -> str | None:
-    """
-    Returns encodings from given HTTP Header Dict.
-
-    :param headers: dictionary to extract encoding from.
-    :rtype: str
-    """
-    ...
-def stream_decode_response_unicode(iterator, r):
-    """Stream decodes an iterator."""
-    ...
-def iter_slices(string: str, slice_length: int | None) -> Generator[str, None, None]:
-    """Iterate over slices of a string."""
-    ...
-def get_unicode_from_response(r):
-    """
-    Returns the requested content back in unicode.
-
-    :param r: Response object to get unicode content from.
-
-    Tried:
-
-    1. charset from content-type
-    2. fall back and replace all unicode characters
-
-    :rtype: str
-    """
-    ...
+def get_netrc_auth(url: _Uri, raise_errors: bool = False) -> tuple[str, str] | None: ...
+def guess_filename(obj): ...
+def extract_zipped_paths(path): ...
+def atomic_open(filename: StrOrBytesPath) -> _GeneratorContextManager[BufferedWriter]: ...
+def from_key_val_list(value): ...
+def to_key_val_list(value): ...
+def parse_list_header(value): ...
+def parse_dict_header(value): ...
+def unquote_header_value(value, is_filename: bool = False): ...
+def dict_from_cookiejar(cj): ...
+def add_dict_to_cookiejar(cj, cookie_dict): ...
+def get_encodings_from_content(content): ...
+def get_encoding_from_headers(headers: Mapping[str, str]) -> str | None: ...
+def stream_decode_response_unicode(iterator, r): ...
+def iter_slices(string: str, slice_length: int | None) -> Generator[str]: ...
+def get_unicode_from_response(r): ...
 
 UNRESERVED_SET: frozenset[str]
 

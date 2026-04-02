@@ -154,40 +154,7 @@ def write_graphml_lxml(
     ...
 def generate_graphml(
     G: Graph[_Node], encoding: str = "utf-8", prettyprint: bool = True, named_key_ids: bool = False, edge_id_from_attribute=None
-) -> Generator[Incomplete, Incomplete, None]:
-    """
-    Generate GraphML lines for G
-
-    Parameters
-    ----------
-    G : graph
-       A networkx graph
-    encoding : string (optional)
-       Encoding for text data.
-    prettyprint : bool (optional)
-       If True use line breaks and indenting in output XML.
-    named_key_ids : bool (optional)
-       If True use attr.name as value for key elements' id attribute.
-    edge_id_from_attribute : dict key (optional)
-        If provided, the graphml edge id is set by looking up the corresponding
-        edge data attribute keyed by this parameter. If `None` or the key does not exist in edge data,
-        the edge id is set by the edge key if `G` is a MultiGraph, else the edge id is left unset.
-
-    Examples
-    --------
-    >>> G = nx.path_graph(4)
-    >>> linefeed = chr(10)  # linefeed = 
-
-    >>> s = linefeed.join(nx.generate_graphml(G))
-    >>> for line in nx.generate_graphml(G):  # doctest: +SKIP
-    ...     print(line)
-
-    Notes
-    -----
-    This implementation does not support mixed graphs (directed and unidirected
-    edges together) hyperedges, nested graphs, or ports.
-    """
-    ...
+) -> Generator[Incomplete, Incomplete]: ...
 @_dispatchable
 def read_graphml(path, node_type=..., edge_key_type=..., force_multigraph: bool = False):
     """
@@ -429,7 +396,7 @@ class GraphMLReader(GraphML):
     edge_ids: Incomplete
     def __init__(self, node_type=..., edge_key_type=..., force_multigraph: bool = False) -> None: ...
     xml: Incomplete
-    def __call__(self, path=None, string=None) -> Generator[Incomplete, None, None]: ...
+    def __call__(self, path=None, string=None) -> Generator[Incomplete]: ...
     def make_graph(self, graph_xml, graphml_keys, defaults, G=None): ...
     def add_node(self, G: Graph[_Node], node_xml, graphml_keys, defaults) -> None:
         """Add a node to the graph."""

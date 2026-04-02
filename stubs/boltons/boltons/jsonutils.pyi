@@ -13,82 +13,11 @@ from typing_extensions import Self
 @overload
 def reverse_iter_lines(
     file_obj: IO[bytes], blocksize: int = 4096, preseek: bool = True, encoding: None = None
-) -> Generator[bytes, None, None]:
-    """
-    Returns an iterator over the lines from a file object, in
-    reverse order, i.e., last line first, first line last. Uses the
-    :meth:`file.seek` method of file objects, and is tested compatible with
-    :class:`file` objects, as well as :class:`StringIO.StringIO`.
-
-    Args:
-        file_obj (file): An open file object. Note that
-            ``reverse_iter_lines`` mutably reads from the file and
-            other functions should not mutably interact with the file
-            object after being passed. Files can be opened in bytes or
-            text mode.
-        blocksize (int): The block size to pass to
-          :meth:`file.read()`. Warning: keep this a fairly large
-          multiple of 2, defaults to 4096.
-        preseek (bool): Tells the function whether or not to automatically
-            seek to the end of the file. Defaults to ``True``.
-            ``preseek=False`` is useful in cases when the
-            file cursor is already in position, either at the end of
-            the file or in the middle for relative reverse line
-            generation.
-    """
-    ...
+) -> Generator[bytes]: ...
 @overload
-def reverse_iter_lines(
-    file_obj: IO[str], blocksize: int = 4096, preseek: bool = True, *, encoding: str
-) -> Generator[str, None, None]:
-    """
-    Returns an iterator over the lines from a file object, in
-    reverse order, i.e., last line first, first line last. Uses the
-    :meth:`file.seek` method of file objects, and is tested compatible with
-    :class:`file` objects, as well as :class:`StringIO.StringIO`.
-
-    Args:
-        file_obj (file): An open file object. Note that
-            ``reverse_iter_lines`` mutably reads from the file and
-            other functions should not mutably interact with the file
-            object after being passed. Files can be opened in bytes or
-            text mode.
-        blocksize (int): The block size to pass to
-          :meth:`file.read()`. Warning: keep this a fairly large
-          multiple of 2, defaults to 4096.
-        preseek (bool): Tells the function whether or not to automatically
-            seek to the end of the file. Defaults to ``True``.
-            ``preseek=False`` is useful in cases when the
-            file cursor is already in position, either at the end of
-            the file or in the middle for relative reverse line
-            generation.
-    """
-    ...
+def reverse_iter_lines(file_obj: IO[str], blocksize: int = 4096, preseek: bool = True, *, encoding: str) -> Generator[str]: ...
 @overload
-def reverse_iter_lines(file_obj: IO[str], blocksize: int, preseek: bool, encoding: str) -> Generator[str, None, None]:
-    """
-    Returns an iterator over the lines from a file object, in
-    reverse order, i.e., last line first, first line last. Uses the
-    :meth:`file.seek` method of file objects, and is tested compatible with
-    :class:`file` objects, as well as :class:`StringIO.StringIO`.
-
-    Args:
-        file_obj (file): An open file object. Note that
-            ``reverse_iter_lines`` mutably reads from the file and
-            other functions should not mutably interact with the file
-            object after being passed. Files can be opened in bytes or
-            text mode.
-        blocksize (int): The block size to pass to
-          :meth:`file.read()`. Warning: keep this a fairly large
-          multiple of 2, defaults to 4096.
-        preseek (bool): Tells the function whether or not to automatically
-            seek to the end of the file. Defaults to ``True``.
-            ``preseek=False`` is useful in cases when the
-            file cursor is already in position, either at the end of
-            the file or in the middle for relative reverse line
-            generation.
-    """
-    ...
+def reverse_iter_lines(file_obj: IO[str], blocksize: int, preseek: bool, encoding: str) -> Generator[str]: ...
 
 class JSONLIterator:
     """

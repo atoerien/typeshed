@@ -22,9 +22,9 @@ from .message import Message
 
 _M = TypeVar("_M", bound=Message)  # message type (of self)
 
-class Error(Exception):
-    """Top-level module error for text_format."""
-    ...
+__all__ = ["MessageToString", "Parse", "PrintMessage", "PrintField", "PrintFieldValue", "Merge", "MessageToBytes"]
+
+class Error(Exception): ...
 
 class ParseError(Error):
     """Thrown in case of text parsing or tokenizing error."""
@@ -35,8 +35,8 @@ class ParseError(Error):
 class TextWriter:
     def __init__(self, as_utf8: bool) -> None: ...
     def write(self, val: str) -> int: ...
-    def getvalue(self) -> str: ...
     def close(self) -> None: ...
+    def getvalue(self) -> str: ...
 
 _MessageFormatter: TypeAlias = Callable[[Message, int, bool], str | None]
 
@@ -47,8 +47,6 @@ def MessageToString(
     use_short_repeated_primitives: bool = False,
     pointy_brackets: bool = False,
     use_index_order: bool = False,
-    float_format: str | None = None,
-    double_format: str | None = None,
     use_field_number: bool = False,
     descriptor_pool: DescriptorPool | None = None,
     indent: int = 0,
@@ -107,8 +105,6 @@ def MessageToBytes(
     use_short_repeated_primitives: bool = False,
     pointy_brackets: bool = False,
     use_index_order: bool = False,
-    float_format: str | None = None,
-    double_format: str | None = None,
     use_field_number: bool = False,
     descriptor_pool: DescriptorPool | None = None,
     indent: int = 0,
@@ -127,8 +123,6 @@ def PrintMessage(
     use_short_repeated_primitives: bool = False,
     pointy_brackets: bool = False,
     use_index_order: bool = False,
-    float_format: str | None = None,
-    double_format: str | None = None,
     use_field_number: bool = False,
     descriptor_pool: DescriptorPool | None = None,
     message_formatter: _MessageFormatter | None = None,
@@ -177,8 +171,6 @@ def PrintField(
     use_short_repeated_primitives: bool = False,
     pointy_brackets: bool = False,
     use_index_order: bool = False,
-    float_format: str | None = None,
-    double_format: str | None = None,
     message_formatter: _MessageFormatter | None = None,
     print_unknown_fields: bool = False,
     force_colon: bool = False,
@@ -195,8 +187,6 @@ def PrintFieldValue(
     use_short_repeated_primitives: bool = False,
     pointy_brackets: bool = False,
     use_index_order: bool = False,
-    float_format: str | None = None,
-    double_format: str | None = None,
     message_formatter: _MessageFormatter | None = None,
     print_unknown_fields: bool = False,
     force_colon: bool = False,
@@ -213,8 +203,6 @@ class _Printer:
     use_short_repeated_primitives: bool
     pointy_brackets: bool
     use_index_order: bool
-    float_format: str | None
-    double_format: str | None
     use_field_number: bool
     descriptor_pool: DescriptorPool | None
     message_formatter: _MessageFormatter | None
@@ -229,8 +217,6 @@ class _Printer:
         use_short_repeated_primitives: bool = False,
         pointy_brackets: bool = False,
         use_index_order: bool = False,
-        float_format: str | None = None,
-        double_format: str | None = None,
         use_field_number: bool = False,
         descriptor_pool: DescriptorPool | None = None,
         message_formatter: _MessageFormatter | None = None,
@@ -449,9 +435,29 @@ class Tokenizer:
     token: str
     def __init__(self, lines: Iterable[str], skip_comments: bool = True) -> None: ...
     def LookingAt(self, token: str) -> bool: ...
-    def AtEnd(self) -> bool:
-        """
-        Checks the end of the text was reached.
+    def AtEnd(self) -> bool: ...
+    def TryConsume(self, token: str) -> bool: ...
+    def Consume(self, token: str) -> None: ...
+    def ConsumeComment(self) -> str: ...
+    def ConsumeCommentOrTrailingComment(self) -> tuple[bool, str]: ...
+    def TryConsumeIdentifier(self) -> bool: ...
+    def ConsumeIdentifier(self) -> str: ...
+    def TryConsumeIdentifierOrNumber(self) -> bool: ...
+    def ConsumeIdentifierOrNumber(self) -> str: ...
+    def TryConsumeInteger(self) -> bool: ...
+    def ConsumeInteger(self) -> int: ...
+    def TryConsumeFloat(self) -> bool: ...
+    def ConsumeFloat(self) -> float: ...
+    def ConsumeBool(self) -> bool: ...
+    def TryConsumeByteString(self) -> bool: ...
+    def ConsumeString(self) -> str: ...
+    def ConsumeByteString(self) -> bytes: ...
+    def ConsumeEnum(self, field: FieldDescriptor) -> int: ...
+    def ConsumeUrlChars(self) -> str: ...
+    def TryConsumeUrlChars(self) -> bool: ...
+    def ParseErrorPreviousToken(self, message: Message) -> _ParseError: ...
+    def ParseError(self, message: Message) -> _ParseError: ...
+    def NextToken(self) -> None: ...
 
         Returns:
           True iff the end was reached.

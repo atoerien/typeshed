@@ -1477,7 +1477,7 @@ class ContainerCollection(Collection[Container]):
         """
         ...
     @override
-    def create(  # type:ignore[override]
+    def create(  # type: ignore[override]
         self,
         image: str | Image,
         command: str | list[str] | None = None,

@@ -120,9 +120,7 @@ class CommentSheet(Serialisable):
     def __init__(self, authors: AuthorList, commentList=None, extLst: Unused = None) -> None: ...
     def to_tree(self) -> Element: ...  # type: ignore[override]
     @property
-    def comments(self) -> Generator[tuple[str, Comment], None, None]:
-        """Return a dictionary of comments keyed by coord"""
-        ...
+    def comments(self) -> Generator[tuple[str, Comment]]: ...
     @classmethod
     def from_comments(cls, comments):
         """Create a comment sheet from a list of comments for a particular worksheet"""

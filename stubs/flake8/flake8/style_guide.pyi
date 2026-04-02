@@ -95,26 +95,9 @@ class StyleGuideManager:
     style_guides: Incomplete
     default_style_guide: Incomplete
     style_guide_for: Incomplete
-    def __init__(self, options: argparse.Namespace, formatter: BaseFormatter, decider: DecisionEngine | None = None) -> None:
-        """
-        Initialize our StyleGuide.
-
-        .. todo:: Add parameter documentation.
-        """
-        ...
-    def populate_style_guides_with(self, options: argparse.Namespace) -> Generator[StyleGuide, None, None]:
-        """
-        Generate style guides from the per-file-ignores option.
-
-        :param options:
-            The original options parsed from the CLI and config file.
-        :returns:
-            A copy of the default style guide with overridden values.
-        """
-        ...
-    def processing_file(self, filename: str) -> Generator[StyleGuide, None, None]:
-        """Record the fact that we're processing the file's results."""
-        ...
+    def __init__(self, options: argparse.Namespace, formatter: BaseFormatter, decider: DecisionEngine | None = None) -> None: ...
+    def populate_style_guides_with(self, options: argparse.Namespace) -> Generator[StyleGuide]: ...
+    def processing_file(self, filename: str) -> Generator[StyleGuide]: ...
     def handle_error(
         self, code: str, filename: str, line_number: int, column_number: int, text: str, physical_line: str | None = None
     ) -> int:
@@ -155,44 +138,11 @@ class StyleGuide:
         stats: Statistics,
         filename: str | None = None,
         decider: DecisionEngine | None = None,
-    ) -> None:
-        """
-        Initialize our StyleGuide.
-
-        .. todo:: Add parameter documentation.
-        """
-        ...
-    def copy(self, filename: str | None = None, extend_ignore_with: Sequence[str] | None = None) -> StyleGuide:
-        """Create a copy of this style guide with different values."""
-        ...
-    def processing_file(self, filename: str) -> Generator[StyleGuide, None, None]:
-        """Record the fact that we're processing the file's results."""
-        ...
-    def applies_to(self, filename: str) -> bool:
-        """
-        Check if this StyleGuide applies to the file.
-
-        :param filename:
-            The name of the file with violations that we're potentially
-            applying this StyleGuide to.
-        :returns:
-            True if this applies, False otherwise
-        """
-        ...
-    def should_report_error(self, code: str) -> Decision:
-        """
-        Determine if the error code should be reported or ignored.
-
-        This method only cares about the select and ignore rules as specified
-        by the user in their configuration files and command-line flags.
-
-        This method does not look at whether the specific line is being
-        ignored in the file itself.
-
-        :param code:
-            The code for the check that has been run.
-        """
-        ...
+    ) -> None: ...
+    def copy(self, filename: str | None = None, extend_ignore_with: Sequence[str] | None = None) -> StyleGuide: ...
+    def processing_file(self, filename: str) -> Generator[StyleGuide]: ...
+    def applies_to(self, filename: str) -> bool: ...
+    def should_report_error(self, code: str) -> Decision: ...
     def handle_error(
         self, code: str, filename: str, line_number: int, column_number: int, text: str, physical_line: str | None = None
     ) -> int:

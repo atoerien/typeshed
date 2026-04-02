@@ -408,119 +408,12 @@ class ISMAGS:
     graph: Incomplete
     subgraph: Incomplete
 
-    def __init__(self, graph, subgraph, node_match=None, edge_match=None, cache=None) -> None:
-        """
-        Parameters
-        ----------
-        graph: networkx.Graph
-        subgraph: networkx.Graph
-        node_match: collections.abc.Callable or None
-            Function used to determine whether two nodes are equivalent. Its
-            signature should look like ``f(n1: dict, n2: dict) -> bool``, with
-            `n1` and `n2` node property dicts. See also
-            :func:`~networkx.algorithms.isomorphism.categorical_node_match` and
-            friends.
-            If `None`, all nodes are considered equal.
-        edge_match: collections.abc.Callable or None
-            Function used to determine whether two edges are equivalent. Its
-            signature should look like ``f(e1: dict, e2: dict) -> bool``, with
-            `e1` and `e2` edge property dicts. See also
-            :func:`~networkx.algorithms.isomorphism.categorical_edge_match` and
-            friends.
-            If `None`, all edges are considered equal.
-        cache: collections.abc.Mapping
-            A cache used for caching graph symmetries.
-        """
-        ...
-    def create_aligned_partitions(self, thing_matcher, sg_things, g_things):
-        """
-        Partitions of "things" (nodes or edges) from subgraph and graph
-        based on function `thing_matcher`.
-
-        Returns: sg_partition, g_partition, number_of_matched_parts
-
-        The first `number_of_matched_parts` parts in each partition
-        match in order, e.g. 2nd part matches other's 2nd part.
-        Warning: nodes in parts after that have no matching nodes in the other graph.
-        For morphisms those nodes can't appear in the mapping.
-        """
-        ...
-    def find_isomorphisms(self, symmetry: bool = True) -> Generator[Incomplete, Incomplete, Incomplete]:
-        """
-        Find all subgraph isomorphisms between subgraph and graph
-
-        Finds isomorphisms where :attr:`subgraph` <= :attr:`graph`.
-
-        Parameters
-        ----------
-        symmetry: bool
-            Whether symmetry should be taken into account. If False, found
-            isomorphisms may be symmetrically equivalent.
-
-        Yields
-        ------
-        dict
-            The found isomorphism mappings of {graph_node: subgraph_node}.
-        """
-        ...
-    def largest_common_subgraph(self, symmetry: bool = True) -> Generator[Incomplete, Incomplete, None]:
-        """
-        Find the largest common induced subgraphs between :attr:`subgraph` and
-        :attr:`graph`.
-
-        Parameters
-        ----------
-        symmetry: bool
-            Whether symmetry should be taken into account. If False, found
-            largest common subgraphs may be symmetrically equivalent.
-
-        Yields
-        ------
-        dict
-            The found isomorphism mappings of {graph_node: subgraph_node}.
-        """
-        ...
-    def analyze_subgraph_symmetry(self) -> dict[Hashable, set[Hashable]]:
-        """
-        Find a minimal set of permutations and corresponding co-sets that
-        describe the symmetry of ``self.subgraph``, given the node and edge
-        equalities given by `node_partition` and `edge_colors`, respectively.
-
-        Returns
-        -------
-        dict[collections.abc.Hashable, set[collections.abc.Hashable]]
-            The found co-sets. The co-sets is a dictionary of
-            ``{node key: set of node keys}``.
-            Every key-value pair describes which ``values`` can be interchanged
-            without changing nodes less than ``key``.
-        """
-        ...
-    def is_isomorphic(self, symmetry: bool = False) -> bool:
-        """
-        Returns True if :attr:`graph` is isomorphic to :attr:`subgraph` and
-        False otherwise.
-
-        Returns
-        -------
-        bool
-        """
-        ...
-    def subgraph_is_isomorphic(self, symmetry: bool = False) -> bool:
-        """
-        Returns True if a subgraph of :attr:`graph` is isomorphic to
-        :attr:`subgraph` and False otherwise.
-
-        Returns
-        -------
-        bool
-        """
-        ...
-    def isomorphisms_iter(self, symmetry: bool = True) -> Generator[Incomplete, Incomplete, None]:
-        """
-        Does the same as :meth:`find_isomorphisms` if :attr:`graph` and
-        :attr:`subgraph` have the same number of nodes.
-        """
-        ...
-    def subgraph_isomorphisms_iter(self, symmetry: bool = True):
-        """Alternative name for :meth:`find_isomorphisms`."""
-        ...
+    def __init__(self, graph, subgraph, node_match=None, edge_match=None, cache=None) -> None: ...
+    def create_aligned_partitions(self, thing_matcher, sg_things, g_things): ...
+    def find_isomorphisms(self, symmetry: bool = True) -> Generator[Incomplete, Incomplete, Incomplete]: ...
+    def largest_common_subgraph(self, symmetry: bool = True) -> Generator[Incomplete, Incomplete]: ...
+    def analyze_subgraph_symmetry(self) -> dict[Hashable, set[Hashable]]: ...
+    def is_isomorphic(self, symmetry: bool = False) -> bool: ...
+    def subgraph_is_isomorphic(self, symmetry: bool = False) -> bool: ...
+    def isomorphisms_iter(self, symmetry: bool = True) -> Generator[Incomplete, Incomplete]: ...
+    def subgraph_isomorphisms_iter(self, symmetry: bool = True): ...

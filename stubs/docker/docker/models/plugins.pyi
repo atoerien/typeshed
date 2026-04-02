@@ -15,103 +15,18 @@ class Plugin(Model):
         """Whether the plugin is enabled."""
         ...
     @property
-    def settings(self) -> dict[str, Any] | None:
-        """A dictionary representing the plugin's configuration."""
-        ...
-    def configure(self, options: dict[str, Any]) -> None:
-        """
-        Update the plugin's settings.
-
-        Args:
-            options (dict): A key-value mapping of options.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def disable(self, force: bool = False) -> None:
-        """
-        Disable the plugin.
-
-        Args:
-            force (bool): Force disable. Default: False
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def enable(self, timeout: int = 0) -> None:
-        """
-        Enable the plugin.
-
-        Args:
-            timeout (int): Timeout in seconds. Default: 0
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def push(self) -> Generator[dict[str, Any], None, None]:
-        """
-        Push the plugin to a remote registry.
-
-        Returns:
-            A dict iterator streaming the status of the upload.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def remove(self, force: bool = False) -> bool:
-        """
-        Remove the plugin from the server.
-
-        Args:
-            force (bool): Remove even if the plugin is enabled.
-                Default: False
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def upgrade(self, remote: str | None = None) -> Generator[dict[str, Any], None, None]:
-        """
-        Upgrade the plugin.
-
-        Args:
-            remote (string): Remote reference to upgrade to. The
-                ``:latest`` tag is optional and is the default if omitted.
-                Default: this plugin's name.
-
-        Returns:
-            A generator streaming the decoded API logs
-        """
-        ...
+    def settings(self) -> dict[str, Any] | None: ...
+    def configure(self, options: dict[str, Any]) -> None: ...
+    def disable(self, force: bool = False) -> None: ...
+    def enable(self, timeout: int = 0) -> None: ...
+    def push(self) -> Generator[dict[str, Any]]: ...
+    def remove(self, force: bool = False) -> bool: ...
+    def upgrade(self, remote: str | None = None) -> Generator[dict[str, Any]]: ...
 
 class PluginCollection(Collection[Plugin]):
     model: type[Plugin]
     @override
-    def create(self, name, plugin_data_dir, gzip: bool = False):
-        """
-        Create a new plugin.
-
-        Args:
-            name (string): The name of the plugin. The ``:latest`` tag is
-                optional, and is the default if omitted.
-            plugin_data_dir (string): Path to the plugin data directory.
-                Plugin data directory must contain the ``config.json``
-                manifest file and the ``rootfs`` directory.
-            gzip (bool): Compress the context using gzip. Default: False
-
-        Returns:
-            (:py:class:`Plugin`): The newly created plugin.
-        """
-        ...
+    def create(self, name, plugin_data_dir, gzip: bool = False): ...  # type: ignore[override]
     @override
     def get(self, name):
         """

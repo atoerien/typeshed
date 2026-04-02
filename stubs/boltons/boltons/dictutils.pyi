@@ -171,98 +171,17 @@ class OrderedMultiDict(dict[_KT, _VT]):
         """
         ...
     @overload
-    def get(self, k: _KT, default: _VT) -> _VT:
-        """
-        Return the value for key *k* if present in the dictionary, else
-        *default*. If *default* is not given, ``None`` is returned.
-        This method never raises a :exc:`KeyError`.
-
-        To get all values under a key, use :meth:`OrderedMultiDict.getlist`.
-        """
-        ...
-    def getlist(self, k: _KT, default: list[_VT] = ...) -> list[_VT]:
-        """
-        Get all values for key *k* as a list, if *k* is in the
-        dictionary, else *default*. The list returned is a copy and
-        can be safely mutated. If *default* is not given, an empty
-        :class:`list` is returned.
-        """
-        ...
-    def inverted(self) -> Self:
-        """
-        Returns a new :class:`OrderedMultiDict` with values and keys
-        swapped, like creating dictionary transposition or reverse
-        index.  Insertion order is retained and all keys and values
-        are represented in the output.
-
-        >>> omd = OMD([(0, 2), (1, 2)])
-        >>> omd.inverted().getlist(2)
-        [0, 1]
-
-        Inverting twice yields a copy of the original:
-
-        >>> omd.inverted().inverted()
-        OrderedMultiDict([(0, 2), (1, 2)])
-        """
-        ...
-    def items(self, multi: bool = False) -> list[tuple[_KT, _VT]]:
-        """
-        Returns a list containing the output of :meth:`iteritems`.  See
-        that method's docs for more details.
-        """
-        ...
-    def iteritems(self, multi: bool = False) -> Generator[tuple[_KT, _VT], None, None]:
-        """
-        Iterate over the OMD's items in insertion order. By default,
-        yields only the most-recently inserted value for each key. Set
-        *multi* to ``True`` to get all inserted items.
-        """
-        ...
-    def iterkeys(self, multi: bool = False) -> Generator[_KT, None, None]:
-        """
-        Iterate over the OMD's keys in insertion order. By default, yields
-        each key once, according to the most recent insertion. Set
-        *multi* to ``True`` to get all keys, including duplicates, in
-        insertion order.
-        """
-        ...
-    def itervalues(self, multi: bool = False) -> Generator[_VT, None, None]:
-        """
-        Iterate over the OMD's values in insertion order. By default,
-        yields the most-recently inserted value per unique key.  Set
-        *multi* to ``True`` to get all values according to insertion
-        order.
-        """
-        ...
-    def keys(self, multi: bool = False) -> list[_KT]:
-        """
-        Returns a list containing the output of :meth:`iterkeys`.  See
-        that method's docs for more details.
-        """
-        ...
-    def pop(self, k: _KT, default: _VT = ...) -> _VT:
-        """
-        Remove all values under key *k*, returning the most-recently
-        inserted value. Raises :exc:`KeyError` if the key is not
-        present and no *default* is provided.
-        """
-        ...
-    def popall(self, k: _KT, default: _VT = ...) -> list[_VT]:
-        """
-        Remove all values under key *k*, returning them in the form of
-        a list. Raises :exc:`KeyError` if the key is not present and no
-        *default* is provided.
-        """
-        ...
-    def poplast(self, k: _KT = ..., default: _VT = ...) -> _VT:
-        """
-        Remove and return the most-recently inserted value under the key
-        *k*, or the most-recently inserted key if *k* is not
-        provided. If no values remain under *k*, it will be removed
-        from the OMD.  Raises :exc:`KeyError` if *k* is not present in
-        the dictionary, or the dictionary is empty.
-        """
-        ...
+    def get(self, k: _KT, default: _VT) -> _VT: ...
+    def getlist(self, k: _KT, default: list[_VT] = ...) -> list[_VT]: ...
+    def inverted(self) -> Self: ...
+    def items(self, multi: bool = False) -> list[tuple[_KT, _VT]]: ...  # type: ignore[override]
+    def iteritems(self, multi: bool = False) -> Generator[tuple[_KT, _VT]]: ...
+    def iterkeys(self, multi: bool = False) -> Generator[_KT]: ...
+    def itervalues(self, multi: bool = False) -> Generator[_VT]: ...
+    def keys(self, multi: bool = False) -> list[_KT]: ...  # type: ignore[override]
+    def pop(self, k: _KT, default: _VT = ...) -> _VT: ...  # type: ignore[override]
+    def popall(self, k: _KT, default: _VT = ...) -> list[_VT]: ...
+    def poplast(self, k: _KT = ..., default: _VT = ...) -> _VT: ...
     @overload  # type: ignore[override]
     def setdefault(self, k: _KT, default: None = None) -> _VT | None:
         """
@@ -383,13 +302,8 @@ OMD: TypeAlias = OrderedMultiDict[_KT, _VT]
 MultiDict: TypeAlias = OrderedMultiDict[_KT, _VT]
 
 class FastIterOrderedMultiDict(OrderedMultiDict[_KT, _VT]):  # undocumented
-    """
-    An OrderedMultiDict backed by a skip list.  Iteration over keys
-    is faster and uses constant memory but adding duplicate key-value
-    pairs is slower. Brainchild of Mark Williams.
-    """
-    def iteritems(self, multi: bool = False) -> Generator[tuple[_KT, _VT], None, None]: ...
-    def iterkeys(self, multi: bool = False) -> Generator[_KT, None, None]: ...
+    def iteritems(self, multi: bool = False) -> Generator[tuple[_KT, _VT]]: ...
+    def iterkeys(self, multi: bool = False) -> Generator[_KT]: ...
 
 class OneToOne(dict[_KT, _VT]):
     """
@@ -473,7 +387,7 @@ class ManyToMany(dict[_KT, frozenset[_VT]]):
     def __setitem__(self, key: _KT, vals: Iterable[_VT]) -> None: ...
     def add(self, key: _KT, val: _VT) -> None: ...
     def get(self, key: _KT, default: frozenset[_VT] = ...) -> frozenset[_VT]: ...  # type: ignore[override]
-    def iteritems(self) -> Generator[tuple[_KT, _VT], None, None]: ...
+    def iteritems(self) -> Generator[tuple[_KT, _VT]]: ...
     def keys(self): ...
     def remove(self, key: _KT, val: _VT) -> None: ...
     def replace(self, key: _KT, newkey: _KT) -> None:

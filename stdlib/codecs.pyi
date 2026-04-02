@@ -257,82 +257,10 @@ def getwriter(encoding: str) -> _StreamWriter:
 @deprecated("Deprecated since Python 3.14. Use `open()` instead.")
 def open(
     filename: str, mode: str = "r", encoding: str | None = None, errors: str = "strict", buffering: int = -1
-) -> StreamReaderWriter:
-    """
-    Open an encoded file using the given mode and return
-    a wrapped version providing transparent encoding/decoding.
-
-    Note: The wrapped version will only accept the object format
-    defined by the codecs, i.e. Unicode objects for most builtin
-    codecs. Output is also codec dependent and will usually be
-    Unicode as well.
-
-    If encoding is not None, then the
-    underlying encoded files are always opened in binary mode.
-    The default file mode is 'r', meaning to open the file in read mode.
-
-    encoding specifies the encoding which is to be used for the
-    file.
-
-    errors may be given to define the error handling. It defaults
-    to 'strict' which causes ValueErrors to be raised in case an
-    encoding error occurs.
-
-    buffering has the same meaning as for the builtin open() API.
-    It defaults to -1 which means that the default buffer size will
-    be used.
-
-    The returned wrapped file object provides an extra attribute
-    .encoding which allows querying the used encoding. This
-    attribute is only available if an encoding was specified as
-    parameter.
-    """
-    ...
-def EncodedFile(file: _Stream, data_encoding: str, file_encoding: str | None = None, errors: str = "strict") -> StreamRecoder:
-    """
-    Return a wrapped version of file which provides transparent
-    encoding translation.
-
-    Data written to the wrapped file is decoded according
-    to the given data_encoding and then encoded to the underlying
-    file using file_encoding. The intermediate data type
-    will usually be Unicode but depends on the specified codecs.
-
-    Bytes read from the file are decoded using file_encoding and then
-    passed back to the caller encoded using data_encoding.
-
-    If file_encoding is not given, it defaults to data_encoding.
-
-    errors may be given to define the error handling. It defaults
-    to 'strict' which causes ValueErrors to be raised in case an
-    encoding error occurs.
-
-    The returned wrapped file object provides two extra attributes
-    .data_encoding and .file_encoding which reflect the given
-    parameters of the same name. The attributes can be used for
-    introspection by Python programs.
-    """
-    ...
-def iterencode(iterator: Iterable[str], encoding: str, errors: str = "strict") -> Generator[bytes, None, None]:
-    """
-    Encoding iterator.
-
-    Encodes the input strings from the iterator using an IncrementalEncoder.
-
-    errors and kwargs are passed through to the IncrementalEncoder
-    constructor.
-    """
-    ...
-def iterdecode(iterator: Iterable[bytes], encoding: str, errors: str = "strict") -> Generator[str, None, None]:
-    """
-    Decoding iterator.
-
-    Decodes the input strings from the iterator using an IncrementalDecoder.
-
-    errors and kwargs are passed through to the IncrementalDecoder
-    constructor.
-    """
-    ...
+) -> StreamReaderWriter: ...
+def EncodedFile(file: _Stream, data_encoding: str, file_encoding: str | None = None, errors: str = "strict") -> StreamRecoder: ...
+def iterencode(iterator: Iterable[str], encoding: str, errors: str = "strict") -> Generator[bytes]: ...
+def iterdecode(iterator: Iterable[bytes], encoding: str, errors: str = "strict") -> Generator[str]: ...
 
 BOM: Final[Literal[b"\xff\xfe", b"\xfe\xff"]]  # depends on `sys.byteorder`
 BOM_BE: Final = b"\xfe\xff"

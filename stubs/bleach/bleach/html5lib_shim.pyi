@@ -103,12 +103,8 @@ class BleachHTMLSerializer(HTMLSerializer):
     escape_rcdata to True
     """
     escape_rcdata: bool
-    def escape_base_amp(self, stoken: str) -> Generator[str, None, None]:
-        """Escapes just bare & in HTML attribute values"""
-        ...
-    def serialize(self, treewalker: TreeWalker, encoding: str | None = None) -> Generator[str, None, None]:
-        """
-        Wrap HTMLSerializer.serialize and conver & to &amp; in attribute values
+    def escape_base_amp(self, stoken: str) -> Generator[str]: ...
+    def serialize(self, treewalker: TreeWalker, encoding: str | None = None) -> Generator[str]: ...  # type: ignore[override]
 
         Note that this converts & to &amp; in attribute values where the & isn't
         already part of an unambiguous character entity.

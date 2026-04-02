@@ -36,6 +36,5 @@ class MessageListener:
         """
         ...
 
-class NullMessageListener(MessageListener):
-    """No-op MessageListener implementation."""
+class NullMessageListener:
     def Modified(self) -> None: ...

@@ -50,13 +50,7 @@ class Relationship(Serialisable):
 
 class RelationshipList(ElementList[Relationship]):
     expected_type: type[Relationship]
-    def find(self, content_type: str) -> Generator[Relationship, None, None]:
-        """
-        Find relationships by content-type
-        NB. these content-types namespaced objects and different to the MIME-types
-        in the package manifest :-(
-        """
-        ...
+    def find(self, content_type: str) -> Generator[Relationship]: ...
     def get(self, key: str) -> Relationship: ...
     def to_dict(self) -> dict[Incomplete, Relationship]:
         """Return a dictionary of relations keyed by id"""

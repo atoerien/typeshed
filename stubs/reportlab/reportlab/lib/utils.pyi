@@ -72,7 +72,7 @@ def zipImported(ldr: zipimport.zipimporter | None = None) -> zipimport.zipimport
 
 class CIDict(dict[_KT, _VT]):
     def __init__(self, *args, **kwds) -> None: ...
-    def update(self, D: SupportsItems[_KT, _VT]) -> None: ...  # type:ignore[override]
+    def update(self, D: SupportsItems[_KT, _VT]) -> None: ...  # type: ignore[override]
 
 def markfilename(filename, creatorcode=None, filetype=None): ...
 
@@ -328,9 +328,7 @@ def recursiveSetAttr(obj, name, value) -> None:
     """Can call down into e.g. object1.object2[4].attr = value"""
     ...
 def recursiveDelAttr(obj, name) -> None: ...
-def yieldNoneSplits(L) -> Generator[Incomplete, None, None]:
-    """yield sublists of L separated by None; the Nones disappear"""
-    ...
+def yieldNoneSplits(L) -> Generator[Incomplete]: ...
 
 class KlassStore:
     lim: int

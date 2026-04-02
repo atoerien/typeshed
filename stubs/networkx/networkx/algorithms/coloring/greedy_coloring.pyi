@@ -62,24 +62,7 @@ def strategy_smallest_last(G: Graph[_Node], colors: Unused):
     """
     ...
 @_dispatchable
-def strategy_independent_set(G: Graph[_Node], colors: Unused) -> Generator[Incomplete, Incomplete, None]:
-    """
-    Uses a greedy independent set removal strategy to determine the
-    colors.
-
-    This function updates ``colors`` **in-place** and return ``None``,
-    unlike the other strategy functions in this module.
-
-    This algorithm repeatedly finds and removes a maximal independent
-    set, assigning each node in the set an unused color.
-
-    ``G`` is a NetworkX graph.
-
-    This strategy is related to :func:`strategy_smallest_last`: in that
-    strategy, an independent set of size one is chosen at each step
-    instead of a maximal independent set.
-    """
-    ...
+def strategy_independent_set(G: Graph[_Node], colors: Unused) -> Generator[Incomplete, Incomplete]: ...
 @_dispatchable
 def strategy_connected_sequential_bfs(G: Graph[_Node], colors):
     """
@@ -105,23 +88,7 @@ def strategy_connected_sequential_dfs(G: Graph[_Node], colors):
     """
     ...
 @_dispatchable
-def strategy_connected_sequential(
-    G: Graph[_Node], colors: Unused, traversal: str = "bfs"
-) -> Generator[Incomplete, None, None]:
-    """
-    Returns an iterable over nodes in ``G`` in the order given by a
-    breadth-first or depth-first traversal.
-
-    ``traversal`` must be one of the strings ``'dfs'`` or ``'bfs'``,
-    representing depth-first traversal or breadth-first traversal,
-    respectively.
-
-    The generated sequence has the property that for each node except
-    the first, at least one neighbor appeared earlier in the sequence.
-
-    ``G`` is a NetworkX graph. ``colors`` is ignored.
-    """
-    ...
+def strategy_connected_sequential(G: Graph[_Node], colors: Unused, traversal: str = "bfs") -> Generator[Incomplete]: ...
 @_dispatchable
 def strategy_saturation_largest_first(G: Graph[_Node], colors) -> Generator[Incomplete, None, Incomplete]:
     """
