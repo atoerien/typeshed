@@ -381,9 +381,34 @@ class __RL_SAFE_ENV__:
     def __rl_range__(self, start, *args): ...
     def __rl_set__(self, it): ...
     def __rl_frozenset__(self, it=()): ...
-    def __rl_iter_unpack_sequence__(self, it, spec, _getiter_) -> Generator[Incomplete]: ...
-    def __rl_unpack_sequence__(self, it, spec, _getiter_): ...
-    def __rl_is_allowed_name__(self, name, crash: bool = True) -> bool: ...
+    def __rl_iter_unpack_sequence__(self, it, spec, _getiter_) -> Generator[Incomplete]:
+        """
+        Protect sequence unpacking of targets in a 'for loop'.
+
+        The target of a for loop could be a sequence.
+        For example "for a, b in it"
+        => Each object from the iterator needs guarded sequence unpacking.
+        """
+        ...
+    def __rl_unpack_sequence__(self, it, spec, _getiter_):
+        """
+        Protect nested sequence unpacking.
+
+        Protect the unpacking of 'it' by wrapping it with '_getiter_'.
+        Furthermore for each child element, defined by spec,
+        __rl_unpack_sequence__ is called again.
+
+        Have a look at transformer.py 'gen_unpack_spec' for a more detailed
+        explanation.
+        """
+        ...
+    def __rl_is_allowed_name__(self, name, crash: bool = True) -> bool:
+        """
+        Check names if they are allowed.
+        If ``allow_magic_methods is True`` names in `__allowed_magic_methods__`
+        are additionally allowed although their names start with `_`.
+        """
+        ...
     def __rl_getattr__(self, obj, a, *args): ...
     def __rl_getitem__(self, obj, a): ...
     __rl_tmax__: int

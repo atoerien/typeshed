@@ -1,3 +1,5 @@
+"""Contains the Any helper APIs."""
+
 from typing import TypeVar
 
 from google.protobuf.any_pb2 import Any

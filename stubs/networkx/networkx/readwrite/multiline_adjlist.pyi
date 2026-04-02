@@ -32,8 +32,90 @@ from networkx.utils.backends import _dispatchable
 
 __all__ = ["generate_multiline_adjlist", "write_multiline_adjlist", "parse_multiline_adjlist", "read_multiline_adjlist"]
 
-def generate_multiline_adjlist(G: Graph[_Node], delimiter: str = " ") -> Generator[str]: ...
-def write_multiline_adjlist(G: Graph[_Node], path, delimiter=" ", comments="#", encoding="utf-8") -> None: ...
+def generate_multiline_adjlist(G: Graph[_Node], delimiter: str = " ") -> Generator[str]:
+    """
+    Generate a single line of the graph G in multiline adjacency list format.
+
+    Parameters
+    ----------
+    G : NetworkX graph
+
+    delimiter : string, optional
+       Separator for node labels
+
+    Returns
+    -------
+    lines : string
+        Lines of data in multiline adjlist format.
+
+    Examples
+    --------
+    >>> G = nx.lollipop_graph(4, 3)
+    >>> for line in nx.generate_multiline_adjlist(G):
+    ...     print(line)
+    0 3
+    1 {}
+    2 {}
+    3 {}
+    1 2
+    2 {}
+    3 {}
+    2 1
+    3 {}
+    3 1
+    4 {}
+    4 1
+    5 {}
+    5 1
+    6 {}
+    6 0
+
+    See Also
+    --------
+    write_multiline_adjlist, read_multiline_adjlist
+    """
+    ...
+def write_multiline_adjlist(G: Graph[_Node], path, delimiter=" ", comments="#", encoding="utf-8") -> None:
+    """
+    Write the graph G in multiline adjacency list format to path
+
+    Parameters
+    ----------
+    G : NetworkX graph
+
+    path : string or file
+       Filename or file handle to write to.
+       Filenames ending in .gz or .bz2 will be compressed.
+
+    comments : string, optional
+       Marker for comment lines
+
+    delimiter : string, optional
+       Separator for node labels
+
+    encoding : string, optional
+       Text encoding.
+
+    Examples
+    --------
+    >>> G = nx.path_graph(4)
+    >>> nx.write_multiline_adjlist(G, "test.multi_adjlist")
+
+    The path can be a file handle or a string with the name of the file. If a
+    file handle is provided, it has to be opened in 'wb' mode.
+
+    >>> fh = open("test.multi_adjlist2", "wb")
+    >>> nx.write_multiline_adjlist(G, fh)
+
+    Filenames ending in .gz or .bz2 will be compressed.
+
+    >>> nx.write_multiline_adjlist(G, "test.multi_adjlist.gz")
+
+    See Also
+    --------
+    read_multiline_adjlist
+    """
+    ...
 @_dispatchable
 def parse_multiline_adjlist(lines, comments: str = "#", delimiter=None, create_using=None, nodetype=None, edgetype=None):
     """

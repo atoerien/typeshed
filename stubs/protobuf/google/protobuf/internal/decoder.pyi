@@ -59,9 +59,50 @@ from google.protobuf.message import Message
 _Decoder: TypeAlias = Callable[[str, int, int, Message, dict[FieldDescriptor, Any]], int]
 _NewDefault: TypeAlias = Callable[[Message], Message]
 
-def IsDefaultScalarValue(value: Any) -> bool: ...
-def ReadTag(buffer: bytes, pos: int) -> tuple[bytes, int]: ...
-def DecodeTag(tag_bytes: bytes) -> tuple[int, int]: ...
+def IsDefaultScalarValue(value: Any) -> bool:
+    """
+    Returns whether or not a scalar value is the default value of its type.
+
+    Specifically, this should be used to determine presence of implicit-presence
+    fields, where we disallow custom defaults.
+
+    Args:
+      value: A scalar value to check.
+
+    Returns:
+      True if the value is equivalent to a default value, False otherwise.
+    """
+    ...
+def ReadTag(buffer: bytes, pos: int) -> tuple[bytes, int]:
+    """
+    Read a tag from the memoryview, and return a (tag_bytes, new_pos) tuple.
+
+    We return the raw bytes of the tag rather than decoding them.  The raw
+    bytes can then be used to look up the proper decoder.  This effectively allows
+    us to trade some work that would be done in pure-python (decoding a varint)
+    for work that is done in C (searching for a byte string in a hash table).
+    In a low-level language it would be much cheaper to decode the varint and
+    use that, but not in Python.
+
+    Args:
+      buffer: memoryview object of the encoded bytes
+      pos: int of the current position to start from
+
+    Returns:
+      Tuple[bytes, int] of the tag data and new position.
+    """
+    ...
+def DecodeTag(tag_bytes: bytes) -> tuple[int, int]:
+    """
+    Decode a tag from the bytes.
+
+    Args:
+      tag_bytes: the bytes of the tag
+
+    Returns:
+      Tuple[int, int] of the tag field number and wire type.
+    """
+    ...
 def EnumDecoder(
     field_number: int,
     is_repeated: bool,
@@ -69,7 +110,9 @@ def EnumDecoder(
     key: FieldDescriptor,
     new_default: _NewDefault,
     clear_if_default: bool = False,
-) -> _Decoder: ...
+) -> _Decoder:
+    """Returns a decoder for enum field."""
+    ...
 
 Int32Decoder: _Decoder
 Int64Decoder: _Decoder
@@ -118,9 +161,27 @@ def MessageDecoder(
 
 MESSAGE_SET_ITEM_TAG: bytes
 
-def MessageSetItemDecoder(descriptor: Descriptor) -> _Decoder: ...
-def UnknownMessageSetItemDecoder() -> _Decoder: ...
-def MapDecoder(field_descriptor: FieldDescriptor, new_default: _NewDefault, is_message_map: bool) -> _Decoder: ...
+def MessageSetItemDecoder(descriptor: Descriptor) -> _Decoder:
+    """
+    Returns a decoder for a MessageSet item.
+
+    The parameter is the message Descriptor.
+
+    The message set message looks like this:
+      message MessageSet {
+        repeated group Item = 1 {
+          required int32 type_id = 2;
+          required string message = 3;
+        }
+      }
+    """
+    ...
+def UnknownMessageSetItemDecoder() -> _Decoder:
+    """Returns a decoder for a Unknown MessageSet item."""
+    ...
+def MapDecoder(field_descriptor: FieldDescriptor, new_default: _NewDefault, is_message_map: bool) -> _Decoder:
+    """Returns a decoder for a map field."""
+    ...
 
 DEFAULT_RECURSION_LIMIT: int
 

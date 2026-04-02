@@ -101,5 +101,9 @@ class SyncConsumer(AsyncConsumer):
 
     # Since we're overriding asynchronous methods with synchronous ones,
     # we need to use `# type: ignore[override]` to suppress mypy errors.
-    async def dispatch(self, message: dict[str, Any]) -> None: ...  # type: ignore[override]
-    def send(self, message: dict[str, Any]) -> None: ...  # type: ignore[override]
+    async def dispatch(self, message: dict[str, Any]) -> None:
+        """Dispatches incoming messages to type-based handlers asynchronously."""
+        ...
+    def send(self, message: dict[str, Any]) -> None:
+        """Overrideable/callable-by-subclasses send method."""
+        ...

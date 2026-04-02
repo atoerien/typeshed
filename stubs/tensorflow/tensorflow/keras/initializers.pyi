@@ -25,8 +25,8 @@ class Initializer:
         # containing values drawn from a distribution of your choice.
     ```
 
-    Optionally, you an also implement the method `get_config()` and the class
-    method `from_config` in order to support serialization -- just like with
+    Optionally, you can also implement the method `get_config()` and the class
+    method `from_config` in order to support serialization, just like with
     any Keras object.
 
     Here's a simple example: a random normal initializer.
@@ -315,7 +315,7 @@ def get(identifier: None) -> None:
     (case-sensitively).
 
     >>> identifier = 'Ones'
-    >>> keras.initializers.deserialize(identifier)
+    >>> keras.initializers.get(identifier)
     <...keras.initializers.initializers.Ones...>
 
     You can also specify `config` of the initializer to this function by passing
@@ -323,15 +323,34 @@ def get(identifier: None) -> None:
     the `class_name` must map to a `Initializer` class.
 
     >>> cfg = {'class_name': 'Ones', 'config': {}}
-    >>> keras.initializers.deserialize(cfg)
+    >>> keras.initializers.get(cfg)
     <...keras.initializers.initializers.Ones...>
 
     In the case that the `identifier` is a class, this method will return a new
     instance of the class by its constructor.
 
+    You may also pass a callable function with a signature that includes `shape`
+    and `dtype=None` as an identifier.
+
+    >>> fn = lambda shape, dtype=None: ops.ones(shape, dtype)
+    >>> keras.initializers.get(fn)
+    <function <lambda> at ...>
+
+    Alternatively, you can pass a backend tensor or numpy array as the
+    `identifier` to define the initializer values directly. Note that when
+    calling the initializer, the specified `shape` argument must be the same as
+    the shape of the tensor.
+
+    >>> tensor = ops.ones(shape=(5, 5))
+    >>> keras.initializers.get(tensor)
+    <function get.<locals>.initialize_fn at ...>
+
     Args:
-        identifier: String or dict that contains the initializer name or
-            configurations.
+        identifier: A string, dict, callable function, or tensor specifying
+            the initializer. If a string, it should be the name of an
+            initializer. If a dict, it should contain the configuration of an
+            initializer. Callable functions or predefined tensors are also
+            accepted.
 
     Returns:
         Initializer instance base on the input identifier.
@@ -346,7 +365,7 @@ def get(identifier: str | Initializer | dict[str, Any] | type[Initializer]) -> I
     (case-sensitively).
 
     >>> identifier = 'Ones'
-    >>> keras.initializers.deserialize(identifier)
+    >>> keras.initializers.get(identifier)
     <...keras.initializers.initializers.Ones...>
 
     You can also specify `config` of the initializer to this function by passing
@@ -354,15 +373,34 @@ def get(identifier: str | Initializer | dict[str, Any] | type[Initializer]) -> I
     the `class_name` must map to a `Initializer` class.
 
     >>> cfg = {'class_name': 'Ones', 'config': {}}
-    >>> keras.initializers.deserialize(cfg)
+    >>> keras.initializers.get(cfg)
     <...keras.initializers.initializers.Ones...>
 
     In the case that the `identifier` is a class, this method will return a new
     instance of the class by its constructor.
 
+    You may also pass a callable function with a signature that includes `shape`
+    and `dtype=None` as an identifier.
+
+    >>> fn = lambda shape, dtype=None: ops.ones(shape, dtype)
+    >>> keras.initializers.get(fn)
+    <function <lambda> at ...>
+
+    Alternatively, you can pass a backend tensor or numpy array as the
+    `identifier` to define the initializer values directly. Note that when
+    calling the initializer, the specified `shape` argument must be the same as
+    the shape of the tensor.
+
+    >>> tensor = ops.ones(shape=(5, 5))
+    >>> keras.initializers.get(tensor)
+    <function get.<locals>.initialize_fn at ...>
+
     Args:
-        identifier: String or dict that contains the initializer name or
-            configurations.
+        identifier: A string, dict, callable function, or tensor specifying
+            the initializer. If a string, it should be the name of an
+            initializer. If a dict, it should contain the configuration of an
+            initializer. Callable functions or predefined tensors are also
+            accepted.
 
     Returns:
         Initializer instance base on the input identifier.
@@ -377,7 +415,7 @@ def get(identifier: Callable[[ShapeLike], Tensor]) -> Callable[[ShapeLike], Tens
     (case-sensitively).
 
     >>> identifier = 'Ones'
-    >>> keras.initializers.deserialize(identifier)
+    >>> keras.initializers.get(identifier)
     <...keras.initializers.initializers.Ones...>
 
     You can also specify `config` of the initializer to this function by passing
@@ -385,15 +423,34 @@ def get(identifier: Callable[[ShapeLike], Tensor]) -> Callable[[ShapeLike], Tens
     the `class_name` must map to a `Initializer` class.
 
     >>> cfg = {'class_name': 'Ones', 'config': {}}
-    >>> keras.initializers.deserialize(cfg)
+    >>> keras.initializers.get(cfg)
     <...keras.initializers.initializers.Ones...>
 
     In the case that the `identifier` is a class, this method will return a new
     instance of the class by its constructor.
 
+    You may also pass a callable function with a signature that includes `shape`
+    and `dtype=None` as an identifier.
+
+    >>> fn = lambda shape, dtype=None: ops.ones(shape, dtype)
+    >>> keras.initializers.get(fn)
+    <function <lambda> at ...>
+
+    Alternatively, you can pass a backend tensor or numpy array as the
+    `identifier` to define the initializer values directly. Note that when
+    calling the initializer, the specified `shape` argument must be the same as
+    the shape of the tensor.
+
+    >>> tensor = ops.ones(shape=(5, 5))
+    >>> keras.initializers.get(tensor)
+    <function get.<locals>.initialize_fn at ...>
+
     Args:
-        identifier: String or dict that contains the initializer name or
-            configurations.
+        identifier: A string, dict, callable function, or tensor specifying
+            the initializer. If a string, it should be the name of an
+            initializer. If a dict, it should contain the configuration of an
+            initializer. Callable functions or predefined tensors are also
+            accepted.
 
     Returns:
         Initializer instance base on the input identifier.

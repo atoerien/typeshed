@@ -219,6 +219,7 @@ CERT_OPTIONAL: Final = VerifyMode.CERT_OPTIONAL
 CERT_REQUIRED: Final = VerifyMode.CERT_REQUIRED
 
 class VerifyFlags(enum.IntFlag):
+    """An enumeration."""
     VERIFY_DEFAULT = 0x00
     VERIFY_CRL_CHECK_LEAF = 0x04
     VERIFY_CRL_CHECK_CHAIN = 0x0C
@@ -261,6 +262,7 @@ PROTOCOL_TLS_CLIENT: Final = _SSLMethod.PROTOCOL_TLS_CLIENT
 PROTOCOL_TLS_SERVER: Final = _SSLMethod.PROTOCOL_TLS_SERVER
 
 class Options(enum.IntFlag):
+    """An enumeration."""
     OP_ALL: int
     OP_NO_SSLv2 = 0
     OP_NO_SSLv3 = 33554432

@@ -130,6 +130,7 @@ class Observer:
 
 @disjoint_base
 class Body:
+    """A celestial body, that can compute() its sky position"""
     @property
     def name(self) -> str | None:
         """object name (read-only string)"""
@@ -245,6 +246,7 @@ class Body:
         ...
 
 class Planet(Body):
+    """A celestial body, that can compute() its sky position"""
     @property
     def hlon(self) -> Angle:
         """heliocentric longitude (but Sun().hlon means the hlon of Earth) as a float giving radians, or a string giving degrees:minutes:seconds"""
@@ -326,6 +328,7 @@ class Saturn(Planet):
 
 @disjoint_base
 class PlanetMoon:
+    """A celestial body, that can compute() its sky position"""
     @property
     def name(self) -> str:
         """object name (read-only string)"""

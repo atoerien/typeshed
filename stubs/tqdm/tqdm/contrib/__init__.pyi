@@ -17,6 +17,30 @@ class DummyTqdmFile(ObjectWrapper):
     def write(self, x, nolock: bool = False) -> None: ...
     def __del__(self) -> None: ...
 
-def tenumerate(iterable, start: int = 0, total=None, tqdm_class: type[Incomplete] = ..., **tqdm_kwargs): ...
-def tzip(iter1, *iter2plus, **tqdm_kwargs) -> Generator[Incomplete]: ...
-def tmap(function: Callable[..., Incomplete], *sequences, **tqdm_kwargs) -> Generator[Incomplete]: ...
+def tenumerate(iterable, start: int = 0, total=None, tqdm_class: type[Incomplete] = ..., **tqdm_kwargs):
+    """
+    Equivalent of `numpy.ndenumerate` or builtin `enumerate`.
+
+    Parameters
+    ----------
+    tqdm_class  : [default: tqdm.auto.tqdm].
+    """
+    ...
+def tzip(iter1, *iter2plus, **tqdm_kwargs) -> Generator[Incomplete]:
+    """
+    Equivalent of builtin `zip`.
+
+    Parameters
+    ----------
+    tqdm_class  : [default: tqdm.auto.tqdm].
+    """
+    ...
+def tmap(function: Callable[..., Incomplete], *sequences, **tqdm_kwargs) -> Generator[Incomplete]:
+    """
+    Equivalent of builtin `map`.
+
+    Parameters
+    ----------
+    tqdm_class  : [default: tqdm.auto.tqdm].
+    """
+    ...

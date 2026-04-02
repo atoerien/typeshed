@@ -115,15 +115,58 @@ class _GlobalCacheSetBatch(_GlobalCacheBatch):
     todo: object
     futures: object
     def __init__(self, options) -> None: ...
-    def done_callback(self, cache_call) -> None: ...
-    def add(self, key, value): ...
-    def make_call(self): ...
-    def future_info(self, key, value): ...  # type: ignore[override]
+    def done_callback(self, cache_call) -> None:
+        """
+        Process results of call to global cache.
+
+        If there is an exception for the cache call, distribute that to waiting
+        futures, otherwise examine the result of the cache call. If the result is
+        :data:`None`, simply set the result to :data:`None` for all waiting futures.
+        Otherwise, if the result is a `dict`, use that to propagate results for
+        individual keys to waiting futures.
+        """
+        ...
+    def add(self, key, value):
+        """
+        Add a key, value pair to store in the cache.
+
+        Arguments:
+            key (bytes): The key to store in the cache.
+            value (bytes): The value to store in the cache.
+
+        Returns:
+            tasklets.Future: Eventual result will be ``None``.
+        """
+        ...
+    def make_call(self):
+        """Call :method:`GlobalCache.set`."""
+        ...
+    def future_info(self, key, value):
+        """Generate info string for Future."""
+        ...
 
 class _GlobalCacheSetIfNotExistsBatch(_GlobalCacheSetBatch):
-    def add(self, key, value): ...
-    def make_call(self): ...
-    def future_info(self, key, value): ...  # type: ignore[override]
+    """Batch for global cache set_if_not_exists requests."""
+    def add(self, key, value):
+        """
+        Add a key, value pair to store in the cache.
+
+        Arguments:
+            key (bytes): The key to store in the cache.
+            value (bytes): The value to store in the cache.
+
+        Returns:
+            tasklets.Future: Eventual result will be a ``bool`` value which will be
+                :data:`True` if a new value was set for the key, or :data:`False` if a
+                value was already set for the key.
+        """
+        ...
+    def make_call(self):
+        """Call :method:`GlobalCache.set`."""
+        ...
+    def future_info(self, key, value):
+        """Generate info string for Future."""
+        ...
 
 global_delete: Incomplete
 
@@ -153,8 +196,13 @@ class _GlobalCacheDeleteBatch(_GlobalCacheBatch):
 global_watch: Incomplete
 
 class _GlobalCacheWatchBatch(_GlobalCacheDeleteBatch):
-    def make_call(self): ...
-    def future_info(self, key, value): ...  # type: ignore[override]
+    """Batch for global cache watch requests."""
+    def make_call(self):
+        """Call :method:`GlobalCache.watch`."""
+        ...
+    def future_info(self, key, value):
+        """Generate info string for Future."""
+        ...
 
 def global_unwatch(key):
     """
@@ -184,8 +232,13 @@ class _GlobalCacheUnwatchBatch(_GlobalCacheDeleteBatch):
 global_compare_and_swap: Incomplete
 
 class _GlobalCacheCompareAndSwapBatch(_GlobalCacheSetBatch):
-    def make_call(self): ...
-    def future_info(self, key, value): ...  # type: ignore[override]
+    """Batch for global cache compare and swap requests."""
+    def make_call(self):
+        """Call :method:`GlobalCache.compare_and_swap`."""
+        ...
+    def future_info(self, key, value):
+        """Generate info string for Future."""
+        ...
 
 def is_locked_value(value):
     """

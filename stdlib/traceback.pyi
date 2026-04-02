@@ -501,14 +501,72 @@ class TracebackException:
     def __eq__(self, other: object) -> bool: ...
     __hash__: ClassVar[None]  # type: ignore[assignment]
     if sys.version_info >= (3, 11):
-        def format(self, *, chain: bool = True, _ctx: _ExceptionPrintContext | None = None) -> Generator[str]: ...
+        def format(self, *, chain: bool = True, _ctx: _ExceptionPrintContext | None = None) -> Generator[str]:
+            """
+            Format the exception.
+
+            If chain is not *True*, *__cause__* and *__context__* will not be formatted.
+
+            The return value is a generator of strings, each ending in a newline and
+            some containing internal newlines. `print_exception` is a wrapper around
+            this method which just prints the lines to a file.
+
+            The message indicating which exception occurred is always the last
+            string in the output.
+            """
+            ...
     else:
-        def format(self, *, chain: bool = True) -> Generator[str]: ...
+        def format(self, *, chain: bool = True) -> Generator[str]:
+            """
+            Format the exception.
+
+            If chain is not *True*, *__cause__* and *__context__* will not be formatted.
+
+            The return value is a generator of strings, each ending in a newline and
+            some containing internal newlines. `print_exception` is a wrapper around
+            this method which just prints the lines to a file.
+
+            The message indicating which exception occurred is always the last
+            string in the output.
+            """
+            ...
 
     if sys.version_info >= (3, 13):
-        def format_exception_only(self, *, show_group: bool = False, _depth: int = 0) -> Generator[str]: ...
+        def format_exception_only(self, *, show_group: bool = False, _depth: int = 0) -> Generator[str]:
+            """
+            Format the exception part of the traceback.
+
+            The return value is a generator of strings, each ending in a newline.
+
+            Generator yields the exception message.
+            For :exc:`SyntaxError` exceptions, it
+            also yields (before the exception message)
+            several lines that (when printed)
+            display detailed information about where the syntax error occurred.
+            Following the message, generator also yields
+            all the exception's ``__notes__``.
+
+            When *show_group* is ``True``, and the exception is an instance of
+            :exc:`BaseExceptionGroup`, the nested exceptions are included as
+            well, recursively, with indentation relative to their nesting depth.
+            """
+            ...
     else:
-        def format_exception_only(self) -> Generator[str]: ...
+        def format_exception_only(self) -> Generator[str]:
+            """
+            Format the exception part of the traceback.
+
+            The return value is a generator of strings, each ending in a newline.
+
+            Generator yields the exception message.
+            For :exc:`SyntaxError` exceptions, it
+            also yields (before the exception message)
+            several lines that (when printed)
+            display detailed information about where the syntax error occurred.
+            Following the message, generator also yields
+            all the exception's ``__notes__``.
+            """
+            ...
 
     if sys.version_info >= (3, 11):
         def print(self, *, file: SupportsWrite[str] | None = None, chain: bool = True) -> None:

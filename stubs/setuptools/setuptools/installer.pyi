@@ -7,7 +7,13 @@ from typing_extensions import deprecated
     Requirements should be satisfied by a PEP 517 installer.
     If you are using pip, you can try `pip install --use-pep517`.
     """)
-def fetch_build_egg(dist, req) -> metadata.Distribution | metadata.PathDistribution: ...
+def fetch_build_egg(dist, req) -> metadata.Distribution | metadata.PathDistribution:
+    """
+    Fetch an egg needed for building.
+
+    Use pip/wheel to fetch/build a wheel.
+    """
+    ...
 
 # Returns packaging.requirements.Requirement
 # But since this module is deprecated, we avoid declaring a dependency on packaging

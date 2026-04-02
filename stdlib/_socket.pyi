@@ -799,7 +799,9 @@ class socket:
         ...
     # F811: "Redefinition of unused `timeout`"
     @property
-    def timeout(self) -> float | None: ...
+    def timeout(self) -> float | None:
+        """the socket timeout"""
+        ...
     if sys.platform == "win32":
         def __init__(
             self, family: int = ..., type: int = ..., proto: int = ..., fileno: SupportsIndex | bytes | None = None
@@ -1290,7 +1292,15 @@ def getdefaulttimeout() -> float | None:
     ...
 
 # F811: "Redefinition of unused `timeout`"
-def setdefaulttimeout(timeout: float | None, /) -> None: ...
+def setdefaulttimeout(timeout: float | None, /) -> None:
+    """
+    setdefaulttimeout(timeout)
+
+    Set the default timeout in seconds (float) for new socket objects.
+    A value of None indicates that new socket objects have no timeout.
+    When the socket module is first imported, the default is None.
+    """
+    ...
 
 if sys.platform != "win32":
     def sethostname(name: str, /) -> None:

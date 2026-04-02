@@ -277,11 +277,51 @@ class ElementTree(Generic[_Root]):
     contents will be used to initialize the tree with.
     """
     def __init__(self, element: Element[Any] | None = None, file: _FileRead | None = None) -> None: ...
-    def getroot(self) -> _Root: ...
-    def _setroot(self, element: Element[Any]) -> None: ...
-    def parse(self, source: _FileRead, parser: XMLParser | None = None) -> Element: ...
-    def iter(self, tag: str | None = None) -> Generator[Element]: ...
-    def find(self, path: str, namespaces: dict[str, str] | None = None) -> Element | None: ...
+    def getroot(self) -> _Root:
+        """Return root element of this tree."""
+        ...
+    def _setroot(self, element: Element[Any]) -> None:
+        """
+        Replace root element of this tree.
+
+        This will discard the current contents of the tree and replace it
+        with the given element.  Use with care!
+        """
+        ...
+    def parse(self, source: _FileRead, parser: XMLParser | None = None) -> Element:
+        """
+        Load external XML document into element tree.
+
+        *source* is a file name or file object, *parser* is an optional parser
+        instance that defaults to XMLParser.
+
+        ParseError is raised if the parser fails to parse the document.
+
+        Returns the root element of the given source document.
+        """
+        ...
+    def iter(self, tag: str | None = None) -> Generator[Element]:
+        """
+        Create and return tree iterator for the root element.
+
+        The iterator loops over all elements in this tree, in document order.
+
+        *tag* is a string with the tag name to iterate over
+        (default is to return all elements).
+        """
+        ...
+    def find(self, path: str, namespaces: dict[str, str] | None = None) -> Element | None:
+        """
+        Find first matching element by tag name or path.
+
+        Same as getroot().find(path), which is Element.find()
+
+        *path* is a string having either an element tag or an XPath,
+        *namespaces* is an optional mapping from namespace prefix to full name.
+
+        Return the first matching element, or None if no element was found.
+        """
+        ...
     @overload
     def findtext(self, path: str, default: None = None, namespaces: dict[str, str] | None = None) -> str | None:
         """
@@ -334,7 +374,18 @@ class ElementTree(Generic[_Root]):
         """
         ...
     @overload
-    def iterfind(self, path: str, namespaces: dict[str, str] | None = None) -> Generator[Element]: ...
+    def iterfind(self, path: str, namespaces: dict[str, str] | None = None) -> Generator[Element]:
+        """
+        Find all matching subelements by tag name or path.
+
+        Same as getroot().iterfind(path), which is element.iterfind()
+
+        *path* is a string having either an element tag or an XPath,
+        *namespaces* is an optional mapping from namespace prefix to full name.
+
+        Return an iterable yielding all matching elements in document order.
+        """
+        ...
     def write(
         self,
         file_or_filename: _FileWrite,

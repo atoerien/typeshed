@@ -214,7 +214,39 @@ def iter_find_files(
     ignored: str | Iterable[str] | None = None,
     include_dirs: bool = False,
     max_depth: int | None = None,
-) -> Generator[str]: ...
+) -> Generator[str]:
+    """
+    Returns a generator that yields file paths under a *directory*,
+    matching *patterns* using `glob`_ syntax (e.g., ``*.txt``). Also
+    supports *ignored* patterns.
+
+    Args:
+        directory (str): Path that serves as the root of the
+            search. Yielded paths will include this as a prefix.
+        patterns (str or list): A single pattern or list of
+            glob-formatted patterns to find under *directory*.
+        ignored (str or list): A single pattern or list of
+            glob-formatted patterns to ignore.
+        include_dirs (bool): Whether to include directories that match
+           patterns, as well. Defaults to ``False``.
+        max_depth (int): traverse up to this level of subdirectory.
+           I.e., 0 for the specified *directory* only, 1 for *directory* 
+           and one level of subdirectory.
+
+    For example, finding Python files in the current directory:
+
+    >>> _CUR_DIR = os.path.dirname(os.path.abspath(__file__))
+    >>> filenames = sorted(iter_find_files(_CUR_DIR, '*.py'))
+    >>> os.path.basename(filenames[-1])
+    'urlutils.py'
+
+    Or, Python files while ignoring emacs lockfiles:
+
+    >>> filenames = iter_find_files(_CUR_DIR, '*.py', ignored='.#*')
+
+    .. _glob: https://en.wikipedia.org/wiki/Glob_%28programming%29
+    """
+    ...
 @overload
 def copy_tree(
     src: _StrPathT, dst: _StrPathT, symlinks: bool = False, ignore: Callable[[_StrPathT, list[str]], Iterable[str]] | None = None

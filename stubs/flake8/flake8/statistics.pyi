@@ -6,10 +6,52 @@ from typing import NamedTuple
 from .violation import Violation
 
 class Statistics:
-    def __init__(self) -> None: ...
-    def error_codes(self) -> list[str]: ...
-    def record(self, error: Violation) -> None: ...
-    def statistics_for(self, prefix: str, filename: str | None = None) -> Generator[Statistic]: ...
+    """Manager of aggregated statistics for a run of Flake8."""
+    def __init__(self) -> None:
+        """Initialize the underlying dictionary for our statistics."""
+        ...
+    def error_codes(self) -> list[str]:
+        """
+        Return all unique error codes stored.
+
+        :returns:
+            Sorted list of error codes.
+        """
+        ...
+    def record(self, error: Violation) -> None:
+        """
+        Add the fact that the error was seen in the file.
+
+        :param error:
+            The Violation instance containing the information about the
+            violation.
+        """
+        ...
+    def statistics_for(self, prefix: str, filename: str | None = None) -> Generator[Statistic]:
+        """
+        Generate statistics for the prefix and filename.
+
+        If you have a :class:`Statistics` object that has recorded errors,
+        you can generate the statistics for a prefix (e.g., ``E``, ``E1``,
+        ``W50``, ``W503``) with the optional filter of a filename as well.
+
+        .. code-block:: python
+
+            >>> stats = Statistics()
+            >>> stats.statistics_for('E12',
+                                     filename='src/flake8/statistics.py')
+            <generator ...>
+            >>> stats.statistics_for('W')
+            <generator ...>
+
+        :param prefix:
+            The error class or specific error code to find statistics for.
+        :param filename:
+            (Optional) The filename to further filter results by.
+        :returns:
+            Generator of instances of :class:`Statistic`
+        """
+        ...
 
 class Key(NamedTuple):
     """

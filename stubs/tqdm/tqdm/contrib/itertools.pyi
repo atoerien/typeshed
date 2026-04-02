@@ -5,4 +5,12 @@ from collections.abc import Generator, Iterable
 
 __all__ = ["product"]
 
-def product(*iterables: Iterable[Incomplete], **tqdm_kwargs) -> Generator[Incomplete]: ...
+def product(*iterables: Iterable[Incomplete], **tqdm_kwargs) -> Generator[Incomplete]:
+    """
+    Equivalent of `itertools.product`.
+
+    Parameters
+    ----------
+    tqdm_class  : [default: tqdm.auto.tqdm].
+    """
+    ...

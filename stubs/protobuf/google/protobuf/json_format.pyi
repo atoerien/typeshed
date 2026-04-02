@@ -18,10 +18,22 @@ from google.protobuf.message import Message
 
 _MessageT = TypeVar("_MessageT", bound=Message)
 
-class Error(Exception): ...
-class SerializeToJsonError(Error): ...
-class ParseError(Error): ...
-class EnumStringValueParseError(ParseError): ...
+class Error(Exception):
+    """Top-level module error for json_format."""
+    ...
+class SerializeToJsonError(Error):
+    """Thrown if serialization to JSON fails."""
+    ...
+class ParseError(Error):
+    """Thrown in case of parsing error."""
+    ...
+class EnumStringValueParseError(ParseError):
+    """
+    Thrown if unknown string enum value is encountered.
+
+    This exception is suppressed if ignore_unknown_fields is set.
+    """
+    ...
 
 def MessageToJson(
     message: Message,
@@ -52,8 +64,6 @@ def MessageToJson(
       use_integers_for_enums: If true, print integers instead of enum names.
       descriptor_pool: A Descriptor Pool for resolving types. If None use the
         default.
-      float_precision: Deprecated. If set, use this to specify float field valid
-        digits.
       ensure_ascii: If True, strings with non-ASCII characters are escaped. If
         False, Unicode strings are returned unchanged.
 
@@ -67,7 +77,29 @@ def MessageToDict(
     preserving_proto_field_name: bool = False,
     use_integers_for_enums: bool = False,
     descriptor_pool: DescriptorPool | None = None,
-) -> dict[str, Any]: ...
+) -> dict[str, Any]:
+    """
+    Converts protobuf message to a dictionary.
+
+    When the dictionary is encoded to JSON, it conforms to ProtoJSON spec.
+
+    Args:
+      message: The protocol buffers message instance to serialize.
+      always_print_fields_with_no_presence: If True, fields without presence
+        (implicit presence scalars, repeated fields, and map fields) will always
+        be serialized. Any field that supports presence is not affected by this
+        option (including singular message fields and oneof fields).
+      preserving_proto_field_name: If True, use the original proto field names as
+        defined in the .proto file. If False, convert the field names to
+        lowerCamelCase.
+      use_integers_for_enums: If true, print integers instead of enum names.
+      descriptor_pool: A Descriptor Pool for resolving types. If None use the
+        default.
+
+    Returns:
+      A dict representation of the protocol buffer message.
+    """
+    ...
 def Parse(
     text: bytes | str,
     message: _MessageT,

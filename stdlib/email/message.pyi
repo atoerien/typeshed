@@ -629,12 +629,72 @@ class Message(Generic[_HeaderT_co, _HeaderParamT_contra]):
         """
         ...
     @overload
-    def get_charsets(self, failobj: _T) -> list[str | _T]: ...
-    def walk(self) -> Generator[Self]: ...
-    def get_content_disposition(self) -> str | None: ...
-    def as_string(self, unixfrom: bool = False, maxheaderlen: int = 0, policy: Policy[Any] | None = None) -> str: ...
-    def as_bytes(self, unixfrom: bool = False, policy: Policy[Any] | None = None) -> bytes: ...
-    def __bytes__(self) -> bytes: ...
+    def get_charsets(self, failobj: _T) -> list[str | _T]:
+        """
+        Return a list containing the charset(s) used in this message.
+
+        The returned list of items describes the Content-Type headers'
+        charset parameter for this message and all the subparts in its
+        payload.
+
+        Each item will either be a string (the value of the charset parameter
+        in the Content-Type header of that part) or the value of the
+        'failobj' parameter (defaults to None), if the part does not have a
+        main MIME type of "text", or the charset is not defined.
+
+        The list will contain one string for each part of the message, plus
+        one for the container message (i.e. self), so that a non-multipart
+        message will still return a list of length 1.
+        """
+        ...
+    def walk(self) -> Generator[Self]:
+        """
+        Walk over the message tree, yielding each subpart.
+
+        The walk is performed in depth-first order.  This method is a
+        generator.
+        """
+        ...
+    def get_content_disposition(self) -> str | None:
+        """
+        Return the message's content-disposition if it exists, or None.
+
+        The return values can be either 'inline', 'attachment' or None
+        according to the rfc2183.
+        """
+        ...
+    def as_string(self, unixfrom: bool = False, maxheaderlen: int = 0, policy: Policy[Any] | None = None) -> str:
+        """
+        Return the entire formatted message as a string.
+
+        Optional 'unixfrom', when true, means include the Unix From_ envelope
+        header.  For backward compatibility reasons, if maxheaderlen is
+        not specified it defaults to 0, so you must override it explicitly
+        if you want a different maxheaderlen.  'policy' is passed to the
+        Generator instance used to serialize the message; if it is not
+        specified the policy associated with the message instance is used.
+
+        If the message object contains binary data that is not encoded
+        according to RFC standards, the non-compliant data will be replaced by
+        unicode "unknown character" code points.
+        """
+        ...
+    def as_bytes(self, unixfrom: bool = False, policy: Policy[Any] | None = None) -> bytes:
+        """
+        Return the entire formatted message as a bytes object.
+
+        Optional 'unixfrom', when true, means include the Unix From_ envelope
+        header.  'policy' is passed to the BytesGenerator instance used to
+        serialize the message; if not specified the policy associated with
+        the message instance is used.
+        """
+        ...
+    def __bytes__(self) -> bytes:
+        """
+        Return the entire formatted message as a bytes object.
+        
+        """
+        ...
     def set_param(
         self,
         param: str,

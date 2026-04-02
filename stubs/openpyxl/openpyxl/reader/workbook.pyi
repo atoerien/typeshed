@@ -18,8 +18,17 @@ class WorkbookParser:
     # Errors if "parse" is never called.
     caches: list[PivotCache]
     def parse(self) -> None: ...
-    def find_sheets(self) -> Generator[tuple[ChildSheet, Relationship]]: ...
-    def assign_names(self) -> None: ...
+    def find_sheets(self) -> Generator[tuple[ChildSheet, Relationship]]:
+        """
+        Find all sheets in the workbook and return the link to the source file.
+
+        Older XLSM files sometimes contain invalid sheet elements.
+        Warn user when these are removed.
+        """
+        ...
+    def assign_names(self) -> None:
+        """Bind defined names and other definitions to worksheets or the workbook"""
+        ...
     @property
     def pivot_caches(self) -> dict[int, CacheDefinition]:
         """Get PivotCache objects"""

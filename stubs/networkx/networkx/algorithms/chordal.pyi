@@ -146,7 +146,53 @@ def find_induced_nodes(G: Graph[_Node], s: _Node, t: _Node, treewidth_bound: flo
     """
     ...
 @_dispatchable
-def chordal_graph_cliques(G: Graph[_Node]) -> Generator[frozenset[_Node]]: ...
+def chordal_graph_cliques(G: Graph[_Node]) -> Generator[frozenset[_Node]]:
+    """
+    Returns all maximal cliques of a chordal graph.
+
+    The algorithm breaks the graph in connected components and performs a
+    maximum cardinality search in each component to get the cliques.
+
+    Parameters
+    ----------
+    G : graph
+      A NetworkX graph
+
+    Yields
+    ------
+    frozenset of nodes
+        Maximal cliques, each of which is a frozenset of
+        nodes in `G`. The order of cliques is arbitrary.
+
+    Raises
+    ------
+    NetworkXError
+        The algorithm does not support DiGraph, MultiGraph and MultiDiGraph.
+        The algorithm can only be applied to chordal graphs. If the input
+        graph is found to be non-chordal, a :exc:`NetworkXError` is raised.
+
+    Examples
+    --------
+    >>> e = [
+    ...     (1, 2),
+    ...     (1, 3),
+    ...     (2, 3),
+    ...     (2, 4),
+    ...     (3, 4),
+    ...     (3, 5),
+    ...     (3, 6),
+    ...     (4, 5),
+    ...     (4, 6),
+    ...     (5, 6),
+    ...     (7, 8),
+    ... ]
+    >>> G = nx.Graph(e)
+    >>> G.add_node(9)
+    >>> cliques = [c for c in chordal_graph_cliques(G)]
+    >>> cliques[0]
+    frozenset({1, 2, 3})
+    """
+    ...
 @_dispatchable
 def chordal_graph_treewidth(G: Graph[_Node]) -> int:
     """

@@ -22,7 +22,9 @@ class ResourceCollection:
         """Returns the first item in the results. """
         ...
     @property
-    def items(self) -> Generator[Incomplete]: ...
+    def items(self) -> Generator[Incomplete]:
+        """Returns a generator allowing iteration over all of the results. """
+        ...
     @property
     def ids(self):
         """Returns the list of ids in the search result. """

@@ -325,16 +325,103 @@ def remap_hotkey(
 
 unremap_hotkey = remove_hotkey
 
-def stash_state() -> list[int]: ...
-def restore_state(scan_codes: Iterable[int]) -> None: ...
-def restore_modifiers(scan_codes: Iterable[int]) -> None: ...
-def write(text: str, delay: float = 0, restore_state_after: bool = True, exact: bool | None = None) -> None: ...
-def wait(hotkey: _ParseableHotkey | None = None, suppress: bool = False, trigger_on_release: bool = False) -> None: ...
-def get_hotkey_name(names: Iterable[str] | None = None) -> str: ...
-def read_event(suppress: bool = False) -> KeyboardEvent: ...
-def read_key(suppress: bool = False) -> _Key: ...
-def read_hotkey(suppress: bool = True) -> str: ...
-def get_typed_strings(events: Iterable[KeyboardEvent], allow_backspace: bool = True) -> Generator[str]: ...
+def stash_state() -> list[int]:
+    """
+    Builds a list of all currently pressed scan codes, releases them and returns
+    the list. Pairs well with `restore_state` and `restore_modifiers`.
+    """
+    ...
+def restore_state(scan_codes: Iterable[int]) -> None:
+    """
+    Given a list of scan_codes ensures these keys, and only these keys, are
+    pressed. Pairs well with `stash_state`, alternative to `restore_modifiers`.
+    """
+    ...
+def restore_modifiers(scan_codes: Iterable[int]) -> None:
+    """Like `restore_state`, but only restores modifier keys."""
+    ...
+def write(text: str, delay: float = 0, restore_state_after: bool = True, exact: bool | None = None) -> None:
+    """
+    Sends artificial keyboard events to the OS, simulating the typing of a given
+    text. Characters not available on the keyboard are typed as explicit unicode
+    characters using OS-specific functionality, such as alt+codepoint.
+
+    To ensure text integrity, all currently pressed keys are released before
+    the text is typed, and modifiers are restored afterwards.
+
+    - `delay` is the number of seconds to wait between keypresses, defaults to
+    no delay.
+    - `restore_state_after` can be used to restore the state of pressed keys
+    after the text is typed, i.e. presses the keys that were released at the
+    beginning. Defaults to True.
+    - `exact` forces typing all characters as explicit unicode (e.g.
+    alt+codepoint or special events). If None, uses platform-specific suggested
+    value.
+    """
+    ...
+def wait(hotkey: _ParseableHotkey | None = None, suppress: bool = False, trigger_on_release: bool = False) -> None:
+    """
+    Blocks the program execution until the given hotkey is pressed or,
+    if given no parameters, blocks forever.
+    """
+    ...
+def get_hotkey_name(names: Iterable[str] | None = None) -> str:
+    """
+    Returns a string representation of hotkey from the given key names, or
+    the currently pressed keys if not given.  This function:
+
+    - normalizes names;
+    - removes "left" and "right" prefixes;
+    - replaces the "+" key name with "plus" to avoid ambiguity;
+    - puts modifier keys first, in a standardized order;
+    - sort remaining keys;
+    - finally, joins everything with "+".
+
+    Example:
+
+        get_hotkey_name(['+', 'left ctrl', 'shift'])
+        # "ctrl+shift+plus"
+    """
+    ...
+def read_event(suppress: bool = False) -> KeyboardEvent:
+    """Blocks until a keyboard event happens, then returns that event."""
+    ...
+def read_key(suppress: bool = False) -> _Key:
+    """
+    Blocks until a keyboard event happens, then returns that event's name or,
+    if missing, its scan code.
+    """
+    ...
+def read_hotkey(suppress: bool = True) -> str:
+    """
+    Similar to `read_key()`, but blocks until the user presses and releases a
+    hotkey (or single key), then returns a string representing the hotkey
+    pressed.
+
+    Example:
+
+        read_hotkey()
+        # "ctrl+shift+p"
+    """
+    ...
+def get_typed_strings(events: Iterable[KeyboardEvent], allow_backspace: bool = True) -> Generator[str]:
+    """
+    Given a sequence of events, tries to deduce what strings were typed.
+    Strings are separated when a non-textual key is pressed (such as tab or
+    enter). Characters are converted to uppercase according to shift and
+    capslock status. If `allow_backspace` is True, backspaces remove the last
+    character typed.
+
+    This function is a generator, so you can pass an infinite stream of events
+    and convert them to strings in real time.
+
+    Note this functions is merely an heuristic. Windows for example keeps per-
+    process keyboard state such as keyboard layout, and this information is not
+    available for our hooks.
+
+        get_type_strings(record()) #-> ['This is what', 'I recorded', '']
+    """
+    ...
 def start_recording(
     recorded_events_queue: Queue[KeyboardEvent] | None = None,
 ) -> tuple[Queue[KeyboardEvent], Callable[[], None]]:

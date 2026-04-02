@@ -24,7 +24,9 @@ _M = TypeVar("_M", bound=Message)  # message type (of self)
 
 __all__ = ["MessageToString", "Parse", "PrintMessage", "PrintField", "PrintFieldValue", "Merge", "MessageToBytes"]
 
-class Error(Exception): ...
+class Error(Exception):
+    """Top-level module error for text_format."""
+    ...
 
 class ParseError(Error):
     """Thrown in case of text parsing or tokenizing error."""
@@ -57,11 +59,6 @@ def MessageToString(
     """
     Convert protobuf message to text format.
 
-    Double values can be formatted compactly with 15 digits of
-    precision (which is the most that IEEE 754 "double" can guarantee)
-    using double_format='.15g'. To ensure that converting to text and back to a
-    proto will result in an identical value, double_format='.17g' should be used.
-
     Args:
       message: The protocol buffers message.
       as_utf8: Return unescaped Unicode for non-ASCII characters.
@@ -74,13 +71,6 @@ def MessageToString(
         will be printed at the end of the message and their relative order is
         determined by the extension number. By default, use the field number
         order.
-      float_format (str): Deprecated. If set, use this to specify float field
-        formatting (per the "Format Specification Mini-Language"); otherwise,
-        shortest float that has same value in wire will be printed. Also affect
-        double field if double_format is not set but float_format is set.
-      double_format (str): Deprecated. If set, use this to specify double field
-        formatting (per the "Format Specification Mini-Language"); if it is not
-        set but float_format is set, use float_format. Otherwise, use ``str()``
       use_field_number: If True, print field numbers instead of names.
       descriptor_pool (DescriptorPool): Descriptor pool used to resolve Any types.
       indent (int): The initial indent level, in terms of spaces, for pretty
@@ -144,13 +134,6 @@ def PrintMessage(
       use_index_order: If True, print fields of a proto message using the order
         defined in source code instead of the field number. By default, use the
         field number order.
-      float_format: If set, use this to specify float field formatting
-        (per the "Format Specification Mini-Language"); otherwise, shortest
-        float that has same value in wire will be printed. Also affect double
-        field if double_format is not set but float_format is set.
-      double_format: If set, use this to specify double field formatting
-        (per the "Format Specification Mini-Language"); if it is not set but
-        float_format is set, use float_format. Otherwise, str() is used.
       use_field_number: If True, print field numbers instead of names.
       descriptor_pool: A DescriptorPool used to resolve Any types.
       message_formatter: A function(message, indent, as_one_line): unicode|None
@@ -226,11 +209,6 @@ class _Printer:
         """
         Initialize the Printer.
 
-        Double values can be formatted compactly with 15 digits of precision
-        (which is the most that IEEE 754 "double" can guarantee) using
-        double_format='.15g'. To ensure that converting to text and back to a proto
-        will result in an identical value, double_format='.17g' should be used.
-
         Args:
           out: To record the text format result.
           indent: The initial indent level for pretty print.
@@ -242,13 +220,6 @@ class _Printer:
           use_index_order: If True, print fields of a proto message using the order
             defined in source code instead of the field number. By default, use the
             field number order.
-          float_format: Deprecated. If set, use this to specify float field
-            formatting (per the "Format Specification Mini-Language"); otherwise,
-            shortest float that has same value in wire will be printed. Also affect
-            double field if double_format is not set but float_format is set.
-          double_format: Deprecated. If set, use this to specify double field
-            formatting (per the "Format Specification Mini-Language"); if it is not
-            set but float_format is set, use float_format. Otherwise, str() is used.
           use_field_number: If True, print field numbers instead of names.
           descriptor_pool: A DescriptorPool used to resolve Any types.
           message_formatter: A function(message, indent, as_one_line): unicode|None
@@ -435,29 +406,9 @@ class Tokenizer:
     token: str
     def __init__(self, lines: Iterable[str], skip_comments: bool = True) -> None: ...
     def LookingAt(self, token: str) -> bool: ...
-    def AtEnd(self) -> bool: ...
-    def TryConsume(self, token: str) -> bool: ...
-    def Consume(self, token: str) -> None: ...
-    def ConsumeComment(self) -> str: ...
-    def ConsumeCommentOrTrailingComment(self) -> tuple[bool, str]: ...
-    def TryConsumeIdentifier(self) -> bool: ...
-    def ConsumeIdentifier(self) -> str: ...
-    def TryConsumeIdentifierOrNumber(self) -> bool: ...
-    def ConsumeIdentifierOrNumber(self) -> str: ...
-    def TryConsumeInteger(self) -> bool: ...
-    def ConsumeInteger(self) -> int: ...
-    def TryConsumeFloat(self) -> bool: ...
-    def ConsumeFloat(self) -> float: ...
-    def ConsumeBool(self) -> bool: ...
-    def TryConsumeByteString(self) -> bool: ...
-    def ConsumeString(self) -> str: ...
-    def ConsumeByteString(self) -> bytes: ...
-    def ConsumeEnum(self, field: FieldDescriptor) -> int: ...
-    def ConsumeUrlChars(self) -> str: ...
-    def TryConsumeUrlChars(self) -> bool: ...
-    def ParseErrorPreviousToken(self, message: Message) -> _ParseError: ...
-    def ParseError(self, message: Message) -> _ParseError: ...
-    def NextToken(self) -> None: ...
+    def AtEnd(self) -> bool:
+        """
+        Checks the end of the text was reached.
 
         Returns:
           True iff the end was reached.
@@ -572,6 +523,20 @@ class Tokenizer:
         """
         ...
     def ConsumeEnum(self, field: FieldDescriptor) -> int: ...
+    def ConsumeUrlChars(self) -> str:
+        """
+        Consumes a token containing valid URL characters.
+
+        Excludes '/' so that it can be treated specially as a delimiter.
+
+        Returns:
+          The next token containing one or more URL characters.
+
+        Raises:
+          ParseError: If the next token contains unaccepted URL characters.
+        """
+        ...
+    def TryConsumeUrlChars(self) -> bool: ...
     def ParseErrorPreviousToken(self, message: Message) -> _ParseError:
         """
         Creates and *returns* a ParseError for the previously read token.

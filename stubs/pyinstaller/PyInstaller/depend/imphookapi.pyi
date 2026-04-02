@@ -333,11 +333,41 @@ class PostGraphAPI:
         """
         ...
     @property
-    def imports(self) -> Generator[Package]: ...
-    def add_imports(self, *module_names: str) -> None: ...
-    def del_imports(self, *module_names: str) -> None: ...
-    def add_binaries(self, binaries: TOC | Iterable[tuple[StrOrBytesPath, StrOrBytesPath]]) -> None: ...
-    def add_datas(self, datas: TOC | Iterable[tuple[StrOrBytesPath, StrOrBytesPath]]) -> None: ...
+    def imports(self) -> Generator[Package]:
+        """List of the graph nodes of all modules directly imported by this module."""
+        ...
+    def add_imports(self, *module_names: str) -> None:
+        """
+        Add all Python modules whose fully-qualified names are in the passed list as "hidden imports" upon which the
+        current module depends.
+
+        This is equivalent to appending such names to the hook-specific `hiddenimports` attribute.
+        """
+        ...
+    def del_imports(self, *module_names: str) -> None:
+        """
+        Remove the named fully-qualified modules from the set of imports (either hidden or visible) upon which the
+        current module depends.
+
+        This is equivalent to appending such names to the hook-specific `excludedimports` attribute.
+        """
+        ...
+    def add_binaries(self, binaries: TOC | Iterable[tuple[StrOrBytesPath, StrOrBytesPath]]) -> None:
+        """
+        Add all external dynamic libraries in the passed list of `(src_name, dest_name)` 2-tuples as dependencies of the
+        current module. This is equivalent to adding to the global `binaries` hook attribute.
+
+        For convenience, the `binaries` may also be a list of TOC-style 3-tuples `(dest_name, src_name, typecode)`.
+        """
+        ...
+    def add_datas(self, datas: TOC | Iterable[tuple[StrOrBytesPath, StrOrBytesPath]]) -> None:
+        """
+        Add all external data files in the passed list of `(src_name, dest_name)` 2-tuples as dependencies of the
+        current module. This is equivalent to adding to the global `datas` hook attribute.
+
+        For convenience, the `datas` may also be a list of TOC-style 3-tuples `(dest_name, src_name, typecode)`.
+        """
+        ...
     def set_module_collection_mode(
         self, name: str | None, mode: Literal["pyz", "pyc", "py", "pyz+py", "py+pyz"] | None
     ) -> None:

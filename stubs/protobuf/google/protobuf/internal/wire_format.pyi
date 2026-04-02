@@ -1,3 +1,5 @@
+"""Constants and static functions to support protocol buffer wire format."""
+
 from google.protobuf.message import Message
 
 TAG_TYPE_BITS: int
@@ -19,10 +21,32 @@ FORMAT_UINT64_LITTLE_ENDIAN: str
 FORMAT_FLOAT_LITTLE_ENDIAN: str
 FORMAT_DOUBLE_LITTLE_ENDIAN: str
 
-def PackTag(field_number: int, wire_type: int) -> int: ...
-def UnpackTag(tag: int) -> tuple[int, int]: ...
-def ZigZagEncode(value: int) -> int: ...
-def ZigZagDecode(value: int) -> int: ...
+def PackTag(field_number: int, wire_type: int) -> int:
+    """
+    Returns an unsigned 32-bit integer that encodes the field number and
+    wire type information in standard protocol message wire format.
+
+    Args:
+      field_number: Expected to be an integer in the range [1, 1 << 29)
+      wire_type: One of the WIRETYPE_* constants.
+    """
+    ...
+def UnpackTag(tag: int) -> tuple[int, int]:
+    """
+    The inverse of PackTag().  Given an unsigned 32-bit number,
+    returns a (field_number, wire_type) tuple.
+    """
+    ...
+def ZigZagEncode(value: int) -> int:
+    """
+    ZigZag Transform:  Encodes signed integers so that they can be
+    effectively used with varint encoding.  See wire_format.h for
+    more details.
+    """
+    ...
+def ZigZagDecode(value: int) -> int:
+    """Inverse of ZigZagEncode()."""
+    ...
 def Int32ByteSize(field_number: int, int32: int) -> int: ...
 def Int32ByteSizeNoTag(int32: int) -> int: ...
 def Int64ByteSize(field_number: int, int64: int) -> int: ...
@@ -43,8 +67,20 @@ def BytesByteSize(field_number: int, b: bytes) -> int: ...
 def GroupByteSize(field_number: int, message: Message) -> int: ...
 def MessageByteSize(field_number: int, message: Message) -> int: ...
 def MessageSetItemByteSize(field_number: int, msg: Message) -> int: ...
-def TagByteSize(field_number: int) -> int: ...
+def TagByteSize(field_number: int) -> int:
+    """Returns the bytes required to serialize a tag with this field number."""
+    ...
 
 NON_PACKABLE_TYPES: tuple[int, ...]
 
-def IsTypePackable(field_type: int) -> bool: ...
+def IsTypePackable(field_type: int) -> bool:
+    """
+    Return true iff packable = true is valid for fields of this type.
+
+    Args:
+      field_type: a FieldDescriptor::Type value.
+
+    Returns:
+      True iff fields of this type are packable.
+    """
+    ...

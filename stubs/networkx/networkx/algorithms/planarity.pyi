@@ -256,16 +256,302 @@ class LRPlanarity:
 # we're only overriding methods that differ in signature from the base classes
 # to use inheritance to our advantage and reduce complexity
 class PlanarEmbedding(DiGraph[_Node]):
-    def get_data(self) -> dict[_Node, list[_Node]]: ...
-    def set_data(self, data: Mapping[_Node, Reversible[_Node]]) -> None: ...
-    def neighbors_cw_order(self, v: _Node) -> Generator[_Node]: ...
-    def add_half_edge(self, start_node: _Node, end_node: _Node, *, cw: _Node | None = None, ccw: _Node | None = None): ...
-    def check_structure(self) -> None: ...
-    def add_half_edge_ccw(self, start_node: _Node, end_node: _Node, reference_neighbor: _Node) -> None: ...
-    def add_half_edge_cw(self, start_node: _Node, end_node: _Node, reference_neighbor: _Node) -> None: ...
-    def connect_components(self, v: _Node, w: _Node) -> None: ...
-    def add_half_edge_first(self, start_node: _Node, end_node: _Node) -> None: ...
-    def next_face_half_edge(self, v: _Node, w: _Node) -> tuple[_Node, _Node]: ...
+    """
+    Represents a planar graph with its planar embedding.
+
+    The planar embedding is given by a `combinatorial embedding
+    <https://en.wikipedia.org/wiki/Graph_embedding#Combinatorial_embedding>`_.
+
+    .. note:: `check_planarity` is the preferred way to check if a graph is planar.
+
+    **Neighbor ordering:**
+
+    In comparison to a usual graph structure, the embedding also stores the
+    order of all neighbors for every vertex.
+    The order of the neighbors can be given in clockwise (cw) direction or
+    counterclockwise (ccw) direction. This order is stored as edge attributes
+    in the underlying directed graph. For the edge (u, v) the edge attribute
+    'cw' is set to the neighbor of u that follows immediately after v in
+    clockwise direction.
+
+    In order for a PlanarEmbedding to be valid it must fulfill multiple
+    conditions. It is possible to check if these conditions are fulfilled with
+    the method :meth:`check_structure`.
+    The conditions are:
+
+    * Edges must go in both directions (because the edge attributes differ)
+    * Every edge must have a 'cw' and 'ccw' attribute which corresponds to a
+      correct planar embedding.
+
+    As long as a PlanarEmbedding is invalid only the following methods should
+    be called:
+
+    * :meth:`add_half_edge`
+    * :meth:`connect_components`
+
+    Even though the graph is a subclass of nx.DiGraph, it can still be used
+    for algorithms that require undirected graphs, because the method
+    :meth:`is_directed` is overridden. This is possible, because a valid
+    PlanarGraph must have edges in both directions.
+
+    **Half edges:**
+
+    In methods like `add_half_edge` the term "half-edge" is used, which is
+    a term that is used in `doubly connected edge lists
+    <https://en.wikipedia.org/wiki/Doubly_connected_edge_list>`_. It is used
+    to emphasize that the edge is only in one direction and there exists
+    another half-edge in the opposite direction.
+    While conventional edges always have two faces (including outer face) next
+    to them, it is possible to assign each half-edge *exactly one* face.
+    For a half-edge (u, v) that is oriented such that u is below v then the
+    face that belongs to (u, v) is to the right of this half-edge.
+
+    See Also
+    --------
+    is_planar :
+        Preferred way to check if an existing graph is planar.
+
+    check_planarity :
+        A convenient way to create a `PlanarEmbedding`. If not planar,
+        it returns a subgraph that shows this.
+
+    Examples
+    --------
+
+    Create an embedding of a star graph (compare `nx.star_graph(3)`):
+
+    >>> G = nx.PlanarEmbedding()
+    >>> G.add_half_edge(0, 1)
+    >>> G.add_half_edge(0, 2, ccw=1)
+    >>> G.add_half_edge(0, 3, ccw=2)
+    >>> G.add_half_edge(1, 0)
+    >>> G.add_half_edge(2, 0)
+    >>> G.add_half_edge(3, 0)
+
+    Alternatively the same embedding can also be defined in counterclockwise
+    orientation. The following results in exactly the same PlanarEmbedding:
+
+    >>> G = nx.PlanarEmbedding()
+    >>> G.add_half_edge(0, 1)
+    >>> G.add_half_edge(0, 3, cw=1)
+    >>> G.add_half_edge(0, 2, cw=3)
+    >>> G.add_half_edge(1, 0)
+    >>> G.add_half_edge(2, 0)
+    >>> G.add_half_edge(3, 0)
+
+    After creating a graph, it is possible to validate that the PlanarEmbedding
+    object is correct:
+
+    >>> G.check_structure()
+    """
+    def get_data(self) -> dict[_Node, list[_Node]]:
+        """
+        Converts the adjacency structure into a better readable structure.
+
+        Returns
+        -------
+        embedding : dict
+            A dict mapping all nodes to a list of neighbors sorted in
+            clockwise order.
+
+        See Also
+        --------
+        set_data
+        """
+        ...
+    def set_data(self, data: Mapping[_Node, Reversible[_Node]]) -> None:
+        """
+        Inserts edges according to given sorted neighbor list.
+
+        The input format is the same as the output format of get_data().
+
+        Parameters
+        ----------
+        data : dict
+            A dict mapping all nodes to a list of neighbors sorted in
+            clockwise order.
+
+        See Also
+        --------
+        get_data
+        """
+        ...
+    def neighbors_cw_order(self, v: _Node) -> Generator[_Node]:
+        """
+        Generator for the neighbors of v in clockwise order.
+
+        Parameters
+        ----------
+        v : node
+
+        Yields
+        ------
+        node
+        """
+        ...
+    def add_half_edge(self, start_node: _Node, end_node: _Node, *, cw: _Node | None = None, ccw: _Node | None = None):
+        """
+        Adds a half-edge from `start_node` to `end_node`.
+
+        If the half-edge is not the first one out of `start_node`, a reference
+        node must be provided either in the clockwise (parameter `cw`) or in
+        the counterclockwise (parameter `ccw`) direction. Only one of `cw`/`ccw`
+        can be specified (or neither in the case of the first edge).
+        Note that specifying a reference in the clockwise (`cw`) direction means
+        inserting the new edge in the first counterclockwise position with
+        respect to the reference (and vice-versa).
+
+        Parameters
+        ----------
+        start_node : node
+            Start node of inserted edge.
+        end_node : node
+            End node of inserted edge.
+        cw, ccw: node
+            End node of reference edge.
+            Omit or pass `None` if adding the first out-half-edge of `start_node`.
+
+
+        Raises
+        ------
+        NetworkXException
+            If the `cw` or `ccw` node is not a successor of `start_node`.
+            If `start_node` has successors, but neither `cw` or `ccw` is provided.
+            If both `cw` and `ccw` are specified.
+
+        See Also
+        --------
+        connect_components
+        """
+        ...
+    def check_structure(self) -> None:
+        """
+        Runs without exceptions if this object is valid.
+
+        Checks that the following properties are fulfilled:
+
+        * Edges go in both directions (because the edge attributes differ).
+        * Every edge has a 'cw' and 'ccw' attribute which corresponds to a
+          correct planar embedding.
+
+        Running this method verifies that the underlying Graph must be planar.
+
+        Raises
+        ------
+        NetworkXException
+            This exception is raised with a short explanation if the
+            PlanarEmbedding is invalid.
+        """
+        ...
+    def add_half_edge_ccw(self, start_node: _Node, end_node: _Node, reference_neighbor: _Node) -> None:
+        """
+        Adds a half-edge from start_node to end_node.
+
+        The half-edge is added counter clockwise next to the existing half-edge
+        (start_node, reference_neighbor).
+
+        Parameters
+        ----------
+        start_node : node
+            Start node of inserted edge.
+        end_node : node
+            End node of inserted edge.
+        reference_neighbor: node
+            End node of reference edge.
+
+        Raises
+        ------
+        NetworkXException
+            If the reference_neighbor does not exist.
+
+        See Also
+        --------
+        add_half_edge
+        add_half_edge_cw
+        connect_components
+        """
+        ...
+    def add_half_edge_cw(self, start_node: _Node, end_node: _Node, reference_neighbor: _Node) -> None:
+        """
+        Adds a half-edge from start_node to end_node.
+
+        The half-edge is added clockwise next to the existing half-edge
+        (start_node, reference_neighbor).
+
+        Parameters
+        ----------
+        start_node : node
+            Start node of inserted edge.
+        end_node : node
+            End node of inserted edge.
+        reference_neighbor: node
+            End node of reference edge.
+
+        Raises
+        ------
+        NetworkXException
+            If the reference_neighbor does not exist.
+
+        See Also
+        --------
+        add_half_edge
+        add_half_edge_ccw
+        connect_components
+        """
+        ...
+    def connect_components(self, v: _Node, w: _Node) -> None:
+        """
+        Adds half-edges for (v, w) and (w, v) at some position.
+
+        This method should only be called if v and w are in different
+        components, or it might break the embedding.
+        This especially means that if `connect_components(v, w)`
+        is called it is not allowed to call `connect_components(w, v)`
+        afterwards. The neighbor orientations in both directions are
+        all set correctly after the first call.
+
+        Parameters
+        ----------
+        v : node
+        w : node
+
+        See Also
+        --------
+        add_half_edge
+        """
+        ...
+    def add_half_edge_first(self, start_node: _Node, end_node: _Node) -> None:
+        """
+        Add a half-edge and set end_node as start_node's leftmost neighbor.
+
+        The new edge is inserted counterclockwise with respect to the current
+        leftmost neighbor, if there is one.
+
+        Parameters
+        ----------
+        start_node : node
+        end_node : node
+
+        See Also
+        --------
+        add_half_edge
+        connect_components
+        """
+        ...
+    def next_face_half_edge(self, v: _Node, w: _Node) -> tuple[_Node, _Node]:
+        """
+        Returns the following half-edge left of a face.
+
+        Parameters
+        ----------
+        v : node
+        w : node
+
+        Returns
+        -------
+        half-edge : tuple
+        """
+        ...
     def traverse_face(
         self, v: _Node, w: _Node, mark_half_edges: MutableSet[tuple[_Node, _Node]] | None = None
     ) -> list[_Node]:

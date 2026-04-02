@@ -36,7 +36,9 @@ class Sequence(Descriptor[_ContainerT]):
     container: type  # internal container type, defaults to `list`
     # seq must be an instance of any of the declared `seq_types`.
     def __set__(self, instance: Serialisable | Strict, seq: Any) -> None: ...
-    def to_tree(self, tagname: str | None, obj: Iterable[object], namespace: str | None = None) -> Generator[Element]: ...
+    def to_tree(self, tagname: str | None, obj: Iterable[object], namespace: str | None = None) -> Generator[Element]:
+        """Convert the sequence represented by the descriptor to an XML element"""
+        ...
 
 # `_T` is the type of the elements in the sequence.
 class UniqueSequence(Sequence[set[_T]]):
@@ -77,7 +79,9 @@ class MultiSequence(Sequence[list[_T]]):
     def __set__(self, instance: Serialisable | Strict, seq: tuple[_T, ...] | list[_T]) -> None: ...
     def to_tree(
         self, tagname: Unused, obj: Iterable[_SupportsToTree], namespace: str | None = None  # type: ignore[override]
-    ) -> Generator[Element]: ...
+    ) -> Generator[Element]:
+        """Convert the sequence represented by the descriptor to an XML element"""
+        ...
 
 class MultiSequencePart(Alias):
     """

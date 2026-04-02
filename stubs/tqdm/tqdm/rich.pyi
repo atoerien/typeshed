@@ -1,12 +1,3 @@
-"""
-`rich.progress` decorator for iterators.
-
-Usage:
->>> from tqdm.rich import trange, tqdm
->>> for i in trange(10):
-...     ...
-"""
-
 from _typeshed import Incomplete, SupportsWrite
 from abc import ABC, abstractmethod
 from collections.abc import Iterable, Mapping
@@ -29,40 +20,25 @@ class _ProgressColumn(ABC):
     def render(self, task): ...
 
 class FractionColumn(_ProgressColumn):
-    """Renders completed/total, e.g. '0.5/2.3 G'."""
     unit_scale: bool
     unit_divisor: int
 
     def __init__(self, unit_scale: bool = ..., unit_divisor: int = ...) -> None: ...
-    def render(self, task):
-        """Calculate common unit for completed and total."""
-        ...
+    def render(self, task): ...
 
 class RateColumn(_ProgressColumn):
-    """Renders human readable transfer speed."""
     unit: str
     unit_scale: bool
     unit_divisor: int
 
     def __init__(self, unit: str = ..., unit_scale: bool = ..., unit_divisor: int = ...) -> None: ...
-    def render(self, task):
-        """Show data transfer speed."""
-        ...
+    def render(self, task): ...
 
 class tqdm_rich(std_tqdm[_T]):
-    """Experimental rich.progress GUI version of tqdm!"""
     def close(self) -> None: ...
     def clear(self, *_, **__) -> None: ...
     def display(self, *_, **__) -> None: ...
-    def reset(self, total: Incomplete | None = ...) -> None:
-        """
-        Resets to 0 iterations for repeated use.
-
-        Parameters
-        ----------
-        total  : int or float, optional. Total to use for the new bar.
-        """
-        ...
+    def reset(self, total: Incomplete | None = ...) -> None: ...
     @overload
     def __init__(
         self,
@@ -93,19 +69,7 @@ class tqdm_rich(std_tqdm[_T]):
         delay: float | None = ...,
         gui: bool = ...,
         **kwargs,
-    ) -> None:
-        """
-        This class accepts the following parameters *in addition* to
-        the parameters accepted by `tqdm`.
-
-        Parameters
-        ----------
-        progress  : tuple, optional
-            arguments for `rich.progress.Progress()`.
-        options  : dict, optional
-            keyword arguments for `rich.progress.Progress()`.
-        """
-        ...
+    ) -> None: ...
     @overload
     def __init__(
         self: tqdm_rich[NoReturn],
@@ -136,23 +100,9 @@ class tqdm_rich(std_tqdm[_T]):
         delay: float | None = ...,
         gui: bool = ...,
         **kwargs,
-    ) -> None:
-        """
-        This class accepts the following parameters *in addition* to
-        the parameters accepted by `tqdm`.
+    ) -> None: ...
 
-        Parameters
-        ----------
-        progress  : tuple, optional
-            arguments for `rich.progress.Progress()`.
-        options  : dict, optional
-            keyword arguments for `rich.progress.Progress()`.
-        """
-        ...
-
-def trrange(*args, **kwargs) -> tqdm_rich[int]:
-    """Shortcut for `tqdm.rich.tqdm(range(*args), **kwargs)`."""
-    ...
+def trrange(*args, **kwargs) -> tqdm_rich[int]: ...
 
 tqdm = tqdm_rich
 trange = trrange

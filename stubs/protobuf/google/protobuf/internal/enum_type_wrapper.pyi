@@ -28,4 +28,5 @@ class _EnumTypeWrapper(type, Generic[_V]):
     def items(self) -> list[tuple[str, _V]]: ...
 
 class EnumTypeWrapper(_EnumTypeWrapper[int]):
+    """A utility for finding the names of enum values."""
     ValueType = int

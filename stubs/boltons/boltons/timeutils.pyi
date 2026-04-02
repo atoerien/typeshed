@@ -106,10 +106,143 @@ parse_td = parse_timedelta
 
 def decimal_relative_time(
     d: datetime, other: datetime | None = None, ndigits: int = 0, cardinalize: bool = True
-) -> tuple[float, str]: ...
-def relative_time(d: datetime, other: datetime | None = None, ndigits: int = 0) -> str: ...
-def strpdate(string: str, format: str) -> date: ...
-def daterange(start: date, stop: date, step: int = 1, inclusive: bool = False) -> Generator[date]: ...
+) -> tuple[float, str]:
+    """
+    Get a tuple representing the relative time difference between two
+    :class:`~datetime.datetime` objects or one
+    :class:`~datetime.datetime` and now.
+
+    Args:
+        d (datetime): The first datetime object.
+        other (datetime): An optional second datetime object. If
+            unset, defaults to the current time as determined
+            :meth:`datetime.utcnow`.
+        ndigits (int): The number of decimal digits to round to,
+            defaults to ``0``.
+        cardinalize (bool): Whether to pluralize the time unit if
+            appropriate, defaults to ``True``.
+    Returns:
+        (float, str): A tuple of the :class:`float` difference and
+           respective unit of time, pluralized if appropriate and
+           *cardinalize* is set to ``True``.
+
+    Unlike :func:`relative_time`, this method's return is amenable to
+    localization into other languages and custom phrasing and
+    formatting.
+
+    >>> now = datetime.now(timezone.utc).replace(tzinfo=None)
+    >>> decimal_relative_time(now - timedelta(days=1, seconds=3600), now)
+    (1.0, 'day')
+    >>> decimal_relative_time(now - timedelta(seconds=0.002), now, ndigits=5)
+    (0.002, 'seconds')
+    >>> decimal_relative_time(now, now - timedelta(days=900), ndigits=1)
+    (-2.5, 'years')
+    """
+    ...
+def relative_time(d: datetime, other: datetime | None = None, ndigits: int = 0) -> str:
+    """
+    Get a string representation of the difference between two
+    :class:`~datetime.datetime` objects or one
+    :class:`~datetime.datetime` and the current time. Handles past and
+    future times.
+
+    Args:
+        d (datetime): The first datetime object.
+        other (datetime): An optional second datetime object. If
+            unset, defaults to the current time as determined
+            :meth:`datetime.utcnow`.
+        ndigits (int): The number of decimal digits to round to,
+            defaults to ``0``.
+    Returns:
+        A short English-language string.
+
+    >>> now = datetime.now(timezone.utc).replace(tzinfo=None)
+    >>> relative_time(now, ndigits=1)
+    '0 seconds ago'
+    >>> relative_time(now - timedelta(days=1, seconds=36000), ndigits=1)
+    '1.4 days ago'
+    >>> relative_time(now + timedelta(days=7), now, ndigits=1)
+    '1 week from now'
+    """
+    ...
+def strpdate(string: str, format: str) -> date:
+    """
+    Parse the date string according to the format in `format`.  Returns a
+    :class:`date` object.  Internally, :meth:`datetime.strptime` is used to
+    parse the string and thus conversion specifiers for time fields (e.g. `%H`)
+    may be provided;  these will be parsed but ignored.
+
+    Args:
+        string (str): The date string to be parsed.
+        format (str): The `strptime`_-style date format string.
+    Returns:
+        datetime.date
+
+    .. _`strptime`: https://docs.python.org/2/library/datetime.html#strftime-strptime-behavior
+
+    >>> strpdate('2016-02-14', '%Y-%m-%d')
+    datetime.date(2016, 2, 14)
+    >>> strpdate('26/12 (2015)', '%d/%m (%Y)')
+    datetime.date(2015, 12, 26)
+    >>> strpdate('20151231 23:59:59', '%Y%m%d %H:%M:%S')
+    datetime.date(2015, 12, 31)
+    >>> strpdate('20160101 00:00:00.001', '%Y%m%d %H:%M:%S.%f')
+    datetime.date(2016, 1, 1)
+    """
+    ...
+def daterange(start: date, stop: date, step: int = 1, inclusive: bool = False) -> Generator[date]:
+    """
+    In the spirit of :func:`range` and :func:`xrange`, the `daterange`
+    generator that yields a sequence of :class:`~datetime.date`
+    objects, starting at *start*, incrementing by *step*, until *stop*
+    is reached.
+
+    When *inclusive* is True, the final date may be *stop*, **if**
+    *step* falls evenly on it. By default, *step* is one day. See
+    details below for many more details.
+
+    Args:
+        start (datetime.date): The starting date The first value in
+            the sequence.
+        stop (datetime.date): The stopping date. By default not
+            included in return. Can be `None` to yield an infinite
+            sequence.
+        step (int): The value to increment *start* by to reach
+            *stop*. Can be an :class:`int` number of days, a
+            :class:`datetime.timedelta`, or a :class:`tuple` of integers,
+            `(year, month, day)`. Positive and negative *step* values
+            are supported.
+        inclusive (bool): Whether or not the *stop* date can be
+            returned. *stop* is only returned when a *step* falls evenly
+            on it.
+
+    >>> christmas = date(year=2015, month=12, day=25)
+    >>> boxing_day = date(year=2015, month=12, day=26)
+    >>> new_year = date(year=2016, month=1,  day=1)
+    >>> for day in daterange(christmas, new_year):
+    ...     print(repr(day))
+    datetime.date(2015, 12, 25)
+    datetime.date(2015, 12, 26)
+    datetime.date(2015, 12, 27)
+    datetime.date(2015, 12, 28)
+    datetime.date(2015, 12, 29)
+    datetime.date(2015, 12, 30)
+    datetime.date(2015, 12, 31)
+    >>> for day in daterange(christmas, boxing_day):
+    ...     print(repr(day))
+    datetime.date(2015, 12, 25)
+    >>> for day in daterange(date(2017, 5, 1), date(2017, 8, 1),
+    ...                      step=(0, 1, 0), inclusive=True):
+    ...     print(repr(day))
+    datetime.date(2017, 5, 1)
+    datetime.date(2017, 6, 1)
+    datetime.date(2017, 7, 1)
+    datetime.date(2017, 8, 1)
+
+    *Be careful when using stop=None, as this will yield an infinite
+    sequence of dates.*
+    """
+    ...
 
 ZERO: timedelta
 HOUR: timedelta

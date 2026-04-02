@@ -261,17 +261,182 @@ class HTMLTextExtractor(HTMLParser):
     def handle_entityref(self, name: str) -> None: ...
     def get_text(self) -> str: ...
 
-def html2text(html: str) -> str: ...
-def gunzip_bytes(bytestring: ReadableBuffer) -> bytes: ...
-def gzip_bytes(bytestring: ReadableBuffer, level: int = 6) -> int: ...
-def iter_splitlines(text: str) -> Generator[str]: ...
-def indent(text: str, margin: str, newline: str = "\n", key: Callable[[str], bool] = ...) -> str: ...
-def is_uuid(obj, version: int = 4) -> bool: ...
-def escape_shell_args(args: Iterable[str], sep: str = " ", style: Literal["cmd", "sh"] | None = None) -> str: ...
-def args2sh(args: Iterable[str], sep: str = " ") -> str: ...
-def args2cmd(args: Iterable[str], sep: str = " ") -> str: ...
-def parse_int_list(range_string: str, delim: str = ",", range_delim: str = "-") -> list[int]: ...
-def format_int_list(int_list: list[int], delim: str = ",", range_delim: str = "-", delim_space: bool = False) -> str: ...
+def html2text(html: str) -> str:
+    """
+    Strips tags from HTML text, returning markup-free text. Also, does
+    a best effort replacement of entities like "&nbsp;"
+
+    >>> r = html2text(u'<a href="#">Test &amp;<em>(Δ&#x03b7;&#956;&#x03CE;)</em></a>')
+    >>> r == u'Test &(Δημώ)'
+    True
+    """
+    ...
+def gunzip_bytes(bytestring: ReadableBuffer) -> bytes:
+    """
+    The :mod:`gzip` module is great if you have a file or file-like
+    object, but what if you just have bytes. StringIO is one
+    possibility, but it's often faster, easier, and simpler to just
+    use this one-liner. Use this tried-and-true utility function to
+    decompress gzip from bytes.
+
+    >>> gunzip_bytes(_EMPTY_GZIP_BYTES) == b''
+    True
+    >>> gunzip_bytes(_NON_EMPTY_GZIP_BYTES).rstrip() == b'bytesahoy!'
+    True
+    """
+    ...
+def gzip_bytes(bytestring: ReadableBuffer, level: int = 6) -> int:
+    """
+    Turn some bytes into some compressed bytes.
+
+    >>> len(gzip_bytes(b'a' * 10000))
+    46
+
+    Args:
+        bytestring (bytes): Bytes to be compressed
+        level (int): An integer, 1-9, controlling the
+          speed/compression. 1 is fastest, least compressed, 9 is
+          slowest, but most compressed.
+
+    Note that all levels of gzip are pretty fast these days, though
+    it's not really a competitor in compression, at any level.
+    """
+    ...
+def iter_splitlines(text: str) -> Generator[str]:
+    r"""
+    Like :meth:`str.splitlines`, but returns an iterator of lines
+    instead of a list. Also similar to :meth:`file.next`, as that also
+    lazily reads and yields lines from a file.
+
+    This function works with a variety of line endings, but as always,
+    be careful when mixing line endings within a file.
+
+    >>> list(iter_splitlines('\nhi\nbye\n'))
+    ['', 'hi', 'bye', '']
+    >>> list(iter_splitlines('\r\nhi\rbye\r\n'))
+    ['', 'hi', 'bye', '']
+    >>> list(iter_splitlines(''))
+    []
+    """
+    ...
+def indent(text: str, margin: str, newline: str = "\n", key: Callable[[str], bool] = ...) -> str:
+    r"""
+    The missing counterpart to the built-in :func:`textwrap.dedent`.
+
+    Args:
+        text (str): The text to indent.
+        margin (str): The string to prepend to each line.
+        newline (str): The newline used to rejoin the lines (default: ``\n``)
+        key (callable): Called on each line to determine whether to
+          indent it. Default: :class:`bool`, to ensure that empty lines do
+          not get whitespace added.
+    """
+    ...
+def is_uuid(obj, version: int = 4) -> bool:
+    """
+    Check the argument is either a valid UUID object or string.
+
+    Args:
+        obj (object): The test target. Strings and UUID objects supported.
+        version (int): The target UUID version, set to 0 to skip version check.
+
+    >>> is_uuid('e682ccca-5a4c-4ef2-9711-73f9ad1e15ea')
+    True
+    >>> is_uuid('0221f0d9-d4b9-11e5-a478-10ddb1c2feb9')
+    False
+    >>> is_uuid('0221f0d9-d4b9-11e5-a478-10ddb1c2feb9', version=1)
+    True
+    """
+    ...
+def escape_shell_args(args: Iterable[str], sep: str = " ", style: Literal["cmd", "sh"] | None = None) -> str:
+    """
+    Returns an escaped version of each string in *args*, according to
+    *style*.
+
+    Args:
+        args (list): A list of arguments to escape and join together
+        sep (str): The separator used to join the escaped arguments.
+        style (str): The style of escaping to use. Can be one of
+          ``cmd`` or ``sh``, geared toward Windows and Linux/BSD/etc.,
+          respectively. If *style* is ``None``, then it is picked
+          according to the system platform.
+
+    See :func:`args2cmd` and :func:`args2sh` for details and example
+    output for each style.
+    """
+    ...
+def args2sh(args: Iterable[str], sep: str = " ") -> str:
+    """
+    Return a shell-escaped string version of *args*, separated by
+    *sep*, based on the rules of sh, bash, and other shells in the
+    Linux/BSD/MacOS ecosystem.
+
+    >>> print(args2sh(['aa', '[bb]', "cc'cc", 'dd"dd']))
+    aa '[bb]' 'cc'"'"'cc' 'dd"dd'
+
+    As you can see, arguments with no special characters are not
+    escaped, arguments with special characters are quoted with single
+    quotes, and single quotes themselves are quoted with double
+    quotes. Double quotes are handled like any other special
+    character.
+
+    Based on code from the :mod:`pipes`/:mod:`shlex` modules. Also
+    note that :mod:`shlex` and :mod:`argparse` have functions to split
+    and parse strings escaped in this manner.
+    """
+    ...
+def args2cmd(args: Iterable[str], sep: str = " ") -> str:
+    r"""
+    Return a shell-escaped string version of *args*, separated by
+    *sep*, using the same rules as the Microsoft C runtime.
+
+    >>> print(args2cmd(['aa', '[bb]', "cc'cc", 'dd"dd']))
+    aa [bb] cc'cc dd\"dd
+
+    As you can see, escaping is through backslashing and not quoting,
+    and double quotes are the only special character. See the comment
+    in the code for more details. Based on internal code from the
+    :mod:`subprocess` module.
+    """
+    ...
+def parse_int_list(range_string: str, delim: str = ",", range_delim: str = "-") -> list[int]:
+    """
+    Returns a sorted list of positive integers based on
+    *range_string*. Reverse of :func:`format_int_list`.
+
+    Args:
+        range_string (str): String of comma separated positive
+            integers or ranges (e.g. '1,2,4-6,8'). Typical of a custom
+            page range string used in printer dialogs.
+        delim (char): Defaults to ','. Separates integers and
+            contiguous ranges of integers.
+        range_delim (char): Defaults to '-'. Indicates a contiguous
+            range of integers.
+
+    >>> parse_int_list('1,3,5-8,10-11,15')
+    [1, 3, 5, 6, 7, 8, 10, 11, 15]
+    """
+    ...
+def format_int_list(int_list: list[int], delim: str = ",", range_delim: str = "-", delim_space: bool = False) -> str:
+    """
+    Returns a sorted range string from a list of positive integers
+    (*int_list*). Contiguous ranges of integers are collapsed to min
+    and max values. Reverse of :func:`parse_int_list`.
+
+    Args:
+        int_list (list): List of positive integers to be converted
+           into a range string (e.g. [1,2,4,5,6,8]).
+        delim (char): Defaults to ','. Separates integers and
+           contiguous ranges of integers.
+        range_delim (char): Defaults to '-'. Indicates a contiguous
+           range of integers.
+        delim_space (bool): Defaults to ``False``. If ``True``, adds a
+           space after all *delim* characters.
+
+    >>> format_int_list([1,3,5,6,7,8,10,11,15])
+    '1,3,5-8,10-11,15'
+    """
+    ...
 def complement_int_list(
     range_string: str, range_start: int = 0, range_end: int | None = None, delim: str = ",", range_delim: str = "-"
 ) -> str:

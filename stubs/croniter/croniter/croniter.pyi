@@ -365,7 +365,16 @@ def croniter_range(
     _croniter: type[croniter] | None = None,
     second_at_beginning: bool = False,
     expand_from_start_time: bool = False,
-) -> Generator[_R2_co]: ...
+) -> Generator[_R2_co]:
+    """
+    Generator that provides all times from start to stop matching the given cron expression.
+    If the cron expression matches either 'start' and/or 'stop', those times will be returned as
+    well unless 'exclude_ends=True' is passed.
+
+    You can think of this function as sibling to the builtin range function for datetime objects.
+    Like range(start,stop,step), except that here 'step' is a cron expression.
+    """
+    ...
 @overload
 def croniter_range(
     start: float,
@@ -377,7 +386,16 @@ def croniter_range(
     _croniter: type[croniter] | None = None,
     second_at_beginning: bool = False,
     expand_from_start_time: bool = False,
-) -> Generator[float]: ...
+) -> Generator[float]:
+    """
+    Generator that provides all times from start to stop matching the given cron expression.
+    If the cron expression matches either 'start' and/or 'stop', those times will be returned as
+    well unless 'exclude_ends=True' is passed.
+
+    You can think of this function as sibling to the builtin range function for datetime objects.
+    Like range(start,stop,step), except that here 'step' is a cron expression.
+    """
+    ...
 @overload
 def croniter_range(
     start: datetime.datetime,
@@ -389,7 +407,16 @@ def croniter_range(
     _croniter: type[croniter] | None = None,
     second_at_beginning: bool = False,
     expand_from_start_time: bool = False,
-) -> Generator[datetime.datetime]: ...
+) -> Generator[datetime.datetime]:
+    """
+    Generator that provides all times from start to stop matching the given cron expression.
+    If the cron expression matches either 'start' and/or 'stop', those times will be returned as
+    well unless 'exclude_ends=True' is passed.
+
+    You can think of this function as sibling to the builtin range function for datetime objects.
+    Like range(start,stop,step), except that here 'step' is a cron expression.
+    """
+    ...
 
 class HashExpander:
     cron: croniter
