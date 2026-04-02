@@ -88,7 +88,7 @@ pynput~=1.8.1
 aiofiles==25.1.*
 yt-dlp==2026.3.17
 grpcio-health-checking==1.*
-protobuf~=6.32.1
+protobuf~=7.34.1
 Flask-Migrate==4.1.*
 nanoleafapi==2.1.*
 Pygments==2.19.*
