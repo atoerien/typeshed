@@ -582,6 +582,13 @@ class StringLookup(_IndexLookup):
             instead of a dense `Tensor`. Defaults to `False`.
         encoding: Optional. The text encoding to use to interpret the input
             strings. Defaults to `"utf-8"`.
+        salt: Only valid when `num_oov_indices > 1`. If passed, the hash
+            function used for OOV bucket assignment will be SipHash64,
+            with these values used as an additional input (known as a
+            "salt" in cryptography).
+            Can be a tuple or list of 2 integers, or a single integer
+            (which is used for both key components). If `None` (default),
+            FarmHash64 is used. Defaults to `None`.
 
     Examples:
 
@@ -854,8 +861,8 @@ class IntegerLookup(_IndexLookup):
             the vocabulary. Note that this size includes the OOV
             and mask tokens. Defaults to `None`.
         num_oov_indices: The number of out-of-vocabulary tokens to use.
-            If this value is more than 1, OOV inputs are modulated to
-            determine their OOV value.
+            If this value is more than 1, OOV inputs are hashed or modulated
+            to determine their OOV value (see `oov_method`).
             If this value is 0, OOV inputs will cause an error when calling
             the layer. Defaults to `1`.
         mask_token: An integer token that represents masked inputs. When
@@ -923,6 +930,23 @@ class IntegerLookup(_IndexLookup):
             `"tf_idf"` output modes. Only supported with TensorFlow
             backend. If `True`, returns a `SparseTensor`
             instead of a dense `Tensor`. Defaults to `False`.
+        oov_method: Only relevant when `num_oov_indices > 1`. Controls how OOV
+            tokens are assigned to OOV buckets.
+            - `"floormod"` (default): uses `token % num_oov_indices`.
+              Preserves backwards compatibility but can produce severe bucket
+              imbalance when input IDs share a common factor with
+              `num_oov_indices` (e.g. all-even IDs with an even bucket count).
+            - `"farmhash"`: applies FarmHash64. Distributes OOV tokens
+            uniformly regardless of the arithmetic structure of the input IDs.
+            This parameter is ignored for string inputs, which always use
+            FarmHash64.
+        salt: Only valid when `oov_method="farmhash"`. If passed, the hash
+            function used for OOV bucket assignment will be SipHash64,
+            with these values used as an additional input (known as a
+            "salt" in cryptography).
+            Can be a tuple or list of 2 integers, or a single integer
+            (which is used for both key components). If `None` (default),
+            FarmHash64 is used. Defaults to `None`.
 
     Examples:
 
@@ -963,8 +987,9 @@ class IntegerLookup(_IndexLookup):
 
     This example demonstrates how to use a lookup layer with multiple OOV
     indices.  When a layer is created with more than one OOV index, any OOV
-    tokens are hashed into the number of OOV buckets, distributing OOV tokens in
-    a deterministic fashion across the set.
+    tokens are hashed or modulated into the number of OOV buckets, distributing
+    OOV tokens in a deterministic fashion across the set. Use `oov_method` to
+    control whether `floormod` or FarmHash64 is used.
 
     >>> vocab = [12, 36, 1138, 42]
     >>> data = np.array([[12, 1138, 42], [37, 1000, 36]])
@@ -977,6 +1002,22 @@ class IntegerLookup(_IndexLookup):
     1000 is 0. The in-vocab terms have their output index increased by 1 from
     earlier examples (12 maps to 2, etc) in order to make space for the extra
     OOV token.
+
+    **Uniform OOV distribution with FarmHash**
+
+    This example shows how `oov_method="farmhash"` avoids the bucket imbalance
+    that `"floormod"` produces for arithmetically structured input IDs.
+
+    >>> vocab = [10, 20, 30]
+    >>> layer_floormod = IntegerLookup(
+    ...     vocabulary=vocab, num_oov_indices=4, oov_method="floormod")
+    >>> layer_farmhash = IntegerLookup(
+    ...     vocabulary=vocab, num_oov_indices=4, oov_method="farmhash")
+    >>> oov_values = np.array([100, 300, 700, 1100, 1700, 2000])
+    >>> layer_floormod(oov_values)
+    tf.Tensor([0 0 0 0 0 0], shape=(6,), dtype=int64) # All map to index 0
+    >>> layer_farmhash(oov_values)
+    tf.Tensor([3 3 2 2 0 1], shape=(6,), dtype=int64) # Spread across indices
 
     **One-hot output**
 
@@ -1299,6 +1340,22 @@ class BatchNormalization(Layer[tf.Tensor, tf.Tensor]):
             variance) for the layer across all devices at each training step
             in a distributed training strategy.
             If `False`, each replica uses its own local batch statistics.
+        renorm: Whether to use
+            [Batch Renormalization](https://arxiv.org/abs/1702.03275). This
+            adds extra variables during training. The inference is the same
+            for either value of this parameter.
+        renorm_clipping: Dictionary, valid only if `renorm = True`.
+            Maps optional keys `"rmax"`, `"rmin"`, `"dmax"` to floats used to
+            clip the renorm correction. The correction `(r, d)` is used as
+            `corrected_value = normalized_value * r + d`, with `r` clipped to
+            `[rmin, rmax]`, and `d` to `[-dmax, dmax]`. Missing `rmax`, `rmin`,
+            `dmax` are set to `inf`, `0`, `inf`, respectively.
+        renorm_momentum: Momentum used to update the moving means and standard
+            deviations with renorm. Valid only if `renorm= True`. Unlike
+            `momentum`, this affects training and should be neither too small
+            (which would add noise) nor too large (which would give stale
+            estimates). Note that `momentum` is still applied to get the means
+            and variances for inference.
         **kwargs: Base layer keyword arguments (e.g. `name` and `dtype`).
 
     Call arguments:
@@ -1854,6 +1911,12 @@ class MultiHeadAttention(Layer[Any, tf.Tensor]):
         activity_regularizer: Regularizer for dense layer activity.
         kernel_constraint: Constraint for dense layer kernels.
         bias_constraint: Constraint for dense layer kernels.
+        use_gate: Boolean, whether to apply a gated attention mechanism.
+            When True, an additional gating branch is added based on the
+            (Gated Attention for Large Language Models)[https://arxiv.org/abs/2505.06708].
+            It applies a sigmoid-activated linear projection to the query
+            which then gates the attention output. This helps improve training
+            stability and eliminates "attention sinks".
         seed: Optional integer to seed the dropout layer.
 
     Call arguments:
