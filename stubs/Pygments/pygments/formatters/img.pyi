@@ -15,12 +15,10 @@ from pygments.formatter import Formatter
 
 _T = TypeVar("_T", str, bytes)
 
-class PilNotAvailable(ImportError):
-    """When Python imaging library is not available"""
-    ...
-class FontNotFound(Exception):
-    """When there are no usable fonts specified"""
-    ...
+__all__ = ["ImageFormatter", "GifImageFormatter", "JpgImageFormatter", "BmpImageFormatter"]
+
+class PilNotAvailable(ImportError): ...
+class FontNotFound(Exception): ...
 
 class FontManager:
     """Manages a set of fonts: normal, italic, bold, etc..."""

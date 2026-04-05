@@ -15,6 +15,8 @@ from pygments.formatter import Formatter
 
 _T = TypeVar("_T", str, bytes)
 
+__all__ = ["HtmlFormatter"]
+
 class HtmlFormatter(Formatter[_T]):
     r"""
     Format tokens as HTML 4 ``<span>`` tags. By default, the content is enclosed

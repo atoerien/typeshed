@@ -15,6 +15,8 @@ from pygments.formatter import Formatter
 
 _T = TypeVar("_T", str, bytes)
 
+__all__ = ["TerminalFormatter"]
+
 class TerminalFormatter(Formatter[_T]):
     """
     Format tokens with ANSI color sequences, for output in a text console.

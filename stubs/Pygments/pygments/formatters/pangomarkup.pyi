@@ -15,6 +15,8 @@ from pygments.formatter import Formatter
 
 _T = TypeVar("_T", str, bytes)
 
+__all__ = ["PangoMarkupFormatter"]
+
 class PangoMarkupFormatter(Formatter[_T]):
     """
     Format tokens as Pango Markup code. It can then be rendered to an SVG.

@@ -10,10 +10,12 @@ literal strings.
 """
 
 from _typeshed import Incomplete
+from collections.abc import Iterable
 
 CS_ESCAPE: Incomplete
 FIRST_ELEMENT: Incomplete
 
+def commonprefix(m: Iterable[str]) -> str: ...
 def make_charset(letters): ...
 def regex_opt_inner(strings, open_paren):
     """Return a regex that matches any string in the sorted list of strings."""

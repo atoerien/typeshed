@@ -15,6 +15,8 @@ from pygments.formatter import Formatter
 
 _T = TypeVar("_T", str, bytes)
 
+__all__ = ["IRCFormatter"]
+
 class IRCFormatter(Formatter[_T]):
     """
     Format tokens with IRC color sequences

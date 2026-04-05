@@ -15,6 +15,8 @@ from pygments.formatter import Formatter
 
 _T = TypeVar("_T", str, bytes)
 
+__all__ = ["BBCodeFormatter"]
+
 class BBCodeFormatter(Formatter[_T]):
     """
     Format tokens with BBcodes. These formatting codes are used by many

@@ -15,6 +15,8 @@ from pygments.formatter import Formatter
 
 _T = TypeVar("_T", str, bytes)
 
+__all__ = ["SvgFormatter"]
+
 class SvgFormatter(Formatter[_T]):
     """
     Format tokens as an SVG graphics file.  This formatter is still experimental.

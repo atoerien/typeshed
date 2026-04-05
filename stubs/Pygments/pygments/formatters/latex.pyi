@@ -16,6 +16,8 @@ from pygments.lexer import Lexer
 
 _T = TypeVar("_T", str, bytes)
 
+__all__ = ["LatexFormatter"]
+
 class LatexFormatter(Formatter[_T]):
     r"""
     Format tokens as LaTeX code. This needs the `fancyvrb` and `color`
