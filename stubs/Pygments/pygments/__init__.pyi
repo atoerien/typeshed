@@ -21,7 +21,7 @@ The `Pygments master branch`_ is installable with ``easy_install Pygments==dev``
 .. _Pygments master branch:
    https://github.com/pygments/pygments/archive/master.zip#egg=Pygments-dev
 
-:copyright: Copyright 2006-2025 by the Pygments team, see AUTHORS.
+:copyright: Copyright 2006-present by the Pygments team, see AUTHORS.
 :license: BSD, see LICENSE for details.
 """
 

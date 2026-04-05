@@ -11,7 +11,7 @@ that just by using a regular expression lexer like the
 Have a look at the `DelphiLexer` to get an idea of how to use
 this scanner.
 
-:copyright: Copyright 2006-2025 by the Pygments team, see AUTHORS.
+:copyright: Copyright 2006-present by the Pygments team, see AUTHORS.
 :license: BSD, see LICENSE for details.
 """
 

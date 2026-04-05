@@ -4,7 +4,7 @@ pygments.lexers.prql
 
 Lexer for the PRQL query language.
 
-:copyright: Copyright 2006-2025 by the Pygments team, see AUTHORS.
+:copyright: Copyright 2006-present by the Pygments team, see AUTHORS.
 :license: BSD, see LICENSE for details.
 """
 
