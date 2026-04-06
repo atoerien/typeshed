@@ -190,7 +190,7 @@ pysftp==0.2.*
 html5lib[all]==1.1.*
 objgraph==3.6.*
 zxcvbn==4.5.*
-jsonnet==0.21.*
+jsonnet==0.22.*
 gdb==16.3.*
 rfc3339-validator==0.1.*
 simplejson==3.20.*
