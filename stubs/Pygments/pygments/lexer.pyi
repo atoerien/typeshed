@@ -40,75 +40,16 @@ class LexerMeta(type):
     static methods which always return float values.
     """
     def __new__(cls, name, bases, d): ...
-    def analyse_text(self, text: str) -> float: ...  # actually defined in class Lexer
-    # ClassVars of Lexer, but same situation as with StyleMeta and Style
-    name: str  # Set to None in Lexer, but always overridden with a non-None value in subclasses.
-    aliases: Sequence[str]  # not intended mutable
-    filenames: Sequence[str]
-    alias_filenames: Sequence[str]
-    mimetypes: Sequence[str]
-    priority: float
-    url: str  # Set to None in Lexer, but always overridden with a non-None value in subclasses.
-    version_added: str  # Set to None in Lexer, but always overridden with a non-None value in subclasses.
 
 class Lexer(metaclass=LexerMeta):
-    """
-    Lexer for a specific language.
-
-    See also :doc:`lexerdevelopment`, a high-level guide to writing
-    lexers.
-
-    Lexer classes have attributes used for choosing the most appropriate
-    lexer based on various criteria.
-
-    .. autoattribute:: name
-       :no-value:
-    .. autoattribute:: aliases
-       :no-value:
-    .. autoattribute:: filenames
-       :no-value:
-    .. autoattribute:: alias_filenames
-    .. autoattribute:: mimetypes
-       :no-value:
-    .. autoattribute:: priority
-
-    Lexers included in Pygments should have two additional attributes:
-
-    .. autoattribute:: url
-       :no-value:
-    .. autoattribute:: version_added
-       :no-value:
-
-    Lexers included in Pygments may have additional attributes:
-
-    .. autoattribute:: _example
-       :no-value:
-
-    You can pass options to the constructor. The basic options recognized
-    by all lexers and processed by the base `Lexer` class are:
-
-    ``stripnl``
-        Strip leading and trailing newlines from the input (default: True).
-    ``stripall``
-        Strip all leading and trailing whitespace from the input
-        (default: False).
-    ``ensurenl``
-        Make sure that the input ends with a newline (default: True).  This
-        is required for some lexers that consume input linewise.
-
-        .. versionadded:: 1.3
-
-    ``tabsize``
-        If given and greater than 0, expand tabs in the input (default: 0).
-    ``encoding``
-        If given, must be an encoding name. This encoding will be used to
-        convert the input string to Unicode, if it is not already a Unicode
-        string (default: ``'guess'``, which uses a simple UTF-8 / Locale /
-        Latin1 detection.  Can also be ``'chardet'`` to use the chardet
-        library, if it is installed.
-    ``inencoding``
-        Overrides the ``encoding`` if given.
-    """
+    name: ClassVar[str]  # Set to None, but always overridden with a non-None value in subclasses.
+    aliases: ClassVar[Sequence[str]]  # not intended to be mutable
+    filenames: ClassVar[Sequence[str]]
+    alias_filenames: ClassVar[Sequence[str]]
+    mimetypes: ClassVar[Sequence[str]]
+    priority: ClassVar[float]
+    url: ClassVar[str]  # Set to None, but always overridden with a non-None value in subclasses.
+    version_added: ClassVar[str]  # Set to None, but always overridden with a non-None value in subclasses.
     options: Incomplete
     stripnl: Incomplete
     stripall: Incomplete
@@ -116,54 +57,12 @@ class Lexer(metaclass=LexerMeta):
     tabsize: Incomplete
     encoding: Incomplete
     filters: Incomplete
-    def __init__(self, **options) -> None:
-        """
-        This constructor takes arbitrary options as keyword arguments.
-        Every subclass must first process its own options and then call
-        the `Lexer` constructor, since it processes the basic
-        options like `stripnl`.
-
-        An example looks like this:
-
-        .. sourcecode:: python
-
-           def __init__(self, **options):
-               self.compress = options.get('compress', '')
-               Lexer.__init__(self, **options)
-
-        As these options must all be specifiable as strings (due to the
-        command line usage), there are various utility functions
-        available to help with that, see `Utilities`_.
-        """
-        ...
-    def add_filter(self, filter_, **options) -> None:
-        """Add a new stream filter to this lexer."""
-        ...
-    def get_tokens(self, text: str, unfiltered: bool = False) -> Iterator[tuple[_TokenType, str]]:
-        """
-        This method is the basic interface of a lexer. It is called by
-        the `highlight()` function. It must process the text and return an
-        iterable of ``(tokentype, value)`` pairs from `text`.
-
-        Normally, you don't need to override this method. The default
-        implementation processes the options recognized by all lexers
-        (`stripnl`, `stripall` and so on), and then yields all tokens
-        from `get_tokens_unprocessed()`, with the ``index`` dropped.
-
-        If `unfiltered` is set to `True`, the filtering mechanism is
-        bypassed even if filters are defined.
-        """
-        ...
-    def get_tokens_unprocessed(self, text: str) -> Iterator[tuple[int, _TokenType, str]]:
-        """
-        This method should process the text and return an iterable of
-        ``(index, tokentype, value)`` tuples where ``index`` is the starting
-        position of the token within the input text.
-
-        It must be overridden by subclasses. It is recommended to
-        implement it as a generator to maximize effectiveness.
-        """
-        ...
+    def __init__(self, **options) -> None: ...
+    def add_filter(self, filter_, **options) -> None: ...
+    @staticmethod  # @staticmethod added by special handling in metaclass
+    def analyse_text(text: str) -> float: ...
+    def get_tokens(self, text: str, unfiltered: bool = False) -> Iterator[tuple[_TokenType, str]]: ...
+    def get_tokens_unprocessed(self, text: str) -> Iterator[tuple[int, _TokenType, str]]: ...
 
 class DelegatingLexer(Lexer):
     """
