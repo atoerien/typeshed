@@ -1,3 +1,13 @@
+"""
+pygments.style
+~~~~~~~~~~~~~~
+
+Basic style object.
+
+:copyright: Copyright 2006-present by the Pygments team, see AUTHORS.
+:license: BSD, see LICENSE for details.
+"""
+
 from _typeshed import Self
 from collections.abc import Iterator, Mapping, Sequence, Set as AbstractSet
 from typing import Any, ClassVar, TypedDict, type_check_only

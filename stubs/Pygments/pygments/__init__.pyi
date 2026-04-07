@@ -47,10 +47,38 @@ def lex(code: str, lexer: Lexer) -> Iterator[tuple[_TokenType, str]]:
     """
     ...
 @overload
-def format(tokens: Iterable[tuple[_TokenType, str]], formatter: Formatter[_T], outfile: SupportsWrite[_T]) -> None: ...
+def format(tokens: Iterable[tuple[_TokenType, str]], formatter: Formatter[_T], outfile: SupportsWrite[_T]) -> None:
+    """
+    Format ``tokens`` (an iterable of tokens) with the formatter ``formatter``
+    (a `Formatter` instance).
+
+    If ``outfile`` is given and a valid file object (an object with a
+    ``write`` method), the result will be written to it, otherwise it
+    is returned as a string.
+    """
+    ...
 @overload
-def format(tokens: Iterable[tuple[_TokenType, str]], formatter: Formatter[_T], outfile: None = None) -> _T: ...
+def format(tokens: Iterable[tuple[_TokenType, str]], formatter: Formatter[_T], outfile: None = None) -> _T:
+    """
+    Format ``tokens`` (an iterable of tokens) with the formatter ``formatter``
+    (a `Formatter` instance).
+
+    If ``outfile`` is given and a valid file object (an object with a
+    ``write`` method), the result will be written to it, otherwise it
+    is returned as a string.
+    """
+    ...
 @overload
-def highlight(code: str, lexer: Lexer, formatter: Formatter[_T], outfile: SupportsWrite[_T]) -> None: ...
+def highlight(code: str, lexer: Lexer, formatter: Formatter[_T], outfile: SupportsWrite[_T]) -> None:
+    """
+    This is the most high-level highlighting function. It combines `lex` and
+    `format` in one function.
+    """
+    ...
 @overload
-def highlight(code: str, lexer: Lexer, formatter: Formatter[_T], outfile: None = None) -> _T: ...
+def highlight(code: str, lexer: Lexer, formatter: Formatter[_T], outfile: None = None) -> _T:
+    """
+    This is the most high-level highlighting function. It combines `lex` and
+    `format` in one function.
+    """
+    ...

@@ -58,6 +58,7 @@ class JWE:
         :param recipient: An optional, default recipient key
         :param header: An optional header for the default recipient
         :param header_registry: Optional additions to the header registry
+        :param flattened: Use flattened serialization syntax (default True)
         """
         ...
     @property
@@ -116,6 +117,10 @@ class JWE:
         :param key: A (:class:`jwcrypto.jwk.JWK`) decryption key,
          or a (:class:`jwcrypto.jwk.JWKSet`) that contains a key indexed
          by the 'kid' header or (deprecated) a string containing a password.
+        :param max_plaintext: Maximum plaintext size allowed, 0 means
+         the library default applies. Application writers are recommended
+         to set a limit here if they know what is the max plaintext size
+         for their application.
 
         :raises InvalidJWEOperation: if the key is not a JWK object.
         :raises InvalidJWEData: if the ciphertext can't be decrypted or
