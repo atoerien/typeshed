@@ -1,29 +1,10 @@
-"""
-pygments.console
-~~~~~~~~~~~~~~~~
+from typing import Final
 
-Format colored console output.
+esc: Final = "\x1b["
+codes: Final[dict[str, str]]
+dark_colors: Final[list[str]]
+light_colors: Final[list[str]]
 
-:copyright: Copyright 2006-present by the Pygments team, see AUTHORS.
-:license: BSD, see LICENSE for details.
-"""
-
-from _typeshed import Incomplete
-
-esc: str
-codes: Incomplete
-dark_colors: Incomplete
-light_colors: Incomplete
-
-def reset_color(): ...
-def colorize(color_key, text): ...
-def ansiformat(attr, text):
-    """
-    Format ``text`` with a color and/or some attributes::
-
-        color       normal color
-        *color*     bold color
-        _color_     underlined color
-        +color+     blinking color
-    """
-    ...
+def reset_color() -> str: ...
+def colorize(color_key: str, text: str) -> str: ...
+def ansiformat(attr: str, text: str) -> str: ...

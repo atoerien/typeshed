@@ -1,53 +1,29 @@
-"""
-pygments.filter
-~~~~~~~~~~~~~~~
-
-Module that implements the default filter.
-
-:copyright: Copyright 2006-present by the Pygments team, see AUTHORS.
-:license: BSD, see LICENSE for details.
-"""
-
-from _typeshed import Incomplete
 from collections.abc import Iterable, Iterator
+from typing import Any, ClassVar, Protocol, type_check_only
 
 from pygments.lexer import Lexer
 from pygments.token import _TokenType
 
-def apply_filters(stream, filters, lexer=None):
-    """
-    Use this method to apply an iterable of filters to
-    a stream. If lexer is given it's forwarded to the
-    filter, otherwise the filter receives `None`.
-    """
-    ...
-def simplefilter(f):
-    """
-    Decorator that converts a function into a filter::
+@type_check_only
+class _SimpleFilterFunction(Protocol):
+    # Function that can looked up as a method on a FunctionFilter subclass.
+    def __call__(
+        self, self_: FunctionFilter, lexer: Lexer | None, stream: Iterable[tuple[_TokenType, str]], options: dict[str, Any], /
+    ) -> Iterator[tuple[_TokenType, str]]: ...
 
-        @simplefilter
-        def lowercase(self, lexer, stream, options):
-            for ttype, value in stream:
-                yield ttype, value.lower()
-    """
-    ...
+def apply_filters(
+    stream: Iterable[tuple[_TokenType, str]], filters: Iterable[Filter], lexer: Lexer | None = None
+) -> Iterator[tuple[_TokenType, str]]: ...
+def simplefilter(f: _SimpleFilterFunction) -> type[FunctionFilter]: ...
 
 class Filter:
-    """
-    Default filter. Subclass this class or use the `simplefilter`
-    decorator to create own filters.
-    """
-    options: Incomplete
-    def __init__(self, **options) -> None: ...
-    def filter(self, lexer: Lexer, stream: Iterable[tuple[_TokenType, str]]) -> Iterator[tuple[_TokenType, str]]: ...
+    options: dict[str, Any]  # Arbitrary values used by subclasses.
+    def __init__(self, **options: Any) -> None: ...  # ditto.
+    def filter(self, lexer: Lexer | None, stream: Iterable[tuple[_TokenType, str]]) -> Iterator[tuple[_TokenType, str]]: ...
 
 class FunctionFilter(Filter):
-    """
-    Abstract class used by `simplefilter` to create simple
-    function filters on the fly. The `simplefilter` decorator
-    automatically creates subclasses of this class for
-    functions passed to it.
-    """
-    function: Incomplete
-    def __init__(self, **options) -> None: ...
-    def filter(self, lexer: Lexer, stream: Iterable[tuple[_TokenType, str]]) -> Iterator[tuple[_TokenType, str]]: ...
+    # Set to None in class, but overridden with a non-None value in the subclasses created by @simplefilter.
+    function: ClassVar[_SimpleFilterFunction]
+    # 'options' gets passed as a dict to 'function'; valid types depends on the wrapped function's signature.
+    def __init__(self, **options: Any) -> None: ...
+    def filter(self, lexer: Lexer | None, stream: Iterable[tuple[_TokenType, str]]) -> Iterator[tuple[_TokenType, str]]: ...

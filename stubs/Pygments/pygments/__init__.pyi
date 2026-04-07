@@ -26,8 +26,8 @@ The `Pygments master branch`_ is installable with ``easy_install Pygments==dev``
 """
 
 from _typeshed import SupportsWrite
-from collections.abc import Iterator
-from typing import TypeVar, overload
+from collections.abc import Iterable, Iterator
+from typing import Final, TypeVar, overload
 
 from pygments.formatter import Formatter
 from pygments.lexer import Lexer
@@ -35,7 +35,8 @@ from pygments.token import _TokenType
 
 _T = TypeVar("_T", str, bytes)
 
-__version__: str
+__version__: Final[str]
+__docformat__: Final = "restructuredtext"
 __all__ = ["lex", "format", "highlight"]
 
 def lex(code: str, lexer: Lexer) -> Iterator[tuple[_TokenType, str]]:
@@ -46,38 +47,10 @@ def lex(code: str, lexer: Lexer) -> Iterator[tuple[_TokenType, str]]:
     """
     ...
 @overload
-def format(tokens, formatter: Formatter[_T], outfile: SupportsWrite[_T]) -> None:
-    """
-    Format ``tokens`` (an iterable of tokens) with the formatter ``formatter``
-    (a `Formatter` instance).
-
-    If ``outfile`` is given and a valid file object (an object with a
-    ``write`` method), the result will be written to it, otherwise it
-    is returned as a string.
-    """
-    ...
+def format(tokens: Iterable[tuple[_TokenType, str]], formatter: Formatter[_T], outfile: SupportsWrite[_T]) -> None: ...
 @overload
-def format(tokens, formatter: Formatter[_T], outfile: None = None) -> _T:
-    """
-    Format ``tokens`` (an iterable of tokens) with the formatter ``formatter``
-    (a `Formatter` instance).
-
-    If ``outfile`` is given and a valid file object (an object with a
-    ``write`` method), the result will be written to it, otherwise it
-    is returned as a string.
-    """
-    ...
+def format(tokens: Iterable[tuple[_TokenType, str]], formatter: Formatter[_T], outfile: None = None) -> _T: ...
 @overload
-def highlight(code, lexer, formatter: Formatter[_T], outfile: SupportsWrite[_T]) -> None:
-    """
-    This is the most high-level highlighting function. It combines `lex` and
-    `format` in one function.
-    """
-    ...
+def highlight(code: str, lexer: Lexer, formatter: Formatter[_T], outfile: SupportsWrite[_T]) -> None: ...
 @overload
-def highlight(code, lexer, formatter: Formatter[_T], outfile: None = None) -> _T:
-    """
-    This is the most high-level highlighting function. It combines `lex` and
-    `format` in one function.
-    """
-    ...
+def highlight(code: str, lexer: Lexer, formatter: Formatter[_T], outfile: None = None) -> _T: ...

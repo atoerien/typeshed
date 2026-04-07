@@ -9,7 +9,7 @@ Basic token types and the standard tokens.
 """
 
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, Final
 from typing_extensions import Self
 
 class _TokenType(tuple[str, ...]):
@@ -37,30 +37,8 @@ Operator: _TokenType
 Comment: _TokenType
 Generic: _TokenType
 
-def is_token_subtype(ttype, other):
-    """
-    Return True if ``ttype`` is a subtype of ``other``.
-
-    exists for backwards compatibility. use ``ttype in other`` now.
-    """
-    ...
-def string_to_tokentype(s):
-    """
-    Convert a string into a token type::
-
-        >>> string_to_token('String.Double')
-        Token.Literal.String.Double
-        >>> string_to_token('Token.Literal.Number')
-        Token.Literal.Number
-        >>> string_to_token('')
-        Token
-
-    Tokens that are already tokens are returned unchanged:
-
-        >>> string_to_token(String)
-        Token.Literal.String
-    """
-    ...
+def is_token_subtype(ttype: _TokenType, other: _TokenType) -> bool: ...
+def string_to_tokentype(s: str | _TokenType) -> _TokenType: ...
 
 # dict, but shouldn't be mutated
-STANDARD_TYPES: Mapping[_TokenType, str]
+STANDARD_TYPES: Final[Mapping[_TokenType, str]]
