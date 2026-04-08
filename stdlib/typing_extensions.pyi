@@ -240,57 +240,8 @@ def runtime_checkable(cls: _TC) -> _TC:
 runtime = runtime_checkable
 Final: _SpecialForm
 
-def final(f: _F) -> _F:
-    """
-    Decorator to indicate final methods and final classes.
-
-    Use this decorator to indicate to type checkers that the decorated
-    method cannot be overridden, and decorated class cannot be subclassed.
-
-    For example::
-
-        class Base:
-            @final
-            def done(self) -> None:
-                ...
-        class Sub(Base):
-            def done(self) -> None:  # Error reported by type checker
-                ...
-
-        @final
-        class Leaf:
-            ...
-        class Other(Leaf):  # Error reported by type checker
-            ...
-
-    There is no runtime checking of these properties. The decorator
-    attempts to set the ``__final__`` attribute to ``True`` on the decorated
-    object to allow runtime introspection.
-    """
-    ...
-def disjoint_base(cls: _TC) -> _TC:
-    """
-    This decorator marks a class as a disjoint base.
-
-    Child classes of a disjoint base cannot inherit from other disjoint bases that are
-    not parent classes of the disjoint base.
-
-    For example:
-
-        @disjoint_base
-        class Disjoint1: pass
-
-        @disjoint_base
-        class Disjoint2: pass
-
-        class Disjoint3(Disjoint1, Disjoint2): pass  # Type checker error
-
-    Type checkers can use knowledge of disjoint bases to detect unreachable code
-    and determine when two types can overlap.
-
-    See PEP 800.
-    """
-    ...
+def final(f: _T) -> _T: ...
+def disjoint_base(cls: _TC) -> _TC: ...
 
 Literal: _SpecialForm
 
