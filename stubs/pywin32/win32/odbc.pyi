@@ -1,5 +1,3 @@
-"""A Python wrapper around the ODBC API."""
-
 from _typeshed import Incomplete
 from typing import ClassVar, Literal
 

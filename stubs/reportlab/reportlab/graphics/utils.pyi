@@ -17,12 +17,6 @@ def text2Path(
 
 # NOTE: This only exists on some render backends
 def processGlyph(G, truncate=1, pathReverse=0): ...
-def text2PathDescription(text, x=0, y=0, fontName=..., fontSize=1000, anchor="start", truncate=1, pathReverse=0, gs=None):
-    """
-    freetype text2PathDescription(text, x=0, y=0, fontName='fontname',
-    fontSize=1000, font = 'fontName',
-    anchor='start', truncate=1, pathReverse=0, gs=None)
-    """
-    ...
+def text2PathDescription(text, x=0, y=0, fontName=..., fontSize=1000, anchor="start", truncate=1, pathReverse=0, gs=None): ...
 
 __all__ = ("setFont", "pathNumTrunc", "processGlyph", "text2PathDescription", "text2Path", "RenderPMError")

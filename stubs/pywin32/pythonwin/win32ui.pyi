@@ -1,5 +1,3 @@
-"""A module, encapsulating the Microsoft Foundation Classes."""
-
 from _typeshed import Incomplete, OptExcInfo, Unused
 from collections.abc import Callable
 

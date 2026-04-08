@@ -1,5 +1,3 @@
-"""A module, encapsulating the Background Intelligent Transfer Service (bits)"""
-
 import _win32typing
 
 BG_AUTH_SCHEME_BASIC: int

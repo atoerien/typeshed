@@ -1,54 +1,3 @@
-"""
-TrueType font support
-
-This defines classes to represent TrueType fonts.  They know how to calculate
-their own width and how to write themselves into PDF files.  They support
-subsetting and embedding and can represent all 16-bit Unicode characters.
-
-Note on dynamic fonts
----------------------
-
-Usually a Font in ReportLab corresponds to a fixed set of PDF objects (Font,
-FontDescriptor, Encoding).  But with dynamic font subsetting a single TTFont
-will result in a number of Font/FontDescriptor/Encoding object sets, and the
-contents of those will depend on the actual characters used for printing.
-
-To support dynamic font subsetting a concept of "dynamic font" was introduced.
-Dynamic Fonts have a _dynamicFont attribute set to 1.
-
-Dynamic fonts have the following additional functions::
-
-    def splitString(self, text, doc):
-        '''Splits text into a number of chunks, each of which belongs to a
-        single subset.  Returns a list of tuples (subset, string).  Use
-        subset numbers with getSubsetInternalName.  Doc is used to identify
-        a document so that different documents may have different dynamically
-        constructed subsets.'''
-
-    def getSubsetInternalName(self, subset, doc):
-        '''Returns the name of a PDF Font object corresponding to a given
-        subset of this dynamic font.  Use this function instead of
-        PDFDocument.getInternalFontName.'''
-
-You must never call PDFDocument.getInternalFontName for dynamic fonts.
-
-If you have a traditional static font, mapping to PDF text output operators
-is simple::
-
-   '%s 14 Tf (%s) Tj' % (getInternalFontName(psfontname), text)
-
-If you have a dynamic font, use this instead::
-
-   for subset, chunk in font.splitString(text, doc):
-       '%s 14 Tf (%s) Tj' % (font.getSubsetInternalName(subset, doc), chunk)
-
-(Tf is a font setting operator and Tj is a text ouput operator.  You should
-also escape invalid characters in Tj argument, see TextObject._formatText.
-Oh, and that 14 up there is font size.)
-
-Canvas and TextObject have special support for dynamic fonts.
-"""
-
 from _typeshed import Incomplete, ReadableBuffer, StrOrBytesPath
 from collections.abc import Sequence
 from typing import Final, Literal, NamedTuple
@@ -59,23 +8,11 @@ from reportlab.pdfbase import pdfdoc, pdfmetrics
 
 __version__: Final[str]
 
-class TTFError(pdfdoc.PDFError):
-    """TrueType font exception"""
-    ...
+class TTFError(pdfdoc.PDFError): ...
 
 def SUBSETN(n, table: ReadableBuffer | None = ...) -> bytes: ...
-def makeToUnicodeCMap(fontname: str, subset) -> str:
-    """
-    Creates a ToUnicode CMap for a given subset.  See Adobe
-    _PDF_Reference (ISBN 0-201-75839-3) for more information.
-    """
-    ...
-def splice(stream, offset, value):
-    """
-    Splices the given value into stream at the given offset and
-    returns the resulting stream (the original is unchanged)
-    """
-    ...
+def makeToUnicodeCMap(fontname: str, subset) -> str: ...
+def splice(stream, offset, value): ...
 
 GF_ARG_1_AND_2_ARE_WORDS: Final = 1
 GF_ARGS_ARE_XY_VALUES: Final = 2
@@ -91,27 +28,15 @@ GF_OVERLAP_COMPOUND: Final = 1024
 GF_SCALED_COMPONENT_OFFSET: Final = 2048
 GF_UNSCALED_COMPONENT_OFFSET: Final = 4096
 
-def TTFOpenFile(fn: StrOrBytesPath) -> tuple[StrOrBytesPath,]:
-    """
-    Opens a TTF file possibly after searching TTFSearchPath
-    returns (filename,file)
-    """
-    ...
+def TTFOpenFile(fn: StrOrBytesPath) -> tuple[StrOrBytesPath,]: ...
 
 class TTFontParser:
-    """Basic TTF file parser"""
     ttfVersions: tuple[int, ...]
     ttcVersions: tuple[int, ...]
     fileKind: str
     validate: bool | Literal[0, 1]
     subfontNameX: bytes
-    def __init__(self, file, validate: bool | Literal[0, 1] = 0, subfontIndex: int = 0) -> None:
-        """
-        Loads and parses a TrueType font file.  file can be a filename or a
-        file object.  If validate is set to a false values, skips checksum
-        validation.  This can save time, especially if the font is large.
-        """
-        ...
+    def __init__(self, file, validate: bool | Literal[0, 1] = 0, subfontIndex: int = 0) -> None: ...
     ttcVersion: int
     numSubfonts: int
     subfontOffsets: list[int]
@@ -125,92 +50,45 @@ class TTFontParser:
     tables: list[Incomplete]
     def readTableDirectory(self) -> None: ...
     version: int
-    def readHeader(self) -> bool:
-        """read the sfnt header at the current position"""
-        ...
+    def readHeader(self) -> bool: ...
     filename: Incomplete
     def readFile(self, f) -> None: ...
     def checksumTables(self) -> None: ...
     def checksumFile(self) -> None: ...
-    def get_table_pos(self, tag) -> tuple[Incomplete, Incomplete]:
-        """Returns the offset and size of a given TTF table."""
-        ...
-    def seek(self, pos: int) -> None:
-        """Moves read pointer to a given offset in file."""
-        ...
-    def skip(self, delta: int) -> None:
-        """Skip the given number of bytes."""
-        ...
-    def seek_table(self, tag, offset_in_table: int = 0) -> int:
-        """
-        Moves read pointer to the given offset within a given table and
-        returns absolute offset of that position in the file.
-        """
-        ...
-    def read_tag(self) -> str:
-        """Read a 4-character tag"""
-        ...
-    def get_chunk(self, pos: int, length: int) -> bytes:
-        """Return a chunk of raw data at given position"""
-        ...
+    def get_table_pos(self, tag) -> tuple[Incomplete, Incomplete]: ...
+    def seek(self, pos: int) -> None: ...
+    def skip(self, delta: int) -> None: ...
+    def seek_table(self, tag, offset_in_table: int = 0) -> int: ...
+    def read_tag(self) -> str: ...
+    def get_chunk(self, pos: int, length: int) -> bytes: ...
     def read_uint8(self) -> int: ...
-    def read_ushort(self) -> int:
-        """Reads an unsigned short"""
-        ...
-    def read_ulong(self) -> int:
-        """Reads an unsigned long"""
-        ...
-    def read_short(self) -> int:
-        """Reads a signed short"""
-        ...
-    def get_ushort(self, pos: int) -> int:
-        """Return an unsigned short at given position"""
-        ...
-    def get_ulong(self, pos: int) -> int:
-        """Return an unsigned long at given position"""
-        ...
-    def get_table(self, tag):
-        """Return the given TTF table"""
-        ...
+    def read_ushort(self) -> int: ...
+    def read_ulong(self) -> int: ...
+    def read_short(self) -> int: ...
+    def get_ushort(self, pos: int) -> int: ...
+    def get_ulong(self, pos: int) -> int: ...
+    def get_table(self, tag): ...
 
 class TTFontMaker:
-    """Basic TTF file generator"""
     tables: dict[Incomplete, Incomplete]
-    def __init__(self) -> None:
-        """Initializes the generator."""
-        ...
-    def add(self, tag, data) -> None:
-        """Adds a table to the TTF file."""
-        ...
-    def makeStream(self) -> bytes:
-        """Finishes the generation and returns the TTF file as a string"""
-        ...
+    def __init__(self) -> None: ...
+    def add(self, tag, data) -> None: ...
+    def makeStream(self) -> bytes: ...
 
 class CMapFmt2SubHeader(NamedTuple):
-    """CMapFmt2SubHeader(firstCode, entryCount, idDelta, idRangeOffset)"""
     firstCode: int
     entryCount: int
     idDelta: int
     idRangeOffset: int
 
 class TTFNameBytes(bytes):
-    """class used to return named strings"""
     ustr: Incomplete
     def __new__(cls, b, enc: str = "utf8") -> Self: ...
 
 class TTFontFile(TTFontParser):
-    """TTF file parser and generator"""
     def __init__(
         self, file, charInfo: bool | Literal[0, 1] = 1, validate: bool | Literal[0, 1] = 0, subfontIndex: int | str | bytes = 0
-    ) -> None:
-        """
-        Loads and parses a TrueType font file.
-
-        file can be a filename or a file object.  If validate is set to a false
-        values, skips checksum validation.  This can save time, especially if
-        the font is large.  See TTFontFile.extractInfo for more information.
-        """
-        ...
+    ) -> None: ...
     name: Incomplete
     familyName: Incomplete
     styleName: Incomplete
@@ -233,37 +111,8 @@ class TTFontFile(TTFontParser):
     charWidths: Incomplete
     hmetrics: Incomplete
     glyphPos: Incomplete
-    def extractInfo(self, charInfo: bool | Literal[0, 1] = 1) -> None:
-        """
-        Extract typographic information from the loaded font file.
-
-        The following attributes will be set::
-
-            name         PostScript font name
-            flags        Font flags
-            ascent       Typographic ascender in 1/1000ths of a point
-            descent      Typographic descender in 1/1000ths of a point
-            capHeight    Cap height in 1/1000ths of a point (0 if not available)
-            bbox         Glyph bounding box [l,t,r,b] in 1/1000ths of a point
-            _bbox        Glyph bounding box [l,t,r,b] in unitsPerEm
-            unitsPerEm   Glyph units per em
-            italicAngle  Italic angle in degrees ccw
-            stemV        stem weight in 1/1000ths of a point (approximate)
-
-        If charInfo is true, the following will also be set::
-
-            defaultWidth   default glyph width in 1/1000ths of a point
-            charWidths     dictionary of character widths for every supported UCS character
-                           code
-
-        This will only work if the font has a Unicode cmap (platform 3,
-        encoding 1, format 4 or platform 0 any encoding format 4).  Setting
-        charInfo to false avoids this requirement
-        """
-        ...
-    def makeSubset(self, subset: Sequence[Incomplete]) -> bytes:
-        """Create a subset of a TrueType font"""
-        ...
+    def extractInfo(self, charInfo: bool | Literal[0, 1] = 1) -> None: ...
+    def makeSubset(self, subset: Sequence[Incomplete]) -> bytes: ...
 
 FF_FIXED: Final = 1
 FF_SERIF: Final = 2
@@ -276,53 +125,15 @@ FF_SMALLCAP: Final = 131072
 FF_FORCEBOLD: Final = 262144
 
 class TTFontFace(TTFontFile, pdfmetrics.TypeFace):
-    """
-    TrueType typeface.
-
-    Conceptually similar to a single byte typeface, but the glyphs are
-    identified by UCS character codes instead of glyph names.
-    """
-    def __init__(self, filename, validate: bool | Literal[0, 1] = 0, subfontIndex: int | str | bytes = 0) -> None:
-        """Loads a TrueType font from filename."""
-        ...
-    def getCharWidth(self, code):
-        """Returns the width of character U+<code>"""
-        ...
-    def addSubsetObjects(self, doc, fontname, subset):
-        """
-        Generate a TrueType font subset and add it to the PDF document.
-        Returns a PDFReference to the new FontDescriptor object.
-        """
-        ...
+    def __init__(self, filename, validate: bool | Literal[0, 1] = 0, subfontIndex: int | str | bytes = 0) -> None: ...
+    def getCharWidth(self, code): ...
+    def addSubsetObjects(self, doc, fontname, subset): ...
 
 class TTEncoding:
-    """
-    Encoding for TrueType fonts (always UTF-8).
-
-    TTEncoding does not directly participate in PDF object creation, since
-    we need a number of different 8-bit encodings for every generated font
-    subset.  TTFont itself cares about that.
-    """
     name: str
     def __init__(self) -> None: ...
 
 class TTFont:
-    """
-    Represents a TrueType font.
-
-    Its encoding is always UTF-8.
-
-    Note: you cannot use the same TTFont object for different documents
-    at the same time.
-
-    Example of usage:
-
-        font = ttfonts.TTFont('PostScriptFontName', '/path/to/font.ttf')
-        pdfmetrics.registerFont(font)
-
-        canvas.setFont('PostScriptFontName', size)
-        canvas.drawString(x, y, "Some text encoded in UTF-8")
-    """
     class State:
         namePrefix: str
         nextCode: int
@@ -343,48 +154,14 @@ class TTFont:
         subfontIndex: int | str | bytes = 0,
         asciiReadable: bool | Literal[0, 1] | None = None,
         shapable: bool = True,
-    ) -> None:
-        """
-        Loads a TrueType font from filename.
-
-        If validate is set to a false values, skips checksum validation.  This
-        can save time, especially if the font is large.
-        """
-        ...
+    ) -> None: ...
     def stringWidth(self, text, size, encoding: str = "utf8") -> float: ...
-    def splitString(self, text, doc, encoding: str = "utf-8") -> list[tuple[int, bytes]]:
-        """
-        Splits text into a number of chunks, each of which belongs to a
-        single subset.  Returns a list of tuples (subset, string).  Use subset
-        numbers with getSubsetInternalName.  Doc is needed for distinguishing
-        subsets when building different documents at the same time.
-        """
-        ...
-    def getSubsetInternalName(self, subset, doc) -> str:
-        """
-        Returns the name of a PDF Font object corresponding to a given
-        subset of this dynamic font.  Use this function instead of
-        PDFDocument.getInternalFontName.
-        """
-        ...
-    def addObjects(self, doc) -> None:
-        """
-        Makes  one or more PDF objects to be added to the document.  The
-        caller supplies the internal name to be used (typically F1, F2, ... in
-        sequence).
-
-        This method creates a number of Font and FontDescriptor objects.  Every
-        FontDescriptor is a (no more than) 256 character subset of the original
-        TrueType font.
-        """
-        ...
+    def splitString(self, text, doc, encoding: str = "utf-8") -> list[tuple[int, bytes]]: ...
+    def getSubsetInternalName(self, subset, doc) -> str: ...
+    def addObjects(self, doc) -> None: ...
     @property
-    def hbFace(self) -> Incomplete | None:
-        """return uharbuzz.Face"""
-        ...
-    def hbFont(self, fontSize: float = 10):
-        """return uharfbuzz Font"""
-        ...
+    def hbFace(self) -> Incomplete | None: ...
+    def hbFont(self, fontSize: float = 10): ...
     @property
     def shapable(self) -> bool: ...
     @shapable.setter
@@ -392,9 +169,7 @@ class TTFont:
     def pdfScale(self, v): ...
     def unregister(self) -> None: ...
 
-class ShapedFragWord(list[Incomplete]):
-    """list class to distinguish frag words that have been shaped"""
-    ...
+class ShapedFragWord(list[Incomplete]): ...
 
 class ShapeData(NamedTuple):
     cluster: int
@@ -410,8 +185,6 @@ class ShapedStr(str):
     def __radd__(self, other) -> ShapedStr: ...
 
 def shapeStr(s: str, fontName: str, fontSize: float, force: bool = False): ...
-def freshTTFont(ttfn, ttfpath, **kwds) -> TTFont:
-    """return a new instance corrsponding to a ttf path"""
-    ...
+def freshTTFont(ttfn, ttfpath, **kwds) -> TTFont: ...
 def makeShapedFragWord(w, K: list[Incomplete] = [], V: list[Incomplete] = []) -> type[ShapedFragWord]: ...
 def shapeFragWord(w, features=None, force: bool = False): ...

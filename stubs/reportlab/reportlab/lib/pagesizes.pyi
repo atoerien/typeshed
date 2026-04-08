@@ -1,9 +1,3 @@
-"""
-This module defines a few common page sizes in points (1/72 inch).
-To be expanded to include things like label sizes, envelope windows
-etc.
-"""
-
 from typing import Final
 
 __version__: Final[str]
@@ -53,9 +47,5 @@ letter: Final[tuple[float, float]]
 legal: Final[tuple[float, float]]
 elevenSeventeen: Final[tuple[float, float]]
 
-def landscape(pagesize: tuple[float, float]) -> tuple[float, float]:
-    """Use this to get page orientation right"""
-    ...
-def portrait(pagesize: tuple[float, float]) -> tuple[float, float]:
-    """Use this to get page orientation right"""
-    ...
+def landscape(pagesize: tuple[float, float]) -> tuple[float, float]: ...
+def portrait(pagesize: tuple[float, float]) -> tuple[float, float]: ...

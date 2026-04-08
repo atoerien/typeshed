@@ -1,9 +1,3 @@
-"""
-Constants used by COM Controls
-
-Hand created version of olectl.h constants.
-"""
-
 from typing import Final
 
 FACILITY_CONTROL: Final = 0xA
