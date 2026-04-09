@@ -27,9 +27,9 @@ aws-xray-sdk==2.15.*
 jsonschema[format]~=4.26.0
 lunardate==0.2.*
 translationstring==1.4.*
-jwcrypto==1.5.*
+jwcrypto==1.5.7
 punq==0.7.*
-greenlet==3.3.*
+greenlet==3.4.*
 click-default-group==1.2.*
 python-jose==3.5.*
 fpdf2==2.8.4
@@ -195,7 +195,7 @@ gdb==16.3.*
 rfc3339-validator==0.1.*
 simplejson==3.20.*
 pyxdg==0.28.*
-gevent==25.9.*
+gevent==26.4.*
 PyYAML==6.0.*
 Authlib==1.6.9
 python-http-client==3.3.7
