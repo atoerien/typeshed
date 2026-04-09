@@ -149,7 +149,7 @@ class greenlet:
         ...
 
 class UnswitchableGreenlet(greenlet):  # undocumented
-    """Undocumented internal class"""
+    """Undocumented internal class for testing error conditions"""
     force_switch_error: bool
     force_slp_switch_error: bool
 

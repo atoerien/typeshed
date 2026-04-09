@@ -55,15 +55,109 @@ class JWE:
             | None
         ) = None,
         flattened: bool = True,
-    ) -> None: ...
+    ) -> None:
+        """
+        Creates a JWE token.
+
+        :param plaintext(bytes): An arbitrary plaintext to be encrypted.
+        :param protected: A JSON string with the protected header.
+        :param unprotected: A JSON string with the shared unprotected header.
+        :param aad(bytes): Arbitrary additional authenticated data
+        :param algs: An optional list of allowed algorithms
+        :param recipient: An optional, default recipient key
+        :param header: An optional header for the default recipient
+        :param header_registry: Optional additions to the header registry
+        :param flattened: Use flattened serialization syntax (default True)
+        """
+        ...
     @property
-    def allowed_algs(self) -> list[LiteralString]: ...
+    def allowed_algs(self) -> list[LiteralString]:
+        """
+        Allowed algorithms.
+
+        The list of allowed algorithms.
+        Can be changed by setting a list of algorithm names.
+        """
+        ...
     @allowed_algs.setter
-    def allowed_algs(self, algs: list[LiteralString]) -> None: ...
-    def add_recipient(self, key: JWK, header: dict[str, Any] | str | None = None) -> None: ...
-    def serialize(self, compact: bool = False) -> str: ...
-    def decrypt(self, key: JWK | JWKSet, max_plaintext: int = 0) -> None: ...
-    def deserialize(self, raw_jwe: str | bytes, key: JWK | JWKSet | None = None) -> None: ...
+    def allowed_algs(self, algs: list[LiteralString]) -> None:
+        """
+        Allowed algorithms.
+
+        The list of allowed algorithms.
+        Can be changed by setting a list of algorithm names.
+        """
+        ...
+    def add_recipient(self, key: JWK, header: dict[str, Any] | str | None = None) -> None:
+        """
+        Encrypt the plaintext with the given key.
+
+        :param key: A JWK key or password of appropriate type for the 'alg'
+         provided in the JOSE Headers.
+        :param header: A JSON string representing the per-recipient header.
+
+        :raises ValueError: if the plaintext is missing or not of type bytes.
+        :raises ValueError: if the compression type is unknown.
+        :raises InvalidJWAAlgorithm: if the 'alg' provided in the JOSE
+         headers is missing or unknown, or otherwise not implemented.
+        """
+        ...
+    def serialize(self, compact: bool = False) -> str:
+        """
+        Serializes the object into a JWE token.
+
+        :param compact(boolean): if True generates the compact
+         representation, otherwise generates a standard JSON format.
+
+        :raises InvalidJWEOperation: if the object cannot be serialized
+         with the compact representation and `compact` is True.
+        :raises InvalidJWEOperation: if no recipients have been added
+         to the object.
+
+        :return: A json formatted string or a compact representation string
+        :rtype: `str`
+        """
+        ...
+    def decrypt(self, key: JWK | JWKSet, max_plaintext: int = 0) -> None:
+        """
+        Decrypt a JWE token.
+
+        :param key: The (:class:`jwcrypto.jwk.JWK`) decryption key.
+        :param key: A (:class:`jwcrypto.jwk.JWK`) decryption key,
+         or a (:class:`jwcrypto.jwk.JWKSet`) that contains a key indexed
+         by the 'kid' header or (deprecated) a string containing a password.
+        :param max_plaintext: Maximum plaintext size allowed, 0 means
+         the library default applies. Application writers are recommended
+         to set a limit here if they know what is the max plaintext size
+         for their application.
+
+        :raises InvalidJWEOperation: if the key is not a JWK object.
+        :raises InvalidJWEData: if the ciphertext can't be decrypted or
+         the object is otherwise malformed.
+        :raises JWKeyNotFound: if key is a JWKSet and the key is not found.
+        """
+        ...
+    def deserialize(self, raw_jwe: str | bytes, key: JWK | JWKSet | None = None) -> None:
+        """
+        Deserialize a JWE token.
+
+        NOTE: Destroys any current status and tries to import the raw
+        JWE provided.
+
+        If a key is provided a decryption step will be attempted after
+        the object is successfully deserialized.
+
+        :param raw_jwe: a 'raw' JWE token (JSON Encoded or Compact
+         notation) string.
+        :param key: A (:class:`jwcrypto.jwk.JWK`) decryption key,
+         or a (:class:`jwcrypto.jwk.JWKSet`) that contains a key indexed
+         by the 'kid' header or (deprecated) a string containing a password
+         (optional).
+
+        :raises InvalidJWEData: if the raw object is an invalid JWE token.
+        :raises InvalidJWEOperation: if the decryption fails.
+        """
+        ...
     @property
     def payload(self) -> bytes: ...
     @property

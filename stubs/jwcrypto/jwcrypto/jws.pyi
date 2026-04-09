@@ -90,6 +90,11 @@ class JWSCore:
         ...
 
 class JWS:
+    """
+    JSON Web Signature object
+
+    This object represent a JWS token.
+    """
     objects: dict[str, Incomplete]
     verifylog: list[str] | None
     header_registry: Incomplete

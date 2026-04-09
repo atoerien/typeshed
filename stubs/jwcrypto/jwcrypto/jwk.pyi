@@ -134,8 +134,48 @@ class InvalidJWKValue(JWException):
     ...
 
 class JWK(dict[str, Any]):
+    """
+    JSON Web Key object
+
+    This object represents a Key.
+    It must be instantiated by using the standard defined key/value pairs
+    as arguments of the initialization function.
+    """
     unsafe_skip_rsa_key_validation: bool
-    def __init__(self, **kwargs) -> None: ...
+    def __init__(self, **kwargs) -> None:
+        r"""
+        Creates a new JWK object.
+
+        The function arguments must be valid parameters as defined in the
+        'IANA JSON Web Key Set Parameters registry' and specified in
+        the :data:`JWKParamsRegistry` variable. The 'kty' parameter must
+        always be provided and its value must be a valid one as defined
+        by the 'IANA JSON Web Key Types registry' and specified in the
+        :data:`JWKTypesRegistry` variable. The valid key parameters per
+        key type are defined in the :data:`JWKValuesRegistry` variable.
+
+        To generate a new random key call the class method generate() with
+        the appropriate 'kty' parameter, and other parameters as needed (key
+        size, public exponents, curve types, etc..)
+
+        Valid options per type, when generating new keys:
+         * oct: size(int)
+         * RSA: public_exponent(int), size(int)
+         * EC: crv(str) (one of P-256, P-384, P-521, secp256k1)
+         * OKP: crv(str) (one of Ed25519, Ed448, X25519, X448)
+
+        Deprecated:
+        Alternatively if the 'generate' parameter is provided with a
+        valid key type as value then a new key will be generated according
+        to the defaults or provided key strength options (type specific).
+
+        :param \**kwargs: parameters (optional).
+
+        :raises InvalidJWKType: if the key type is invalid
+        :raises InvalidJWKValue: if incorrect or inconsistent parameters
+            are provided.
+        """
+        ...
     # `kty` and the other keyword arguments are passed as `params` to the called generator
     # function. The possible arguments depend on the value of `kty`.
     # TODO: Add overloads for the individual `kty` values.
