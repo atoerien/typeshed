@@ -11,7 +11,8 @@ from _typeshed import (
 from asyncio import AbstractEventLoop
 from collections.abc import Callable
 from concurrent.futures import Executor
-from typing import Literal, overload
+from functools import _SingleDispatchCallable
+from typing import Any, Literal, overload
 from typing_extensions import TypeAlias
 
 from ..base import AiofilesContextManager
@@ -99,6 +100,8 @@ def open(
     loop: AbstractEventLoop | None = None,
     executor: Executor | None = None,
 ) -> AiofilesContextManager[_UnknownAsyncBinaryIO]: ...
+
+wrap: _SingleDispatchCallable[Any]
 
 stdin: AsyncTextIndirectIOWrapper
 stdout: AsyncTextIndirectIOWrapper
