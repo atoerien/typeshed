@@ -55,14 +55,14 @@ def parse_metadata(path: Path) -> StubMetadata:
 
     extras: list[str] = tools_stubtest.get("extras", [])
 
-    platforms = tools_stubtest.get("ci_platforms", ["linux"])
+    platforms = tools_stubtest.get("ci-platforms", ["linux"])
 
-    extra_requirements = tools_stubtest.get("stubtest_requirements", [])
-    apt_dependencies = tools_stubtest.get("apt_dependencies", [])
-    brew_dependencies = tools_stubtest.get("brew_dependencies", [])
-    choco_dependencies = tools_stubtest.get("choco_dependencies", [])
+    extra_requirements = tools_stubtest.get("stubtest-requirements", [])
+    apt_dependencies = tools_stubtest.get("apt-dependencies", [])
+    brew_dependencies = tools_stubtest.get("brew-dependencies", [])
+    choco_dependencies = tools_stubtest.get("choco-dependencies", [])
 
-    requires_python = data.get("requires_python")
+    requires_python = data.get("requires-python")
     if requires_python:
         requires_python = SpecifierSet(requires_python)
 
