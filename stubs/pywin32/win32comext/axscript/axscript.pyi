@@ -1,3 +1,5 @@
+"""A module, encapsulating the ActiveX Scripting interfaces."""
+
 import _win32typing
 
 CATID_ActiveScript: _win32typing.PyIID

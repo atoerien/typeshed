@@ -1,3 +1,17 @@
+"""
+Classes for ParagraphStyle and similar things.
+
+A style is a collection of attributes, but with some extra features
+to allow 'inheritance' from a parent, and to ensure nobody makes
+changes after construction.
+
+ParagraphStyle shows all the attributes available for formatting
+paragraphs.
+
+getSampleStyleSheet()  returns a stylesheet you can use for initial
+development, with a few basic heading and text styles.
+"""
+
 from _typeshed import Incomplete
 from typing import Any, ClassVar, Literal, TypeVar, overload
 from typing_extensions import Self, TypeAlias
@@ -15,13 +29,28 @@ class PropertySet:
     defaults: ClassVar[dict[str, Any]]
     name: str
     parent: PropertySet | None
-    def __init__(self, name: str, parent: PropertySet | None = None, **kw: Any) -> None: ...
-    def refresh(self) -> None: ...
+    def __init__(self, name: str, parent: PropertySet | None = None, **kw: Any) -> None:
+        """
+        When initialized, it copies the class defaults;
+        then takes a copy of the attributes of the parent
+        if any.  All the work is done in init - styles
+        should cost little to use at runtime.
+        """
+        ...
+    def refresh(self) -> None:
+        """
+        re-fetches attributes from the parent on demand;
+        use if you have been hacking the styles.  This is
+        used by __init__
+        """
+        ...
     def listAttrs(self, indent: str = "") -> None: ...
     def clone(self, name: str, parent: PropertySet | None = None, **kwds: Any) -> Self: ...
     # PropertySet can have arbitrary attributes
     def __getattr__(self, name: str) -> Any: ...
-    def __setattr__(self, name: str, value: Any) -> None: ...
+    def __setattr__(self, name: str, value: Any) -> None:
+        """Implement setattr(self, name, value)."""
+        ...
 
 class ParagraphStyle(PropertySet):
     # NOTE: We list the attributes this has for sure due to defaults
@@ -112,7 +141,14 @@ class ParagraphStyle(PropertySet):
         embeddedHyphenation=...,
         uriWasteReduce: float = ...,
         **kw: Any,
-    ) -> None: ...
+    ) -> None:
+        """
+        When initialized, it copies the class defaults;
+        then takes a copy of the attributes of the parent
+        if any.  All the work is done in init - styles
+        should cost little to use at runtime.
+        """
+        ...
 
 def str2alignment(
     v: _AlignmentStr,
@@ -123,11 +159,23 @@ class LineStyle(PropertySet):
     # NOTE: We list the attributes this has for sure due to defaults
     width: float
     color: Color
-    def prepareCanvas(self, canvas) -> None: ...
+    def prepareCanvas(self, canvas) -> None:
+        """
+        You can ask a LineStyle to set up the canvas for drawing
+        the lines.
+        """
+        ...
     # NOTE: We redefine __init__ for the same reason
     def __init__(
         self, name: str, parent: PropertySet | None = None, *, width: float = ..., color: Color = ..., **kw: Any
-    ) -> None: ...
+    ) -> None:
+        """
+        When initialized, it copies the class defaults;
+        then takes a copy of the attributes of the parent
+        if any.  All the work is done in init - styles
+        should cost little to use at runtime.
+        """
+        ...
 
 class ListStyle(PropertySet):
     # NOTE: We list the attributes this has for sure due to defaults
@@ -162,9 +210,36 @@ class ListStyle(PropertySet):
         bulletFormat: Incomplete | None = ...,
         start: Incomplete | None = ...,
         **kw: Any,
-    ) -> None: ...
+    ) -> None:
+        """
+        When initialized, it copies the class defaults;
+        then takes a copy of the attributes of the parent
+        if any.  All the work is done in init - styles
+        should cost little to use at runtime.
+        """
+        ...
 
 class StyleSheet1:
+    """
+    This may or may not be used.  The idea is to:
+
+    1. slightly simplify construction of stylesheets;
+
+    2. enforce rules to validate styles when added
+       (e.g. we may choose to disallow having both
+       'heading1' and 'Heading1' - actual rules are
+       open to discussion);
+   
+    3. allow aliases and alternate style lookup
+       mechanisms
+   
+    4. Have a place to hang style-manipulation
+       methods (save, load, maybe support a GUI
+       editor)
+
+    Access is via getitem, so they can be
+    compatible with plain old dictionaries.
+    """
     byName: dict[str, PropertySet]
     byAlias: dict[str, PropertySet]
     def __init__(self) -> None: ...
@@ -178,6 +253,8 @@ class StyleSheet1:
     def add(self, style: PropertySet, alias: str | None = None) -> None: ...
     def list(self) -> None: ...
 
-def getSampleStyleSheet() -> StyleSheet1: ...
+def getSampleStyleSheet() -> StyleSheet1:
+    """Returns a stylesheet object"""
+    ...
 
 __all__ = ("PropertySet", "ParagraphStyle", "str2alignment", "LineStyle", "ListStyle", "StyleSheet1", "getSampleStyleSheet")

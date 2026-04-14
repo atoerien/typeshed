@@ -1,3 +1,5 @@
+"""libuv loop implementation"""
+
 import sys
 from _typeshed import FileDescriptor
 from typing import NamedTuple
@@ -18,6 +20,7 @@ class loop(AbstractLoop):
     def __init__(self, flags: int | None = None, default: bool | None = None) -> None: ...
 
     class _HandleState(NamedTuple):
+        """HandleState(handle, type, watcher, ref, active, closing)"""
         handle: int
         type: str
         watcher: watcher.watcher
@@ -25,7 +28,9 @@ class loop(AbstractLoop):
         active: bool
         closing: bool
 
-    def debug(self) -> list[_HandleState]: ...
+    def debug(self) -> list[_HandleState]:
+        """Return all the handles that are open and their ref status."""
+        ...
     def install_sigchld(self) -> None: ...
     def reset_sigchld(self) -> None: ...
     # this returns a class private to gevent.libuv.watcher.io, which satisifies the protocol

@@ -1,3 +1,5 @@
+"""Container for constants. Hardly used!"""
+
 from typing import Final
 
 __version__: Final[str]

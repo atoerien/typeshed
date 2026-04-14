@@ -1,3 +1,5 @@
+"""Supports the Scheduled Tasks COM interfaces"""
+
 import _win32typing
 
 CLSID_CTask: _win32typing.PyIID

@@ -1,3 +1,5 @@
+"""A module that interfaces with the Windows Service Control Manager."""
+
 from _typeshed import Incomplete
 
 def CoInitializeEx() -> None: ...

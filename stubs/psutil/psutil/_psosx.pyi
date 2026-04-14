@@ -1,3 +1,5 @@
+"""macOS platform implementation."""
+
 import sys
 
 if sys.platform == "darwin":

@@ -1,3 +1,5 @@
+"""A module encapsulating the Windows Remote Access Service (RAS) API."""
+
 from _typeshed import Incomplete
 
 import _win32typing

@@ -1,3 +1,5 @@
+"""A module encapsulating the Windows printing API."""
+
 from _typeshed import Incomplete
 from typing import Literal
 

@@ -1,3 +1,5 @@
+"""A module encapsulating the DirectSound interfaces."""
+
 from _typeshed import Incomplete
 
 import _win32typing

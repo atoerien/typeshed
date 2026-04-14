@@ -1,3 +1,5 @@
+"""Interface to the Windows Console functions for dealing with character-mode applications."""
+
 from win32.lib.pywintypes import error as error
 
 def GetHandle() -> int: ...

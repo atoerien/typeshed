@@ -1,3 +1,9 @@
+"""
+Utilities for Server Side connections.
+
+A collection of helpers for server side connection points.
+"""
+
 from _typeshed import Incomplete
 from typing import Final
 

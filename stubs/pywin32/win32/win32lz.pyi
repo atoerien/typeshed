@@ -1,3 +1,5 @@
+"""A module encapsulating the Windows LZ compression routines."""
+
 from _typeshed import Incomplete
 
 from win32.lib.pywintypes import error as error

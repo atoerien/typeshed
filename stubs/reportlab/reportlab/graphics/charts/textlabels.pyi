@@ -9,6 +9,13 @@ from reportlab.lib.attrmap import *
 __version__: Final[str]
 
 class Label(Widget):
+    """
+    A text label to attach to something else, such as a chart axis.
+
+    This allows you to specify an offset, angle and many anchor
+    properties relative to the label's origin.  It allows, for example,
+    angled multiline axis labels.
+    """
     # TODO: This has more attributes.
     x: Incomplete
     y: Incomplete
@@ -17,9 +24,24 @@ class Label(Widget):
     def padding(self): ...
     @padding.setter
     def padding(self, p) -> None: ...
-    def setText(self, text) -> None: ...
-    def setOrigin(self, x, y) -> None: ...
-    def demo(self) -> Drawing: ...
+    def setText(self, text) -> None:
+        """
+        Set the text property.  May contain embedded newline characters.
+        Called by the containing chart or axis.
+        """
+        ...
+    def setOrigin(self, x, y) -> None:
+        """
+        Set the origin.  This would be the tick mark or bar top relative to
+        which it is defined.  Called by the containing chart or axis.
+        """
+        ...
+    def demo(self) -> Drawing:
+        """
+        This shows a label positioned with its top right corner
+        at the top centre of the drawing, and rotated 45 degrees.
+        """
+        ...
     def computeSize(self) -> None: ...
     def draw(self) -> Group: ...
 
@@ -43,6 +65,7 @@ class PMVLabel(Label):
     def __init__(self, **kwds) -> None: ...
 
 class BarChartLabel(PMVLabel):
+    """An extended Label allowing for nudging, lines visibility etc"""
     lineStrokeWidth: int
     lineStrokeColor: Incomplete
     fixedStart: Incomplete
@@ -50,6 +73,7 @@ class BarChartLabel(PMVLabel):
     def __init__(self, **kwds) -> None: ...
 
 class NA_Label(BarChartLabel):
+    """An extended Label allowing for nudging, lines visibility etc"""
     text: str
     def __init__(self) -> None: ...
 
@@ -60,6 +84,7 @@ class RedNegativeChanger(CustomDrawChanger):
     def __init__(self, fillColor=...) -> None: ...
 
 class XLabel(Label):
+    """like label but uses XPreFormatted/Paragraph to draw the _text"""
     ddfKlass: Incomplete
     ddf: Incomplete
     def __init__(self, *args, **kwds) -> None: ...

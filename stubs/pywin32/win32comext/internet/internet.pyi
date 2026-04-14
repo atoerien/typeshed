@@ -1,3 +1,5 @@
+"""A module, encapsulating the ActiveX Internet interfaces"""
+
 import _win32typing
 
 def CoInternetCreateSecurityManager(reserved, /) -> _win32typing.PyIInternetSecurityManager: ...

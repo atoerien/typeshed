@@ -1,3 +1,5 @@
+"""A module, encapsulating the ActiveX Control interfaces."""
+
 import _win32typing
 
 def OleCreate(

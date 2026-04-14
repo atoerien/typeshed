@@ -1,8 +1,18 @@
+"""
+Support for stack-frames.
+
+Provides Implements a nearly complete wrapper for a stack frame.
+"""
+
 from _typeshed import Incomplete
 
 from win32comext.axdebug import gateways
 
 class EnumDebugStackFrames(gateways.EnumDebugStackFrames):
+    """
+    A class that given a debugger object, can return an enumerator
+    of DebugStackFrame objects.
+    """
     def __init__(self, debugger) -> None: ...
     def Next(self, count): ...
 
@@ -12,7 +22,13 @@ class DebugStackFrame(gateways.DebugStackFrame):
     codeContainer: Incomplete
     expressionContext: Incomplete
     def __init__(self, frame, lineno, codeContainer) -> None: ...
-    def GetThread(self) -> None: ...
+    def GetThread(self) -> None:
+        """
+        Returns the thread associated with this stack frame.
+
+        Result must be a IDebugApplicationThread
+        """
+        ...
     def GetCodeContext(self): ...
     def GetDescriptionString(self, fLong): ...
     def GetLanguageString(self, fLong): ...  # type: ignore[override]

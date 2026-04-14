@@ -1,3 +1,5 @@
+"""Wraps general API functions that are not subsumed in the more specific modules"""
+
 from _typeshed import Incomplete, ReadableBuffer
 from collections.abc import Callable, Iterable
 from typing import Literal, TypedDict, overload, type_check_only

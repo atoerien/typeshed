@@ -1,3 +1,5 @@
+"""A module wrapping Windows Shell functions and interfaces"""
+
 from _typeshed import Incomplete
 from typing_extensions import TypeAlias
 

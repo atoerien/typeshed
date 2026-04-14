@@ -1,3 +1,5 @@
+"""Module wrapping Kernal Transaction Manager functions, as used with transacted NTFS and transacted registry functions."""
+
 import _win32typing
 from win32.lib.pywintypes import error as error
 

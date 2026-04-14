@@ -1,3 +1,11 @@
+"""
+Windows API functions implemented as ctypes functions and classes as found
+in jaraco.windows (3.4.1).
+
+If you encounter issues with this module, please consider reporting the issues
+in jaraco.windows and asking the author to port the fixes back here.
+"""
+
 import builtins
 import ctypes
 import sys

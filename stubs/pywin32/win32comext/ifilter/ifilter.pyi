@@ -1,3 +1,5 @@
+"""Wraps the interfaces used with Indexing Service filtering"""
+
 import _win32typing
 
 def BindIFilterFromStorage(stg, /): ...

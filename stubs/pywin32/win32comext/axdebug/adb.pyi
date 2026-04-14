@@ -1,3 +1,5 @@
+"""The glue between the Python debugger interface and the Active Debugger interface"""
+
 import bdb
 from _typeshed import Incomplete
 
@@ -56,7 +58,12 @@ class Adb(bdb.Bdb, gateways.RemoteDebugApplicationEvents):
     def ResetAXDebugging(self) -> None: ...
     botframe: Incomplete
     stopframe: Incomplete
-    def SetupAXDebugging(self, baseFrame: Incomplete | None = ..., userFrame: Incomplete | None = ...) -> None: ...
+    def SetupAXDebugging(self, baseFrame: Incomplete | None = ..., userFrame: Incomplete | None = ...) -> None:
+        """
+        Get ready for potential debugging.  Must be called on the thread
+        that is being debugged.
+        """
+        ...
     def OnConnectDebugger(self, appDebugger): ...
     def OnDisconnectDebugger(self) -> None: ...
     def OnSetName(self, name) -> None: ...

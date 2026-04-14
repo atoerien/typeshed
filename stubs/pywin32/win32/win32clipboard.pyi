@@ -1,3 +1,5 @@
+"""A module which supports the Windows Clipboard API."""
+
 from typing import Any, Final
 
 from win32.lib.pywintypes import error as error

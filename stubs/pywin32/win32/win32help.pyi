@@ -1,3 +1,5 @@
+"""A module, encapsulating the Win32 help API's."""
+
 import _win32typing
 
 def WinHelp(hwnd: int, hlpFile: str, cmd, data: str | None = ..., /) -> None: ...

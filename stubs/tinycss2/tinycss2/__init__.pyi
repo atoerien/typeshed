@@ -1,3 +1,12 @@
+"""
+tinycss2
+========
+
+tinycss2 is a low-level CSS parser and generator: it can parse strings, return
+Python objects representing tokens and blocks, and generate CSS strings
+corresponding to these objects.
+"""
+
 from typing import Final
 
 from .bytes import parse_stylesheet_bytes as parse_stylesheet_bytes

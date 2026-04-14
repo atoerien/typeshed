@@ -1,3 +1,5 @@
+"""A module, encapsulating the Microsoft Foundation Classes OLE functionality."""
+
 import _win32typing
 
 def AfxOleInit(enabled, /) -> None: ...
