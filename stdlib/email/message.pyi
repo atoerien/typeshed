@@ -743,13 +743,50 @@ class MIMEPart(Message[_HeaderRegistryT_co, _HeaderRegistryParamT_contra]):
     def __init__(self, policy: Policy[Any] | None = None) -> None: ...
     def get_body(
         self, preferencelist: Sequence[str] = ("related", "html", "plain")
-    ) -> MIMEPart[_HeaderRegistryT_co, _HeaderRegistryParamT_contra] | None: ...
-    def attach(self, payload: Self) -> None: ...  # type: ignore[override]
+    ) -> MIMEPart[_HeaderRegistryT_co, _HeaderRegistryParamT_contra] | None:
+        """
+        Return best candidate mime part for display as 'body' of message.
+
+        Do a depth first search, starting with self, looking for the first part
+        matching each of the items in preferencelist, and return the part
+        corresponding to the first item that has a match, or None if no items
+        have a match.  If 'related' is not included in preferencelist, consider
+        the root part of any multipart/related encountered as a candidate
+        match.  Ignore parts with 'Content-Disposition: attachment'.
+        """
+        ...
+    def attach(self, payload: Self) -> None:
+        """
+        Add the given payload to the current payload.
+
+        The current payload will always be a list of objects after this method
+        is called.  If you want to set the payload to a scalar object, use
+        set_payload() instead.
+        """
+        ...
     # The attachments are created via type(self) in the attach method. It's theoretically
     # possible to sneak other attachment types into a MIMEPart instance, but could cause
     # cause unforseen consequences.
-    def iter_attachments(self) -> Iterator[Self]: ...
-    def iter_parts(self) -> Iterator[MIMEPart[_HeaderRegistryT_co, _HeaderRegistryParamT_contra]]: ...
+    def iter_attachments(self) -> Iterator[Self]:
+        """
+        Return an iterator over the non-main parts of a multipart.
+
+        Skip the first of each occurrence of text/plain, text/html,
+        multipart/related, or multipart/alternative in the multipart (unless
+        they have a 'Content-Disposition: attachment' header) and include all
+        remaining subparts in the returned iterator.  When applied to a
+        multipart/related, return all parts except the root part.  Return an
+        empty iterator when applied to a multipart/alternative or a
+        non-multipart.
+        """
+        ...
+    def iter_parts(self) -> Iterator[MIMEPart[_HeaderRegistryT_co, _HeaderRegistryParamT_contra]]:
+        """
+        Return an iterator over all immediate subparts of a multipart.
+
+        Return an empty iterator for a non-multipart.
+        """
+        ...
     def get_content(self, *args: Any, content_manager: ContentManager | None = None, **kw: Any) -> Any: ...
     def set_content(self, *args: Any, content_manager: ContentManager | None = None, **kw: Any) -> None: ...
     def make_related(self, boundary: str | None = None) -> None: ...
