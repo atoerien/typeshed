@@ -174,7 +174,7 @@ opentracing==2.4.*
 PyScreeze==1.0.1
 netifaces==0.11.*
 et_xmlfile==2.0.*
-Authlib==1.6.10
+Authlib==1.6.11
 shapely==2.1.*
 wurlitzer==3.1.*
 Markdown~=3.10.2
