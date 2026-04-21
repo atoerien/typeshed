@@ -33,7 +33,12 @@ async def logout(scope: _ChannelScope) -> None:
 
 # Inherits AbstractBaseUser to improve autocomplete and show this is a lazy proxy for a user.
 # At runtime, it's just a LazyObject that wraps the actual user instance.
-class UserLazyObject(AbstractBaseUser, LazyObject[Incomplete]): ...
+class UserLazyObject(AbstractBaseUser, LazyObject[Incomplete]):
+    """
+    Throw a more useful error message when scope['user'] is accessed before
+    it's resolved
+    """
+    ...
 
 class AuthMiddleware(BaseMiddleware):
     """
