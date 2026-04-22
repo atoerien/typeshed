@@ -3,7 +3,7 @@ docify==1.2.0
 typing-extensions==4.15.0
 
 defusedxml==0.7.*
-psycopg2==2.9.11
+psycopg2==2.9.12
 TgCrypto==1.2.*
 six==1.17.*
 WTForms~=3.2.1
