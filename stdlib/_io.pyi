@@ -921,4 +921,18 @@ if sys.version_info >= (3, 10):
         """
         ...
     @overload
-    def text_encoding(encoding: _S, stacklevel: int = 2, /) -> _S: ...
+    def text_encoding(encoding: _S, stacklevel: int = 2, /) -> _S:
+        """
+        A helper function to choose the text encoding.
+
+        When encoding is not None, this function returns it.
+        Otherwise, this function returns the default text encoding
+        (i.e. "locale" or "utf-8" depends on UTF-8 mode).
+
+        This function emits an EncodingWarning if encoding is None and
+        sys.flags.warn_default_encoding is true.
+
+        This can be used in APIs with an encoding=None parameter.
+        However, please consider using encoding="utf-8" for new APIs.
+        """
+        ...
