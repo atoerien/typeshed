@@ -196,7 +196,7 @@ paramiko==4.0.*
 watchpoints==0.2.5
 Pygments==2.20.*
 flake8-simplify==0.30.*
-peewee==4.0.0
+peewee==4.0.1
 click-shell==2.1
 grpcio==1.*
 convertdate==2.4.1
