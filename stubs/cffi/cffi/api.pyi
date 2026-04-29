@@ -35,7 +35,7 @@ class FFI:
 
     BVoidP: CType
     BCharA: CType
-    NULL: CType
+    NULL: CData
     errno: int
 
     def __init__(self, backend: types.ModuleType | None = None) -> None:
