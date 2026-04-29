@@ -143,7 +143,7 @@ cachetools==6.2.*
 dirhash==0.5.*
 networkx==3.6.1
 ttkthemes==3.3.*
-greenlet==3.4.*
+greenlet==3.5.*
 pyxdg==0.28.*
 pyasn1==0.6.*
 click-spinner==0.1.*
