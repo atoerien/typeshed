@@ -365,14 +365,45 @@ class Restart(Exception):
 
 def run(  # matches `builtins.exec`
     statement: str | ReadableBuffer | CodeType, globals: dict[str, Any] | None = None, locals: Mapping[str, object] | None = None
-) -> None: ...
+) -> None:
+    """
+    Execute the *statement* (given as a string or a code object)
+    under debugger control.
+
+    The debugger prompt appears before any code is executed; you can set
+    breakpoints and type continue, or you can step through the statement
+    using step or next.
+
+    The optional *globals* and *locals* arguments specify the
+    environment in which the code is executed; by default the
+    dictionary of the module __main__ is used (see the explanation of
+    the built-in exec() or eval() functions.).
+    """
+    ...
 def runctx(  # matches `builtins.exec`
     statement: str | ReadableBuffer | CodeType, globals: dict[str, Any], locals: Mapping[str, object]
 ) -> None: ...
 def runeval(  # matches `builtins.eval`
     expression: str | ReadableBuffer | CodeType, globals: dict[str, Any] | None = None, locals: Mapping[str, object] | None = None
-) -> Any: ...
-def runcall(func: Callable[_P, _T], *args: _P.args, **kwds: _P.kwargs) -> _T | None: ...
+) -> Any:
+    """
+    Evaluate the *expression* (given as a string or a code object)
+    under debugger control.
+
+    When runeval() returns, it returns the value of the expression.
+    Otherwise this function is similar to run().
+    """
+    ...
+def runcall(func: Callable[_P, _T], *args: _P.args, **kwds: _P.kwargs) -> _T | None:
+    """
+    Call the function (a function or method object, not a string)
+    with the given arguments.
+
+    When runcall() returns, it returns whatever the function call
+    returned. The debugger prompt appears as soon as the function is
+    entered.
+    """
+    ...
 
 if sys.version_info >= (3, 14):
     def set_default_backend(backend: _Backend) -> None:

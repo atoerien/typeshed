@@ -1,3 +1,5 @@
+"""Extensible memoizing collections and decorators."""
+
 import random
 from collections.abc import Callable, Iterator, MutableMapping, Sequence
 from contextlib import AbstractContextManager
@@ -15,6 +17,7 @@ _KT2 = TypeVar("_KT2")
 _VT2 = TypeVar("_VT2")
 
 class Cache(MutableMapping[_KT, _VT]):
+    """Mutable mapping to serve as a simple cache or cache base class."""
     def __init__(self, maxsize: float, getsizeof: Callable[[_VT], float] | None = None) -> None: ...
     def __getitem__(self, key: _KT) -> _VT: ...
     def __setitem__(self, key: _KT, value: _VT) -> None: ...
@@ -51,6 +54,7 @@ class LRUCache(Cache[_KT, _VT]):
     ...
 
 class RRCache(Cache[_KT, _VT]):
+    """Random Replacement (RR) cache implementation."""
     def __init__(
         self,
         maxsize: float,
@@ -58,9 +62,12 @@ class RRCache(Cache[_KT, _VT]):
         getsizeof: Callable[[_VT], float] | None = None,
     ) -> None: ...
     @property
-    def choice(self) -> Callable[[Sequence[_KT]], _KT]: ...
+    def choice(self) -> Callable[[Sequence[_KT]], _KT]:
+        """The `choice` function used by the cache."""
+        ...
 
 class _TimedCache(Cache[_KT, _VT], Generic[_KT, _VT, _TT]):
+    """Base class for time aware cache implementations."""
     def __init__(self, maxsize: float, timer: Callable[[], _TT], getsizeof: Callable[[_VT], float] | None = None) -> None: ...
 
     class _Timer(AbstractContextManager[_T]):
@@ -71,9 +78,12 @@ class _TimedCache(Cache[_KT, _VT], Generic[_KT, _VT, _TT]):
         def __getattr__(self, name: str) -> Any: ...
 
     @property
-    def timer(self) -> _Timer[_TT]: ...
+    def timer(self) -> _Timer[_TT]:
+        """The timer function used by the cache."""
+        ...
 
 class TTLCache(_TimedCache[_KT, _VT, _TT]):
+    """LRU Cache implementation with per-item time-to-live (TTL) value."""
     @overload
     def __init__(
         self: TTLCache[_KT2, _VT2, float], maxsize: float, ttl: float, *, getsizeof: Callable[[_VT2], float] | None = None
@@ -87,10 +97,18 @@ class TTLCache(_TimedCache[_KT, _VT, _TT]):
         getsizeof: Callable[[_VT], float] | None = None,
     ) -> None: ...
     @property
-    def ttl(self) -> Any: ...
-    def expire(self, time: _TT | None = None) -> list[tuple[_KT, _VT]]: ...
+    def ttl(self) -> Any:
+        """The time-to-live value of the cache's items."""
+        ...
+    def expire(self, time: _TT | None = None) -> list[tuple[_KT, _VT]]:
+        """
+        Remove expired items from the cache and return an iterable of the
+        expired `(key, value)` pairs.
+        """
+        ...
 
 class TLRUCache(_TimedCache[_KT, _VT, _TT]):
+    """Time aware Least Recently Used (TLRU) cache implementation."""
     @overload
     def __init__(
         self: TLRUCache[_KT2, _VT2, float],
@@ -108,8 +126,15 @@ class TLRUCache(_TimedCache[_KT, _VT, _TT]):
         getsizeof: Callable[[_VT], float] | None = None,
     ) -> None: ...
     @property
-    def ttu(self) -> Callable[[_KT, _VT, _TT], _TT]: ...
-    def expire(self, time: _TT | None = None) -> list[tuple[_KT, _VT]]: ...
+    def ttu(self) -> Callable[[_KT, _VT, _TT], _TT]:
+        """The local time-to-use function used by the cache."""
+        ...
+    def expire(self, time: _TT | None = None) -> list[tuple[_KT, _VT]]:
+        """
+        Remove expired items from the cache and return an iterable of the
+        expired `(key, value)` pairs.
+        """
+        ...
 
 class _CacheInfo(NamedTuple):
     """CacheInfo(hits, misses, maxsize, currsize)"""
@@ -161,7 +186,12 @@ def cached(
     lock: AbstractContextManager[Any] | None = None,
     condition: _AbstractCondition | None = None,
     info: Literal[False] = ...,
-) -> Callable[[Callable[..., _R]], _cached_wrapper[_R]]: ...
+) -> Callable[[Callable[..., _R]], _cached_wrapper[_R]]:
+    """
+    Decorator to wrap a function with a memoizing callable that saves
+    results in a cache.
+    """
+    ...
 @type_check_only
 class _cachedmethod_wrapper(Generic[_R]):
     __wrapped__: Callable[..., _R]
@@ -185,7 +215,12 @@ def cachedmethod(
     lock: Callable[[Any], AbstractContextManager[Any]] | None = None,
     condition: Callable[[Any], _AbstractCondition] | None = None,
     info: Literal[True] = ...,
-) -> Callable[[Callable[..., _R]], _cachedmethod_wrapper_info[_R]]: ...
+) -> Callable[[Callable[..., _R]], _cachedmethod_wrapper_info[_R]]:
+    """
+    Decorator to wrap a method with a memoizing callable that saves
+    results in a cache.
+    """
+    ...
 @overload
 def cachedmethod(
     cache: Callable[[Any], MutableMapping[_KT, Any]],
@@ -193,4 +228,9 @@ def cachedmethod(
     lock: Callable[[Any], AbstractContextManager[Any]] | None = None,
     condition: Callable[[Any], _AbstractCondition] | None = None,
     info: Literal[False] = ...,
-) -> Callable[[Callable[..., _R]], _cachedmethod_wrapper[_R]]: ...
+) -> Callable[[Callable[..., _R]], _cachedmethod_wrapper[_R]]:
+    """
+    Decorator to wrap a method with a memoizing callable that saves
+    results in a cache.
+    """
+    ...
