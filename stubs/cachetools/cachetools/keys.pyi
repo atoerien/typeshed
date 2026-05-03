@@ -2,8 +2,9 @@
 
 from _typeshed import Unused
 from collections.abc import Hashable
+from typing import Final
 
-__all__ = ("hashkey", "methodkey", "typedkey", "typedmethodkey")
+__all__: Final = ("hashkey", "methodkey", "typedkey", "typedmethodkey")
 
 def hashkey(*args: Hashable, **kwargs: Hashable) -> tuple[Hashable, ...]:
     """Return a cache key for the specified hashable arguments."""

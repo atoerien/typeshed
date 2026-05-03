@@ -6,7 +6,7 @@ from abc import ABCMeta
 from builtins import type as Type  # alias to avoid name clash
 from collections.abc import Callable
 from copyreg import _DispatchTableType
-from multiprocessing import connection
+from multiprocessing import connection, popen_forkserver, popen_spawn_posix, resource_sharer
 from socket import socket
 from typing import Any, Final
 
@@ -58,21 +58,11 @@ else:
     if sys.version_info < (3, 14):
         ACKNOWLEDGE: Final[bool]
 
-    def recvfds(sock: socket, size: int) -> list[int]:
-        """Receive an array of fds over an AF_UNIX socket."""
-        ...
-    def send_handle(conn: HasFileno, handle: int, destination_pid: Unused) -> None:
-        """Send a handle over a local connection."""
-        ...
-    def recv_handle(conn: HasFileno) -> int:
-        """Receive a handle over a local connection."""
-        ...
-    def sendfds(sock: socket, fds: list[int]) -> None:
-        """Send an array of fds over an AF_UNIX socket."""
-        ...
-    def DupFd(fd: int) -> Any:
-        """Return a wrapper for an fd."""
-        ...
+    def recvfds(sock: socket, size: int) -> list[int]: ...
+    def send_handle(conn: HasFileno, handle: int, destination_pid: Unused) -> None: ...
+    def recv_handle(conn: HasFileno) -> int: ...
+    def sendfds(sock: socket, fds: list[int]) -> None: ...
+    def DupFd(fd: int) -> popen_forkserver._DupFd | popen_spawn_posix._DupFd | resource_sharer.DupFd: ...
 
 # These aliases are to work around pyright complaints.
 # Pyright doesn't like it when a class object is defined as an alias

@@ -39,7 +39,7 @@ Reference Manual pages.
 """
 
 import sys
-from _typeshed import OptExcInfo, SupportsWrite, Unused
+from _typeshed import OptExcInfo, StrPath, SupportsWrite, Unused
 from abc import abstractmethod
 from builtins import list as _list  # "list" conflicts with method name
 from collections.abc import Callable, Container, Mapping, MutableMapping
@@ -95,14 +95,10 @@ def classify_class_attrs(object: object) -> list[tuple[str, str, type, str]]:
 
 if sys.version_info >= (3, 13):
     @deprecated("Deprecated since Python 3.13.")
-    def ispackage(path: str) -> bool:
-        """Guess whether a path refers to a package directory."""
-        ...
+    def ispackage(path: StrPath) -> bool: ...  # undocumented
 
 else:
-    def ispackage(path: str) -> bool:
-        """Guess whether a path refers to a package directory."""
-        ...
+    def ispackage(path: StrPath) -> bool: ...  # undocumented
 
 def source_synopsis(file: IO[AnyStr]) -> AnyStr | None:
     """Return the one-line summary of a file object, if present"""

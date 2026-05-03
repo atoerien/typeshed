@@ -268,73 +268,11 @@ class HTTPAdapter(BaseAdapter):
         """
         ...
     @deprecated("Use get_connection_with_tls_context() instead.")
-    def get_connection(self, url: _Uri, proxies: Mapping[str, str] | None = None) -> ConnectionPool:
-        """
-        DEPRECATED: Users should move to `get_connection_with_tls_context`
-        for all subclasses of HTTPAdapter using Requests>=2.32.2.
-
-        Returns a urllib3 connection for the given URL. This should not be
-        called from user code, and is only exposed for use when subclassing the
-        :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.
-
-        :param url: The URL to connect to.
-        :param proxies: (optional) A Requests-style dictionary of proxies used on this request.
-        :rtype: urllib3.ConnectionPool
-        """
-        ...
-    def close(self):
-        """
-        Disposes of any internal state.
-
-        Currently, this closes the PoolManager and any active ProxyManager,
-        which closes any pooled connections.
-        """
-        ...
-    def request_url(self, request, proxies):
-        """
-        Obtain the url to use when making the final request.
-
-        If the message is being sent through a HTTP proxy, the full URL has to
-        be used. Otherwise, we should only use the path portion of the URL.
-
-        This should not be called from user code, and is only exposed for use
-        when subclassing the
-        :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.
-
-        :param request: The :class:`PreparedRequest <PreparedRequest>` being sent.
-        :param proxies: A dictionary of schemes or schemes and hosts to proxy URLs.
-        :rtype: str
-        """
-        ...
-    def add_headers(self, request, **kwargs):
-        """
-        Add any headers needed by the connection. As of v2.0 this does
-        nothing by default, but is left for overriding by users that subclass
-        the :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.
-
-        This should not be called from user code, and is only exposed for use
-        when subclassing the
-        :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.
-
-        :param request: The :class:`PreparedRequest <PreparedRequest>` to add headers to.
-        :param kwargs: The keyword arguments from the call to send().
-        """
-        ...
-    def proxy_headers(self, proxy):
-        """
-        Returns a dictionary of the headers to add to any request sent
-        through a proxy. This works with urllib3 magic to ensure that they are
-        correctly sent to the proxy, rather than in a tunnelled request if
-        CONNECT is being used.
-
-        This should not be called from user code, and is only exposed for use
-        when subclassing the
-        :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.
-
-        :param proxy: The url of the proxy being used for this request.
-        :rtype: dict
-        """
-        ...
+    def get_connection(self, url: _Uri, proxies: Mapping[str, str] | None = None) -> ConnectionPool: ...
+    def close(self) -> None: ...
+    def request_url(self, request, proxies): ...
+    def add_headers(self, request, **kwargs): ...
+    def proxy_headers(self, proxy): ...
     def send(
         self,
         request: PreparedRequest,

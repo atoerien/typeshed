@@ -1,7 +1,7 @@
 """Debugger basics"""
 
 import sys
-from _typeshed import ExcInfo, TraceFunction, Unused
+from _typeshed import ExcInfo, ReadableBuffer, TraceFunction, Unused
 from collections.abc import Callable, Iterable, Iterator, Mapping
 from contextlib import contextmanager
 from types import CodeType, FrameType, TracebackType
@@ -232,114 +232,34 @@ class Bdb:
         ...
     def set_break(
         self, filename: str, lineno: int, temporary: bool = False, cond: str | None = None, funcname: str | None = None
-    ) -> str | None:
-        """
-        Set a new breakpoint for filename:lineno.
-
-        If lineno doesn't exist for the filename, return an error message.
-        The filename should be in canonical form.
-        """
-        ...
-    def clear_break(self, filename: str, lineno: int) -> str | None:
-        """
-        Delete breakpoints for filename:lineno.
-
-        If no breakpoints were set, return an error message.
-        """
-        ...
-    def clear_bpbynumber(self, arg: SupportsInt) -> str | None:
-        """
-        Delete a breakpoint by its index in Breakpoint.bpbynumber.
-
-        If arg is invalid, return an error message.
-        """
-        ...
-    def clear_all_file_breaks(self, filename: str) -> str | None:
-        """
-        Delete all breakpoints in filename.
-
-        If none were set, return an error message.
-        """
-        ...
-    def clear_all_breaks(self) -> str | None:
-        """
-        Delete all existing breakpoints.
-
-        If none were set, return an error message.
-        """
-        ...
-    def get_bpbynumber(self, arg: SupportsInt) -> Breakpoint:
-        """
-        Return a breakpoint by its index in Breakpoint.bybpnumber.
-
-        For invalid arg values or if the breakpoint doesn't exist,
-        raise a ValueError.
-        """
-        ...
-    def get_break(self, filename: str, lineno: int) -> bool:
-        """Return True if there is a breakpoint for filename:lineno."""
-        ...
-    def get_breaks(self, filename: str, lineno: int) -> list[Breakpoint]:
-        """
-        Return all breakpoints for filename:lineno.
-
-        If no breakpoints are set, return an empty list.
-        """
-        ...
-    def get_file_breaks(self, filename: str) -> list[int]:
-        """
-        Return all lines with breakpoints for filename.
-
-        If no breakpoints are set, return an empty list.
-        """
-        ...
-    def get_all_breaks(self) -> dict[str, list[int]]:
-        """Return all breakpoints that are set."""
-        ...
-    def get_stack(self, f: FrameType | None, t: TracebackType | None) -> tuple[list[tuple[FrameType, int]], int]:
-        """
-        Return a list of (frame, lineno) in a stack trace and a size.
-
-        List starts with original calling frame, if there is one.
-        Size may be number of frames above or below f.
-        """
-        ...
-    def format_stack_entry(self, frame_lineno: tuple[FrameType, int], lprefix: str = ": ") -> str:
-        """
-        Return a string with information about a stack entry.
-
-        The stack entry frame_lineno is a (frame, lineno) tuple.  The
-        return string contains the canonical filename, the function name
-        or '<lambda>', the input arguments, the return value, and the
-        line of code (if it exists).
-        """
-        ...
-    def run(
-        self, cmd: str | CodeType, globals: dict[str, Any] | None = None, locals: Mapping[str, Any] | None = None
-    ) -> None:
-        """
-        Debug a statement executed via the exec() function.
-
-        globals defaults to __main__.dict; locals defaults to globals.
-        """
-        ...
-    def runeval(self, expr: str, globals: dict[str, Any] | None = None, locals: Mapping[str, Any] | None = None) -> None:
-        """
-        Debug an expression executed via the eval() function.
-
-        globals defaults to __main__.dict; locals defaults to globals.
-        """
-        ...
-    def runctx(self, cmd: str | CodeType, globals: dict[str, Any] | None, locals: Mapping[str, Any] | None) -> None:
-        """For backwards-compatibility.  Defers to run()."""
-        ...
-    def runcall(self, func: Callable[_P, _T], /, *args: _P.args, **kwds: _P.kwargs) -> _T | None:
-        """
-        Debug a single function call.
-
-        Return the result of the function call.
-        """
-        ...
+    ) -> str | None: ...
+    def clear_break(self, filename: str, lineno: int) -> str | None: ...
+    def clear_bpbynumber(self, arg: SupportsInt) -> str | None: ...
+    def clear_all_file_breaks(self, filename: str) -> str | None: ...
+    def clear_all_breaks(self) -> str | None: ...
+    def get_bpbynumber(self, arg: SupportsInt) -> Breakpoint: ...
+    def get_break(self, filename: str, lineno: int) -> bool: ...
+    def get_breaks(self, filename: str, lineno: int) -> list[Breakpoint]: ...
+    def get_file_breaks(self, filename: str) -> list[int]: ...
+    def get_all_breaks(self) -> dict[str, list[int]]: ...
+    def get_stack(self, f: FrameType | None, t: TracebackType | None) -> tuple[list[tuple[FrameType, int]], int]: ...
+    def format_stack_entry(self, frame_lineno: tuple[FrameType, int], lprefix: str = ": ") -> str: ...
+    def run(  # matches `builtins.exec`
+        self,
+        cmd: str | ReadableBuffer | CodeType,
+        globals: dict[str, Any] | None = None,
+        locals: Mapping[str, object] | None = None,
+    ) -> None: ...
+    def runctx(  # matches `builtins.exec`
+        self, cmd: str | ReadableBuffer | CodeType, globals: dict[str, Any] | None, locals: Mapping[str, object] | None
+    ) -> None: ...
+    def runeval(  # matches `builtins.eval`
+        self,
+        expr: str | ReadableBuffer | CodeType,
+        globals: dict[str, Any] | None = None,
+        locals: Mapping[str, object] | None = None,
+    ) -> Any: ...
+    def runcall(self, func: Callable[_P, _T], /, *args: _P.args, **kwds: _P.kwargs) -> _T | None: ...
     if sys.version_info >= (3, 14):
         def start_trace(self) -> None: ...
         def stop_trace(self) -> None: ...
