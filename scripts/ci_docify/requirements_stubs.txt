@@ -139,7 +139,7 @@ click-default-group==1.2.*
 pyserial[cp2110]==3.5.*
 mock==5.2.*
 tinycss2==1.5.1
-cachetools==6.2.*
+cachetools==7.0.*
 dirhash==0.5.*
 networkx==3.6.1
 ttkthemes==3.3.*
@@ -157,7 +157,7 @@ xmldiff==2.7.*
 grpcio-status==1.*
 JACK-Client==0.5.*
 pycurl==7.45.7
-pyinstaller==6.19.*
+pyinstaller==6.20.*
 retry==0.9.*
 croniter==6.2.2
 pexpect==4.9.*
