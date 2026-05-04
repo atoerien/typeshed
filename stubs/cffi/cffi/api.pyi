@@ -72,15 +72,69 @@ class FFI:
             """
             ...
 
-    def dlclose(self, lib: _cffi_backend.Lib) -> None: ...
-    def typeof(self, cdecl: str | CData | types.BuiltinFunctionType | types.FunctionType) -> CType: ...
-    def sizeof(self, cdecl: str | CData) -> int: ...
-    def alignof(self, cdecl: str | CData) -> int: ...
-    def offsetof(self, cdecl: str | CData, *fields_or_indexes: str | int) -> int: ...
+    def dlclose(self, lib: _cffi_backend.Lib) -> None:
+        """
+        Close a library obtained with ffi.dlopen().  After this call,
+        access to functions or variables from the library will fail
+        (possibly with a segmentation fault).
+        """
+        ...
+    def typeof(self, cdecl: str | CData | types.BuiltinFunctionType | types.FunctionType) -> CType:
+        """
+        Parse the C type given as a string and return the
+        corresponding <ctype> object.
+        It can also be used on 'cdata' instance to get its C type.
+        """
+        ...
+    def sizeof(self, cdecl: str | CData) -> int:
+        """
+        Return the size in bytes of the argument.  It can be a
+        string naming a C type, or a 'cdata' instance.
+        """
+        ...
+    def alignof(self, cdecl: str | CData) -> int:
+        """
+        Return the natural alignment size in bytes of the C type
+        given as a string.
+        """
+        ...
+    def offsetof(self, cdecl: str | CData, *fields_or_indexes: str | int) -> int:
+        """
+        Return the offset of the named field inside the given
+        structure or array, which must be given as a C type name.
+        You can give several field names in case of nested structures.
+        You can also give numeric values which correspond to array
+        items, in case of an array type.
+        """
+        ...
 
     # The acceptable types of `init` depend on the value of `cdecl` only known at runtime, and
     # therefore unknown to the type checker.
-    def new(self, cdecl: str | CType, init: Any = None) -> CData: ...
+    def new(self, cdecl: str | CType, init: Any = None) -> CData:
+        """
+        Allocate an instance according to the specified C type and
+        return a pointer to it.  The specified C type must be either a
+        pointer or an array: ``new('X *')`` allocates an X and returns
+        a pointer to it, whereas ``new('X[n]')`` allocates an array of
+        n X'es and returns an array referencing it (which works
+        mostly like a pointer, like in C).  You can also use
+        ``new('X[]', n)`` to allocate an array of a non-constant
+        length n.
+
+        The memory is initialized following the rules of declaring a
+        global variable in C: by default it is zero-initialized, but
+        an explicit initializer can be given which can be used to
+        fill all or part of the memory.
+
+        When the returned <cdata> object goes out of scope, the memory
+        is freed.  In other words the returned <cdata> object has
+        ownership of the value of type 'cdecl' that it points to.  This
+        means that the raw data can be used as long as this object is
+        kept alive, but must not be used for a longer time.  Be careful
+        about that when copying the pointer to the memory somewhere
+        else, e.g. into another structure.
+        """
+        ...
     def new_allocator(
         self,
         alloc: Callable[[int], CData] | None = None,

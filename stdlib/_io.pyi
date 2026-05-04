@@ -629,6 +629,13 @@ _BufferedWriterStreamT = TypeVar("_BufferedWriterStreamT", bound=_BufferedWriter
 
 @disjoint_base
 class BufferedWriter(BufferedIOBase, _BufferedIOBase, BinaryIO, Generic[_BufferedWriterStreamT]):  # type: ignore[misc]  # incompatible definitions of writelines in the base classes
+    """
+    A buffer for a writeable sequential RawIO object.
+
+    The constructor creates a BufferedWriter for the given writeable raw
+    stream. If the buffer_size is not given, it defaults to
+    DEFAULT_BUFFER_SIZE.
+    """
     raw: _BufferedWriterStreamT
     if sys.version_info >= (3, 14):
         def __init__(self, raw: _BufferedWriterStreamT, buffer_size: int = 131072) -> None: ...
@@ -662,6 +669,17 @@ class BufferedRandom(BufferedIOBase, _BufferedIOBase, BinaryIO):  # type: ignore
 
 @disjoint_base
 class BufferedRWPair(BufferedIOBase, _BufferedIOBase, Generic[_BufferedReaderStreamT, _BufferedWriterStreamT]):
+    """
+    A buffered reader and writer object together.
+
+    A buffered reader object and buffered writer object put together to
+    form a sequential IO object that can read and write. This is typically
+    used with a socket or two-way pipe.
+
+    reader and writer are RawIOBase objects that are readable and
+    writeable respectively. If the buffer_size is omitted it defaults to
+    DEFAULT_BUFFER_SIZE.
+    """
     if sys.version_info >= (3, 14):
         def __init__(
             self, reader: _BufferedReaderStreamT, writer: _BufferedWriterStreamT, buffer_size: int = 131072, /
