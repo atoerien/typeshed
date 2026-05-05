@@ -597,23 +597,84 @@ class _IterParseIterator(Iterator[tuple[_EventType, _EventT_co]], Protocol[_Even
 
 # See the comment for _EventT_co above for possible iterator types.
 @overload
-def iterparse(source: _FileRead, events: Iterable[_EventType]) -> _IterParseIterator[Any]: ...
+def iterparse(source: _FileRead, events: Iterable[_EventType]) -> _IterParseIterator[Any]:
+    """
+    Incrementally parse XML document into ElementTree.
+
+    This class also reports what's going on to the user based on the
+    *events* it is initialized with.  The supported events are the strings
+    "start", "end", "start-ns" and "end-ns" (the "ns" events are used to get
+    detailed namespace information).  If *events* is omitted, only
+    "end" events are reported.
+
+    *source* is a filename or file object containing XML data, *events* is
+    a list of events to report back, *parser* is an optional parser instance.
+
+    Returns an iterator providing (event, elem) pairs.
+    """
+    ...
 @overload
-def iterparse(source: _FileRead, events: None = None) -> _IterParseIterator[Element[str]]: ...
+def iterparse(source: _FileRead, events: None = None) -> _IterParseIterator[Element[str]]:
+    """
+    Incrementally parse XML document into ElementTree.
+
+    This class also reports what's going on to the user based on the
+    *events* it is initialized with.  The supported events are the strings
+    "start", "end", "start-ns" and "end-ns" (the "ns" events are used to get
+    detailed namespace information).  If *events* is omitted, only
+    "end" events are reported.
+
+    *source* is a filename or file object containing XML data, *events* is
+    a list of events to report back, *parser* is an optional parser instance.
+
+    Returns an iterator providing (event, elem) pairs.
+    """
+    ...
 
 # In case a custom parser is passed, the type of the second element of the tuple
 # yielded by iterparse depends on the parser.
 @overload
 @deprecated("The `parser` parameter is deprecated since Python 3.4.")
-def iterparse(source: _FileRead, events: Iterable[_EventType], parser: XMLParser | None = None) -> _IterParseIterator[Any]: ...
+def iterparse(source: _FileRead, events: Iterable[_EventType], parser: XMLParser | None = None) -> _IterParseIterator[Any]:
+    """
+    Incrementally parse XML document into ElementTree.
+
+    This class also reports what's going on to the user based on the
+    *events* it is initialized with.  The supported events are the strings
+    "start", "end", "start-ns" and "end-ns" (the "ns" events are used to get
+    detailed namespace information).  If *events* is omitted, only
+    "end" events are reported.
+
+    *source* is a filename or file object containing XML data, *events* is
+    a list of events to report back, *parser* is an optional parser instance.
+
+    Returns an iterator providing (event, elem) pairs.
+    """
+    ...
 
 _EventQueue: TypeAlias = tuple[str] | tuple[str, tuple[str, str]] | tuple[str, None]
 
 class XMLPullParser(Generic[_EventT_co]):
     def __init__(self, events: Iterable[_EventType] | None = None, *, _parser: XMLParser[_EventT_co] | None = None) -> None: ...
-    def feed(self, data: str | ReadableBuffer) -> None: ...
-    def close(self) -> None: ...
-    def read_events(self) -> Iterator[_EventQueue | tuple[_EventType, _EventT_co]]: ...
+    def feed(self, data: str | ReadableBuffer) -> None:
+        """Feed encoded data to parser."""
+        ...
+    def close(self) -> None:
+        """
+        Finish feeding data to parser.
+
+        Unlike XMLParser, does not return the root element. Use
+        read_events() to consume elements from XMLPullParser.
+        """
+        ...
+    def read_events(self) -> Iterator[_EventQueue | tuple[_EventType, _EventT_co]]:
+        """
+        Return an iterator over currently available (event, elem) pairs.
+
+        Events are consumed from the internal event queue as they are
+        retrieved from the iterator.
+        """
+        ...
     def flush(self) -> None: ...
 
 def XML(text: str | ReadableBuffer, parser: XMLParser | None = None) -> Element:
