@@ -2,7 +2,7 @@
 
 from _typeshed import ReadableBuffer
 from collections.abc import Sequence
-from typing import Final
+from typing import Any, Final
 from xml.etree.ElementTree import (
     Element,
     ElementTree,
@@ -51,7 +51,7 @@ XMLTreeBuilder = DefusedXMLParser
 XMLParse = DefusedXMLParser
 XMLParser = DefusedXMLParser
 
-# wrapper to xml.etree.ElementTree.parse
+# Wrapper to xml.etree.ElementTree.parse
 def parse(
     source: _FileRead,
     parser: XMLParser | None = None,
@@ -60,7 +60,9 @@ def parse(
     forbid_external: bool = True,
 ) -> ElementTree: ...
 
-# wrapper to xml.etree.ElementTree.iterparse
+# Wrapper to xml.etree.ElementTree.iterparse
+#
+# See there for possible return types.
 def iterparse(
     source: _FileRead,
     events: Sequence[str] | None = None,
@@ -68,7 +70,7 @@ def iterparse(
     forbid_dtd: bool = False,
     forbid_entities: bool = True,
     forbid_external: bool = True,
-) -> _IterParseIterator: ...
+) -> _IterParseIterator[Any]: ...
 def fromstring(
     text: str | ReadableBuffer, forbid_dtd: bool = False, forbid_entities: bool = True, forbid_external: bool = True
 ) -> Element: ...
