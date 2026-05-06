@@ -99,7 +99,7 @@ flake8==7.3.*
 olefile==0.47.*
 tqdm[slack,telegram]==4.67.3
 unidiff==0.7.*
-pytz==2026.1.post1
+pytz==2026.2
 uWSGI==2.0.*
 polib==1.2.*
 PySocks==1.7.1
