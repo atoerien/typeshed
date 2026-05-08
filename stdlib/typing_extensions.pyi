@@ -355,9 +355,74 @@ else:
         """
         Return type hints for an object.
 
-def get_args(tp: AnnotationForm) -> tuple[AnnotationForm, ...]: ...
+        This is often the same as obj.__annotations__, but it handles
+        forward references encoded as string literals, adds Optional[t] if a
+        default value equal to None is set and recursively replaces all
+        'Annotated[T, ...]', 'Required[T]' or 'NotRequired[T]' with 'T'
+        (unless 'include_extras=True').
+
+        The argument may be a module, class, method, or function. The annotations
+        are returned as a dictionary. For classes, annotations include also
+        inherited members.
+
+        TypeError is raised if the argument is not of a type that can contain
+        annotations, and an empty dictionary is returned if no annotations are
+        present.
+
+        BEWARE -- the behavior of globalns and localns is counterintuitive
+        (unless you are familiar with how eval() and exec() work).  The
+        search order is locals first, then globals.
+
+        - If no dict arguments are passed, an attempt is made to use the
+          globals from obj (or the respective module's globals for classes),
+          and these are also used as the locals.  If the object does not appear
+          to have globals, an empty dictionary is used.
+
+        - If one dict argument is passed, it is used for both globals and
+          locals.
+
+        - If two dict arguments are passed, they specify globals and
+          locals, respectively.
+        """
+        ...
+
+def get_args(tp: AnnotationForm) -> tuple[AnnotationForm, ...]:
+    """
+    Get type arguments with all substitutions performed.
+
+    For unions, basic simplifications used by Union constructor are performed.
+
+    Examples::
+
+        >>> T = TypeVar('T')
+        >>> assert get_args(Dict[str, int]) == (str, int)
+        >>> assert get_args(int) == ()
+        >>> assert get_args(Union[int, Union[T, int], str][int]) == (int, str)
+        >>> assert get_args(Union[int, Tuple[T, int]][str]) == (int, Tuple[str, int])
+        >>> assert get_args(Callable[[], T][int]) == ([], int)
+    """
+    ...
 @overload
-def get_origin(tp: UnionType) -> type[UnionType]: ...
+def get_origin(tp: UnionType) -> type[UnionType]:
+    """
+    Get the unsubscripted version of a type.
+
+    This supports generic types, Callable, Tuple, Union, Literal, Final, ClassVar,
+    Annotated, and others. Return None for unsupported types.
+
+    Examples::
+
+        >>> P = ParamSpec('P')
+        >>> assert get_origin(Literal[42]) is Literal
+        >>> assert get_origin(int) is None
+        >>> assert get_origin(ClassVar[int]) is ClassVar
+        >>> assert get_origin(Generic) is Generic
+        >>> assert get_origin(Generic[T]) is Generic
+        >>> assert get_origin(Union[T, int]) is Union
+        >>> assert get_origin(List[Tuple[T, T]][int]) is list
+        >>> assert get_origin(P.args) is P
+    """
+    ...
 @overload
 def get_origin(tp: GenericAlias) -> type:
     """
@@ -961,8 +1026,12 @@ else:
         ) -> None: ...
         def has_default(self) -> bool: ...
         def __typing_prepare_subst__(self, alias: Any, args: Any) -> tuple[Any, ...]: ...
-        def __or__(self, right: Any) -> _SpecialForm: ...
-        def __ror__(self, left: Any) -> _SpecialForm: ...
+        def __or__(self, right: Any) -> _SpecialForm:
+            """Return self|value."""
+            ...
+        def __ror__(self, left: Any) -> _SpecialForm:
+            """Return value|self."""
+            ...
         if sys.version_info >= (3, 11):
             def __typing_subst__(self, arg: Any) -> Any: ...
 
@@ -990,8 +1059,12 @@ else:
             covariant: bool = False,
             default: AnnotationForm = ...,
         ) -> None: ...
-        def __or__(self, right: Any) -> _SpecialForm: ...
-        def __ror__(self, left: Any) -> _SpecialForm: ...
+        def __or__(self, right: Any) -> _SpecialForm:
+            """Return self|value."""
+            ...
+        def __ror__(self, left: Any) -> _SpecialForm:
+            """Return value|self."""
+            ...
         @property
         def args(self) -> ParamSpecArgs: ...
         @property

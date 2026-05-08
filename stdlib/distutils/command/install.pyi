@@ -1,3 +1,9 @@
+"""
+distutils.command.install
+
+Implements the Distutils 'install' command.
+"""
+
 from _typeshed import Incomplete
 from collections.abc import Callable
 from typing import Any, ClassVar, Final, Literal

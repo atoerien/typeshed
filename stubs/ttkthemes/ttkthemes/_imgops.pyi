@@ -1,3 +1,9 @@
+"""
+Author: RedFantom
+License: GNU GPLv3
+Copyright (c) 2017-2018 RedFantom
+"""
+
 from typing import Any, TypeAlias
 
 _Image: TypeAlias = Any  # actually PIL.Image, but not worth adding a dependency

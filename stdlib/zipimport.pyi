@@ -47,29 +47,34 @@ class zipimporter(_LoaderBasics):
 
     if sys.version_info < (3, 12):
         @deprecated("Deprecated since Python 3.10; removed in Python 3.12. Use `find_spec()` instead.")
-        def find_loader(self, fullname: str, path: str | None = None) -> tuple[zipimporter | None, list[str]]: ...
+        def find_loader(self, fullname: str, path: str | None = None) -> tuple[zipimporter | None, list[str]]:
+            """
+            find_loader(fullname, path=None) -> self, str or None.
+
+            Search for a module specified by 'fullname'. 'fullname' must be the
+            fully qualified (dotted) module name. It returns the zipimporter
+            instance itself if the module was found, a string containing the
+            full path name if it's possibly a portion of a namespace package,
+            or None otherwise. The optional 'path' argument is ignored -- it's
+            there for compatibility with the importer protocol.
+
+            Deprecated since Python 3.10. Use find_spec() instead.
+            """
+            ...
         @deprecated("Deprecated since Python 3.10; removed in Python 3.12. Use `find_spec()` instead.")
-        def find_module(self, fullname: str, path: str | None = None) -> zipimporter | None: ...
+        def find_module(self, fullname: str, path: str | None = None) -> zipimporter | None:
+            """
+            find_module(fullname, path=None) -> self or None.
 
-                Search for a module specified by 'fullname'. 'fullname' must be the
-                fully qualified (dotted) module name. It returns the zipimporter
-                instance itself if the module was found, a string containing the
-                full path name if it's possibly a portion of a namespace package,
-                or None otherwise. The optional 'path' argument is ignored -- it's
-                there for compatibility with the importer protocol.
-                """
-                ...
-            def find_module(self, fullname: str, path: str | None = None) -> zipimporter | None:
-                """
-                find_module(fullname, path=None) -> self or None.
+            Search for a module specified by 'fullname'. 'fullname' must be the
+            fully qualified (dotted) module name. It returns the zipimporter
+            instance itself if the module was found, or None if it wasn't.
+            The optional 'path' argument is ignored -- it's there for compatibility
+            with the importer protocol.
 
-                Search for a module specified by 'fullname'. 'fullname' must be the
-                fully qualified (dotted) module name. It returns the zipimporter
-                instance itself if the module was found, or None if it wasn't.
-                The optional 'path' argument is ignored -- it's there for compatibility
-                with the importer protocol.
-                """
-                ...
+            Deprecated since Python 3.10. Use find_spec() instead.
+            """
+            ...
 
     def get_code(self, fullname: str) -> CodeType:
         """
@@ -96,15 +101,56 @@ class zipimporter(_LoaderBasics):
         """
         ...
     if sys.version_info >= (3, 14):
-        def get_resource_reader(self, fullname: str) -> ZipReader: ...  # undocumented
+        def get_resource_reader(self, fullname: str) -> ZipReader:
+            """Return the ResourceReader for a module in a zip file."""
+            ...
     else:
-        def get_resource_reader(self, fullname: str) -> ZipReader | None: ...  # undocumented
+        def get_resource_reader(self, fullname: str) -> ZipReader | None:
+            """Return the ResourceReader for a module in a zip file."""
+            ...
 
-    def get_source(self, fullname: str) -> str | None: ...
-    def is_package(self, fullname: str) -> bool: ...
+    def get_source(self, fullname: str) -> str | None:
+        """
+        get_source(fullname) -> source string.
+
+        Return the source code for the specified module. Raise ZipImportError
+        if the module couldn't be found, return None if the archive does
+        contain the module, but has no source for it.
+        """
+        ...
+    def is_package(self, fullname: str) -> bool:
+        """
+        is_package(fullname) -> bool.
+
+        Return True if the module specified by fullname is a package.
+        Raise ZipImportError if the module couldn't be found.
+        """
+        ...
     @deprecated("Deprecated since Python 3.10; removed in Python 3.15. Use `exec_module()` instead.")
-    def load_module(self, fullname: str) -> ModuleType: ...
-    def exec_module(self, module: ModuleType) -> None: ...
-    def create_module(self, spec: ModuleSpec) -> None: ...
-    def find_spec(self, fullname: str, target: ModuleType | None = None) -> ModuleSpec | None: ...
-    def invalidate_caches(self) -> None: ...
+    def load_module(self, fullname: str) -> ModuleType:
+        """
+        load_module(fullname) -> module.
+
+        Load the module specified by 'fullname'. 'fullname' must be the
+        fully qualified (dotted) module name. It returns the imported
+        module, or raises ZipImportError if it could not be imported.
+
+        Deprecated since Python 3.10. Use exec_module() instead.
+        """
+        ...
+    def exec_module(self, module: ModuleType) -> None:
+        """Execute the module."""
+        ...
+    def create_module(self, spec: ModuleSpec) -> None:
+        """Use default semantics for module creation."""
+        ...
+    def find_spec(self, fullname: str, target: ModuleType | None = None) -> ModuleSpec | None:
+        """
+        Create a ModuleSpec for the specified module.
+
+        Returns None if the module cannot be found.
+        """
+        ...
+    def invalidate_caches(self) -> None:
+        """Invalidates the cache of file data of the archive path."""
+        ...

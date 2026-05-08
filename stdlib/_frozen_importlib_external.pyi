@@ -133,10 +133,25 @@ class WindowsRegistryFinder(importlib.abc.MetaPathFinder):
     ) -> ModuleSpec | None: ...
 
 class PathFinder(importlib.abc.MetaPathFinder):
+    """Meta path finder for sys.path and package __path__ attributes."""
     @staticmethod
-    def invalidate_caches() -> None: ...
+    def invalidate_caches() -> None:
+        """
+        Call the invalidate_caches() method on all path entry finders
+        stored in sys.path_importer_cache (where implemented).
+        """
+        ...
     @staticmethod
-    def find_distributions(context: DistributionFinder.Context = ...) -> Iterable[PathDistribution]: ...
+    def find_distributions(context: DistributionFinder.Context = ...) -> Iterable[PathDistribution]:
+        """
+        Find distributions.
+
+        Return an iterable of all Distribution instances capable of
+        loading the metadata for packages matching ``context.name``
+        (or all names if ``None`` indicated) along the paths in the list
+        of directories ``context.path``.
+        """
+        ...
     @classmethod
     def find_spec(
         cls, fullname: str, path: Sequence[str] | None = None, target: types.ModuleType | None = None
@@ -273,10 +288,25 @@ class FileLoader:
     """
     name: str
     path: str
-    def __init__(self, fullname: str, path: str) -> None: ...
-    def get_data(self, path: str) -> bytes: ...
-    def get_filename(self, fullname: str | None = None) -> str: ...
-    def load_module(self, fullname: str | None = None) -> types.ModuleType: ...
+    def __init__(self, fullname: str, path: str) -> None:
+        """
+        Cache the module name and the path to the file found by the
+        finder.
+        """
+        ...
+    def get_data(self, path: str) -> bytes:
+        """Return the data from path as raw bytes."""
+        ...
+    def get_filename(self, fullname: str | None = None) -> str:
+        """Return the path to the source file as found by the finder."""
+        ...
+    def load_module(self, fullname: str | None = None) -> types.ModuleType:
+        """
+        Load a module from a file.
+
+        This method is deprecated.  Use exec_module() instead.
+        """
+        ...
     def get_resource_reader(self, name: str | None = None) -> importlib.readers.FileReader: ...
 
 class SourceFileLoader(importlib.abc.FileLoader, FileLoader, importlib.abc.SourceLoader, SourceLoader):  # type: ignore[misc]  # incompatible method arguments in base classes
@@ -382,13 +412,25 @@ else:
             ...
         def exec_module(self, module: types.ModuleType) -> None: ...
         @deprecated("Deprecated since Python 3.10; will be removed in Python 3.15. Use `exec_module()` instead.")
-        def load_module(self, fullname: str) -> types.ModuleType: ...
+        def load_module(self, fullname: str) -> types.ModuleType:
+            """
+            Load a namespace module.
+
+            This method is deprecated.  Use exec_module() instead.
+            """
+            ...
         @staticmethod
         @deprecated(
             "Deprecated since Python 3.4; removed in Python 3.12. "
             "The module spec is now used by the import machinery to generate a module repr."
         )
-        def module_repr(module: types.ModuleType) -> str: ...
+        def module_repr(module: types.ModuleType) -> str:
+            """
+            Return repr for the module.
+
+            The method is deprecated.  The import machinery does the job itself.
+            """
+            ...
         def get_resource_reader(self, module: types.ModuleType) -> importlib.readers.NamespaceReader: ...
 
 if sys.version_info >= (3, 13):

@@ -1,3 +1,10 @@
+"""
+Event loop using a proactor and related classes.
+
+A proactor is a "notify-on-completion" multiplexer.  Currently a
+proactor is only implemented on Windows with IOCP.
+"""
+
 from collections.abc import Mapping
 from socket import socket
 from typing import Any, ClassVar, Literal
@@ -20,6 +27,7 @@ class _ProactorBasePipeTransport(transports._FlowControlMixin, transports.BaseTr
     def __del__(self) -> None: ...
 
 class _ProactorReadPipeTransport(_ProactorBasePipeTransport, transports.ReadTransport):
+    """Transport for read pipes."""
     def __init__(
         self,
         loop: events.AbstractEventLoop,

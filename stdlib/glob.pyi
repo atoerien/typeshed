@@ -103,7 +103,12 @@ else:
         """
         ...
 
-def escape(pathname: AnyStr) -> AnyStr: ...
+def escape(pathname: AnyStr) -> AnyStr:
+    """
+    Escape all special characters.
+    
+    """
+    ...
 def has_magic(s: str | bytes) -> bool: ...  # undocumented
 
 if sys.version_info >= (3, 13):

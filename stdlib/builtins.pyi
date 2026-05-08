@@ -218,6 +218,24 @@ class object:
 
 @disjoint_base
 class staticmethod(Generic[_P, _R_co]):
+    """
+    Convert a function to be a static method.
+
+    A static method does not receive an implicit first argument.
+    To declare a static method, use this idiom:
+
+         class C:
+             @staticmethod
+             def f(arg1, arg2, argN):
+                 ...
+
+    It can be called either on the class (e.g. C.f()) or on an instance
+    (e.g. C().f()). Both the class and the instance are ignored, and
+    neither is passed implicitly as the first argument to the method.
+
+    Static methods in Python are similar to those found in Java or C++.
+    For a more advanced concept, see the classmethod builtin.
+    """
     __name__: str
     __qualname__: str
     @property
@@ -230,16 +248,40 @@ class staticmethod(Generic[_P, _R_co]):
         """Return an attribute of instance, which is of type owner."""
         ...
     @overload
-    def __get__(self, instance: _T, owner: type[_T] | None = None, /) -> Callable[_P, _R_co]: ...
+    def __get__(self, instance: _T, owner: type[_T] | None = None, /) -> Callable[_P, _R_co]:
+        """Return an attribute of instance, which is of type owner."""
+        ...
     @property
     def __wrapped__(self) -> Callable[_P, _R_co]: ...
-    def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> _R_co: ...
+    def __call__(self, *args: _P.args, **kwargs: _P.kwargs) -> _R_co:
+        """Call self as a function."""
+        ...
     if sys.version_info >= (3, 14):
         def __class_getitem__(cls, item: Any, /) -> GenericAlias: ...
         __annotate__: AnnotateFunc | None
 
 @disjoint_base
 class classmethod(Generic[_T, _P, _R_co]):
+    """
+    Convert a function to be a class method.
+
+    A class method receives the class as implicit first argument,
+    just like an instance method receives the instance.
+    To declare a class method, use this idiom:
+
+      class C:
+          @classmethod
+          def f(cls, arg1, arg2, argN):
+              ...
+
+    It can be called either on the class (e.g. C.f()) or on an instance
+    (e.g. C().f()).  The instance is ignored except for its class.
+    If a class method is called for a derived class, the derived class
+    object is passed as the implied first argument.
+
+    Class methods are different than C++ or Java static methods.
+    If you want those, see the staticmethod builtin.
+    """
     __name__: str
     __qualname__: str
     @property
@@ -252,7 +294,9 @@ class classmethod(Generic[_T, _P, _R_co]):
         """Return an attribute of instance, which is of type owner."""
         ...
     @overload
-    def __get__(self, instance: None, owner: type[_T], /) -> Callable[_P, _R_co]: ...
+    def __get__(self, instance: None, owner: type[_T], /) -> Callable[_P, _R_co]:
+        """Return an attribute of instance, which is of type owner."""
+        ...
     @property
     def __wrapped__(self) -> Callable[Concatenate[type[_T], _P], _R_co]: ...
     if sys.version_info >= (3, 14):
@@ -317,11 +361,17 @@ class type:
         """Check if a class is a subclass."""
         ...
     @classmethod
-    def __prepare__(metacls, name: str, bases: tuple[type, ...], /, **kwds: Any) -> MutableMapping[str, object]: ...
+    def __prepare__(metacls, name: str, bases: tuple[type, ...], /, **kwds: Any) -> MutableMapping[str, object]:
+        """Create the namespace for the class statement"""
+        ...
     # `int | str` produces an instance of `UnionType`, but `int | int` produces an instance of `type`,
     # and `abc.ABC | abc.ABC` produces an instance of `abc.ABCMeta`.
-    def __or__(self: _typeshed.Self, value: Any, /) -> types.UnionType | _typeshed.Self: ...
-    def __ror__(self: _typeshed.Self, value: Any, /) -> types.UnionType | _typeshed.Self: ...
+    def __or__(self: _typeshed.Self, value: Any, /) -> types.UnionType | _typeshed.Self:
+        """Return self|value."""
+        ...
+    def __ror__(self: _typeshed.Self, value: Any, /) -> types.UnionType | _typeshed.Self:
+        """Return value|self."""
+        ...
     if sys.version_info >= (3, 12):
         __type_params__: tuple[TypeVar | ParamSpec | TypeVarTuple, ...]
     __annotations__: dict[str, AnnotationForm]
@@ -405,10 +455,34 @@ class int:
         """the numerator of a rational number in lowest terms"""
         ...
     @property
-    def denominator(self) -> Literal[1]: ...
-    def conjugate(self) -> int: ...
-    def bit_length(self) -> int: ...
-    def bit_count(self) -> int: ...
+    def denominator(self) -> Literal[1]:
+        """the denominator of a rational number in lowest terms"""
+        ...
+    def conjugate(self) -> int:
+        """Returns self, the complex conjugate of any int."""
+        ...
+    def bit_length(self) -> int:
+        """
+        Number of bits necessary to represent self in binary.
+
+        >>> bin(37)
+        '0b100101'
+        >>> (37).bit_length()
+        6
+        """
+        ...
+    def bit_count(self) -> int:
+        """
+        Number of ones in the binary representation of the absolute value of self.
+
+        Also known as the population count.
+
+        >>> bin(13)
+        '0b1101'
+        >>> (13).bit_count()
+        3
+        """
+        ...
 
     if sys.version_info >= (3, 11):
         def to_bytes(
@@ -3052,14 +3126,57 @@ class memoryview(Sequence[_I]):
         """Set self[key] to value."""
         ...
     @overload
-    def __setitem__(self, key: SupportsIndex | tuple[SupportsIndex, ...], value: _I, /) -> None: ...
-    def tobytes(self, order: Literal["C", "F", "A"] | None = "C") -> bytes: ...
-    def tolist(self) -> list[int]: ...
-    def toreadonly(self) -> memoryview: ...
-    def release(self) -> None: ...
-    def hex(self, sep: str | bytes = ..., bytes_per_sep: SupportsIndex = 1) -> str: ...
-    def __buffer__(self, flags: int, /) -> memoryview: ...
-    def __release_buffer__(self, buffer: memoryview, /) -> None: ...
+    def __setitem__(self, key: SupportsIndex | tuple[SupportsIndex, ...], value: _I, /) -> None:
+        """Set self[key] to value."""
+        ...
+    def tobytes(self, order: Literal["C", "F", "A"] | None = "C") -> bytes:
+        """
+        Return the data in the buffer as a byte string.
+
+        Order can be {'C', 'F', 'A'}. When order is 'C' or 'F', the data of the
+        original array is converted to C or Fortran order. For contiguous views,
+        'A' returns an exact copy of the physical memory. In particular, in-memory
+        Fortran order is preserved. For non-contiguous views, the data is converted
+        to C first. order=None is the same as order='C'.
+        """
+        ...
+    def tolist(self) -> list[int]:
+        """Return the data in the buffer as a list of elements."""
+        ...
+    def toreadonly(self) -> memoryview:
+        """Return a readonly version of the memoryview."""
+        ...
+    def release(self) -> None:
+        """Release the underlying buffer exposed by the memoryview object."""
+        ...
+    def hex(self, sep: str | bytes = ..., bytes_per_sep: SupportsIndex = 1) -> str:
+        r"""
+        Return the data in the buffer as a str of hexadecimal numbers.
+
+          sep
+            An optional single character or byte to separate hex bytes.
+          bytes_per_sep
+            How many bytes between separators.  Positive values count from the
+            right, negative values count from the left.
+
+        Example:
+        >>> value = memoryview(b'\xb9\x01\xef')
+        >>> value.hex()
+        'b901ef'
+        >>> value.hex(':')
+        'b9:01:ef'
+        >>> value.hex(':', 2)
+        'b9:01ef'
+        >>> value.hex(':', -2)
+        'b901:ef'
+        """
+        ...
+    def __buffer__(self, flags: int, /) -> memoryview:
+        """Return a buffer object that exposes the underlying memory of the object."""
+        ...
+    def __release_buffer__(self, buffer: memoryview, /) -> None:
+        """Release the buffer object that exposes the underlying memory of the object."""
+        ...
     if sys.version_info >= (3, 14):
         def index(self, value: object, start: SupportsIndex = 0, stop: SupportsIndex = sys.maxsize, /) -> int:
             """
@@ -3984,15 +4101,63 @@ class property:
         """Delete an attribute of instance."""
         ...
 
-def abs(x: SupportsAbs[_T], /) -> _T: ...
-def all(iterable: Iterable[object], /) -> bool: ...
-def any(iterable: Iterable[object], /) -> bool: ...
-def ascii(obj: object, /) -> str: ...
-def bin(number: SupportsIndex, /) -> str: ...
-def breakpoint(*args: Any, **kws: Any) -> None: ...
-def callable(obj: object, /) -> TypeIs[Callable[..., object]]: ...
-def chr(i: SupportsIndex, /) -> str: ...
-def aiter(async_iterable: SupportsAiter[_SupportsAnextT_co], /) -> _SupportsAnextT_co: ...
+def abs(x: SupportsAbs[_T], /) -> _T:
+    """Return the absolute value of the argument."""
+    ...
+def all(iterable: Iterable[object], /) -> bool:
+    """
+    Return True if bool(x) is True for all values x in the iterable.
+
+    If the iterable is empty, return True.
+    """
+    ...
+def any(iterable: Iterable[object], /) -> bool:
+    """
+    Return True if bool(x) is True for any x in the iterable.
+
+    If the iterable is empty, return False.
+    """
+    ...
+def ascii(obj: object, /) -> str:
+    r"""
+    Return an ASCII-only representation of an object.
+
+    As repr(), return a string containing a printable representation of an
+    object, but escape the non-ASCII characters in the string returned by
+    repr() using \\x, \\u or \\U escapes. This generates a string similar
+    to that returned by repr() in Python 2.
+    """
+    ...
+def bin(number: SupportsIndex, /) -> str:
+    """
+    Return the binary representation of an integer.
+
+    >>> bin(2796202)
+    '0b1010101010101010101010'
+    """
+    ...
+def breakpoint(*args: Any, **kws: Any) -> None:
+    """
+    Call sys.breakpointhook(*args, **kws).  sys.breakpointhook() must accept
+    whatever arguments are passed.
+
+    By default, this drops you into the pdb debugger.
+    """
+    ...
+def callable(obj: object, /) -> TypeIs[Callable[..., object]]:
+    """
+    Return whether the object is callable (i.e., some kind of function).
+
+    Note that classes are callable, as are instances of classes with a
+    __call__() method.
+    """
+    ...
+def chr(i: SupportsIndex, /) -> str:
+    """Return a Unicode string of one character with ordinal i; 0 <= i <= 0x10ffff."""
+    ...
+def aiter(async_iterable: SupportsAiter[_SupportsAnextT_co], /) -> _SupportsAnextT_co:
+    """Return an AsyncIterator for an AsyncIterable object."""
+    ...
 @type_check_only
 class _SupportsSynchronousAnext(Protocol[_AwaitableT_co]):
     def __anext__(self) -> _AwaitableT_co: ...
@@ -4001,9 +4166,23 @@ class _SupportsSynchronousAnext(Protocol[_AwaitableT_co]):
 # `anext` is not, in fact, an async function. When default is not provided
 # `anext` is just a passthrough for `obj.__anext__`
 # See discussion in #7491 and pure-Python implementation of `anext` at https://github.com/python/cpython/blob/ea786a882b9ed4261eafabad6011bc7ef3b5bf94/Lib/test/test_asyncgen.py#L52-L80
-def anext(i: _SupportsSynchronousAnext[_AwaitableT], /) -> _AwaitableT: ...
+def anext(i: _SupportsSynchronousAnext[_AwaitableT], /) -> _AwaitableT:
+    """
+    Return the next item from the async iterator.
+
+    If default is given and the async iterator is exhausted,
+    it is returned instead of raising StopAsyncIteration.
+    """
+    ...
 @overload
-async def anext(i: SupportsAnext[_T], default: _VT, /) -> _T | _VT: ...
+async def anext(i: SupportsAnext[_T], default: _VT, /) -> _T | _VT:
+    """
+    Return the next item from the async iterator.
+
+    If default is given and the async iterator is exhausted,
+    it is returned instead of raising StopAsyncIteration.
+    """
+    ...
 
 # compile() returns a CodeType, unless the flags argument includes PyCF_ONLY_AST (=1024),
 # in which case it returns ast.AST. We have overloads for flag 0 (the default) and for
@@ -6047,6 +6226,18 @@ def vars(object: Any = ..., /) -> dict[str, Any]:
     ...
 @disjoint_base
 class zip(Generic[_T_co]):
+    """
+    The zip object yields n-length tuples, where n is the number of iterables
+    passed as positional arguments to zip().  The i-th element in every tuple
+    comes from the i-th iterable argument to zip().  This continues until the
+    shortest argument is exhausted.
+
+    If strict is true and one of the arguments is exhausted before the others,
+    raise a ValueError.
+
+       >>> list(zip('abcdefg', range(3), range(4)))
+       [('a', 0, 0), ('b', 1, 1), ('c', 2, 2)]
+    """
     @overload
     def __new__(cls, *, strict: bool = False) -> zip[Any]: ...
     @overload
@@ -6086,8 +6277,12 @@ class zip(Generic[_T_co]):
         *iterables: Iterable[Any],
         strict: bool = False,
     ) -> zip[tuple[Any, ...]]: ...
-    def __iter__(self) -> Self: ...
-    def __next__(self) -> _T_co: ...
+    def __iter__(self) -> Self:
+        """Implement iter(self)."""
+        ...
+    def __next__(self) -> _T_co:
+        """Implement next(self)."""
+        ...
 
 # Signature of `builtins.__import__` should be kept identical to `importlib.__import__`
 # Return type of `__import__` should be kept the same as return type of `importlib.import_module`
@@ -6206,6 +6401,7 @@ class AssertionError(Exception):
 
 @disjoint_base
 class AttributeError(Exception):
+    """Attribute not found."""
     def __init__(self, *args: object, name: str | None = None, obj: object = None) -> None: ...
     name: str | None
     obj: object
@@ -6236,6 +6432,7 @@ class MemoryError(Exception):
 
 @disjoint_base
 class NameError(Exception):
+    """Name not found globally."""
     def __init__(self, *args: object, name: str | None = None) -> None: ...
     name: str | None
 
@@ -6406,18 +6603,54 @@ class UnicodeTranslateError(UnicodeError):
     reason: str
     def __init__(self, object: str, start: int, end: int, reason: str, /) -> None: ...
 
-class Warning(Exception): ...
-class UserWarning(Warning): ...
-class DeprecationWarning(Warning): ...
-class SyntaxWarning(Warning): ...
-class RuntimeWarning(Warning): ...
-class FutureWarning(Warning): ...
-class PendingDeprecationWarning(Warning): ...
-class ImportWarning(Warning): ...
-class UnicodeWarning(Warning): ...
-class BytesWarning(Warning): ...
-class ResourceWarning(Warning): ...
-class EncodingWarning(Warning): ...
+class Warning(Exception):
+    """Base class for warning categories."""
+    ...
+class UserWarning(Warning):
+    """Base class for warnings generated by user code."""
+    ...
+class DeprecationWarning(Warning):
+    """Base class for warnings about deprecated features."""
+    ...
+class SyntaxWarning(Warning):
+    """Base class for warnings about dubious syntax."""
+    ...
+class RuntimeWarning(Warning):
+    """Base class for warnings about dubious runtime behavior."""
+    ...
+class FutureWarning(Warning):
+    """
+    Base class for warnings about constructs that will change semantically
+    in the future.
+    """
+    ...
+class PendingDeprecationWarning(Warning):
+    """
+    Base class for warnings about features which will be deprecated
+    in the future.
+    """
+    ...
+class ImportWarning(Warning):
+    """Base class for warnings about probable mistakes in module imports"""
+    ...
+class UnicodeWarning(Warning):
+    """
+    Base class for warnings about Unicode related problems, mostly
+    related to conversion problems.
+    """
+    ...
+class BytesWarning(Warning):
+    """
+    Base class for warnings about bytes and buffer related problems, mostly
+    related to conversion from str or comparing to str.
+    """
+    ...
+class ResourceWarning(Warning):
+    """Base class for warnings about resource usage."""
+    ...
+class EncodingWarning(Warning):
+    """Base class for warnings about encodings."""
+    ...
 
 if sys.version_info >= (3, 11):
     _BaseExceptionT_co = TypeVar("_BaseExceptionT_co", bound=BaseException, covariant=True, default=BaseException)

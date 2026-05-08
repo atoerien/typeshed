@@ -226,7 +226,23 @@ else:
         match_args: bool = True,
         kw_only: bool = False,
         slots: bool = False,
-    ) -> type[_T]: ...
+    ) -> type[_T]:
+        """
+        Returns the same class as was passed in, with dunder methods
+        added based on the fields defined in the class.
+
+        Examines PEP 526 __annotations__ to determine fields.
+
+        If init is true, an __init__() method is added to the class. If
+        repr is true, a __repr__() method is added. If order is true, rich
+        comparison dunder methods are added. If unsafe_hash is true, a
+        __hash__() method function is added. If frozen is true, fields may
+        not be assigned to after instance creation. If match_args is true,
+        the __match_args__ tuple is added. If kw_only is true, then by
+        default all fields are keyword-only. If slots is true, an
+        __slots__ attribute is added.
+        """
+        ...
     @overload
     def dataclass(
         cls: None = None,
@@ -241,7 +257,23 @@ else:
         match_args: bool = True,
         kw_only: bool = False,
         slots: bool = False,
-    ) -> Callable[[type[_T]], type[_T]]: ...
+    ) -> Callable[[type[_T]], type[_T]]:
+        """
+        Returns the same class as was passed in, with dunder methods
+        added based on the fields defined in the class.
+
+        Examines PEP 526 __annotations__ to determine fields.
+
+        If init is true, an __init__() method is added to the class. If
+        repr is true, a __repr__() method is added. If order is true, rich
+        comparison dunder methods are added. If unsafe_hash is true, a
+        __hash__() method function is added. If frozen is true, fields may
+        not be assigned to after instance creation. If match_args is true,
+        the __match_args__ tuple is added. If kw_only is true, then by
+        default all fields are keyword-only. If slots is true, an
+        __slots__ attribute is added.
+        """
+        ...
 
 # See https://github.com/python/mypy/issues/10750
 @type_check_only
@@ -434,7 +466,24 @@ else:
         compare: bool = True,
         metadata: Mapping[Any, Any] | None = None,
         kw_only: bool | Literal[_MISSING_TYPE.MISSING] = ...,
-    ) -> _T: ...
+    ) -> _T:
+        """
+        Return an object to identify dataclass fields.
+
+        default is the default value of the field.  default_factory is a
+        0-argument function called to initialize a field's value.  If init
+        is true, the field will be a parameter to the class's __init__()
+        function.  If repr is true, the field will be included in the
+        object's repr().  If hash is true, the field will be included in the
+        object's hash().  If compare is true, the field will be used in
+        comparison functions.  metadata, if specified, must be a mapping
+        which is stored but not otherwise examined by dataclass.  If kw_only
+        is true, the field will become a keyword-only parameter to
+        __init__().
+
+        It is an error to specify both default and default_factory.
+        """
+        ...
     @overload
     def field(
         *,
@@ -446,7 +495,24 @@ else:
         compare: bool = True,
         metadata: Mapping[Any, Any] | None = None,
         kw_only: bool | Literal[_MISSING_TYPE.MISSING] = ...,
-    ) -> _T: ...
+    ) -> _T:
+        """
+        Return an object to identify dataclass fields.
+
+        default is the default value of the field.  default_factory is a
+        0-argument function called to initialize a field's value.  If init
+        is true, the field will be a parameter to the class's __init__()
+        function.  If repr is true, the field will be included in the
+        object's repr().  If hash is true, the field will be included in the
+        object's hash().  If compare is true, the field will be used in
+        comparison functions.  metadata, if specified, must be a mapping
+        which is stored but not otherwise examined by dataclass.  If kw_only
+        is true, the field will become a keyword-only parameter to
+        __init__().
+
+        It is an error to specify both default and default_factory.
+        """
+        ...
     @overload
     def field(
         *,
@@ -458,16 +524,20 @@ else:
         compare: bool = True,
         metadata: Mapping[Any, Any] | None = None,
         kw_only: bool | Literal[_MISSING_TYPE.MISSING] = ...,
-    ) -> Any: ...
+    ) -> Any:
+        """
+        Return an object to identify dataclass fields.
 
         default is the default value of the field.  default_factory is a
         0-argument function called to initialize a field's value.  If init
-        is True, the field will be a parameter to the class's __init__()
-        function.  If repr is True, the field will be included in the
-        object's repr().  If hash is True, the field will be included in
-        the object's hash().  If compare is True, the field will be used
-        in comparison functions.  metadata, if specified, must be a
-        mapping which is stored but not otherwise examined by dataclass.
+        is true, the field will be a parameter to the class's __init__()
+        function.  If repr is true, the field will be included in the
+        object's repr().  If hash is true, the field will be included in the
+        object's hash().  If compare is true, the field will be used in
+        comparison functions.  metadata, if specified, must be a mapping
+        which is stored but not otherwise examined by dataclass.  If kw_only
+        is true, the field will become a keyword-only parameter to
+        __init__().
 
         It is an error to specify both default and default_factory.
         """
@@ -696,4 +766,19 @@ else:
         """
         ...
 
-def replace(obj: _DataclassT, /, **changes: Any) -> _DataclassT: ...
+def replace(obj: _DataclassT, /, **changes: Any) -> _DataclassT:
+    """
+    Return a new object replacing specified fields with new values.
+
+    This is especially useful for frozen classes.  Example usage::
+
+      @dataclass(frozen=True)
+      class C:
+          x: int
+          y: int
+
+      c = C(1, 2)
+      c1 = replace(c, x=3)
+      assert c1.x == 3 and c1.y == 2
+    """
+    ...

@@ -1,3 +1,8 @@
+"""
+This module provides primitive operations to manage Python interpreters.
+The 'interpreters' module provides a more convenient interface.
+"""
+
 from typing import Any, Literal, SupportsIndex, TypeAlias
 
 _UnboundOp: TypeAlias = Literal[1, 2, 3]

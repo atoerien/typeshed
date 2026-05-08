@@ -1,3 +1,14 @@
+"""
+Utilities to associate bold and italic versions of fonts into families
+
+Bold, italic and plain fonts are usually implemented in separate disk files;
+but non-trivial apps want <b>this</b> to do the right thing.   We therefore
+need to keep 'mappings' between the font family name and the right group
+of up to 4 implementation fonts to use.
+
+Most font-handling code lives in pdfbase, and this probably should too.
+"""
+
 from typing import Final, Literal, TypeAlias
 
 _BoolInt: TypeAlias = Literal[0, 1]

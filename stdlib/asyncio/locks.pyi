@@ -79,9 +79,30 @@ class Lock(_ContextManagerMixin, _LoopBoundMixin):
     """
     _waiters: deque[Future[Any]] | None
     def __init__(self) -> None: ...
-    def locked(self) -> bool: ...
-    async def acquire(self) -> Literal[True]: ...
-    def release(self) -> None: ...
+    def locked(self) -> bool:
+        """Return True if lock is acquired."""
+        ...
+    async def acquire(self) -> Literal[True]:
+        """
+        Acquire a lock.
+
+        This method blocks until the lock is unlocked, then sets it to
+        locked and returns True.
+        """
+        ...
+    def release(self) -> None:
+        """
+        Release a lock.
+
+        When the lock is locked, reset it to unlocked, and return.
+        If any other tasks are blocked waiting for the lock to become
+        unlocked, allow exactly one of them to proceed.
+
+        When invoked on an unlocked lock, a RuntimeError is raised.
+
+        There is no return value.
+        """
+        ...
 
 class Event(_LoopBoundMixin):
     """
@@ -94,10 +115,32 @@ class Event(_LoopBoundMixin):
     """
     _waiters: deque[Future[Any]]
     def __init__(self) -> None: ...
-    def is_set(self) -> bool: ...
-    def set(self) -> None: ...
-    def clear(self) -> None: ...
-    async def wait(self) -> Literal[True]: ...
+    def is_set(self) -> bool:
+        """Return True if and only if the internal flag is true."""
+        ...
+    def set(self) -> None:
+        """
+        Set the internal flag to true. All tasks waiting for it to
+        become true are awakened. Tasks that call wait() once the flag is
+        true will not block at all.
+        """
+        ...
+    def clear(self) -> None:
+        """
+        Reset the internal flag to false. Subsequently, tasks calling
+        wait() will block until set() is called to set the internal flag
+        to true again.
+        """
+        ...
+    async def wait(self) -> Literal[True]:
+        """
+        Block until the internal flag is true.
+
+        If the internal flag is true on entry, return True
+        immediately.  Otherwise, block until another task calls
+        set() to set the flag to true, then return True.
+        """
+        ...
 
 class Condition(_ContextManagerMixin, _LoopBoundMixin):
     """
@@ -182,10 +225,12 @@ class Semaphore(_ContextManagerMixin, _LoopBoundMixin):
     _value: int
     _waiters: deque[Future[Any]] | None
     def __init__(self, value: int = 1) -> None: ...
-    def locked(self) -> bool: ...
-    async def acquire(self) -> Literal[True]: ...
-    def release(self) -> None: ...
-    def _wake_up_next(self) -> None: ...
+    def locked(self) -> bool:
+        """Returns True if semaphore cannot be acquired immediately."""
+        ...
+    async def acquire(self) -> Literal[True]:
+        """
+        Acquire a semaphore.
 
         If the internal counter is larger than zero on entry,
         decrement it by one and return True immediately.  If it is

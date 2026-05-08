@@ -1072,6 +1072,15 @@ class DirEntry(Generic[AnyStr]):
 
 @final
 class statvfs_result(structseq[int], tuple[int, int, int, int, int, int, int, int, int, int, int]):
+    """
+    statvfs_result: Result from statvfs or fstatvfs.
+
+    This object may be accessed either as a tuple of
+      (bsize, frsize, blocks, bfree, bavail, files, ffree, favail, flag, namemax),
+    or via the attributes f_bsize, f_frsize, f_blocks, f_bfree, and so on.
+
+    See os.statvfs for more information.
+    """
     __match_args__: Final = (
         "f_bsize",
         "f_frsize",
@@ -1186,6 +1195,15 @@ def umask(mask: int, /) -> int:
     ...
 @final
 class uname_result(structseq[str], tuple[str, str, str, str, str]):
+    """
+    uname_result: Result from os.uname().
+
+    This object may be accessed either as a tuple of
+      (sysname, nodename, release, version, machine),
+    or via the attributes sysname, nodename, release, version, and machine.
+
+    See os.uname for more information.
+    """
     __match_args__: Final = ("sysname", "nodename", "release", "version", "machine")
 
     @property
@@ -1762,6 +1780,7 @@ if sys.version_info >= (3, 14):
 
 @final
 class terminal_size(structseq[int], tuple[int, int]):
+    """A tuple of (columns, lines) for holding terminal window size"""
     __match_args__: Final = ("columns", "lines")
 
     @property
@@ -2776,6 +2795,16 @@ else:
 
 @final
 class times_result(structseq[float], tuple[float, float, float, float, float]):
+    """
+    times_result: Result from os.times().
+
+    This object may be accessed either as a tuple of
+      (user, system, children_user, children_system, elapsed),
+    or via the attributes user, system, children_user, children_system,
+    and elapsed.
+
+    See os.times for more information.
+    """
     __match_args__: Final = ("user", "system", "children_user", "children_system", "elapsed")
 
     @property
@@ -2933,6 +2962,15 @@ else:
     if sys.platform != "darwin" or sys.version_info >= (3, 13):
         @final
         class waitid_result(structseq[int], tuple[int, int, int, int, int]):
+            """
+            waitid_result: Result from waitid.
+
+            This object may be accessed either as a tuple of
+              (si_pid, si_uid, si_signo, si_status, si_code),
+            or via the attributes si_pid, si_uid, and so on.
+
+            See os.waitid for more information.
+            """
             __match_args__: Final = ("si_pid", "si_uid", "si_signo", "si_status", "si_code")
 
             @property
@@ -3206,6 +3244,12 @@ else:
 if sys.platform != "win32":
     @final
     class sched_param(structseq[int], tuple[int]):
+        """
+        Currently has only one field: sched_priority
+
+        sched_priority
+          A scheduling parameter.
+        """
         __match_args__: Final = ("sched_priority",)
 
         def __new__(cls, sched_priority: int) -> Self: ...

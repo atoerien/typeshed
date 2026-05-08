@@ -22,6 +22,13 @@ from typing import Any, Final, final
 if sys.platform != "win32":
     @final
     class struct_group(structseq[Any], tuple[str, str | None, int, list[str]]):
+        """
+        grp.struct_group: Results from getgr*() routines.
+
+        This object may be accessed either as a tuple of
+          (gr_name,gr_passwd,gr_gid,gr_mem)
+        or via the object attributes as named in the above tuple.
+        """
         __match_args__: Final = ("gr_name", "gr_passwd", "gr_gid", "gr_mem")
 
         @property

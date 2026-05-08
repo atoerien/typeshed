@@ -1,3 +1,5 @@
+"""Public API for tf._api.v2.bitwise namespace"""
+
 from typing import Any, TypeAlias, overload
 
 import numpy as np

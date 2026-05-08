@@ -75,8 +75,21 @@ if sys.version_info < (3, 12):
         """
         ...
 
-def RAND_status() -> bool: ...
-def get_default_verify_paths() -> tuple[str, str, str, str]: ...
+def RAND_status() -> bool:
+    """
+    Returns True if the OpenSSL PRNG has been seeded with enough data and False if not.
+
+    It is necessary to seed the PRNG with RAND_add() on some platforms before
+    using the ssl() function.
+    """
+    ...
+def get_default_verify_paths() -> tuple[str, str, str, str]:
+    """
+    Return search paths and environment vars that are used by SSLContext's set_default_verify_paths() to load default CAs.
+
+    The values are 'cert_file_env', 'cert_file', 'cert_dir_env', 'cert_dir'.
+    """
+    ...
 
 if sys.platform == "win32":
     _EnumRetType: TypeAlias = list[tuple[bytes, str, set[str] | bool]]

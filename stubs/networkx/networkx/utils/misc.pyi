@@ -207,7 +207,9 @@ class PythonRandomViaNumpyBits(random.Random):
     a numpy generator.
     """
     def __init__(self, rng: numpy.random.Generator | None = None) -> None: ...
-    def getrandbits(self, k: int) -> int: ...
+    def getrandbits(self, k: int) -> int:
+        """getrandbits(k) -> x.  Generates an int with k random bits."""
+        ...
 
 class PythonRandomInterface:
     """

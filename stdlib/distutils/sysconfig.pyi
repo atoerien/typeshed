@@ -1,3 +1,15 @@
+"""
+Provide access to Python's configuration information.  The specific
+configuration variables available depend heavily on the platform and
+configuration.  The values may be retrieved using
+get_config_var(name), and the list of variables is available via
+get_config_vars().keys().  Additional convenience functions are also
+available.
+
+Written by:   Fred L. Drake, Jr.
+Email:        <fdrake@acm.org>
+"""
+
 from collections.abc import Mapping
 from distutils.ccompiler import CCompiler
 from typing import Final, Literal, overload
@@ -86,5 +98,27 @@ def get_python_inc(plat_specific: bool | Literal[0, 1] = 0, prefix: str | None =
     ...
 def get_python_lib(
     plat_specific: bool | Literal[0, 1] = 0, standard_lib: bool | Literal[0, 1] = 0, prefix: str | None = None
-) -> str: ...
-def customize_compiler(compiler: CCompiler) -> None: ...
+) -> str:
+    """
+    Return the directory containing the Python library (standard or
+    site additions).
+
+    If 'plat_specific' is true, return the directory containing
+    platform-specific modules, i.e. any module from a non-pure-Python
+    module distribution; otherwise, return the platform-shared library
+    directory.  If 'standard_lib' is true, return the directory
+    containing standard Python library modules; otherwise, return the
+    directory for site-specific modules.
+
+    If 'prefix' is supplied, use it instead of sys.base_prefix or
+    sys.base_exec_prefix -- i.e., ignore 'plat_specific'.
+    """
+    ...
+def customize_compiler(compiler: CCompiler) -> None:
+    """
+    Do any platform-specific customization of a CCompiler instance.
+
+    Mainly needed on Unix, so we can plug in the information that
+    varies across Unices and is stored in Python's Makefile.
+    """
+    ...

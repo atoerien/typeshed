@@ -177,7 +177,13 @@ def contextmanager(func: Callable[_P, Iterator[_T_co]]) -> Callable[_P, _Generat
 _AF = TypeVar("_AF", bound=Callable[..., Awaitable[Any]])
 
 class AsyncContextDecorator:
-    def _recreate_cm(self) -> Self: ...
+    """A base class or mixin that enables async context managers to work as decorators."""
+    def _recreate_cm(self) -> Self:
+        """
+        Return a recreated instance of self.
+        
+        """
+        ...
     def __call__(self, func: _AF) -> _AF: ...
 
 class _AsyncGeneratorContextManager(
@@ -185,6 +191,7 @@ class _AsyncGeneratorContextManager(
     AbstractAsyncContextManager[_T_co, bool | None],
     AsyncContextDecorator,
 ):
+    """Helper for @asynccontextmanager decorator."""
     async def __aexit__(
         self, typ: type[BaseException] | None, value: BaseException | None, traceback: TracebackType | None
     ) -> bool | None: ...
@@ -286,6 +293,23 @@ class _SupportsAclose(Protocol):
 _SupportsAcloseT = TypeVar("_SupportsAcloseT", bound=_SupportsAclose)
 
 class aclosing(AbstractAsyncContextManager[_SupportsAcloseT, None]):
+    """
+    Async context manager for safely finalizing an asynchronously cleaned-up
+    resource such as an async generator, calling its ``aclose()`` method.
+
+    Code like this:
+
+        async with aclosing(<module>.fetch(<arguments>)) as agen:
+            <block>
+
+    is equivalent to this:
+
+        agen = <module>.fetch(<arguments>)
+        try:
+            <block>
+        finally:
+            await agen.aclose()
+    """
     def __init__(self, thing: _SupportsAcloseT) -> None: ...
     async def __aexit__(self, *exc_info: Unused) -> None: ...
 
@@ -452,6 +476,16 @@ class AsyncExitStack(_BaseExitStackAbstract[_ExitT_co]):
     ) -> _ExitT_co: ...
 
 class nullcontext(AbstractContextManager[_T, None], AbstractAsyncContextManager[_T, None]):
+    """
+    Context manager that does no additional processing.
+
+    Used as a stand-in for a normal context manager, when a particular
+    block of code is only sometimes used with a normal context manager:
+
+    cm = optional_cm if condition else nullcontext()
+    with cm:
+        # Perform operation, using optional_cm if condition is True
+    """
     enter_result: _T
     @overload
     def __init__(self: nullcontext[None]) -> None: ...

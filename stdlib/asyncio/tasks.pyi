@@ -141,7 +141,26 @@ if sys.version_info >= (3, 13):
         ...
 
 else:
-    def as_completed(fs: Iterable[_FutureLike[_T]], *, timeout: float | None = None) -> Iterator[Future[_T]]: ...
+    def as_completed(fs: Iterable[_FutureLike[_T]], *, timeout: float | None = None) -> Iterator[Future[_T]]:
+        """
+        Return an iterator whose values are coroutines.
+
+        When waiting for the yielded coroutines you'll get the results (or
+        exceptions!) of the original Futures (or coroutines), in the order
+        in which and as soon as they complete.
+
+        This differs from PEP 3148; the proper way to use this is:
+
+            for f in as_completed(fs):
+                result = await f  # The 'await' may raise.
+                # Use result.
+
+        If a timeout is specified, the 'await' will raise
+        TimeoutError when the timeout occurs before all Futures are done.
+
+        Note: The futures 'f' are not necessarily members of fs.
+        """
+        ...
 
 @overload
 def ensure_future(coro_or_future: _FT, *, loop: AbstractEventLoop | None = None) -> _FT:
@@ -167,11 +186,73 @@ def ensure_future(coro_or_future: Awaitable[_T], *, loop: AbstractEventLoop | No
 #
 # N.B. Having overlapping overloads is the only way to get acceptable type inference in all edge cases.
 @overload
-def gather(coro_or_future1: _FutureLike[_T1], /, *, return_exceptions: Literal[False] = False) -> Future[tuple[_T1]]: ...  # type: ignore[overload-overlap]
+def gather(coro_or_future1: _FutureLike[_T1], /, *, return_exceptions: Literal[False] = False) -> Future[tuple[_T1]]:
+    """
+    Return a future aggregating results from the given coroutines/futures.
+
+    Coroutines will be wrapped in a future and scheduled in the event
+    loop. They will not necessarily be scheduled in the same order as
+    passed in.
+
+    All futures must share the same event loop.  If all the tasks are
+    done successfully, the returned future's result is the list of
+    results (in the order of the original sequence, not necessarily
+    the order of results arrival).  If *return_exceptions* is True,
+    exceptions in the tasks are treated the same as successful
+    results, and gathered in the result list; otherwise, the first
+    raised exception will be immediately propagated to the returned
+    future.
+
+    Cancellation: if the outer Future is cancelled, all children (that
+    have not completed yet) are also cancelled.  If any child is
+    cancelled, this is treated as if it raised CancelledError --
+    the outer Future is *not* cancelled in this case.  (This is to
+    prevent the cancellation of one child to cause other children to
+    be cancelled.)
+
+    If *return_exceptions* is False, cancelling gather() after it
+    has been marked done won't cancel any submitted awaitables.
+    For instance, gather can be marked done after propagating an
+    exception to the caller, therefore, calling ``gather.cancel()``
+    after catching an exception (raised by one of the awaitables) from
+    gather won't cancel any other awaitables.
+    """
+    ...
 @overload
 def gather(  # type: ignore[overload-overlap]
     coro_or_future1: _FutureLike[_T1], coro_or_future2: _FutureLike[_T2], /, *, return_exceptions: Literal[False] = False
-) -> Future[tuple[_T1, _T2]]: ...
+) -> Future[tuple[_T1, _T2]]:
+    """
+    Return a future aggregating results from the given coroutines/futures.
+
+    Coroutines will be wrapped in a future and scheduled in the event
+    loop. They will not necessarily be scheduled in the same order as
+    passed in.
+
+    All futures must share the same event loop.  If all the tasks are
+    done successfully, the returned future's result is the list of
+    results (in the order of the original sequence, not necessarily
+    the order of results arrival).  If *return_exceptions* is True,
+    exceptions in the tasks are treated the same as successful
+    results, and gathered in the result list; otherwise, the first
+    raised exception will be immediately propagated to the returned
+    future.
+
+    Cancellation: if the outer Future is cancelled, all children (that
+    have not completed yet) are also cancelled.  If any child is
+    cancelled, this is treated as if it raised CancelledError --
+    the outer Future is *not* cancelled in this case.  (This is to
+    prevent the cancellation of one child to cause other children to
+    be cancelled.)
+
+    If *return_exceptions* is False, cancelling gather() after it
+    has been marked done won't cancel any submitted awaitables.
+    For instance, gather can be marked done after propagating an
+    exception to the caller, therefore, calling ``gather.cancel()``
+    after catching an exception (raised by one of the awaitables) from
+    gather won't cancel any other awaitables.
+    """
+    ...
 @overload
 def gather(  # type: ignore[overload-overlap]
     coro_or_future1: _FutureLike[_T1],
@@ -180,7 +261,38 @@ def gather(  # type: ignore[overload-overlap]
     /,
     *,
     return_exceptions: Literal[False] = False,
-) -> Future[tuple[_T1, _T2, _T3]]: ...
+) -> Future[tuple[_T1, _T2, _T3]]:
+    """
+    Return a future aggregating results from the given coroutines/futures.
+
+    Coroutines will be wrapped in a future and scheduled in the event
+    loop. They will not necessarily be scheduled in the same order as
+    passed in.
+
+    All futures must share the same event loop.  If all the tasks are
+    done successfully, the returned future's result is the list of
+    results (in the order of the original sequence, not necessarily
+    the order of results arrival).  If *return_exceptions* is True,
+    exceptions in the tasks are treated the same as successful
+    results, and gathered in the result list; otherwise, the first
+    raised exception will be immediately propagated to the returned
+    future.
+
+    Cancellation: if the outer Future is cancelled, all children (that
+    have not completed yet) are also cancelled.  If any child is
+    cancelled, this is treated as if it raised CancelledError --
+    the outer Future is *not* cancelled in this case.  (This is to
+    prevent the cancellation of one child to cause other children to
+    be cancelled.)
+
+    If *return_exceptions* is False, cancelling gather() after it
+    has been marked done won't cancel any submitted awaitables.
+    For instance, gather can be marked done after propagating an
+    exception to the caller, therefore, calling ``gather.cancel()``
+    after catching an exception (raised by one of the awaitables) from
+    gather won't cancel any other awaitables.
+    """
+    ...
 @overload
 def gather(  # type: ignore[overload-overlap]
     coro_or_future1: _FutureLike[_T1],
@@ -190,7 +302,38 @@ def gather(  # type: ignore[overload-overlap]
     /,
     *,
     return_exceptions: Literal[False] = False,
-) -> Future[tuple[_T1, _T2, _T3, _T4]]: ...
+) -> Future[tuple[_T1, _T2, _T3, _T4]]:
+    """
+    Return a future aggregating results from the given coroutines/futures.
+
+    Coroutines will be wrapped in a future and scheduled in the event
+    loop. They will not necessarily be scheduled in the same order as
+    passed in.
+
+    All futures must share the same event loop.  If all the tasks are
+    done successfully, the returned future's result is the list of
+    results (in the order of the original sequence, not necessarily
+    the order of results arrival).  If *return_exceptions* is True,
+    exceptions in the tasks are treated the same as successful
+    results, and gathered in the result list; otherwise, the first
+    raised exception will be immediately propagated to the returned
+    future.
+
+    Cancellation: if the outer Future is cancelled, all children (that
+    have not completed yet) are also cancelled.  If any child is
+    cancelled, this is treated as if it raised CancelledError --
+    the outer Future is *not* cancelled in this case.  (This is to
+    prevent the cancellation of one child to cause other children to
+    be cancelled.)
+
+    If *return_exceptions* is False, cancelling gather() after it
+    has been marked done won't cancel any submitted awaitables.
+    For instance, gather can be marked done after propagating an
+    exception to the caller, therefore, calling ``gather.cancel()``
+    after catching an exception (raised by one of the awaitables) from
+    gather won't cancel any other awaitables.
+    """
+    ...
 @overload
 def gather(  # type: ignore[overload-overlap]
     coro_or_future1: _FutureLike[_T1],
@@ -201,7 +344,38 @@ def gather(  # type: ignore[overload-overlap]
     /,
     *,
     return_exceptions: Literal[False] = False,
-) -> Future[tuple[_T1, _T2, _T3, _T4, _T5]]: ...
+) -> Future[tuple[_T1, _T2, _T3, _T4, _T5]]:
+    """
+    Return a future aggregating results from the given coroutines/futures.
+
+    Coroutines will be wrapped in a future and scheduled in the event
+    loop. They will not necessarily be scheduled in the same order as
+    passed in.
+
+    All futures must share the same event loop.  If all the tasks are
+    done successfully, the returned future's result is the list of
+    results (in the order of the original sequence, not necessarily
+    the order of results arrival).  If *return_exceptions* is True,
+    exceptions in the tasks are treated the same as successful
+    results, and gathered in the result list; otherwise, the first
+    raised exception will be immediately propagated to the returned
+    future.
+
+    Cancellation: if the outer Future is cancelled, all children (that
+    have not completed yet) are also cancelled.  If any child is
+    cancelled, this is treated as if it raised CancelledError --
+    the outer Future is *not* cancelled in this case.  (This is to
+    prevent the cancellation of one child to cause other children to
+    be cancelled.)
+
+    If *return_exceptions* is False, cancelling gather() after it
+    has been marked done won't cancel any submitted awaitables.
+    For instance, gather can be marked done after propagating an
+    exception to the caller, therefore, calling ``gather.cancel()``
+    after catching an exception (raised by one of the awaitables) from
+    gather won't cancel any other awaitables.
+    """
+    ...
 @overload
 def gather(  # type: ignore[overload-overlap]
     coro_or_future1: _FutureLike[_T1],
@@ -213,15 +387,139 @@ def gather(  # type: ignore[overload-overlap]
     /,
     *,
     return_exceptions: Literal[False] = False,
-) -> Future[tuple[_T1, _T2, _T3, _T4, _T5, _T6]]: ...
+) -> Future[tuple[_T1, _T2, _T3, _T4, _T5, _T6]]:
+    """
+    Return a future aggregating results from the given coroutines/futures.
+
+    Coroutines will be wrapped in a future and scheduled in the event
+    loop. They will not necessarily be scheduled in the same order as
+    passed in.
+
+    All futures must share the same event loop.  If all the tasks are
+    done successfully, the returned future's result is the list of
+    results (in the order of the original sequence, not necessarily
+    the order of results arrival).  If *return_exceptions* is True,
+    exceptions in the tasks are treated the same as successful
+    results, and gathered in the result list; otherwise, the first
+    raised exception will be immediately propagated to the returned
+    future.
+
+    Cancellation: if the outer Future is cancelled, all children (that
+    have not completed yet) are also cancelled.  If any child is
+    cancelled, this is treated as if it raised CancelledError --
+    the outer Future is *not* cancelled in this case.  (This is to
+    prevent the cancellation of one child to cause other children to
+    be cancelled.)
+
+    If *return_exceptions* is False, cancelling gather() after it
+    has been marked done won't cancel any submitted awaitables.
+    For instance, gather can be marked done after propagating an
+    exception to the caller, therefore, calling ``gather.cancel()``
+    after catching an exception (raised by one of the awaitables) from
+    gather won't cancel any other awaitables.
+    """
+    ...
 @overload
-def gather(*coros_or_futures: _FutureLike[_T], return_exceptions: Literal[False] = False) -> Future[list[_T]]: ...  # type: ignore[overload-overlap]
+def gather(*coros_or_futures: _FutureLike[_T], return_exceptions: Literal[False] = False) -> Future[list[_T]]:
+    """
+    Return a future aggregating results from the given coroutines/futures.
+
+    Coroutines will be wrapped in a future and scheduled in the event
+    loop. They will not necessarily be scheduled in the same order as
+    passed in.
+
+    All futures must share the same event loop.  If all the tasks are
+    done successfully, the returned future's result is the list of
+    results (in the order of the original sequence, not necessarily
+    the order of results arrival).  If *return_exceptions* is True,
+    exceptions in the tasks are treated the same as successful
+    results, and gathered in the result list; otherwise, the first
+    raised exception will be immediately propagated to the returned
+    future.
+
+    Cancellation: if the outer Future is cancelled, all children (that
+    have not completed yet) are also cancelled.  If any child is
+    cancelled, this is treated as if it raised CancelledError --
+    the outer Future is *not* cancelled in this case.  (This is to
+    prevent the cancellation of one child to cause other children to
+    be cancelled.)
+
+    If *return_exceptions* is False, cancelling gather() after it
+    has been marked done won't cancel any submitted awaitables.
+    For instance, gather can be marked done after propagating an
+    exception to the caller, therefore, calling ``gather.cancel()``
+    after catching an exception (raised by one of the awaitables) from
+    gather won't cancel any other awaitables.
+    """
+    ...
 @overload
-def gather(coro_or_future1: _FutureLike[_T1], /, *, return_exceptions: bool) -> Future[tuple[_T1 | BaseException]]: ...
+def gather(coro_or_future1: _FutureLike[_T1], /, *, return_exceptions: bool) -> Future[tuple[_T1 | BaseException]]:
+    """
+    Return a future aggregating results from the given coroutines/futures.
+
+    Coroutines will be wrapped in a future and scheduled in the event
+    loop. They will not necessarily be scheduled in the same order as
+    passed in.
+
+    All futures must share the same event loop.  If all the tasks are
+    done successfully, the returned future's result is the list of
+    results (in the order of the original sequence, not necessarily
+    the order of results arrival).  If *return_exceptions* is True,
+    exceptions in the tasks are treated the same as successful
+    results, and gathered in the result list; otherwise, the first
+    raised exception will be immediately propagated to the returned
+    future.
+
+    Cancellation: if the outer Future is cancelled, all children (that
+    have not completed yet) are also cancelled.  If any child is
+    cancelled, this is treated as if it raised CancelledError --
+    the outer Future is *not* cancelled in this case.  (This is to
+    prevent the cancellation of one child to cause other children to
+    be cancelled.)
+
+    If *return_exceptions* is False, cancelling gather() after it
+    has been marked done won't cancel any submitted awaitables.
+    For instance, gather can be marked done after propagating an
+    exception to the caller, therefore, calling ``gather.cancel()``
+    after catching an exception (raised by one of the awaitables) from
+    gather won't cancel any other awaitables.
+    """
+    ...
 @overload
 def gather(
     coro_or_future1: _FutureLike[_T1], coro_or_future2: _FutureLike[_T2], /, *, return_exceptions: bool
-) -> Future[tuple[_T1 | BaseException, _T2 | BaseException]]: ...
+) -> Future[tuple[_T1 | BaseException, _T2 | BaseException]]:
+    """
+    Return a future aggregating results from the given coroutines/futures.
+
+    Coroutines will be wrapped in a future and scheduled in the event
+    loop. They will not necessarily be scheduled in the same order as
+    passed in.
+
+    All futures must share the same event loop.  If all the tasks are
+    done successfully, the returned future's result is the list of
+    results (in the order of the original sequence, not necessarily
+    the order of results arrival).  If *return_exceptions* is True,
+    exceptions in the tasks are treated the same as successful
+    results, and gathered in the result list; otherwise, the first
+    raised exception will be immediately propagated to the returned
+    future.
+
+    Cancellation: if the outer Future is cancelled, all children (that
+    have not completed yet) are also cancelled.  If any child is
+    cancelled, this is treated as if it raised CancelledError --
+    the outer Future is *not* cancelled in this case.  (This is to
+    prevent the cancellation of one child to cause other children to
+    be cancelled.)
+
+    If *return_exceptions* is False, cancelling gather() after it
+    has been marked done won't cancel any submitted awaitables.
+    For instance, gather can be marked done after propagating an
+    exception to the caller, therefore, calling ``gather.cancel()``
+    after catching an exception (raised by one of the awaitables) from
+    gather won't cancel any other awaitables.
+    """
+    ...
 @overload
 def gather(
     coro_or_future1: _FutureLike[_T1],
@@ -230,7 +528,38 @@ def gather(
     /,
     *,
     return_exceptions: bool,
-) -> Future[tuple[_T1 | BaseException, _T2 | BaseException, _T3 | BaseException]]: ...
+) -> Future[tuple[_T1 | BaseException, _T2 | BaseException, _T3 | BaseException]]:
+    """
+    Return a future aggregating results from the given coroutines/futures.
+
+    Coroutines will be wrapped in a future and scheduled in the event
+    loop. They will not necessarily be scheduled in the same order as
+    passed in.
+
+    All futures must share the same event loop.  If all the tasks are
+    done successfully, the returned future's result is the list of
+    results (in the order of the original sequence, not necessarily
+    the order of results arrival).  If *return_exceptions* is True,
+    exceptions in the tasks are treated the same as successful
+    results, and gathered in the result list; otherwise, the first
+    raised exception will be immediately propagated to the returned
+    future.
+
+    Cancellation: if the outer Future is cancelled, all children (that
+    have not completed yet) are also cancelled.  If any child is
+    cancelled, this is treated as if it raised CancelledError --
+    the outer Future is *not* cancelled in this case.  (This is to
+    prevent the cancellation of one child to cause other children to
+    be cancelled.)
+
+    If *return_exceptions* is False, cancelling gather() after it
+    has been marked done won't cancel any submitted awaitables.
+    For instance, gather can be marked done after propagating an
+    exception to the caller, therefore, calling ``gather.cancel()``
+    after catching an exception (raised by one of the awaitables) from
+    gather won't cancel any other awaitables.
+    """
+    ...
 @overload
 def gather(
     coro_or_future1: _FutureLike[_T1],
@@ -240,7 +569,38 @@ def gather(
     /,
     *,
     return_exceptions: bool,
-) -> Future[tuple[_T1 | BaseException, _T2 | BaseException, _T3 | BaseException, _T4 | BaseException]]: ...
+) -> Future[tuple[_T1 | BaseException, _T2 | BaseException, _T3 | BaseException, _T4 | BaseException]]:
+    """
+    Return a future aggregating results from the given coroutines/futures.
+
+    Coroutines will be wrapped in a future and scheduled in the event
+    loop. They will not necessarily be scheduled in the same order as
+    passed in.
+
+    All futures must share the same event loop.  If all the tasks are
+    done successfully, the returned future's result is the list of
+    results (in the order of the original sequence, not necessarily
+    the order of results arrival).  If *return_exceptions* is True,
+    exceptions in the tasks are treated the same as successful
+    results, and gathered in the result list; otherwise, the first
+    raised exception will be immediately propagated to the returned
+    future.
+
+    Cancellation: if the outer Future is cancelled, all children (that
+    have not completed yet) are also cancelled.  If any child is
+    cancelled, this is treated as if it raised CancelledError --
+    the outer Future is *not* cancelled in this case.  (This is to
+    prevent the cancellation of one child to cause other children to
+    be cancelled.)
+
+    If *return_exceptions* is False, cancelling gather() after it
+    has been marked done won't cancel any submitted awaitables.
+    For instance, gather can be marked done after propagating an
+    exception to the caller, therefore, calling ``gather.cancel()``
+    after catching an exception (raised by one of the awaitables) from
+    gather won't cancel any other awaitables.
+    """
+    ...
 @overload
 def gather(
     coro_or_future1: _FutureLike[_T1],
@@ -251,7 +611,38 @@ def gather(
     /,
     *,
     return_exceptions: bool,
-) -> Future[tuple[_T1 | BaseException, _T2 | BaseException, _T3 | BaseException, _T4 | BaseException, _T5 | BaseException]]: ...
+) -> Future[tuple[_T1 | BaseException, _T2 | BaseException, _T3 | BaseException, _T4 | BaseException, _T5 | BaseException]]:
+    """
+    Return a future aggregating results from the given coroutines/futures.
+
+    Coroutines will be wrapped in a future and scheduled in the event
+    loop. They will not necessarily be scheduled in the same order as
+    passed in.
+
+    All futures must share the same event loop.  If all the tasks are
+    done successfully, the returned future's result is the list of
+    results (in the order of the original sequence, not necessarily
+    the order of results arrival).  If *return_exceptions* is True,
+    exceptions in the tasks are treated the same as successful
+    results, and gathered in the result list; otherwise, the first
+    raised exception will be immediately propagated to the returned
+    future.
+
+    Cancellation: if the outer Future is cancelled, all children (that
+    have not completed yet) are also cancelled.  If any child is
+    cancelled, this is treated as if it raised CancelledError --
+    the outer Future is *not* cancelled in this case.  (This is to
+    prevent the cancellation of one child to cause other children to
+    be cancelled.)
+
+    If *return_exceptions* is False, cancelling gather() after it
+    has been marked done won't cancel any submitted awaitables.
+    For instance, gather can be marked done after propagating an
+    exception to the caller, therefore, calling ``gather.cancel()``
+    after catching an exception (raised by one of the awaitables) from
+    gather won't cancel any other awaitables.
+    """
+    ...
 @overload
 def gather(
     coro_or_future1: _FutureLike[_T1],
@@ -272,18 +663,141 @@ def gather(
         _T5 | BaseException,
         _T6 | BaseException,
     ]
-]: ...
+]:
+    """
+    Return a future aggregating results from the given coroutines/futures.
+
+    Coroutines will be wrapped in a future and scheduled in the event
+    loop. They will not necessarily be scheduled in the same order as
+    passed in.
+
+    All futures must share the same event loop.  If all the tasks are
+    done successfully, the returned future's result is the list of
+    results (in the order of the original sequence, not necessarily
+    the order of results arrival).  If *return_exceptions* is True,
+    exceptions in the tasks are treated the same as successful
+    results, and gathered in the result list; otherwise, the first
+    raised exception will be immediately propagated to the returned
+    future.
+
+    Cancellation: if the outer Future is cancelled, all children (that
+    have not completed yet) are also cancelled.  If any child is
+    cancelled, this is treated as if it raised CancelledError --
+    the outer Future is *not* cancelled in this case.  (This is to
+    prevent the cancellation of one child to cause other children to
+    be cancelled.)
+
+    If *return_exceptions* is False, cancelling gather() after it
+    has been marked done won't cancel any submitted awaitables.
+    For instance, gather can be marked done after propagating an
+    exception to the caller, therefore, calling ``gather.cancel()``
+    after catching an exception (raised by one of the awaitables) from
+    gather won't cancel any other awaitables.
+    """
+    ...
 @overload
-def gather(*coros_or_futures: _FutureLike[_T], return_exceptions: bool) -> Future[list[_T | BaseException]]: ...
+def gather(*coros_or_futures: _FutureLike[_T], return_exceptions: bool) -> Future[list[_T | BaseException]]:
+    """
+    Return a future aggregating results from the given coroutines/futures.
+
+    Coroutines will be wrapped in a future and scheduled in the event
+    loop. They will not necessarily be scheduled in the same order as
+    passed in.
+
+    All futures must share the same event loop.  If all the tasks are
+    done successfully, the returned future's result is the list of
+    results (in the order of the original sequence, not necessarily
+    the order of results arrival).  If *return_exceptions* is True,
+    exceptions in the tasks are treated the same as successful
+    results, and gathered in the result list; otherwise, the first
+    raised exception will be immediately propagated to the returned
+    future.
+
+    Cancellation: if the outer Future is cancelled, all children (that
+    have not completed yet) are also cancelled.  If any child is
+    cancelled, this is treated as if it raised CancelledError --
+    the outer Future is *not* cancelled in this case.  (This is to
+    prevent the cancellation of one child to cause other children to
+    be cancelled.)
+
+    If *return_exceptions* is False, cancelling gather() after it
+    has been marked done won't cancel any submitted awaitables.
+    For instance, gather can be marked done after propagating an
+    exception to the caller, therefore, calling ``gather.cancel()``
+    after catching an exception (raised by one of the awaitables) from
+    gather won't cancel any other awaitables.
+    """
+    ...
 
 # unlike some asyncio apis, This does strict runtime checking of actually being a coroutine, not of any future-like.
-def run_coroutine_threadsafe(coro: Coroutine[Any, Any, _T], loop: AbstractEventLoop) -> concurrent.futures.Future[_T]: ...
-def shield(arg: _FutureLike[_T]) -> Future[_T]: ...
+def run_coroutine_threadsafe(coro: Coroutine[Any, Any, _T], loop: AbstractEventLoop) -> concurrent.futures.Future[_T]:
+    """
+    Submit a coroutine object to a given event loop.
+
+    Return a concurrent.futures.Future to access the result.
+    """
+    ...
+def shield(arg: _FutureLike[_T]) -> Future[_T]:
+    """
+    Wait for a future, shielding it from cancellation.
+
+    The statement
+
+        task = asyncio.create_task(something())
+        res = await shield(task)
+
+    is exactly equivalent to the statement
+
+        res = await something()
+
+    *except* that if the coroutine containing it is cancelled, the
+    task running in something() is not cancelled.  From the POV of
+    something(), the cancellation did not happen.  But its caller is
+    still cancelled, so the yield-from expression still raises
+    CancelledError.  Note: If something() is cancelled by other means
+    this will still cancel shield().
+
+    If you want to completely ignore cancellation (not recommended)
+    you can combine shield() with a try/except clause, as follows:
+
+        task = asyncio.create_task(something())
+        try:
+            res = await shield(task)
+        except CancelledError:
+            res = None
+
+    Save a reference to tasks passed to this function, to avoid
+    a task disappearing mid-execution. The event loop only keeps
+    weak references to tasks. A task that isn't referenced elsewhere
+    may get garbage collected at any time, even before it's done.
+    """
+    ...
 @overload
-async def sleep(delay: float) -> None: ...
+async def sleep(delay: float) -> None:
+    """Coroutine that completes after a given time (in seconds)."""
+    ...
 @overload
-async def sleep(delay: float, result: _T) -> _T: ...
-async def wait_for(fut: _FutureLike[_T], timeout: float | None) -> _T: ...
+async def sleep(delay: float, result: _T) -> _T:
+    """Coroutine that completes after a given time (in seconds)."""
+    ...
+async def wait_for(fut: _FutureLike[_T], timeout: float | None) -> _T:
+    """
+    Wait for the single Future or coroutine to complete, with timeout.
+
+    Coroutine will be wrapped in Task.
+
+    Returns result of the Future or coroutine.  When a timeout occurs,
+    it cancels the task and raises TimeoutError.  To avoid the task
+    cancellation, wrap it in shield().
+
+    If the wait is cancelled, the task is also cancelled.
+
+    If the task suppresses the cancellation and returns a value instead,
+    that value is returned.
+
+    This function is a coroutine.
+    """
+    ...
 
 if sys.version_info >= (3, 11):
     async def wait(

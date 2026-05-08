@@ -73,13 +73,24 @@ class _DictConfigArgs(TypedDict, total=False):
 #
 # Also accept a TypedDict type, to allow callers to use TypedDict
 # types, and for somewhat stricter type checking of dict literals.
-def dictConfig(config: _DictConfigArgs | dict[str, Any]) -> None: ...
+def dictConfig(config: _DictConfigArgs | dict[str, Any]) -> None:
+    """Configure logging using a dictionary."""
+    ...
 def fileConfig(
     fname: StrOrBytesPath | IO[str] | RawConfigParser,
     defaults: Mapping[str, str] | None = None,
     disable_existing_loggers: bool = True,
     encoding: str | None = None,
-) -> None: ...
+) -> None:
+    """
+    Read the logging configuration from a ConfigParser-format file.
+
+    This can be called several times from an application, allowing an end user
+    the ability to select from various pre-canned configurations (if the
+    developer provides a mechanism to present the choices and load the chosen
+    configuration).
+    """
+    ...
 def valid_ident(s: str) -> Literal[True]: ...  # undocumented
 def listen(port: int = 9030, verify: Callable[[bytes], bytes | None] | None = None) -> Thread:
     """

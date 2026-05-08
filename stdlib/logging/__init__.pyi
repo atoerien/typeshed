@@ -630,10 +630,64 @@ class Formatter:
         validate: bool = True,
         *,
         defaults: Mapping[str, Any] | None = None,
-    ) -> None: ...
-    def format(self, record: LogRecord) -> str: ...
-    def formatTime(self, record: LogRecord, datefmt: str | None = None) -> str: ...
-    def formatException(self, ei: _SysExcInfoType) -> str: ...
+    ) -> None:
+        """
+        Initialize the formatter with specified format strings.
+
+        Initialize the formatter either with the specified format string, or a
+        default as described above. Allow for specialized date formatting with
+        the optional datefmt argument. If datefmt is omitted, you get an
+        ISO8601-like (or RFC 3339-like) format.
+
+        Use a style parameter of '%', '{' or '$' to specify that you want to
+        use one of %-formatting, :meth:`str.format` (``{}``) formatting or
+        :class:`string.Template` formatting in your format string.
+
+        .. versionchanged:: 3.2
+           Added the ``style`` parameter.
+        """
+        ...
+    def format(self, record: LogRecord) -> str:
+        """
+        Format the specified record as text.
+
+        The record's attribute dictionary is used as the operand to a
+        string formatting operation which yields the returned string.
+        Before formatting the dictionary, a couple of preparatory steps
+        are carried out. The message attribute of the record is computed
+        using LogRecord.getMessage(). If the formatting string uses the
+        time (as determined by a call to usesTime(), formatTime() is
+        called to format the event time. If there is exception information,
+        it is formatted using formatException() and appended to the message.
+        """
+        ...
+    def formatTime(self, record: LogRecord, datefmt: str | None = None) -> str:
+        """
+        Return the creation time of the specified LogRecord as formatted text.
+
+        This method should be called from format() by a formatter which
+        wants to make use of a formatted time. This method can be overridden
+        in formatters to provide for any specific requirement, but the
+        basic behaviour is as follows: if datefmt (a string) is specified,
+        it is used with time.strftime() to format the creation time of the
+        record. Otherwise, an ISO8601-like (or RFC 3339-like) format is used.
+        The resulting string is returned. This function uses a user-configurable
+        function to convert the creation time to a tuple. By default,
+        time.localtime() is used; to change this for a particular formatter
+        instance, set the 'converter' attribute to a function with the same
+        signature as time.localtime() or time.gmtime(). To change it for all
+        formatters, for example if you want all logging times to be shown in GMT,
+        set the 'converter' attribute in the Formatter class.
+        """
+        ...
+    def formatException(self, ei: _SysExcInfoType) -> str:
+        """
+        Format and return the specified exception information as a string.
+
+        This default implementation just uses
+        traceback.print_exception()
+        """
+        ...
     def formatMessage(self, record: LogRecord) -> str: ...  # undocumented
     def formatStack(self, stack_info: str) -> str:
         """
@@ -790,9 +844,41 @@ class LoggerAdapter(Generic[_L]):
     extra: Mapping[str, object] | None
 
     if sys.version_info >= (3, 13):
-        def __init__(self, logger: _L, extra: Mapping[str, object] | None = None, merge_extra: bool = False) -> None: ...
+        def __init__(self, logger: _L, extra: Mapping[str, object] | None = None, merge_extra: bool = False) -> None:
+            """
+            Initialize the adapter with a logger and an optional dict-like object
+            which provides contextual information. This constructor signature
+            allows easy stacking of LoggerAdapters, if so desired.
+
+            You can effectively pass keyword arguments as shown in the
+            following example:
+
+            adapter = LoggerAdapter(someLogger, dict(p1=v1, p2="v2"))
+
+            By default, LoggerAdapter objects will drop the "extra" argument
+            passed on the individual log calls to use its own instead.
+
+            Initializing it with merge_extra=True will instead merge both
+            maps when logging, the individual call extra taking precedence
+            over the LoggerAdapter instance extra
+
+            .. versionchanged:: 3.13
+               The *merge_extra* argument was added.
+            """
+            ...
     else:
-        def __init__(self, logger: _L, extra: Mapping[str, object] | None = None) -> None: ...
+        def __init__(self, logger: _L, extra: Mapping[str, object] | None = None) -> None:
+            """
+            Initialize the adapter with a logger and a dict-like object which
+            provides contextual information. This constructor signature allows
+            easy stacking of LoggerAdapters, if so desired.
+
+            You can effectively pass keyword arguments as shown in the
+            following example:
+
+            adapter = LoggerAdapter(someLogger, dict(p1=v1, p2="v2"))
+            """
+            ...
 
     if sys.version_info >= (3, 13):
         merge_extra: bool

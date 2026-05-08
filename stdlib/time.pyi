@@ -71,6 +71,16 @@ if sys.platform == "linux":
 # https://github.com/python/typeshed/pull/6560#discussion_r767162532
 @final
 class struct_time(structseq[Any | int], _TimeTuple):
+    """
+    The time value as returned by gmtime(), localtime(), and strptime(), and
+    accepted by asctime(), mktime() and strftime().  May be considered as a
+    sequence of 9 integers.
+
+    Note that several fields' values are not the same as those defined by
+    the C language standard for struct tm.  For example, the value of the
+    field tm_year is the actual year, not year - 1900.  See individual
+    fields' descriptions for details.
+    """
     __match_args__: Final = ("tm_year", "tm_mon", "tm_mday", "tm_hour", "tm_min", "tm_sec", "tm_wday", "tm_yday", "tm_isdst")
 
     @property

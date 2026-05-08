@@ -1,3 +1,5 @@
+"""Read an xlsx file into Python"""
+
 from typing import Final, Literal, TypeAlias
 from zipfile import ZipFile
 

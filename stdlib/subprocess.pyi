@@ -2193,7 +2193,9 @@ class Popen(Generic[AnyStr]):
             umask: int = -1,
             pipesize: int = -1,
             process_group: int | None = None,
-        ) -> None: ...
+        ) -> None:
+            """Create new Popen instance."""
+            ...
     else:
         # pipesize is added in 3.10
         @overload  # encoding is str
@@ -2386,7 +2388,9 @@ class Popen(Generic[AnyStr]):
             extra_groups: Iterable[str | int] | None = None,
             umask: int = -1,
             pipesize: int = -1,
-        ) -> None: ...
+        ) -> None:
+            """Create new Popen instance."""
+            ...
 
     def poll(self) -> int | None:
         """

@@ -315,8 +315,12 @@ class TypeVar:
             contravariant: bool = False,
         ) -> None: ...
 
-    def __or__(self, right: Any, /) -> _SpecialForm: ...  # AnnotationForm
-    def __ror__(self, left: Any, /) -> _SpecialForm: ...  # AnnotationForm
+    def __or__(self, right: Any, /) -> _SpecialForm:
+        """Return self|value."""
+        ...
+    def __ror__(self, left: Any, /) -> _SpecialForm:
+        """Return value|self."""
+        ...
     if sys.version_info >= (3, 11):
         def __typing_subst__(self, arg: Any, /) -> Any: ...
     if sys.version_info >= (3, 13):
@@ -427,6 +431,20 @@ if sys.version_info >= (3, 11):
 
 @final
 class ParamSpecArgs:
+    """
+    The args for a ParamSpec object.
+
+    Given a ParamSpec object P, P.args is an instance of ParamSpecArgs.
+
+    ParamSpecArgs objects have a reference back to their ParamSpec::
+
+        >>> P = ParamSpec("P")
+        >>> P.args.__origin__ is P
+        True
+
+    This type is meant for runtime introspection and has no special meaning
+    to static type checkers.
+    """
     @property
     def __origin__(self) -> ParamSpec: ...
     if sys.version_info >= (3, 12):
@@ -434,11 +452,27 @@ class ParamSpecArgs:
     else:
         def __init__(self, origin: ParamSpec) -> None: ...
 
-    def __eq__(self, other: object, /) -> bool: ...
+    def __eq__(self, other: object, /) -> bool:
+        """Return self==value."""
+        ...
     __hash__: ClassVar[None]  # type: ignore[assignment]
 
 @final
 class ParamSpecKwargs:
+    """
+    The kwargs for a ParamSpec object.
+
+    Given a ParamSpec object P, P.kwargs is an instance of ParamSpecKwargs.
+
+    ParamSpecKwargs objects have a reference back to their ParamSpec::
+
+        >>> P = ParamSpec("P")
+        >>> P.kwargs.__origin__ is P
+        True
+
+    This type is meant for runtime introspection and has no special meaning
+    to static type checkers.
+    """
     @property
     def __origin__(self) -> ParamSpec: ...
     if sys.version_info >= (3, 12):
@@ -446,11 +480,65 @@ class ParamSpecKwargs:
     else:
         def __init__(self, origin: ParamSpec) -> None: ...
 
-    def __eq__(self, other: object, /) -> bool: ...
+    def __eq__(self, other: object, /) -> bool:
+        """Return self==value."""
+        ...
     __hash__: ClassVar[None]  # type: ignore[assignment]
 
 @final
 class ParamSpec:
+    """
+    Parameter specification variable.
+
+    The preferred way to construct a parameter specification is via the
+    dedicated syntax for generic functions, classes, and type aliases,
+    where the use of '**' creates a parameter specification::
+
+        type IntFunc[**P] = Callable[P, int]
+
+    The following syntax creates a parameter specification that defaults
+    to a callable accepting two positional-only arguments of types int
+    and str:
+
+        type IntFuncDefault[**P = [int, str]] = Callable[P, int]
+
+    For compatibility with Python 3.11 and earlier, ParamSpec objects
+    can also be created as follows::
+
+        P = ParamSpec('P')
+        DefaultP = ParamSpec('DefaultP', default=[int, str])
+
+    Parameter specification variables exist primarily for the benefit of
+    static type checkers.  They are used to forward the parameter types of
+    one callable to another callable, a pattern commonly found in
+    higher-order functions and decorators.  They are only valid when used
+    in ``Concatenate``, or as the first argument to ``Callable``, or as
+    parameters for user-defined Generics. See class Generic for more
+    information on generic types.
+
+    An example for annotating a decorator::
+
+        def add_logging[**P, T](f: Callable[P, T]) -> Callable[P, T]:
+            '''A type-safe decorator to add logging to a function.'''
+            def inner(*args: P.args, **kwargs: P.kwargs) -> T:
+                logging.info(f'{f.__name__} was called')
+                return f(*args, **kwargs)
+            return inner
+
+        @add_logging
+        def add_two(x: float, y: float) -> float:
+            '''Add two numbers together.'''
+            return x + y
+
+    Parameter specification variables can be introspected. e.g.::
+
+        >>> P = ParamSpec("P")
+        >>> P.__name__
+        'P'
+
+    Note that only parameter specification variables defined in the global
+    scope can be pickled.
+    """
     @property
     def __name__(self) -> str: ...
     @property
@@ -464,7 +552,9 @@ class ParamSpec:
         def __infer_variance__(self) -> bool: ...
     if sys.version_info >= (3, 13):
         @property
-        def __default__(self) -> Any: ...  # AnnotationForm
+        def __default__(self) -> Any:
+            """The default value for this ParamSpec."""
+            ...
     if sys.version_info >= (3, 13):
         def __new__(
             cls,
@@ -496,15 +586,23 @@ class ParamSpec:
         ) -> None: ...
 
     @property
-    def args(self) -> ParamSpecArgs: ...
+    def args(self) -> ParamSpecArgs:
+        """Represents positional arguments."""
+        ...
     @property
-    def kwargs(self) -> ParamSpecKwargs: ...
+    def kwargs(self) -> ParamSpecKwargs:
+        """Represents keyword arguments."""
+        ...
     if sys.version_info >= (3, 11):
         def __typing_subst__(self, arg: Any, /) -> Any: ...
         def __typing_prepare_subst__(self, alias: Any, args: Any, /) -> tuple[Any, ...]: ...
 
-    def __or__(self, right: Any, /) -> _SpecialForm: ...
-    def __ror__(self, left: Any, /) -> _SpecialForm: ...
+    def __or__(self, right: Any, /) -> _SpecialForm:
+        """Return self|value."""
+        ...
+    def __ror__(self, left: Any, /) -> _SpecialForm:
+        """Return value|self."""
+        ...
     if sys.version_info >= (3, 13):
         def has_default(self) -> bool: ...
     if sys.version_info >= (3, 14):
@@ -516,12 +614,37 @@ TypeAlias: _SpecialForm
 TypeGuard: _SpecialForm
 
 class NewType:
-    def __init__(self, name: str, tp: Any) -> None: ...  # AnnotationForm
+    """
+    NewType creates simple unique types with almost zero runtime overhead.
+
+    NewType(name, tp) is considered a subtype of tp
+    by static type checkers. At runtime, NewType(name, tp) returns
+    a dummy callable that simply returns its argument.
+
+    Usage::
+
+        UserId = NewType('UserId', int)
+
+        def name_by_id(user_id: UserId) -> str:
+            ...
+
+        UserId('user')          # Fails type check
+
+        name_by_id(42)          # Fails type check
+        name_by_id(UserId(42))  # OK
+
+        num = UserId(5) + 1     # type: int
+    """
+    def __init__(self, name: str, tp: Any) -> None:
+        """Initialize self.  See help(type(self)) for accurate signature."""
+        ...
     if sys.version_info >= (3, 11):
         @staticmethod
         def __call__(x: _T, /) -> _T: ...
     else:
-        def __call__(self, x: _T) -> _T: ...
+        def __call__(self, x: _T) -> _T:
+            """Call self as a function."""
+            ...
 
     def __or__(self, other: Any) -> _SpecialForm: ...
     def __ror__(self, other: Any) -> _SpecialForm: ...
@@ -1479,11 +1602,94 @@ else:
         """
         Return type hints for an object.
 
-def get_args(tp: Any) -> tuple[Any, ...]: ...  # AnnotationForm
+        This is often the same as obj.__annotations__, but it handles
+        forward references encoded as string literals and recursively replaces all
+        'Annotated[T, ...]' with 'T' (unless 'include_extras=True').
+
+        The argument may be a module, class, method, or function. The annotations
+        are returned as a dictionary. For classes, annotations include also
+        inherited members.
+
+        TypeError is raised if the argument is not of a type that can contain
+        annotations, and an empty dictionary is returned if no annotations are
+        present.
+
+        BEWARE -- the behavior of globalns and localns is counterintuitive
+        (unless you are familiar with how eval() and exec() work).  The
+        search order is locals first, then globals.
+
+        - If no dict arguments are passed, an attempt is made to use the
+          globals from obj (or the respective module's globals for classes),
+          and these are also used as the locals.  If the object does not appear
+          to have globals, an empty dictionary is used.  For classes, the search
+          order is globals first then locals.
+
+        - If one dict argument is passed, it is used for both globals and
+          locals.
+
+        - If two dict arguments are passed, they specify globals and
+          locals, respectively.
+        """
+        ...
+
+def get_args(tp: Any) -> tuple[Any, ...]:
+    """
+    Get type arguments with all substitutions performed.
+
+    For unions, basic simplifications used by Union constructor are performed.
+
+    Examples::
+
+        >>> T = TypeVar('T')
+        >>> assert get_args(Dict[str, int]) == (str, int)
+        >>> assert get_args(int) == ()
+        >>> assert get_args(Union[int, Union[T, int], str][int]) == (int, str)
+        >>> assert get_args(Union[int, Tuple[T, int]][str]) == (int, Tuple[str, int])
+        >>> assert get_args(Callable[[], T][int]) == ([], int)
+    """
+    ...
 @overload
-def get_origin(tp: ParamSpecArgs | ParamSpecKwargs) -> ParamSpec: ...
+def get_origin(tp: ParamSpecArgs | ParamSpecKwargs) -> ParamSpec:
+    """
+    Get the unsubscripted version of a type.
+
+    This supports generic types, Callable, Tuple, Union, Literal, Final, ClassVar,
+    Annotated, and others. Return None for unsupported types.
+
+    Examples::
+
+        >>> P = ParamSpec('P')
+        >>> assert get_origin(Literal[42]) is Literal
+        >>> assert get_origin(int) is None
+        >>> assert get_origin(ClassVar[int]) is ClassVar
+        >>> assert get_origin(Generic) is Generic
+        >>> assert get_origin(Generic[T]) is Generic
+        >>> assert get_origin(Union[T, int]) is Union
+        >>> assert get_origin(List[Tuple[T, T]][int]) is list
+        >>> assert get_origin(P.args) is P
+    """
+    ...
 @overload
-def get_origin(tp: UnionType) -> type[UnionType]: ...
+def get_origin(tp: UnionType) -> type[UnionType]:
+    """
+    Get the unsubscripted version of a type.
+
+    This supports generic types, Callable, Tuple, Union, Literal, Final, ClassVar,
+    Annotated, and others. Return None for unsupported types.
+
+    Examples::
+
+        >>> P = ParamSpec('P')
+        >>> assert get_origin(Literal[42]) is Literal
+        >>> assert get_origin(int) is None
+        >>> assert get_origin(ClassVar[int]) is ClassVar
+        >>> assert get_origin(Generic) is Generic
+        >>> assert get_origin(Generic[T]) is Generic
+        >>> assert get_origin(Union[T, int]) is Union
+        >>> assert get_origin(List[Tuple[T, T]][int]) is list
+        >>> assert get_origin(P.args) is P
+    """
+    ...
 @overload
 def get_origin(tp: GenericAlias) -> type:
     """
@@ -1882,8 +2088,33 @@ else:
             def __or__(self, other: Any) -> _SpecialForm: ...
             def __ror__(self, other: Any) -> _SpecialForm: ...
 
-def is_typeddict(tp: object) -> bool: ...
-def _type_repr(obj: object) -> str: ...
+def is_typeddict(tp: object) -> bool:
+    """
+    Check if an annotation is a TypedDict class.
+
+    For example::
+
+        >>> from typing import TypedDict
+        >>> class Film(TypedDict):
+        ...     title: str
+        ...     year: int
+        ...
+        >>> is_typeddict(Film)
+        True
+        >>> is_typeddict(dict)
+        False
+    """
+    ...
+def _type_repr(obj: object) -> str:
+    """
+    Return the repr() of an object, special-casing types (internal helper).
+
+    If obj is a type, we return a shorter version than the default
+    type.__repr__, based on the module and qualified name, which is
+    typically enough to uniquely identify a type.  For everything
+    else, we fall back on repr(obj).
+    """
+    ...
 
 if sys.version_info >= (3, 12):
     _TypeParameter: typing_extensions.TypeAlias = (

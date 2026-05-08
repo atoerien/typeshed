@@ -1,3 +1,37 @@
+"""
+Python comes with a many great data structures, from :class:`dict`
+to :class:`collections.deque`, and no shortage of serviceable
+algorithm implementations, from :func:`sorted` to :mod:`bisect`. But
+priority queues are curiously relegated to an example documented in
+:mod:`heapq`. Even there, the approach presented is not full-featured
+and object-oriented. There is a built-in priority queue,
+:class:`Queue.PriorityQueue`, but in addition to its austere API, it
+carries the double-edged sword of threadsafety, making it fine for
+multi-threaded, multi-consumer applications, but high-overhead for
+cooperative/single-threaded use cases.
+
+The ``queueutils`` module currently provides two Queue
+implementations: :class:`HeapPriorityQueue`, based on a heap, and
+:class:`SortedPriorityQueue`, based on a sorted list. Both use a
+unified API based on :class:`BasePriorityQueue` to facilitate testing
+the slightly different performance characteristics on various
+application use cases.
+
+>>> pq = PriorityQueue()
+>>> pq.add('low priority task', 0)
+>>> pq.add('high priority task', 2)
+>>> pq.add('medium priority task 1', 1)
+>>> pq.add('medium priority task 2', 1)
+>>> len(pq)
+4
+>>> pq.pop()
+'high priority task'
+>>> pq.peek()
+'medium priority task 1'
+>>> len(pq)
+3
+"""
+
 from typing import TypeAlias
 
 class BasePriorityQueue:

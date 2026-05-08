@@ -574,8 +574,12 @@ class _patch_dict:
     clear: Any
     def __init__(self, in_dict: Any, values: Any = (), clear: Any = False, **kwargs: Any) -> None: ...
     def __call__(self, f: Any) -> Any: ...
-    def __enter__(self) -> Any: ...
-    def __exit__(self, *args: object) -> Any: ...
+    def __enter__(self) -> Any:
+        """Patch the dict."""
+        ...
+    def __exit__(self, *args: object) -> Any:
+        """Unpatch the dict."""
+        ...
     def decorate_callable(self, f: _F) -> _F: ...
     def decorate_async_callable(self, f: _AF) -> _AF: ...
     def decorate_class(self, klass: Any) -> Any: ...
@@ -868,7 +872,31 @@ def create_autospec(
     *,
     unsafe: bool = False,
     **kwargs: Any,
-) -> Any: ...
+) -> Any:
+    """
+    Create a mock object using another object as a spec. Attributes on the
+    mock will use the corresponding attribute on the `spec` object as their
+    spec.
+
+    Functions or methods being mocked will have their arguments checked
+    to check that they are called with the correct signature.
+
+    If `spec_set` is True then attempting to set attributes that don't exist
+    on the spec object will raise an `AttributeError`.
+
+    If a class is used as a spec then the return value of the mock (the
+    instance of the class) will have the same spec. You can use a class as the
+    spec for an instance object by passing `instance=True`. The returned mock
+    will only be callable if instances of the mock are callable.
+
+    `create_autospec` will raise a `RuntimeError` if passed some common
+    misspellings of the arguments autospec and spec_set. Pass the argument
+    `unsafe` with the value True to disable that check.
+
+    `create_autospec` also takes arbitrary keyword arguments that are passed to
+    the constructor of the created mock.
+    """
+    ...
 
 class _SpecState:
     spec: Any

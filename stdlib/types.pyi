@@ -263,7 +263,9 @@ class CodeType:
             co_qualname: str = ...,
             co_linetable: bytes = ...,
             co_exceptiontable: bytes = ...,
-        ) -> Self: ...
+        ) -> Self:
+            """Return a copy of the code object with new values for the specified fields."""
+            ...
     else:
         def replace(
             self,
@@ -284,7 +286,9 @@ class CodeType:
             co_filename: str = ...,
             co_name: str = ...,
             co_linetable: bytes = ...,
-        ) -> Self: ...
+        ) -> Self:
+            """Return a copy of the code object with new values for the specified fields."""
+            ...
 
     if sys.version_info >= (3, 13):
         __replace__ = replace
@@ -982,41 +986,69 @@ class GenericAlias:
         @property
         def __typing_unpacked_tuple_args__(self) -> tuple[Any, ...] | None: ...
 
-    def __or__(self, value: Any, /) -> UnionType: ...
-    def __ror__(self, value: Any, /) -> UnionType: ...
+    def __or__(self, value: Any, /) -> UnionType:
+        """Return self|value."""
+        ...
+    def __ror__(self, value: Any, /) -> UnionType:
+        """Return value|self."""
+        ...
 
     # GenericAlias delegates attr access to `__origin__`
     def __getattr__(self, name: str) -> Any: ...
 
 @final
 class NoneType:
-    def __bool__(self) -> Literal[False]: ...
+    """The type of the None singleton."""
+    def __bool__(self) -> Literal[False]:
+        """True if self else False"""
+        ...
 
 @final
-class EllipsisType: ...
+class EllipsisType:
+    """The type of the Ellipsis singleton."""
+    ...
 
 @final
-class NotImplementedType(Any): ...
+class NotImplementedType(Any):
+    """The type of the NotImplemented singleton."""
+    ...
 
 @final
 class UnionType:
+    """
+    Represent a union type
+
+    E.g. for int | str
+    """
     @property
     def __args__(self) -> tuple[Any, ...]: ...
     @property
-    def __parameters__(self) -> tuple[Any, ...]: ...
+    def __parameters__(self) -> tuple[Any, ...]:
+        """Type variables in the types.UnionType."""
+        ...
     # `(int | str) | Literal["foo"]` returns a generic alias to an instance of `_SpecialForm` (`Union`).
     # Normally we'd express this using the return type of `_SpecialForm.__ror__`,
     # but because `UnionType.__or__` accepts `Any`, type checkers will use
     # the return type of `UnionType.__or__` to infer the result of this operation
     # rather than `_SpecialForm.__ror__`. To mitigate this, we use `| Any`
     # in the return type of `UnionType.__(r)or__`.
-    def __or__(self, value: Any, /) -> UnionType | Any: ...
-    def __ror__(self, value: Any, /) -> UnionType | Any: ...
-    def __eq__(self, value: object, /) -> bool: ...
-    def __hash__(self) -> int: ...
+    def __or__(self, value: Any, /) -> UnionType | Any:
+        """Return self|value."""
+        ...
+    def __ror__(self, value: Any, /) -> UnionType | Any:
+        """Return value|self."""
+        ...
+    def __eq__(self, value: object, /) -> bool:
+        """Return self==value."""
+        ...
+    def __hash__(self) -> int:
+        """Return hash(self)."""
+        ...
     # you can only subscript a `UnionType` instance if at least one of the elements
     # in the union is a generic alias instance that has a non-empty `__parameters__`
-    def __getitem__(self, parameters: Any, /) -> object: ...
+    def __getitem__(self, parameters: Any, /) -> object:
+        """Return self[key]."""
+        ...
 
 if sys.version_info >= (3, 13):
     @final

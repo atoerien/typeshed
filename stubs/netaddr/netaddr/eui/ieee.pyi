@@ -19,9 +19,26 @@ OUI_INDEX: _INDEX
 IAB_INDEX: _INDEX
 
 class FileIndexer(Subscriber):
+    """
+    A concrete Subscriber that receives OUI record offset information that is
+    written to an index data file as a set of comma separated records.
+    """
     writer: _csv.Writer
-    def __init__(self, index_file: TextIO | FileDescriptorOrPath) -> None: ...
-    def update(self, data: Iterable[Any]) -> None: ...
+    def __init__(self, index_file: TextIO | FileDescriptorOrPath) -> None:
+        """
+        Constructor.
+
+        :param index_file: a file-like object or name of index file where
+            index records will be written.
+        """
+        ...
+    def update(self, data: Iterable[Any]) -> None:
+        """
+        Receives and writes index data to a CSV data file.
+
+        :param data: record containing offset record information.
+        """
+        ...
 
 class OUIIndexParser(Publisher):
     """

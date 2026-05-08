@@ -1,3 +1,8 @@
+"""
+This module provides access to mathematical functions for complex
+numbers.
+"""
+
 from typing import Final, SupportsComplex, SupportsFloat, SupportsIndex, TypeAlias
 
 e: Final[float]

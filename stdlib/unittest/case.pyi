@@ -490,10 +490,38 @@ class TestCase:
         ...
     def assertLogs(
         self, logger: str | logging.Logger | None = None, level: int | str | None = None
-    ) -> _AssertLogsContext[_LoggingWatcher]: ...
+    ) -> _AssertLogsContext[_LoggingWatcher]:
+        """
+        Fail unless a log message of level *level* or higher is emitted
+        on *logger_name* or its children.  If omitted, *level* defaults to
+        INFO and *logger* defaults to the root logger.
+
+        This method must be used as a context manager, and will yield
+        a recording object with two attributes: `output` and `records`.
+        At the end of the context manager, the `output` attribute will
+        be a list of the matching formatted log messages and the
+        `records` attribute will be a list of the corresponding LogRecord
+        objects.
+
+        Example::
+
+            with self.assertLogs('foo', level='INFO') as cm:
+                logging.getLogger('foo').info('first message')
+                logging.getLogger('foo.bar').error('second message')
+            self.assertEqual(cm.output, ['INFO:foo:first message',
+                                         'ERROR:foo.bar:second message'])
+        """
+        ...
     def assertNoLogs(
         self, logger: str | logging.Logger | None = None, level: int | str | None = None
-    ) -> _AssertLogsContext[None]: ...
+    ) -> _AssertLogsContext[None]:
+        """
+        Fail unless no log messages of level *level* or higher are emitted
+        on *logger_name* or its children.
+
+        This method must be used as a context manager.
+        """
+        ...
     @overload
     def assertAlmostEqual(self, first: _S, second: _S, places: None, msg: Any, delta: _SupportsAbsAndDunderGE) -> None:
         """
@@ -847,7 +875,14 @@ class TestCase:
             ...
 
     # Runtime has *args, **kwargs, but will error if any are supplied
-    def __init_subclass__(cls, *args: Never, **kwargs: Never) -> None: ...
+    def __init_subclass__(cls, *args: Never, **kwargs: Never) -> None:
+        """
+        This method is called when a class is subclassed.
+
+        The default implementation does nothing. It may be
+        overridden to extend subclasses.
+        """
+        ...
 
     if sys.version_info >= (3, 14):
         def assertIsSubclass(self, cls: type, superclass: type | tuple[type, ...], msg: Any = None) -> None: ...

@@ -904,7 +904,17 @@ class AbstractEventLoop:
             ssl: _SSLContext = None,
             ssl_handshake_timeout: float | None = None,
             ssl_shutdown_timeout: float | None = None,
-        ) -> tuple[Transport, _ProtocolT]: ...
+        ) -> tuple[Transport, _ProtocolT]:
+            """
+            Handle an accepted connection.
+
+            This is used by servers that accept connections outside of
+            asyncio, but use asyncio to handle connections.
+
+            This method is a coroutine.  When completed, the coroutine
+            returns a (transport, protocol) pair.
+            """
+            ...
     else:
         async def connect_accepted_socket(
             self,

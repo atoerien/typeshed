@@ -220,7 +220,13 @@ if sys.version_info < (3, 12):
         "Deprecated since Python 3.10; removed in Python 3.12. "
         "Open database in URI mode using `cache=shared` parameter instead."
     )
-    def enable_shared_cache(enable: int) -> None: ...
+    def enable_shared_cache(enable: int) -> None:
+        """
+        enable_shared_cache(do_enable)
+
+        Enable or disable shared cache mode for the calling thread.
+        """
+        ...
 
 paramstyle: Final = "qmark"
 threadsafety: Literal[0, 1, 3]

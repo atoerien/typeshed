@@ -307,7 +307,16 @@ class Checker:
         withDoctest: bool = False,
         file_tokens: Unused = (),
     ) -> None: ...
-    def deferFunction(self, callable: Callable[..., Any]) -> None: ...
+    def deferFunction(self, callable: Callable[..., Any]) -> None:
+        """
+        Schedule a function handler to be called just before completion.
+
+        This is used for handling function bodies, which must be deferred
+        because code later in the file might modify the global scope. When
+        `callable` is called, the scope at the time this is called will be
+        restored, however it will contain any new bindings added to it.
+        """
+        ...
     @property
     def futuresAllowed(self) -> bool: ...
     @futuresAllowed.setter

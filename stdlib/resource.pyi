@@ -30,6 +30,14 @@ if sys.platform != "win32":
     class struct_rusage(
         structseq[float], tuple[float, float, int, int, int, int, int, int, int, int, int, int, int, int, int, int]
     ):
+        """
+        struct_rusage: Result from getrusage.
+
+        This object may be accessed either as a tuple of
+            (utime,stime,maxrss,ixrss,idrss,isrss,minflt,majflt,
+            nswap,inblock,oublock,msgsnd,msgrcv,nsignals,nvcsw,nivcsw)
+        or via the attributes ru_utime, ru_stime, ru_maxrss, and so on.
+        """
         __match_args__: Final = (
             "ru_utime",
             "ru_stime",

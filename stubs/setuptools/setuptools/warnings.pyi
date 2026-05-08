@@ -1,3 +1,11 @@
+"""
+Provide basic warnings used by setuptools modules.
+
+Using custom classes (other than ``UserWarning``) allow users to set
+``PYTHONWARNINGS`` filters to run tests and prepare for upcoming changes in
+setuptools.
+"""
+
 from typing import TypeAlias
 
 _DueDate: TypeAlias = tuple[int, int, int]  # time tuple

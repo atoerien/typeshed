@@ -360,9 +360,18 @@ class Path(PurePath):
         def __new__(cls, *args: StrPath, **kwargs: Unused) -> Self: ...
 
     @classmethod
-    def cwd(cls) -> Self: ...
-    def stat(self, *, follow_symlinks: bool = True) -> stat_result: ...
-    def chmod(self, mode: int, *, follow_symlinks: bool = True) -> None: ...
+    def cwd(cls) -> Self:
+        """Return a new path pointing to the current working directory."""
+        ...
+    def stat(self, *, follow_symlinks: bool = True) -> stat_result:
+        """
+        Return the result of the stat() system call on this path, like
+        os.stat() does.
+        """
+        ...
+    def chmod(self, mode: int, *, follow_symlinks: bool = True) -> None:
+        """Change the permissions of the path, like os.chmod()."""
+        ...
 
     if sys.version_info >= (3, 13):
         @classmethod
@@ -666,28 +675,115 @@ class Path(PurePath):
             """Check if this path is a mount point"""
             ...
 
-    def readlink(self) -> Self: ...
-    def rename(self, target: StrPath) -> Self: ...
-    def replace(self, target: StrPath) -> Self: ...
-    def resolve(self, strict: bool = False) -> Self: ...
-    def rmdir(self) -> None: ...
-    def symlink_to(self, target: StrOrBytesPath, target_is_directory: bool = False) -> None: ...
-    def hardlink_to(self, target: StrOrBytesPath) -> None: ...
-    def touch(self, mode: int = 0o666, exist_ok: bool = True) -> None: ...
-    def unlink(self, missing_ok: bool = False) -> None: ...
+    def readlink(self) -> Self:
+        """Return the path to which the symbolic link points."""
+        ...
+    def rename(self, target: StrPath) -> Self:
+        """
+        Rename this path to the target path.
+
+        The target path may be absolute or relative. Relative paths are
+        interpreted relative to the current working directory, *not* the
+        directory of the Path object.
+
+        Returns the new Path instance pointing to the target path.
+        """
+        ...
+    def replace(self, target: StrPath) -> Self:
+        """
+        Rename this path to the target path, overwriting if that path exists.
+
+        The target path may be absolute or relative. Relative paths are
+        interpreted relative to the current working directory, *not* the
+        directory of the Path object.
+
+        Returns the new Path instance pointing to the target path.
+        """
+        ...
+    def resolve(self, strict: bool = False) -> Self:
+        """
+        Make the path absolute, resolving all symlinks on the way and also
+        normalizing it.
+        """
+        ...
+    def rmdir(self) -> None:
+        """Remove this directory.  The directory must be empty."""
+        ...
+    def symlink_to(self, target: StrOrBytesPath, target_is_directory: bool = False) -> None:
+        """
+        Make this path a symlink pointing to the target path.
+        Note the order of arguments (link, target) is the reverse of os.symlink.
+        """
+        ...
+    def hardlink_to(self, target: StrOrBytesPath) -> None:
+        """
+        Make this path a hard link pointing to the same file as *target*.
+
+        Note the order of arguments (self, target) is the reverse of os.link's.
+        """
+        ...
+    def touch(self, mode: int = 0o666, exist_ok: bool = True) -> None:
+        """Create this file with the given access mode, if it doesn't exist."""
+        ...
+    def unlink(self, missing_ok: bool = False) -> None:
+        """
+        Remove this file or link.
+        If the path is a directory, use rmdir() instead.
+        """
+        ...
     @classmethod
-    def home(cls) -> Self: ...
-    def absolute(self) -> Self: ...
-    def expanduser(self) -> Self: ...
-    def read_bytes(self) -> bytes: ...
-    def samefile(self, other_path: StrPath) -> bool: ...
-    def write_bytes(self, data: ReadableBuffer) -> int: ...
+    def home(cls) -> Self:
+        """
+        Return a new path pointing to expanduser('~').
+        
+        """
+        ...
+    def absolute(self) -> Self:
+        """
+        Return an absolute version of this path
+        No normalization or symlink resolution is performed.
+
+        Use resolve() to resolve symlinks and remove '..' segments.
+        """
+        ...
+    def expanduser(self) -> Self:
+        """
+        Return a new path with expanded ~ and ~user constructs
+        (as returned by os.path.expanduser)
+        """
+        ...
+    def read_bytes(self) -> bytes:
+        """Open the file in bytes mode, read it, and close the file."""
+        ...
+    def samefile(self, other_path: StrPath) -> bool:
+        """
+        Return whether other_path is the same or not as this file
+        (as returned by os.path.samefile()).
+        """
+        ...
+    def write_bytes(self, data: ReadableBuffer) -> int:
+        """Open the file in bytes mode, write to it, and close the file."""
+        ...
     def write_text(
         self, data: str, encoding: str | None = None, errors: str | None = None, newline: str | None = None
-    ) -> int: ...
+    ) -> int:
+        """Open the file in text mode, write to it, and close the file."""
+        ...
     if sys.version_info < (3, 12):
         @deprecated("Deprecated since Python 3.10; removed in Python 3.12. Use `hardlink_to()` instead.")
-        def link_to(self, target: StrOrBytesPath) -> None: ...
+        def link_to(self, target: StrOrBytesPath) -> None:
+            """
+            Make the target path a hard link pointing to this path.
+
+            Note this function does not make this path a hard link to *target*,
+            despite the implication of the function and argument names. The order
+            of arguments (target, link) is the reverse of Path.symlink_to, but
+            matches that of os.link.
+
+            Deprecated since Python 3.10 and scheduled for removal in Python 3.12.
+            Use `hardlink_to()` instead.
+            """
+            ...
     if sys.version_info >= (3, 12):
         def walk(
             self, top_down: bool = True, on_error: Callable[[OSError], object] | None = None, follow_symlinks: bool = False

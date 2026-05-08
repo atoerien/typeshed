@@ -34,7 +34,16 @@ if sys.version_info >= (3, 14):
 
 _FrameSummaryTuple: TypeAlias = tuple[str, int, str, str | None]
 
-def print_tb(tb: TracebackType | None, limit: int | None = None, file: SupportsWrite[str] | None = None) -> None: ...
+def print_tb(tb: TracebackType | None, limit: int | None = None, file: SupportsWrite[str] | None = None) -> None:
+    """
+    Print up to 'limit' stack trace entries from the traceback 'tb'.
+
+    If 'limit' is omitted or None, all entries are printed.  If 'file'
+    is omitted or None, the output goes to sys.stderr; otherwise
+    'file' should be an open file or file-like object with a write()
+    method.
+    """
+    ...
 @overload
 def print_exception(
     exc: type[BaseException] | None,
@@ -44,11 +53,35 @@ def print_exception(
     limit: int | None = None,
     file: SupportsWrite[str] | None = None,
     chain: bool = True,
-) -> None: ...
+) -> None:
+    """
+    Print exception up to 'limit' stack trace entries from 'tb' to 'file'.
+
+    This differs from print_tb() in the following ways: (1) if
+    traceback is not None, it prints a header "Traceback (most recent
+    call last):"; (2) it prints the exception type and value after the
+    stack trace; (3) if type is SyntaxError and value has the
+    appropriate format, it prints the line where the syntax error
+    occurred with a caret on the next line indicating the approximate
+    position of the error.
+    """
+    ...
 @overload
 def print_exception(
     exc: BaseException, /, *, limit: int | None = None, file: SupportsWrite[str] | None = None, chain: bool = True
-) -> None: ...
+) -> None:
+    """
+    Print exception up to 'limit' stack trace entries from 'tb' to 'file'.
+
+    This differs from print_tb() in the following ways: (1) if
+    traceback is not None, it prints a header "Traceback (most recent
+    call last):"; (2) it prints the exception type and value after the
+    stack trace; (3) if type is SyntaxError and value has the
+    appropriate format, it prints the line where the syntax error
+    occurred with a caret on the next line indicating the approximate
+    position of the error.
+    """
+    ...
 @overload
 def format_exception(
     exc: type[BaseException] | None,
@@ -57,16 +90,89 @@ def format_exception(
     tb: TracebackType | None = ...,
     limit: int | None = None,
     chain: bool = True,
-) -> list[str]: ...
+) -> list[str]:
+    """
+    Format a stack trace and the exception information.
+
+    The arguments have the same meaning as the corresponding arguments
+    to print_exception().  The return value is a list of strings, each
+    ending in a newline and some containing internal newlines.  When
+    these lines are concatenated and printed, exactly the same text is
+    printed as does print_exception().
+    """
+    ...
 @overload
-def format_exception(exc: BaseException, /, *, limit: int | None = None, chain: bool = True) -> list[str]: ...
-def print_exc(limit: int | None = None, file: SupportsWrite[str] | None = None, chain: bool = True) -> None: ...
-def print_last(limit: int | None = None, file: SupportsWrite[str] | None = None, chain: bool = True) -> None: ...
-def print_stack(f: FrameType | None = None, limit: int | None = None, file: SupportsWrite[str] | None = None) -> None: ...
-def extract_tb(tb: TracebackType | None, limit: int | None = None) -> StackSummary: ...
-def extract_stack(f: FrameType | None = None, limit: int | None = None) -> StackSummary: ...
-def format_list(extracted_list: Iterable[FrameSummary | _FrameSummaryTuple]) -> list[str]: ...
-def print_list(extracted_list: Iterable[FrameSummary | _FrameSummaryTuple], file: SupportsWrite[str] | None = None) -> None: ...
+def format_exception(exc: BaseException, /, *, limit: int | None = None, chain: bool = True) -> list[str]:
+    """
+    Format a stack trace and the exception information.
+
+    The arguments have the same meaning as the corresponding arguments
+    to print_exception().  The return value is a list of strings, each
+    ending in a newline and some containing internal newlines.  When
+    these lines are concatenated and printed, exactly the same text is
+    printed as does print_exception().
+    """
+    ...
+def print_exc(limit: int | None = None, file: SupportsWrite[str] | None = None, chain: bool = True) -> None:
+    """Shorthand for 'print_exception(sys.exception(), limit=limit, file=file, chain=chain)'."""
+    ...
+def print_last(limit: int | None = None, file: SupportsWrite[str] | None = None, chain: bool = True) -> None:
+    """This is a shorthand for 'print_exception(sys.last_exc, limit=limit, file=file, chain=chain)'."""
+    ...
+def print_stack(f: FrameType | None = None, limit: int | None = None, file: SupportsWrite[str] | None = None) -> None:
+    """
+    Print a stack trace from its invocation point.
+
+    The optional 'f' argument can be used to specify an alternate
+    stack frame at which to start. The optional 'limit' and 'file'
+    arguments have the same meaning as for print_exception().
+    """
+    ...
+def extract_tb(tb: TracebackType | None, limit: int | None = None) -> StackSummary:
+    """
+    Return a StackSummary object representing a list of
+    pre-processed entries from traceback.
+
+    This is useful for alternate formatting of stack traces.  If
+    'limit' is omitted or None, all entries are extracted.  A
+    pre-processed stack trace entry is a FrameSummary object
+    containing attributes filename, lineno, name, and line
+    representing the information that is usually printed for a stack
+    trace.  The line is a string with leading and trailing
+    whitespace stripped; if the source is not available it is None.
+    """
+    ...
+def extract_stack(f: FrameType | None = None, limit: int | None = None) -> StackSummary:
+    """
+    Extract the raw traceback from the current stack frame.
+
+    The return value has the same format as for extract_tb().  The
+    optional 'f' and 'limit' arguments have the same meaning as for
+    print_stack().  Each item in the list is a quadruple (filename,
+    line number, function name, text), and the entries are in order
+    from oldest to newest stack frame.
+    """
+    ...
+def format_list(extracted_list: Iterable[FrameSummary | _FrameSummaryTuple]) -> list[str]:
+    """
+    Format a list of tuples or FrameSummary objects for printing.
+
+    Given a list of tuples or FrameSummary objects as returned by
+    extract_tb() or extract_stack(), return a list of strings ready
+    for printing.
+
+    Each string in the resulting list corresponds to the item with the
+    same index in the argument list.  Each string ends in a newline;
+    the strings may contain internal newlines as well, for those items
+    whose source text line is not None.
+    """
+    ...
+def print_list(extracted_list: Iterable[FrameSummary | _FrameSummaryTuple], file: SupportsWrite[str] | None = None) -> None:
+    """
+    Print the list of tuples as returned by extract_tb() or
+    extract_stack() as a formatted stack trace to the given file.
+    """
+    ...
 
 if sys.version_info >= (3, 13):
     @overload
@@ -136,12 +242,34 @@ else:
         """
         ...
 
-def format_exc(limit: int | None = None, chain: bool = True) -> str: ...
-def format_tb(tb: TracebackType | None, limit: int | None = None) -> list[str]: ...
-def format_stack(f: FrameType | None = None, limit: int | None = None) -> list[str]: ...
-def clear_frames(tb: TracebackType | None) -> None: ...
-def walk_stack(f: FrameType | None) -> Iterator[tuple[FrameType, int]]: ...
-def walk_tb(tb: TracebackType | None) -> Iterator[tuple[FrameType, int]]: ...
+def format_exc(limit: int | None = None, chain: bool = True) -> str:
+    """Like print_exc() but return a string."""
+    ...
+def format_tb(tb: TracebackType | None, limit: int | None = None) -> list[str]:
+    """A shorthand for 'format_list(extract_tb(tb, limit))'."""
+    ...
+def format_stack(f: FrameType | None = None, limit: int | None = None) -> list[str]:
+    """Shorthand for 'format_list(extract_stack(f, limit))'."""
+    ...
+def clear_frames(tb: TracebackType | None) -> None:
+    """Clear all references to local variables in the frames of a traceback."""
+    ...
+def walk_stack(f: FrameType | None) -> Iterator[tuple[FrameType, int]]:
+    """
+    Walk a stack yielding the frame and line number for each frame.
+
+    This will follow f.f_back from the given frame. If no frame is given, the
+    current stack is used. Usually used with StackSummary.extract.
+    """
+    ...
+def walk_tb(tb: TracebackType | None) -> Iterator[tuple[FrameType, int]]:
+    """
+    Walk a traceback yielding the frame and line number for each frame.
+
+    This will follow tb.tb_next (and thus is in the opposite order to
+    walk_stack). Usually used with StackSummary.extract.
+    """
+    ...
 
 if sys.version_info >= (3, 11):
     class _ExceptionPrintContext:
@@ -271,7 +399,9 @@ class TracebackException:
             compact: bool = False,
             max_group_width: int = 15,
             max_group_depth: int = 10,
-        ) -> Self: ...
+        ) -> Self:
+            """Create a TracebackException from an exception."""
+            ...
     else:
         @classmethod
         def from_exception(
@@ -282,7 +412,9 @@ class TracebackException:
             lookup_lines: bool = True,
             capture_locals: bool = False,
             compact: bool = False,
-        ) -> Self: ...
+        ) -> Self:
+            """Create a TracebackException from an exception."""
+            ...
 
     def __eq__(self, other: object) -> bool: ...
     __hash__: ClassVar[None]  # type: ignore[assignment]

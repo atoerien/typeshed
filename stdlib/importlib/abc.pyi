@@ -173,24 +173,70 @@ class SourceLoader(_bootstrap_external.SourceLoader, ResourceLoader, ExecutionLo
 
 # Please keep in sync with _typeshed.importlib.MetaPathFinderProtocol
 class MetaPathFinder(metaclass=ABCMeta):
+    """Abstract base class for import finders on sys.meta_path."""
     if sys.version_info < (3, 12):
         @deprecated("Deprecated since Python 3.4; removed in Python 3.12. Use `MetaPathFinder.find_spec()` instead.")
-        def find_module(self, fullname: str, path: Sequence[str] | None) -> Loader | None: ...
+        def find_module(self, fullname: str, path: Sequence[str] | None) -> Loader | None:
+            """
+            Return a loader for the module.
 
-    def invalidate_caches(self) -> None: ...
+            If no module is found, return None.  The fullname is a str and
+            the path is a list of strings or None.
+
+            This method is deprecated since Python 3.4 in favor of
+            finder.find_spec(). If find_spec() exists then backwards-compatible
+            functionality is provided for this method.
+            """
+            ...
+
+    def invalidate_caches(self) -> None:
+        """
+        An optional method for clearing the finder's cache, if any.
+        This method is used by importlib.invalidate_caches().
+        """
+        ...
     # Not defined on the actual class, but expected to exist.
     def find_spec(
         self, fullname: str, path: Sequence[str] | None, target: types.ModuleType | None = ..., /
     ) -> ModuleSpec | None: ...
 
 class PathEntryFinder(metaclass=ABCMeta):
+    """Abstract base class for path entry finders used by PathFinder."""
     if sys.version_info < (3, 12):
         @deprecated("Deprecated since Python 3.4; removed in Python 3.12. Use `PathEntryFinder.find_spec()` instead.")
-        def find_module(self, fullname: str) -> Loader | None: ...
-        @deprecated("Deprecated since Python 3.4; removed in Python 3.12. Use `find_spec()` instead.")
-        def find_loader(self, fullname: str) -> tuple[Loader | None, Sequence[str]]: ...
+        def find_module(self, fullname: str) -> Loader | None:
+            """
+            Try to find a loader for the specified module by delegating to
+            self.find_loader().
 
-    def invalidate_caches(self) -> None: ...
+            This method is deprecated in favor of finder.find_spec().
+            """
+            ...
+        @deprecated("Deprecated since Python 3.4; removed in Python 3.12. Use `find_spec()` instead.")
+        def find_loader(self, fullname: str) -> tuple[Loader | None, Sequence[str]]:
+            """
+            Return (loader, namespace portion) for the path entry.
+
+            The fullname is a str.  The namespace portion is a sequence of
+            path entries contributing to part of a namespace package. The
+            sequence may be empty.  If loader is not None, the portion will
+            be ignored.
+
+            The portion will be discarded if another path entry finder
+            locates the module as a normal module or package.
+
+            This method is deprecated since Python 3.4 in favor of
+            finder.find_spec(). If find_spec() is provided than backwards-compatible
+            functionality is provided.
+            """
+            ...
+
+    def invalidate_caches(self) -> None:
+        """
+        An optional method for clearing the finder's cache, if any.
+        This method is used by PathFinder.invalidate_caches().
+        """
+        ...
     # Not defined on the actual class, but expected to exist.
     def find_spec(self, fullname: str, target: types.ModuleType | None = ...) -> ModuleSpec | None: ...
 
@@ -234,9 +280,23 @@ if sys.version_info < (3, 11):
             """
             ...
         @abstractmethod
-        def resource_path(self, resource: str) -> str: ...
+        def resource_path(self, resource: str) -> str:
+            """
+            Return the file system path to the specified resource.
+
+            The 'resource' argument is expected to represent only a file name.
+            If the resource does not exist on the file system, raise
+            FileNotFoundError.
+            """
+            ...
         @abstractmethod
-        def is_resource(self, path: str) -> bool: ...
+        def is_resource(self, path: str) -> bool:
+            """
+            Return True if the named 'path' is a resource.
+
+            Files are resources, directories are not.
+            """
+            ...
         @abstractmethod
         def contents(self) -> Iterator[str]:
             """Return an iterable of entries in `package`."""
@@ -296,8 +356,12 @@ if sys.version_info < (3, 11):
             ...
         @property
         @abstractmethod
-        def name(self) -> str: ...
-        def __truediv__(self, child: str, /) -> Traversable: ...
+        def name(self) -> str:
+            """The base name of this object without any parent references."""
+            ...
+        def __truediv__(self, child: str, /) -> Traversable:
+            """Return Traversable child in self"""
+            ...
         @abstractmethod
         def read_bytes(self) -> bytes:
             """Read contents of self as bytes"""

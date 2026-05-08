@@ -144,7 +144,15 @@ class EnumMeta(type):
             """
             ...
     elif sys.version_info >= (3, 11):
-        def __contains__(self: type[Any], member: object) -> bool: ...
+        def __contains__(self: type[Any], member: object) -> bool:
+            """
+            Return True if member is a member of this enum
+            raises TypeError if member is not an enum member
+
+            note: in 3.12 TypeError will no longer be raised, and True will also be
+            returned if member is the value of a member in this enum
+            """
+            ...
     else:
         def __contains__(self: type[Any], obj: object) -> bool: ...
 

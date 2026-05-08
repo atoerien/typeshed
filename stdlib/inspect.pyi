@@ -742,8 +742,12 @@ else:
         """Get a signature object for the passed callable."""
         ...
 
-class _void: ...
-class _empty: ...
+class _void:
+    """A private marker - used in Parameter & Signature."""
+    ...
+class _empty:
+    """Marker object for Signature.empty and Parameter.empty."""
+    ...
 
 class Signature:
     """
@@ -815,7 +819,9 @@ class Signature:
             locals: Mapping[str, Any] | None = None,
             eval_str: bool = False,
             annotation_format: Format = Format.VALUE,  # noqa: Y011
-        ) -> Self: ...
+        ) -> Self:
+            """Constructs Signature for the given callable object."""
+            ...
     else:
         @classmethod
         def from_callable(
@@ -826,7 +832,9 @@ class Signature:
             globals: Mapping[str, Any] | None = None,
             locals: Mapping[str, Any] | None = None,
             eval_str: bool = False,
-        ) -> Self: ...
+        ) -> Self:
+            """Constructs Signature for the given callable object."""
+            ...
     if sys.version_info >= (3, 14):
         def format(self, *, max_width: int | None = None, quote_annotation_strings: bool = True) -> str:
             """

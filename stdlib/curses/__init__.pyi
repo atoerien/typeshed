@@ -1,3 +1,15 @@
+"""
+curses
+
+The main package for curses support for Python.  Normally used by importing
+the package, and perhaps a particular module inside it.
+
+   import curses
+   from curses import textpad
+   curses.initscr()
+   ...
+"""
+
 from _curses import *
 from _curses import window as window
 from _typeshed import structseq

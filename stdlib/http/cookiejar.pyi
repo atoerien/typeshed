@@ -1,3 +1,30 @@
+r"""
+HTTP cookie handling for web clients.
+
+This module has (now fairly distant) origins in Gisle Aas' Perl module
+HTTP::Cookies, from the libwww-perl library.
+
+Docstrings, comments and debug strings in this code refer to the
+attributes of the HTTP cookie system as cookie-attributes, to distinguish
+them clearly from Python attributes.
+
+Class diagram (note that BSDDBCookieJar and the MSIE* classes are not
+distributed with the Python standard library, but are available from
+http://wwwsearch.sf.net/):
+
+                        CookieJar____
+                        /     \      \
+            FileCookieJar      \      \
+             /    |   \         \      \
+ MozillaCookieJar | LWPCookieJar \      \
+                  |               |      \
+                  |   ---MSIEBase |       \
+                  |  /      |     |        \
+                  | /   MSIEDBCookieJar BSDDBCookieJar
+                  |/
+               MSIECookieJar
+"""
+
 from _typeshed import StrPath
 from collections.abc import Iterator, Sequence
 from http.client import HTTPResponse
@@ -116,7 +143,36 @@ class FileCookieJar(CookieJar):
         """
         ...
 
-class MozillaCookieJar(FileCookieJar): ...
+class MozillaCookieJar(FileCookieJar):
+    """
+    WARNING: you may want to backup your browser's cookies file if you use
+    this class to save cookies.  I *think* it works, but there have been
+    bugs in the past!
+
+    This class differs from CookieJar only in the format it uses to save and
+    load cookies to and from a file.  This class uses the Mozilla/Netscape
+    'cookies.txt' format.  curl and lynx use this file format, too.
+
+    Don't expect cookies saved while the browser is running to be noticed by
+    the browser (in fact, Mozilla on unix will overwrite your saved cookies if
+    you change them on disk while it's running; on Windows, you probably can't
+    save at all while the browser is running).
+
+    Note that the Mozilla/Netscape format will downgrade RFC2965 cookies to
+    Netscape cookies on saving.
+
+    In particular, the cookie version and port number information is lost,
+    together with information about whether or not Path, Port and Discard were
+    specified by the Set-Cookie2 (or Set-Cookie) header, and whether or not the
+    domain as set in the HTTP header started with a dot (yes, I'm aware some
+    domains in Netscape files start with a dot and some don't -- trust me, you
+    really don't want to know any more about this).
+
+    Note that though Mozilla and Netscape use the same format, they use
+    slightly different headers.  The class saves cookies using the Netscape
+    header by default (Mozilla can cope with that).
+    """
+    ...
 
 class LWPCookieJar(FileCookieJar):
     """
