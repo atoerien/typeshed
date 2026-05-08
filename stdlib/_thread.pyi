@@ -289,38 +289,9 @@ def start_new(function: Callable[[Unpack[_Ts]], object], args: tuple[Unpack[_Ts]
     ...
 @overload
 @deprecated("Obsolete synonym. Use `start_new_thread()` instead.")
-def start_new(function: Callable[..., object], args: tuple[Any, ...], kwargs: dict[str, Any], /) -> int:
-    """An obsolete synonym of start_new_thread()."""
-    ...
-
-if sys.version_info >= (3, 10):
-    def interrupt_main(signum: signal.Signals = signal.SIGINT, /) -> None:
-        """
-        Simulate the arrival of the given signal in the main thread,
-        where the corresponding signal handler will be executed.
-        If *signum* is omitted, SIGINT is assumed.
-        A subthread can use this function to interrupt the main thread.
-
-        Note: the default signal handler for SIGINT raises ``KeyboardInterrupt``.
-        """
-        ...
-
-else:
-    def interrupt_main() -> None:
-        """
-        interrupt_main()
-
-        Raise a KeyboardInterrupt in the main thread.
-        A subthread can use this function to interrupt the main thread.
-        """
-        ...
-
-def exit() -> NoReturn:
-    """
-    This is synonymous to ``raise SystemExit''.  It will cause the current
-    thread to exit silently unless the exception is caught.
-    """
-    ...
+def start_new(function: Callable[..., object], args: tuple[Any, ...], kwargs: dict[str, Any], /) -> int: ...  # undocumented
+def interrupt_main(signum: signal.Signals = signal.SIGINT, /) -> None: ...
+def exit() -> NoReturn: ...
 @deprecated("Obsolete synonym. Use `exit()` instead.")
 def exit_thread() -> NoReturn:
     """An obsolete synonym of exit()."""
@@ -378,13 +349,7 @@ def get_native_id() -> int:
     ...
 @final
 class _ExceptHookArgs(structseq[Any], tuple[type[BaseException], BaseException | None, TracebackType | None, Thread | None]):
-    """
-    ExceptHookArgs
-
-    Type used to pass arguments to threading.excepthook.
-    """
-    if sys.version_info >= (3, 10):
-        __match_args__: Final = ("exc_type", "exc_value", "exc_traceback", "thread")
+    __match_args__: Final = ("exc_type", "exc_value", "exc_traceback", "thread")
 
     @property
     def exc_type(self) -> type[BaseException]:

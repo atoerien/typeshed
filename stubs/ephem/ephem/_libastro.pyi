@@ -2,8 +2,8 @@
 
 from _typeshed import Unused
 from datetime import datetime as _datetime
-from typing import Final, NoReturn, TypedDict, overload, type_check_only
-from typing_extensions import Self, TypeAlias, deprecated, disjoint_base
+from typing import Final, NoReturn, TypeAlias, TypedDict, overload, type_check_only
+from typing_extensions import Self, deprecated, disjoint_base
 
 _DateInitType: TypeAlias = (
     Date

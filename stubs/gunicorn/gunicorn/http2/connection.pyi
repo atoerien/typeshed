@@ -7,8 +7,7 @@ Uses the hyper-h2 library for HTTP/2 protocol handling.
 from _typeshed import Incomplete
 from collections.abc import Iterable
 from ssl import SSLSocket
-from typing import Any, ClassVar
-from typing_extensions import TypeAlias
+from typing import Any, ClassVar, TypeAlias
 
 from gunicorn.config import Config
 from gunicorn.http2.request import HTTP2Request

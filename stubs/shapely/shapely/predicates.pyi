@@ -1,8 +1,4 @@
-"""Predicates for spatial analysis."""
-
-import sys
-from typing import Any, Literal, overload
-from typing_extensions import TypeAlias, TypeGuard
+from typing import Any, Literal, TypeGuard, overload
 
 import numpy as np
 from numpy.typing import NDArray
@@ -10,13 +6,6 @@ from numpy.typing import NDArray
 from ._typing import ArrayLike, ArrayLikeSeq, OptGeoArrayLike, OptGeoArrayLikeSeq
 from .geometry.base import BaseGeometry
 from .lib import Geometry
-
-if sys.version_info >= (3, 10):
-    _NPTrue: TypeAlias = np.bool_[Literal[True]]
-    _NPFalse: TypeAlias = np.bool_[Literal[False]]
-else:
-    _NPTrue: TypeAlias = np.bool_
-    _NPFalse: TypeAlias = np.bool_
 
 __all__ = [
     "contains",
@@ -363,67 +352,9 @@ def is_empty(geometry: OptGeoArrayLikeSeq, **kwargs) -> NDArray[np.bool_]:
     """
     ...
 @overload
-def is_geometry(geometry: Geometry, **kwargs) -> _NPTrue:
-    """
-    Return True if the object is a geometry.
-
-    Parameters
-    ----------
-    geometry : any object or array_like
-        Geometry or geometries to check.
-    **kwargs
-        See :ref:`NumPy ufunc docs <ufuncs.kwargs>` for other keyword arguments.
-
-    See Also
-    --------
-    is_missing : check if an object is missing (None)
-    is_valid_input : check if an object is a geometry or None
-
-    Examples
-    --------
-    >>> import shapely
-    >>> from shapely import GeometryCollection, Point
-    >>> shapely.is_geometry(Point(0, 0))
-    True
-    >>> shapely.is_geometry(GeometryCollection())
-    True
-    >>> shapely.is_geometry(None)
-    False
-    >>> shapely.is_geometry("text")
-    False
-    """
-    ...
+def is_geometry(geometry: Geometry, **kwargs) -> np.bool_[Literal[True]]: ...
 @overload
-def is_geometry(geometry: None, **kwargs) -> _NPFalse:
-    """
-    Return True if the object is a geometry.
-
-    Parameters
-    ----------
-    geometry : any object or array_like
-        Geometry or geometries to check.
-    **kwargs
-        See :ref:`NumPy ufunc docs <ufuncs.kwargs>` for other keyword arguments.
-
-    See Also
-    --------
-    is_missing : check if an object is missing (None)
-    is_valid_input : check if an object is a geometry or None
-
-    Examples
-    --------
-    >>> import shapely
-    >>> from shapely import GeometryCollection, Point
-    >>> shapely.is_geometry(Point(0, 0))
-    True
-    >>> shapely.is_geometry(GeometryCollection())
-    True
-    >>> shapely.is_geometry(None)
-    False
-    >>> shapely.is_geometry("text")
-    False
-    """
-    ...
+def is_geometry(geometry: None, **kwargs) -> np.bool_[Literal[False]]: ...
 @overload
 def is_geometry(geometry: ArrayLikeSeq[Any], **kwargs) -> NDArray[np.bool_]:
     """
@@ -487,69 +418,9 @@ def is_geometry(geometry: object, **kwargs) -> TypeGuard[BaseGeometry]:
     """
     ...
 @overload
-def is_missing(geometry: Geometry, **kwargs) -> _NPFalse:
-    """
-    Return True if the object is not a geometry (None).
-
-    Parameters
-    ----------
-    geometry : any object or array_like
-        Geometry or geometries to check.
-    **kwargs
-        See :ref:`NumPy ufunc docs <ufuncs.kwargs>` for other keyword arguments.
-
-    See Also
-    --------
-    is_geometry : check if an object is a geometry
-    is_valid_input : check if an object is a geometry or None
-    is_empty : checks if the object is an empty geometry
-
-    Examples
-    --------
-    >>> import shapely
-    >>> from shapely import GeometryCollection, Point
-    >>> shapely.is_missing(Point(0, 0))
-    False
-    >>> shapely.is_missing(GeometryCollection())
-    False
-    >>> shapely.is_missing(None)
-    True
-    >>> shapely.is_missing("text")
-    False
-    """
-    ...
+def is_missing(geometry: Geometry, **kwargs) -> np.bool_[Literal[False]]: ...
 @overload
-def is_missing(geometry: None, **kwargs) -> _NPTrue:
-    """
-    Return True if the object is not a geometry (None).
-
-    Parameters
-    ----------
-    geometry : any object or array_like
-        Geometry or geometries to check.
-    **kwargs
-        See :ref:`NumPy ufunc docs <ufuncs.kwargs>` for other keyword arguments.
-
-    See Also
-    --------
-    is_geometry : check if an object is a geometry
-    is_valid_input : check if an object is a geometry or None
-    is_empty : checks if the object is an empty geometry
-
-    Examples
-    --------
-    >>> import shapely
-    >>> from shapely import GeometryCollection, Point
-    >>> shapely.is_missing(Point(0, 0))
-    False
-    >>> shapely.is_missing(GeometryCollection())
-    False
-    >>> shapely.is_missing(None)
-    True
-    >>> shapely.is_missing("text")
-    False
-    """
-    ...
+def is_missing(geometry: None, **kwargs) -> np.bool_[Literal[True]]: ...
 @overload
 def is_missing(geometry: ArrayLikeSeq[Any], **kwargs) -> NDArray[np.bool_]:
     """
@@ -689,38 +560,7 @@ def is_prepared(geometry: OptGeoArrayLikeSeq, **kwargs) -> NDArray[np.bool_]:
     """
     ...
 @overload
-def is_valid_input(geometry: Geometry | None, **kwargs) -> _NPTrue:
-    """
-    Return True if the object is a geometry or None.
-
-    Parameters
-    ----------
-    geometry : any object or array_like
-        Geometry or geometries to check.
-    **kwargs
-        See :ref:`NumPy ufunc docs <ufuncs.kwargs>` for other keyword arguments.
-
-    See Also
-    --------
-    is_geometry : checks if an object is a geometry
-    is_missing : checks if an object is None
-
-    Examples
-    --------
-    >>> import shapely
-    >>> from shapely import GeometryCollection, Point
-    >>> shapely.is_valid_input(Point(0, 0))
-    True
-    >>> shapely.is_valid_input(GeometryCollection())
-    True
-    >>> shapely.is_valid_input(None)
-    True
-    >>> shapely.is_valid_input(1.0)
-    False
-    >>> shapely.is_valid_input("text")
-    False
-    """
-    ...
+def is_valid_input(geometry: Geometry | None, **kwargs) -> np.bool_[Literal[True]]: ...
 @overload
 def is_valid_input(geometry: ArrayLikeSeq[Any], **kwargs) -> NDArray[np.bool_]:
     """

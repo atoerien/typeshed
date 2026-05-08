@@ -6,8 +6,7 @@ since your modifications would be overwritten.
 """
 
 from collections.abc import Callable, Iterable
-from typing import Any
-from typing_extensions import TypeAlias
+from typing import Any, TypeAlias
 
 import tensorflow as tf
 from tensorflow._aliases import Gradients

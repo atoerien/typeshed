@@ -8,21 +8,18 @@ work. One should use importlib as the public-facing version of this module.
 """
 
 import _ast
-import _io
 import importlib.abc
 import importlib.machinery
+import importlib.readers
 import sys
 import types
 from _typeshed import ReadableBuffer, StrOrBytesPath, StrPath
 from _typeshed.importlib import LoaderProtocol
-from collections.abc import Callable, Iterable, Iterator, Mapping, MutableSequence, Sequence
+from collections.abc import Callable, Iterable, Mapping, MutableSequence, Sequence
 from importlib.machinery import ModuleSpec
 from importlib.metadata import DistributionFinder, PathDistribution
 from typing import Any, Final, Literal, overload
-from typing_extensions import Self, deprecated
-
-if sys.version_info >= (3, 10):
-    import importlib.readers
+from typing_extensions import deprecated
 
 if sys.platform == "win32":
     path_separators: Literal["\\/"]
@@ -136,48 +133,10 @@ class WindowsRegistryFinder(importlib.abc.MetaPathFinder):
     ) -> ModuleSpec | None: ...
 
 class PathFinder(importlib.abc.MetaPathFinder):
-    """Meta path finder for sys.path and package __path__ attributes."""
-    if sys.version_info >= (3, 10):
-        @staticmethod
-        def invalidate_caches() -> None:
-            """
-            Call the invalidate_caches() method on all path entry finders
-            stored in sys.path_importer_cache (where implemented).
-            """
-            ...
-    else:
-        @classmethod
-        def invalidate_caches(cls) -> None:
-            """
-            Call the invalidate_caches() method on all path entry finders
-            stored in sys.path_importer_caches (where implemented).
-            """
-            ...
-    if sys.version_info >= (3, 10):
-        @staticmethod
-        def find_distributions(context: DistributionFinder.Context = ...) -> Iterable[PathDistribution]:
-            """
-            Find distributions.
-
-            Return an iterable of all Distribution instances capable of
-            loading the metadata for packages matching ``context.name``
-            (or all names if ``None`` indicated) along the paths in the list
-            of directories ``context.path``.
-            """
-            ...
-    else:
-        @classmethod
-        def find_distributions(cls, context: DistributionFinder.Context = ...) -> Iterable[PathDistribution]:
-            """
-            Find distributions.
-
-            Return an iterable of all Distribution instances capable of
-            loading the metadata for packages matching ``context.name``
-            (or all names if ``None`` indicated) along the paths in the list
-            of directories ``context.path``.
-            """
-            ...
-
+    @staticmethod
+    def invalidate_caches() -> None: ...
+    @staticmethod
+    def find_distributions(context: DistributionFinder.Context = ...) -> Iterable[PathDistribution]: ...
     @classmethod
     def find_spec(
         cls, fullname: str, path: Sequence[str] | None = None, target: types.ModuleType | None = None
@@ -314,33 +273,11 @@ class FileLoader:
     """
     name: str
     path: str
-    def __init__(self, fullname: str, path: str) -> None:
-        """
-        Cache the module name and the path to the file found by the
-        finder.
-        """
-        ...
-    def get_data(self, path: str) -> bytes:
-        """Return the data from path as raw bytes."""
-        ...
-    def get_filename(self, fullname: str | None = None) -> str:
-        """Return the path to the source file as found by the finder."""
-        ...
-    def load_module(self, fullname: str | None = None) -> types.ModuleType:
-        """
-        Load a module from a file.
-
-        This method is deprecated.  Use exec_module() instead.
-        """
-        ...
-    if sys.version_info >= (3, 10):
-        def get_resource_reader(self, name: str | None = None) -> importlib.readers.FileReader: ...
-    else:
-        def get_resource_reader(self, name: str | None = None) -> Self | None: ...
-        def open_resource(self, resource: str) -> _io.FileIO: ...
-        def resource_path(self, resource: str) -> str: ...
-        def is_resource(self, name: str) -> bool: ...
-        def contents(self) -> Iterator[str]: ...
+    def __init__(self, fullname: str, path: str) -> None: ...
+    def get_data(self, path: str) -> bytes: ...
+    def get_filename(self, fullname: str | None = None) -> str: ...
+    def load_module(self, fullname: str | None = None) -> types.ModuleType: ...
+    def get_resource_reader(self, name: str | None = None) -> importlib.readers.FileReader: ...
 
 class SourceFileLoader(importlib.abc.FileLoader, FileLoader, importlib.abc.SourceLoader, SourceLoader):  # type: ignore[misc]  # incompatible method arguments in base classes
     """Concrete implementation of SourceLoader using the file system."""
@@ -444,48 +381,15 @@ else:
             """Use default semantics for module creation."""
             ...
         def exec_module(self, module: types.ModuleType) -> None: ...
-        if sys.version_info >= (3, 10):
-            @deprecated("Deprecated since Python 3.10; will be removed in Python 3.15. Use `exec_module()` instead.")
-            def load_module(self, fullname: str) -> types.ModuleType:
-                """
-                Load a namespace module.
-
-                This method is deprecated.  Use exec_module() instead.
-                """
-                ...
-            @staticmethod
-            @deprecated(
-                "Deprecated since Python 3.4; removed in Python 3.12. "
-                "The module spec is now used by the import machinery to generate a module repr."
-            )
-            def module_repr(module: types.ModuleType) -> str:
-                """
-                Return repr for the module.
-
-                The method is deprecated.  The import machinery does the job itself.
-                """
-                ...
-            def get_resource_reader(self, module: types.ModuleType) -> importlib.readers.NamespaceReader: ...
-        else:
-            def load_module(self, fullname: str) -> types.ModuleType:
-                """
-                Load a namespace module.
-
-                This method is deprecated.  Use exec_module() instead.
-                """
-                ...
-            @classmethod
-            @deprecated(
-                "Deprecated since Python 3.4; removed in Python 3.12. "
-                "The module spec is now used by the import machinery to generate a module repr."
-            )
-            def module_repr(cls, module: types.ModuleType) -> str:
-                """
-                Return repr for the module.
-
-                The method is deprecated.  The import machinery does the job itself.
-                """
-                ...
+        @deprecated("Deprecated since Python 3.10; will be removed in Python 3.15. Use `exec_module()` instead.")
+        def load_module(self, fullname: str) -> types.ModuleType: ...
+        @staticmethod
+        @deprecated(
+            "Deprecated since Python 3.4; removed in Python 3.12. "
+            "The module spec is now used by the import machinery to generate a module repr."
+        )
+        def module_repr(module: types.ModuleType) -> str: ...
+        def get_resource_reader(self, module: types.ModuleType) -> importlib.readers.NamespaceReader: ...
 
 if sys.version_info >= (3, 13):
     class AppleFrameworkLoader(ExtensionFileLoader, importlib.abc.ExecutionLoader):

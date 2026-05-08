@@ -17,8 +17,8 @@ from ssl import (
     SSLWantWriteError as SSLWantWriteError,
     SSLZeroReturnError as SSLZeroReturnError,
 )
-from typing import Any, ClassVar, Final, Literal, TypedDict, final, overload, type_check_only
-from typing_extensions import NotRequired, Self, TypeAlias, deprecated, disjoint_base
+from typing import Any, ClassVar, Final, Literal, TypeAlias, TypedDict, final, overload, type_check_only
+from typing_extensions import NotRequired, Self, deprecated, disjoint_base
 
 _PasswordType: TypeAlias = Callable[[], str | bytes | bytearray] | str | bytes | bytearray
 _PCTRTT: TypeAlias = tuple[tuple[str, str], ...]
@@ -75,25 +75,8 @@ if sys.version_info < (3, 12):
         """
         ...
 
-if sys.version_info < (3, 10):
-    @deprecated("Unsupported by OpenSSL since 1.1.1; removed in Python 3.10.")
-    def RAND_egd(path: str) -> None: ...
-
-def RAND_status() -> bool:
-    """
-    Returns True if the OpenSSL PRNG has been seeded with enough data and False if not.
-
-    It is necessary to seed the PRNG with RAND_add() on some platforms before
-    using the ssl() function.
-    """
-    ...
-def get_default_verify_paths() -> tuple[str, str, str, str]:
-    """
-    Return search paths and environment vars that are used by SSLContext's set_default_verify_paths() to load default CAs.
-
-    The values are 'cert_file_env', 'cert_file', 'cert_dir_env', 'cert_dir'.
-    """
-    ...
+def RAND_status() -> bool: ...
+def get_default_verify_paths() -> tuple[str, str, str, str]: ...
 
 if sys.platform == "win32":
     _EnumRetType: TypeAlias = list[tuple[bytes, str, set[str] | bool]]
@@ -121,8 +104,7 @@ class _SSLContext:
     options: int
     post_handshake_auth: bool
     protocol: int
-    if sys.version_info >= (3, 10):
-        security_level: int
+    security_level: int
     sni_callback: Callable[[SSLObject, str, SSLContext], None | int] | None
     verify_flags: int
     verify_mode: int
@@ -259,18 +241,17 @@ class SSLSession:
 #
 # You can find a _ssl._SSLSocket object as the _sslobj attribute of a ssl.SSLSocket object
 
-if sys.version_info >= (3, 10):
-    @final
-    class Certificate:
-        def get_info(self) -> _CertInfo: ...
-        @overload
-        def public_bytes(self) -> str: ...
-        @overload
-        def public_bytes(self, format: Literal[1] = 1, /) -> str: ...  # ENCODING_PEM
-        @overload
-        def public_bytes(self, format: Literal[2], /) -> bytes: ...  # ENCODING_DER
-        @overload
-        def public_bytes(self, format: int, /) -> str | bytes: ...
+@final
+class Certificate:
+    def get_info(self) -> _CertInfo: ...
+    @overload
+    def public_bytes(self) -> str: ...
+    @overload
+    def public_bytes(self, format: Literal[1] = 1, /) -> str: ...  # ENCODING_PEM
+    @overload
+    def public_bytes(self, format: Literal[2], /) -> bytes: ...  # ENCODING_DER
+    @overload
+    def public_bytes(self, format: int, /) -> str | bytes: ...
 
 if sys.version_info < (3, 12):
     err_codes_to_names: dict[tuple[int, int], str]
@@ -301,9 +282,8 @@ VERIFY_CRL_CHECK_LEAF: Final = 0x04
 VERIFY_CRL_CHECK_CHAIN: Final = 0x0C
 VERIFY_X509_STRICT: Final = 0x20
 VERIFY_X509_TRUSTED_FIRST: Final = 0x8000
-if sys.version_info >= (3, 10):
-    VERIFY_ALLOW_PROXY_CERTS: Final = 0x40
-    VERIFY_X509_PARTIAL_CHAIN: Final = 0x80000
+VERIFY_ALLOW_PROXY_CERTS: Final = 0x40
+VERIFY_X509_PARTIAL_CHAIN: Final = 0x80000
 
 # alert descriptions
 ALERT_DESCRIPTION_CLOSE_NOTIFY: Final = 0
@@ -372,10 +352,9 @@ HOSTFLAG_NO_PARTIAL_WILDCARDS: Final = 0x4
 HOSTFLAG_MULTI_LABEL_WILDCARDS: Final = 0x8
 HOSTFLAG_SINGLE_LABEL_SUBDOMAINS: Final = 0x10
 
-if sys.version_info >= (3, 10):
-    # certificate file types
-    ENCODING_PEM: Final = 1
-    ENCODING_DER: Final = 2
+# certificate file types
+ENCODING_PEM: Final = 1
+ENCODING_DER: Final = 2
 
 # protocol versions
 PROTO_MINIMUM_SUPPORTED: Final = -2

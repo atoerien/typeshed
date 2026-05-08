@@ -44,7 +44,7 @@ where ``**kwargs`` are additional parameters to `sinc_window`.
 """
 
 from collections.abc import Callable
-from typing_extensions import TypeAlias
+from typing import TypeAlias
 
 import numpy as np
 

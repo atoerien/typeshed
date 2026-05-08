@@ -21,8 +21,7 @@ from decimal import (
     Underflow as Underflow,
     _ContextManager,
 )
-from typing import Final
-from typing_extensions import TypeAlias
+from typing import Final, TypeAlias
 
 _TrapType: TypeAlias = type[DecimalException]
 

@@ -2,8 +2,8 @@
 
 from _typeshed import MaybeNone
 from collections.abc import Callable, Iterable
-from typing import Any, Final, Generic, TypeVar, type_check_only
-from typing_extensions import Self, TypeAlias, disjoint_base
+from typing import Any, Final, Generic, TypeAlias, TypeVar, type_check_only
+from typing_extensions import Self, disjoint_base
 
 __all__ = [
     "LUA_VERSION",

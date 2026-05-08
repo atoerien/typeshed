@@ -5,8 +5,7 @@ Implements the Distutils 'check' command.
 """
 
 from _typeshed import Incomplete
-from typing import Any, ClassVar, Final, Literal
-from typing_extensions import TypeAlias
+from typing import Any, ClassVar, Final, Literal, TypeAlias
 
 from ..cmd import Command
 

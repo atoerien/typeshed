@@ -14,8 +14,7 @@ and produce a well-formed data structure suitable for building a CALS table.
 """
 
 from re import Pattern
-from typing import ClassVar, Final
-from typing_extensions import TypeAlias
+from typing import ClassVar, Final, TypeAlias
 
 from docutils import DataError
 from docutils.statemachine import StringList

@@ -12,8 +12,7 @@ http://www.x.org/releases/X11R7.5/doc/randrproto/randrproto.txt
 """
 
 from collections.abc import Sequence
-from typing import Final
-from typing_extensions import TypeAlias
+from typing import Final, TypeAlias
 
 from Xlib.display import Display
 from Xlib.protocol import request, rq

@@ -6,8 +6,7 @@ since your modifications would be overwritten.
 """
 
 from collections.abc import Callable, Mapping, Sequence
-from typing import Any, Literal
-from typing_extensions import TypeAlias
+from typing import Any, Literal, TypeAlias
 
 import tensorflow as tf
 from requests.api import _HeadersMapping

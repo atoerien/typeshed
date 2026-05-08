@@ -8,8 +8,7 @@ Bachtal
 
 from _typeshed import Incomplete
 from re import Pattern
-from typing import Final, Literal
-from typing_extensions import TypeAlias
+from typing import Final, Literal, TypeAlias
 
 _TokenTypesNotOperand: TypeAlias = Literal[
     "LITERAL", "FUNC", "ARRAY", "PAREN", "SEP", "OPERATOR-PREFIX", "OPERATOR-INFIX", "OPERATOR-POSTFIX", "WHITE-SPACE"

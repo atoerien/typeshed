@@ -30,33 +30,24 @@ if sys.platform != "win32":
     class struct_rusage(
         structseq[float], tuple[float, float, int, int, int, int, int, int, int, int, int, int, int, int, int, int]
     ):
-        """
-        struct_rusage: Result from getrusage.
-
-        This object may be accessed either as a tuple of
-            (utime,stime,maxrss,ixrss,idrss,isrss,minflt,majflt,
-            nswap,inblock,oublock,msgsnd,msgrcv,nsignals,nvcsw,nivcsw)
-        or via the attributes ru_utime, ru_stime, ru_maxrss, and so on.
-        """
-        if sys.version_info >= (3, 10):
-            __match_args__: Final = (
-                "ru_utime",
-                "ru_stime",
-                "ru_maxrss",
-                "ru_ixrss",
-                "ru_idrss",
-                "ru_isrss",
-                "ru_minflt",
-                "ru_majflt",
-                "ru_nswap",
-                "ru_inblock",
-                "ru_oublock",
-                "ru_msgsnd",
-                "ru_msgrcv",
-                "ru_nsignals",
-                "ru_nvcsw",
-                "ru_nivcsw",
-            )
+        __match_args__: Final = (
+            "ru_utime",
+            "ru_stime",
+            "ru_maxrss",
+            "ru_ixrss",
+            "ru_idrss",
+            "ru_isrss",
+            "ru_minflt",
+            "ru_majflt",
+            "ru_nswap",
+            "ru_inblock",
+            "ru_oublock",
+            "ru_msgsnd",
+            "ru_msgrcv",
+            "ru_nsignals",
+            "ru_nvcsw",
+            "ru_nivcsw",
+        )
 
         @property
         def ru_utime(self) -> float:

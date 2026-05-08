@@ -14,8 +14,8 @@ from collections.abc import Callable, Hashable, Iterable, Mapping, Sequence
 from configparser import RawConfigParser
 from re import Pattern
 from threading import Thread
-from typing import IO, Any, Final, Literal, SupportsIndex, TypedDict, overload, type_check_only
-from typing_extensions import Required, TypeAlias, disjoint_base
+from typing import IO, Any, Final, Literal, SupportsIndex, TypeAlias, TypedDict, overload, type_check_only
+from typing_extensions import Required, disjoint_base
 
 from . import Filter, Filterer, Formatter, Handler, Logger, _FilterType, _FormatStyle, _Level
 
@@ -73,43 +73,13 @@ class _DictConfigArgs(TypedDict, total=False):
 #
 # Also accept a TypedDict type, to allow callers to use TypedDict
 # types, and for somewhat stricter type checking of dict literals.
-def dictConfig(config: _DictConfigArgs | dict[str, Any]) -> None:
-    """Configure logging using a dictionary."""
-    ...
-
-if sys.version_info >= (3, 10):
-    def fileConfig(
-        fname: StrOrBytesPath | IO[str] | RawConfigParser,
-        defaults: Mapping[str, str] | None = None,
-        disable_existing_loggers: bool = True,
-        encoding: str | None = None,
-    ) -> None:
-        """
-        Read the logging configuration from a ConfigParser-format file.
-
-        This can be called several times from an application, allowing an end user
-        the ability to select from various pre-canned configurations (if the
-        developer provides a mechanism to present the choices and load the chosen
-        configuration).
-        """
-        ...
-
-else:
-    def fileConfig(
-        fname: StrOrBytesPath | IO[str] | RawConfigParser,
-        defaults: Mapping[str, str] | None = None,
-        disable_existing_loggers: bool = True,
-    ) -> None:
-        """
-        Read the logging configuration from a ConfigParser-format file.
-
-        This can be called several times from an application, allowing an end user
-        the ability to select from various pre-canned configurations (if the
-        developer provides a mechanism to present the choices and load the chosen
-        configuration).
-        """
-        ...
-
+def dictConfig(config: _DictConfigArgs | dict[str, Any]) -> None: ...
+def fileConfig(
+    fname: StrOrBytesPath | IO[str] | RawConfigParser,
+    defaults: Mapping[str, str] | None = None,
+    disable_existing_loggers: bool = True,
+    encoding: str | None = None,
+) -> None: ...
 def valid_ident(s: str) -> Literal[True]: ...  # undocumented
 def listen(port: int = 9030, verify: Callable[[bytes], bytes | None] | None = None) -> Thread:
     """

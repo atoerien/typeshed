@@ -160,31 +160,12 @@ class BuiltinImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader)
             "Deprecated since Python 3.4; removed in Python 3.12. "
             "The module spec is now used by the import machinery to generate a module repr."
         )
-        def module_repr(module: types.ModuleType) -> str:
-            """
-            Return repr for the module.
+        def module_repr(module: types.ModuleType) -> str: ...
 
-            The method is deprecated.  The import machinery does the job itself.
-            """
-            ...
-    if sys.version_info >= (3, 10):
-        @staticmethod
-        def create_module(spec: ModuleSpec) -> types.ModuleType | None:
-            """Create a built-in module"""
-            ...
-        @staticmethod
-        def exec_module(module: types.ModuleType) -> None:
-            """Exec a built-in module"""
-            ...
-    else:
-        @classmethod
-        def create_module(cls, spec: ModuleSpec) -> types.ModuleType | None:
-            """Create a built-in module"""
-            ...
-        @classmethod
-        def exec_module(cls, module: types.ModuleType) -> None:
-            """Exec a built-in module"""
-            ...
+    @staticmethod
+    def create_module(spec: ModuleSpec) -> types.ModuleType | None: ...
+    @staticmethod
+    def exec_module(module: types.ModuleType) -> None: ...
 
 class FrozenImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
     """
@@ -237,23 +218,9 @@ class FrozenImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
             "Deprecated since Python 3.4; removed in Python 3.12. "
             "The module spec is now used by the import machinery to generate a module repr."
         )
-        def module_repr(m: types.ModuleType) -> str:
-            """
-            Return repr for the module.
+        def module_repr(m: types.ModuleType) -> str: ...
 
-            The method is deprecated.  The import machinery does the job itself.
-            """
-            ...
-    if sys.version_info >= (3, 10):
-        @staticmethod
-        def create_module(spec: ModuleSpec) -> types.ModuleType | None:
-            """Set __file__, if able."""
-            ...
-    else:
-        @classmethod
-        def create_module(cls, spec: ModuleSpec) -> types.ModuleType | None:
-            """Use default semantics for module creation."""
-            ...
-
+    @staticmethod
+    def create_module(spec: ModuleSpec) -> types.ModuleType | None: ...
     @staticmethod
     def exec_module(module: types.ModuleType) -> None: ...

@@ -13,7 +13,7 @@ This takes different calendar software into account and the RFC 9074 (Alarm Exte
 """
 
 import datetime
-from typing_extensions import TypeAlias
+from typing import TypeAlias
 
 from .cal import Alarm, Event, Todo
 from .error import (

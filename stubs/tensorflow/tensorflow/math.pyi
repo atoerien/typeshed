@@ -1,8 +1,7 @@
 """Public API for tf._api.v2.math namespace"""
 
 from collections.abc import Iterable
-from typing import TypeVar, overload
-from typing_extensions import TypeAlias
+from typing import TypeAlias, TypeVar, overload
 
 from tensorflow import IndexedSlices, RaggedTensor, Tensor
 from tensorflow._aliases import DTypeLike, ShapeLike, TensorCompatible

@@ -1,41 +1,6 @@
-"""
-pygments.plugin
-~~~~~~~~~~~~~~~
-
-Pygments plugin interface.
-
-lexer plugins::
-
-    [pygments.lexers]
-    yourlexer = yourmodule:YourLexer
-
-formatter plugins::
-
-    [pygments.formatters]
-    yourformatter = yourformatter:YourFormatter
-    /.ext = yourformatter:YourFormatter
-
-As you can see, you can define extensions for the formatter
-with a leading slash.
-
-syntax plugins::
-
-    [pygments.styles]
-    yourstyle = yourstyle:YourStyle
-
-filter plugin::
-
-    [pygments.filter]
-    yourfilter = yourfilter:YourFilter
-
-
-:copyright: Copyright 2006-present by the Pygments team, see AUTHORS.
-:license: BSD, see LICENSE for details.
-"""
-
-import sys
 from _typeshed import Incomplete
 from collections.abc import Generator
+from importlib.metadata import EntryPoints
 from typing import Final
 
 from pygments.filter import Filter
@@ -48,15 +13,7 @@ FORMATTER_ENTRY_POINT: Final = "pygments.formatters"
 STYLE_ENTRY_POINT: Final = "pygments.styles"
 FILTER_ENTRY_POINT: Final = "pygments.filters"
 
-if sys.version_info >= (3, 10):
-    from importlib.metadata import EntryPoints
-    def iter_entry_points(group_name: str) -> EntryPoints: ...
-
-else:
-    from importlib.metadata import EntryPoint
-
-    def iter_entry_points(group_name: str) -> tuple[EntryPoint, ...] | list[EntryPoint]: ...
-
+def iter_entry_points(group_name: str) -> EntryPoints: ...
 def find_plugin_lexers() -> Generator[type[Lexer]]: ...
 def find_plugin_formatters() -> Generator[tuple[str, type[Formatter[Incomplete]]]]: ...
 def find_plugin_styles() -> Generator[tuple[str, type[Style]]]: ...

@@ -1,8 +1,7 @@
 """Shortest path algorithms for weighted graphs."""
 
 from collections.abc import Callable, Collection, Generator
-from typing import Any
-from typing_extensions import TypeAlias
+from typing import Any, TypeAlias
 
 from networkx.classes.graph import Graph, _Node
 from networkx.utils.backends import _dispatchable

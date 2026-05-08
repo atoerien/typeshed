@@ -7,8 +7,8 @@ including support for caching of results.
 
 import datetime
 from collections.abc import Callable, Generator, Iterable, Iterator, Mapping, Sequence
-from typing import Final, Literal, overload
-from typing_extensions import Self, TypeAlias
+from typing import Final, Literal, TypeAlias, overload
+from typing_extensions import Self
 
 from dateutil.parser._parser import _TzInfos
 

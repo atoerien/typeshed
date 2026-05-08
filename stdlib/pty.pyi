@@ -2,8 +2,8 @@
 
 import sys
 from collections.abc import Callable, Iterable
-from typing import Final
-from typing_extensions import TypeAlias, deprecated
+from typing import Final, TypeAlias
+from typing_extensions import deprecated
 
 if sys.platform != "win32":
     __all__ = ["openpty", "fork", "spawn"]

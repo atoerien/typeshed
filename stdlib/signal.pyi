@@ -3,8 +3,8 @@ from _typeshed import structseq
 from collections.abc import Callable, Iterable
 from enum import IntEnum
 from types import FrameType
-from typing import Any, Final, final
-from typing_extensions import Never, TypeAlias
+from typing import Any, Final, TypeAlias, final
+from typing_extensions import Never
 
 NSIG: int
 
@@ -70,63 +70,9 @@ SIG_IGN: Final = Handlers.SIG_IGN
 _SIGNUM: TypeAlias = int | Signals
 _HANDLER: TypeAlias = Callable[[int, FrameType | None], Any] | int | Handlers | None
 
-def default_int_handler(signalnum: int, frame: FrameType | None, /) -> Never:
-    """
-    The default handler for SIGINT installed by Python.
-
-    It raises KeyboardInterrupt.
-    """
-    ...
-
-if sys.version_info >= (3, 10):  # arguments changed in 3.10.2
-    def getsignal(signalnum: _SIGNUM) -> _HANDLER:
-        """
-        Return the current action for the given signal.
-
-        The return value can be:
-          SIG_IGN -- if the signal is being ignored
-          SIG_DFL -- if the default action for the signal is in effect
-          None    -- if an unknown handler is in effect
-          anything else -- the callable Python object used as a handler
-        """
-        ...
-    def signal(signalnum: _SIGNUM, handler: _HANDLER) -> _HANDLER:
-        """
-        Set the action for the given signal.
-
-        The action can be SIG_DFL, SIG_IGN, or a callable Python object.
-        The previous action is returned.  See getsignal() for possible return values.
-
-        *** IMPORTANT NOTICE ***
-        A signal handler function is called with two arguments:
-        the first is the signal number, the second is the interrupted stack frame.
-        """
-        ...
-
-else:
-    def getsignal(signalnum: _SIGNUM, /) -> _HANDLER:
-        """
-        Return the current action for the given signal.
-
-        The return value can be:
-          SIG_IGN -- if the signal is being ignored
-          SIG_DFL -- if the default action for the signal is in effect
-          None    -- if an unknown handler is in effect
-          anything else -- the callable Python object used as a handler
-        """
-        ...
-    def signal(signalnum: _SIGNUM, handler: _HANDLER, /) -> _HANDLER:
-        """
-        Set the action for the given signal.
-
-        The action can be SIG_DFL, SIG_IGN, or a callable Python object.
-        The previous action is returned.  See getsignal() for possible return values.
-
-        *** IMPORTANT NOTICE ***
-        A signal handler function is called with two arguments:
-        the first is the signal number, the second is the interrupted stack frame.
-        """
-        ...
+def default_int_handler(signalnum: int, frame: FrameType | None, /) -> Never: ...
+def getsignal(signalnum: _SIGNUM) -> _HANDLER: ...
+def signal(signalnum: _SIGNUM, handler: _HANDLER) -> _HANDLER: ...
 
 SIGABRT: Final = Signals.SIGABRT
 SIGFPE: Final = Signals.SIGFPE
@@ -182,73 +128,15 @@ else:
     SIG_BLOCK: Final = Sigmasks.SIG_BLOCK
     SIG_UNBLOCK: Final = Sigmasks.SIG_UNBLOCK
     SIG_SETMASK: Final = Sigmasks.SIG_SETMASK
-    def alarm(seconds: int, /) -> int:
-        """Arrange for SIGALRM to arrive after the given number of seconds."""
-        ...
-    def getitimer(which: int, /) -> tuple[float, float]:
-        """Returns current value of given itimer."""
-        ...
-    def pause() -> None:
-        """Wait until a signal arrives."""
-        ...
-    def pthread_kill(thread_id: int, signalnum: int, /) -> None:
-        """Send a signal to a thread."""
-        ...
-    if sys.version_info >= (3, 10):  # arguments changed in 3.10.2
-        def pthread_sigmask(how: int, mask: Iterable[int]) -> set[_SIGNUM]:
-            """Fetch and/or change the signal mask of the calling thread."""
-            ...
-    else:
-        def pthread_sigmask(how: int, mask: Iterable[int], /) -> set[_SIGNUM]:
-            """Fetch and/or change the signal mask of the calling thread."""
-            ...
-
-    def setitimer(which: int, seconds: float, interval: float = 0.0, /) -> tuple[float, float]:
-        """
-        Sets given itimer (one of ITIMER_REAL, ITIMER_VIRTUAL or ITIMER_PROF).
-
-        The timer will fire after value seconds and after that every interval seconds.
-        The itimer can be cleared by setting seconds to zero.
-
-        Returns old values as a tuple: (delay, interval).
-        """
-        ...
-    def siginterrupt(signalnum: int, flag: bool, /) -> None:
-        """
-        Change system call restart behaviour.
-
-        If flag is False, system calls will be restarted when interrupted by
-        signal sig, else system calls will be interrupted.
-        """
-        ...
-    def sigpending() -> Any:
-        """
-        Examine pending signals.
-
-        Returns a set of signal numbers that are pending for delivery to
-        the calling thread.
-        """
-        ...
-    if sys.version_info >= (3, 10):  # argument changed in 3.10.2
-        def sigwait(sigset: Iterable[int]) -> _SIGNUM:
-            """
-            Wait for a signal.
-
-            Suspend execution of the calling thread until the delivery of one of the
-            signals specified in the signal set sigset.  The function accepts the signal
-            and returns the signal number.
-            """
-            ...
-    else:
-        def sigwait(sigset: Iterable[int], /) -> _SIGNUM:
-            """
-            Wait for a signal.
-
-            Suspend execution of the calling thread until the delivery of one of the
-            signals specified in the signal set sigset.  The function accepts the signal
-            and returns the signal number.
-            """
-            ...
+    def alarm(seconds: int, /) -> int: ...
+    def getitimer(which: int, /) -> tuple[float, float]: ...
+    def pause() -> None: ...
+    def pthread_kill(thread_id: int, signalnum: int, /) -> None: ...
+    def pthread_sigmask(how: int, mask: Iterable[int]) -> set[_SIGNUM]: ...
+    def setitimer(which: int, seconds: float, interval: float = 0.0, /) -> tuple[float, float]: ...
+    def siginterrupt(signalnum: int, flag: bool, /) -> None: ...
+    def sigpending() -> Any: ...
+    def sigwait(sigset: Iterable[int]) -> _SIGNUM: ...
     if sys.platform != "darwin":
         SIGCLD: Final = Signals.SIGCHLD  # alias
         SIGPOLL: Final = Signals.SIGIO  # alias
@@ -260,15 +148,7 @@ else:
 
         @final
         class struct_siginfo(structseq[int], tuple[int, int, int, int, int, int, int]):
-            """
-            struct_siginfo: Result from sigwaitinfo or sigtimedwait.
-
-            This object may be accessed either as a tuple of
-            (si_signo, si_code, si_errno, si_pid, si_uid, si_status, si_band),
-            or via the attributes si_signo, si_code, and so on.
-            """
-            if sys.version_info >= (3, 10):
-                __match_args__: Final = ("si_signo", "si_code", "si_errno", "si_pid", "si_uid", "si_status", "si_band")
+            __match_args__: Final = ("si_signo", "si_code", "si_errno", "si_pid", "si_uid", "si_status", "si_band")
 
             @property
             def si_signo(self) -> int:

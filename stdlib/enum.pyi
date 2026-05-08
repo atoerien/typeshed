@@ -4,8 +4,8 @@ import types
 from _typeshed import SupportsKeysAndGetItem, Unused
 from builtins import property as _builtins_property
 from collections.abc import Callable, Iterable, Iterator, Mapping
-from typing import Any, Final, Generic, Literal, SupportsIndex, TypeVar, overload
-from typing_extensions import Self, TypeAlias, disjoint_base
+from typing import Any, Final, Generic, Literal, SupportsIndex, TypeAlias, TypeVar, overload
+from typing_extensions import Self, disjoint_base
 
 __all__ = ["EnumMeta", "Enum", "IntEnum", "Flag", "IntFlag", "auto", "unique"]
 
@@ -144,19 +144,9 @@ class EnumMeta(type):
             """
             ...
     elif sys.version_info >= (3, 11):
-        def __contains__(self: type[Any], member: object) -> bool:
-            """
-            Return True if member is a member of this enum
-            raises TypeError if member is not an enum member
-
-            note: in 3.12 TypeError will no longer be raised, and True will also be
-            returned if member is the value of a member in this enum
-            """
-            ...
-    elif sys.version_info >= (3, 10):
-        def __contains__(self: type[Any], obj: object) -> bool: ...
-    else:
         def __contains__(self: type[Any], member: object) -> bool: ...
+    else:
+        def __contains__(self: type[Any], obj: object) -> bool: ...
 
     def __getitem__(self: type[_EnumMemberT], name: str) -> _EnumMemberT:
         """Return the member matching `name`."""

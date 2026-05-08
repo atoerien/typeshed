@@ -18,8 +18,8 @@ from collections.abc import (
     ValuesView,
 )
 from importlib.machinery import ModuleSpec
-from typing import Any, ClassVar, Literal, TypeVar, final, overload
-from typing_extensions import ParamSpec, Self, TypeAliasType, TypeVarTuple, deprecated, disjoint_base
+from typing import Any, ClassVar, Literal, ParamSpec, TypeVar, final, overload
+from typing_extensions import Self, TypeAliasType, TypeVarTuple, deprecated, disjoint_base
 
 if sys.version_info >= (3, 14):
     from _typeshed import AnnotateFunc
@@ -52,10 +52,11 @@ __all__ = [
     "resolve_bases",
     "CellType",
     "GenericAlias",
+    "EllipsisType",
+    "NoneType",
+    "NotImplementedType",
+    "UnionType",
 ]
-
-if sys.version_info >= (3, 10):
-    __all__ += ["EllipsisType", "NoneType", "NotImplementedType", "UnionType"]
 
 if sys.version_info >= (3, 12):
     __all__ += ["get_original_bases"]
@@ -102,9 +103,8 @@ class FunctionType:
     if sys.version_info >= (3, 14):
         __annotate__: AnnotateFunc | None
     __kwdefaults__: dict[str, Any] | None
-    if sys.version_info >= (3, 10):
-        @property
-        def __builtins__(self) -> dict[str, Any]: ...
+    @property
+    def __builtins__(self) -> dict[str, Any]: ...
     if sys.version_info >= (3, 12):
         __type_params__: tuple[TypeVar | ParamSpec | TypeVarTuple, ...]
 
@@ -178,22 +178,16 @@ class CodeType:
     def co_name(self) -> str: ...
     @property
     def co_firstlineno(self) -> int: ...
-    if sys.version_info >= (3, 10):
-        @property
-        @deprecated("Deprecated since Python 3.10; will be removed in Python 3.15. Use `CodeType.co_lines()` instead.")
-        def co_lnotab(self) -> bytes: ...
-    else:
-        @property
-        def co_lnotab(self) -> bytes: ...
-
+    @property
+    @deprecated("Deprecated since Python 3.10; will be removed in Python 3.15. Use `CodeType.co_lines()` instead.")
+    def co_lnotab(self) -> bytes: ...
     @property
     def co_freevars(self) -> tuple[str, ...]: ...
     @property
     def co_cellvars(self) -> tuple[str, ...]: ...
-    if sys.version_info >= (3, 10):
-        @property
-        def co_linetable(self) -> bytes: ...
-        def co_lines(self) -> Iterator[tuple[int, int, int | None]]: ...
+    @property
+    def co_linetable(self) -> bytes: ...
+    def co_lines(self) -> Iterator[tuple[int, int, int | None]]: ...
     if sys.version_info >= (3, 11):
         @property
         def co_exceptiontable(self) -> bytes: ...
@@ -226,27 +220,6 @@ class CodeType:
             cellvars: tuple[str, ...] = ...,
             /,
         ) -> Self: ...
-    elif sys.version_info >= (3, 10):
-        def __new__(
-            cls,
-            argcount: int,
-            posonlyargcount: int,
-            kwonlyargcount: int,
-            nlocals: int,
-            stacksize: int,
-            flags: int,
-            codestring: bytes,
-            constants: tuple[object, ...],
-            names: tuple[str, ...],
-            varnames: tuple[str, ...],
-            filename: str,
-            name: str,
-            firstlineno: int,
-            linetable: bytes,
-            freevars: tuple[str, ...] = ...,
-            cellvars: tuple[str, ...] = ...,
-            /,
-        ) -> Self: ...
     else:
         def __new__(
             cls,
@@ -263,7 +236,7 @@ class CodeType:
             filename: str,
             name: str,
             firstlineno: int,
-            lnotab: bytes,
+            linetable: bytes,
             freevars: tuple[str, ...] = ...,
             cellvars: tuple[str, ...] = ...,
             /,
@@ -290,32 +263,7 @@ class CodeType:
             co_qualname: str = ...,
             co_linetable: bytes = ...,
             co_exceptiontable: bytes = ...,
-        ) -> Self:
-            """Return a copy of the code object with new values for the specified fields."""
-            ...
-    elif sys.version_info >= (3, 10):
-        def replace(
-            self,
-            *,
-            co_argcount: int = -1,
-            co_posonlyargcount: int = -1,
-            co_kwonlyargcount: int = -1,
-            co_nlocals: int = -1,
-            co_stacksize: int = -1,
-            co_flags: int = -1,
-            co_firstlineno: int = -1,
-            co_code: bytes = ...,
-            co_consts: tuple[object, ...] = ...,
-            co_names: tuple[str, ...] = ...,
-            co_varnames: tuple[str, ...] = ...,
-            co_freevars: tuple[str, ...] = ...,
-            co_cellvars: tuple[str, ...] = ...,
-            co_filename: str = ...,
-            co_name: str = ...,
-            co_linetable: bytes = ...,
-        ) -> Self:
-            """Return a copy of the code object with new values for the specified fields."""
-            ...
+        ) -> Self: ...
     else:
         def replace(
             self,
@@ -335,10 +283,8 @@ class CodeType:
             co_cellvars: tuple[str, ...] = ...,
             co_filename: str = ...,
             co_name: str = ...,
-            co_lnotab: bytes = ...,
-        ) -> Self:
-            """Return a copy of the code object with new values for the specified fields."""
-            ...
+            co_linetable: bytes = ...,
+        ) -> Self: ...
 
     if sys.version_info >= (3, 13):
         __replace__ = replace
@@ -1035,71 +981,42 @@ class GenericAlias:
         def __unpacked__(self) -> bool: ...
         @property
         def __typing_unpacked_tuple_args__(self) -> tuple[Any, ...] | None: ...
-    if sys.version_info >= (3, 10):
-        def __or__(self, value: Any, /) -> UnionType:
-            """Return self|value."""
-            ...
-        def __ror__(self, value: Any, /) -> UnionType:
-            """Return value|self."""
-            ...
+
+    def __or__(self, value: Any, /) -> UnionType: ...
+    def __ror__(self, value: Any, /) -> UnionType: ...
 
     # GenericAlias delegates attr access to `__origin__`
     def __getattr__(self, name: str) -> Any: ...
 
-if sys.version_info >= (3, 10):
-    @final
-    class NoneType:
-        """The type of the None singleton."""
-        def __bool__(self) -> Literal[False]:
-            """True if self else False"""
-            ...
+@final
+class NoneType:
+    def __bool__(self) -> Literal[False]: ...
 
-    @final
-    class EllipsisType:
-        """The type of the Ellipsis singleton."""
-        ...
+@final
+class EllipsisType: ...
 
-    @final
-    class NotImplementedType(Any):
-        """The type of the NotImplemented singleton."""
-        ...
+@final
+class NotImplementedType(Any): ...
 
-    @final
-    class UnionType:
-        """
-        Represent a union type
-
-        E.g. for int | str
-        """
-        @property
-        def __args__(self) -> tuple[Any, ...]: ...
-        @property
-        def __parameters__(self) -> tuple[Any, ...]:
-            """Type variables in the types.UnionType."""
-            ...
-        # `(int | str) | Literal["foo"]` returns a generic alias to an instance of `_SpecialForm` (`Union`).
-        # Normally we'd express this using the return type of `_SpecialForm.__ror__`,
-        # but because `UnionType.__or__` accepts `Any`, type checkers will use
-        # the return type of `UnionType.__or__` to infer the result of this operation
-        # rather than `_SpecialForm.__ror__`. To mitigate this, we use `| Any`
-        # in the return type of `UnionType.__(r)or__`.
-        def __or__(self, value: Any, /) -> UnionType | Any:
-            """Return self|value."""
-            ...
-        def __ror__(self, value: Any, /) -> UnionType | Any:
-            """Return value|self."""
-            ...
-        def __eq__(self, value: object, /) -> bool:
-            """Return self==value."""
-            ...
-        def __hash__(self) -> int:
-            """Return hash(self)."""
-            ...
-        # you can only subscript a `UnionType` instance if at least one of the elements
-        # in the union is a generic alias instance that has a non-empty `__parameters__`
-        def __getitem__(self, parameters: Any, /) -> object:
-            """Return self[key]."""
-            ...
+@final
+class UnionType:
+    @property
+    def __args__(self) -> tuple[Any, ...]: ...
+    @property
+    def __parameters__(self) -> tuple[Any, ...]: ...
+    # `(int | str) | Literal["foo"]` returns a generic alias to an instance of `_SpecialForm` (`Union`).
+    # Normally we'd express this using the return type of `_SpecialForm.__ror__`,
+    # but because `UnionType.__or__` accepts `Any`, type checkers will use
+    # the return type of `UnionType.__or__` to infer the result of this operation
+    # rather than `_SpecialForm.__ror__`. To mitigate this, we use `| Any`
+    # in the return type of `UnionType.__(r)or__`.
+    def __or__(self, value: Any, /) -> UnionType | Any: ...
+    def __ror__(self, value: Any, /) -> UnionType | Any: ...
+    def __eq__(self, value: object, /) -> bool: ...
+    def __hash__(self) -> int: ...
+    # you can only subscript a `UnionType` instance if at least one of the elements
+    # in the union is a generic alias instance that has a non-empty `__parameters__`
+    def __getitem__(self, parameters: Any, /) -> object: ...
 
 if sys.version_info >= (3, 13):
     @final

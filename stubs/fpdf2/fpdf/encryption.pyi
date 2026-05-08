@@ -11,8 +11,7 @@ Usage documentation at: <https://py-pdf.github.io/fpdf2/Encryption.html>
 from _typeshed import Incomplete, SupportsLenAndGetItem
 from collections.abc import Generator, Iterable
 from logging import Logger
-from typing import ClassVar, Protocol, TypeVar, overload, type_check_only
-from typing_extensions import TypeAlias
+from typing import ClassVar, Protocol, TypeAlias, TypeVar, overload, type_check_only
 
 from .enums import AccessPermission, EncryptionMethod
 from .fpdf import FPDF

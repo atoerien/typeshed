@@ -2,8 +2,7 @@ import codecs
 import sys
 from _typeshed import ReadableBuffer
 from collections.abc import Callable
-from typing import Literal, final, overload, type_check_only
-from typing_extensions import TypeAlias
+from typing import Literal, TypeAlias, final, overload, type_check_only
 
 # This type is not exposed; it is defined in unicodeobject.c
 # At runtime it calls itself builtins.EncodingMap
@@ -16,42 +15,10 @@ _CharMap: TypeAlias = dict[int, int] | _EncodingMap
 _Handler: TypeAlias = Callable[[UnicodeError], tuple[str | bytes, int]]
 _SearchFunction: TypeAlias = Callable[[str], codecs.CodecInfo | None]
 
-def register(search_function: _SearchFunction, /) -> None:
-    """
-    Register a codec search function.
-
-    Search functions are expected to take one argument, the encoding name in
-    all lower case letters, and either return None, or a tuple of functions
-    (encoder, decoder, stream_reader, stream_writer) (or a CodecInfo object).
-    """
-    ...
-
-if sys.version_info >= (3, 10):
-    def unregister(search_function: _SearchFunction, /) -> None:
-        """
-        Unregister a codec search function and clear the registry's cache.
-
-        If the search function is not registered, do nothing.
-        """
-        ...
-
-def register_error(errors: str, handler: _Handler, /) -> None:
-    """
-    Register the specified error handler under the name errors.
-
-    handler must be a callable object, that will be called with an exception
-    instance containing information about the location of the encoding/decoding
-    error and must return a (replacement, new position) tuple.
-    """
-    ...
-def lookup_error(name: str, /) -> _Handler:
-    """
-    lookup_error(errors) -> handler
-
-    Return the error handler for the specified error handling name or raise a
-    LookupError, if no handler exists under this name.
-    """
-    ...
+def register(search_function: _SearchFunction, /) -> None: ...
+def unregister(search_function: _SearchFunction, /) -> None: ...
+def register_error(errors: str, handler: _Handler, /) -> None: ...
+def lookup_error(name: str, /) -> _Handler: ...
 
 # The type ignore on `encode` and `decode` is to avoid issues with overlapping overloads, for more details, see #300
 # https://docs.python.org/3/library/codecs.html#binary-transforms

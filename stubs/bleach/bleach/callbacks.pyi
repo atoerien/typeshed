@@ -1,8 +1,7 @@
 """A set of basic callbacks for bleach.linkify."""
 
 from collections.abc import MutableMapping
-from typing import Protocol, type_check_only
-from typing_extensions import TypeAlias
+from typing import Protocol, TypeAlias, type_check_only
 
 from bleach import _HTMLAttrKey
 

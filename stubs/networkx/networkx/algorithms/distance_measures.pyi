@@ -1,7 +1,7 @@
 """Graph diameter, radius, eccentricity and other properties."""
 
 from collections.abc import Callable, Mapping
-from typing_extensions import TypeAlias
+from typing import TypeAlias
 
 from networkx.classes.graph import Graph, _Node
 from networkx.utils.backends import _dispatchable

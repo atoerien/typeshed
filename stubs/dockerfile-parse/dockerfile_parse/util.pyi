@@ -8,8 +8,7 @@ of the BSD license. See the LICENSE file for details.
 
 from collections.abc import Generator, Mapping, MutableMapping
 from io import StringIO
-from typing import ClassVar, Literal
-from typing_extensions import TypeAlias
+from typing import ClassVar, Literal, TypeAlias
 
 def b2u(string: bytes | str) -> str:
     """bytes to unicode """

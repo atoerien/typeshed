@@ -1,8 +1,7 @@
 """Lexical analysis of formal languages (i.e. code) using Pygments."""
 
 from collections.abc import Generator, Iterable
-from typing import Final, Literal
-from typing_extensions import TypeAlias
+from typing import Final, Literal, TypeAlias
 
 from docutils import ApplicationError
 

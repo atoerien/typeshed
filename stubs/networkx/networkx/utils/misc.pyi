@@ -12,9 +12,8 @@ can be accessed, for example, as
 """
 
 import random
-import sys
 from types import ModuleType
-from typing_extensions import Self, TypeAlias
+from typing import TypeAlias
 
 import numpy
 from networkx.classes.graph import Graph, _Node
@@ -208,13 +207,7 @@ class PythonRandomViaNumpyBits(random.Random):
     a numpy generator.
     """
     def __init__(self, rng: numpy.random.Generator | None = None) -> None: ...
-    if sys.version_info < (3, 10):
-        # this is a workaround for pyright correctly flagging an inconsistent inherited constructor, see #14624
-        def __new__(cls, rng: numpy.random.Generator | None = None) -> Self: ...
-
-    def getrandbits(self, k: int) -> int:
-        """getrandbits(k) -> x.  Generates an int with k random bits."""
-        ...
+    def getrandbits(self, k: int) -> int: ...
 
 class PythonRandomInterface:
     """

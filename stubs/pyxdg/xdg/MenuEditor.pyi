@@ -1,8 +1,7 @@
 """CLass to edit XDG Menus """
 
 from _typeshed import StrPath, Unused
-from typing import Literal, overload
-from typing_extensions import TypeAlias
+from typing import Literal, TypeAlias, overload
 from xml.etree.ElementTree import ElementTree
 
 from .Menu import Menu, MenuEntry, Separator, XMLMenuBuilder

@@ -8,8 +8,8 @@ override Connection.default_cursor with a non-standard Cursor class.
 from _typeshed import Incomplete
 from re import Pattern
 from types import TracebackType
-from typing import Any
-from typing_extensions import LiteralString, Self, TypeAlias
+from typing import Any, TypeAlias
+from typing_extensions import LiteralString, Self
 
 from . import _mysql, cursors
 from ._exceptions import (

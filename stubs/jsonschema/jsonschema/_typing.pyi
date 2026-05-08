@@ -1,8 +1,7 @@
 """Some (initially private) typing helpers for jsonschema's types."""
 
 from collections.abc import Callable, Iterable
-from typing import Any, Protocol
-from typing_extensions import TypeAlias
+from typing import Any, Protocol, TypeAlias
 
 from jsonschema.protocols import Validator
 from referencing.jsonschema import Schema

@@ -12,8 +12,7 @@ with the help of ``configparser``.
 from _typeshed import Incomplete, StrPath
 from abc import abstractmethod
 from collections.abc import Callable, Iterable
-from typing import Any, ClassVar, Generic, TypeVar
-from typing_extensions import TypeAlias
+from typing import Any, ClassVar, Generic, TypeAlias, TypeVar
 
 from .._distutils.dist import DistributionMetadata
 from ..dist import Distribution

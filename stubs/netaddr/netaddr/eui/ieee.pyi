@@ -10,8 +10,7 @@ More details can be found at the following URLs :-
 import _csv
 from _typeshed import FileDescriptorOrPath, StrOrBytesPath
 from collections.abc import Iterable
-from typing import Any, BinaryIO, TextIO
-from typing_extensions import TypeAlias
+from typing import Any, BinaryIO, TextIO, TypeAlias
 
 from netaddr.core import Publisher, Subscriber
 
@@ -20,26 +19,9 @@ OUI_INDEX: _INDEX
 IAB_INDEX: _INDEX
 
 class FileIndexer(Subscriber):
-    """
-    A concrete Subscriber that receives OUI record offset information that is
-    written to an index data file as a set of comma separated records.
-    """
-    writer: _csv._writer
-    def __init__(self, index_file: TextIO | FileDescriptorOrPath) -> None:
-        """
-        Constructor.
-
-        :param index_file: a file-like object or name of index file where
-            index records will be written.
-        """
-        ...
-    def update(self, data: Iterable[Any]) -> None:
-        """
-        Receives and writes index data to a CSV data file.
-
-        :param data: record containing offset record information.
-        """
-        ...
+    writer: _csv.Writer
+    def __init__(self, index_file: TextIO | FileDescriptorOrPath) -> None: ...
+    def update(self, data: Iterable[Any]) -> None: ...
 
 class OUIIndexParser(Publisher):
     """

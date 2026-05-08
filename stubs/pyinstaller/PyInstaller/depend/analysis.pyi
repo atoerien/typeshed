@@ -30,7 +30,7 @@ the old ImpTracker list could do.
 
 from _typeshed import Incomplete, StrPath, SupportsKeysAndGetItem
 from collections.abc import Iterable
-from typing_extensions import TypeAlias
+from typing import TypeAlias
 
 from PyInstaller.lib.modulegraph.modulegraph import Alias, Node
 

@@ -10,8 +10,8 @@ See examples at :doc:`examples`
 from _typeshed import Incomplete
 from collections.abc import Mapping, MutableMapping, Sequence
 from re import Pattern
-from typing import Any, Final, Literal, TypedDict, overload, type_check_only
-from typing_extensions import Required, TypeAlias, deprecated
+from typing import Any, Final, Literal, TypeAlias, TypedDict, overload, type_check_only
+from typing_extensions import Required, deprecated
 
 import requests
 from requests.models import Request, Response

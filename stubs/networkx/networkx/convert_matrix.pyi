@@ -28,8 +28,7 @@ nx_agraph, nx_pydot
 
 from _typeshed import Incomplete
 from collections.abc import Callable, Collection, Hashable, Iterable
-from typing import Literal, TypeVar, overload
-from typing_extensions import TypeAlias
+from typing import Literal, TypeAlias, TypeVar, overload
 
 import numpy
 from networkx.classes.graph import Graph, _Node

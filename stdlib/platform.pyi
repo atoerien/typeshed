@@ -147,167 +147,27 @@ if sys.version_info >= (3, 12):
 else:
     @disjoint_base
     class uname_result(_uname_result_base):
-        """
-        A uname_result that's largely compatible with a
-        simple namedtuple except that 'processor' is
-        resolved late and cached to avoid calling "uname"
-        except when needed.
-        """
-        if sys.version_info >= (3, 10):
-            __match_args__ = ("system", "node", "release", "version", "machine")  # pyright: ignore[reportAssignmentType]
-
-        def __new__(_cls, system: str, node: str, release: str, version: str, machine: str) -> Self:
-            """Create new instance of uname_result_base(system, node, release, version, machine)"""
-            ...
+        __match_args__ = ("system", "node", "release", "version", "machine")  # pyright: ignore[reportAssignmentType]
+        def __new__(_cls, system: str, node: str, release: str, version: str, machine: str) -> Self: ...
         @property
         def processor(self) -> str: ...
 
-def uname() -> uname_result:
-    """
-    Fairly portable uname interface. Returns a tuple
-    of strings (system, node, release, version, machine, processor)
-    identifying the underlying platform.
-
-    Note that unlike the os.uname function this also returns
-    possible processor information as an additional tuple entry.
-
-    Entries which cannot be determined are set to ''.
-    """
-    ...
-def system() -> str:
-    """
-    Returns the system/OS name, e.g. 'Linux', 'Windows' or 'Java'.
-
-    An empty string is returned if the value cannot be determined.
-    """
-    ...
-def node() -> str:
-    """
-    Returns the computer's network name (which may not be fully
-    qualified)
-
-    An empty string is returned if the value cannot be determined.
-    """
-    ...
-def release() -> str:
-    """
-    Returns the system's release, e.g. '2.2.0' or 'NT'
-
-    An empty string is returned if the value cannot be determined.
-    """
-    ...
-def version() -> str:
-    """
-    Returns the system's release version, e.g. '#3 on degas'
-
-    An empty string is returned if the value cannot be determined.
-    """
-    ...
-def machine() -> str:
-    """
-    Returns the machine type, e.g. 'i386'
-
-    An empty string is returned if the value cannot be determined.
-    """
-    ...
-def processor() -> str:
-    """
-    Returns the (true) processor name, e.g. 'amdk6'
-
-    An empty string is returned if the value cannot be
-    determined. Note that many platforms do not provide this
-    information or simply return the same value as for machine(),
-    e.g.  NetBSD does this.
-    """
-    ...
-def python_implementation() -> str:
-    """
-    Returns a string identifying the Python implementation.
-
-    Currently, the following implementations are identified:
-      'CPython' (C implementation of Python),
-      'Jython' (Java implementation of Python),
-      'PyPy' (Python implementation of Python).
-    """
-    ...
-def python_version() -> str:
-    """
-    Returns the Python version as string 'major.minor.patchlevel'
-
-    Note that unlike the Python sys.version, the returned value
-    will always include the patchlevel (it defaults to 0).
-    """
-    ...
-def python_version_tuple() -> tuple[str, str, str]:
-    """
-    Returns the Python version as tuple (major, minor, patchlevel)
-    of strings.
-
-    Note that unlike the Python sys.version, the returned value
-    will always include the patchlevel (it defaults to 0).
-    """
-    ...
-def python_branch() -> str:
-    """
-    Returns a string identifying the Python implementation
-    branch.
-
-    For CPython this is the SCM branch from which the
-    Python binary was built.
-
-    If not available, an empty string is returned.
-    """
-    ...
-def python_revision() -> str:
-    """
-    Returns a string identifying the Python implementation
-    revision.
-
-    For CPython this is the SCM revision from which the
-    Python binary was built.
-
-    If not available, an empty string is returned.
-    """
-    ...
-def python_build() -> tuple[str, str]:
-    """
-    Returns a tuple (buildno, builddate) stating the Python
-    build number and date as strings.
-    """
-    ...
-def python_compiler() -> str:
-    """
-    Returns a string identifying the compiler used for compiling
-    Python.
-    """
-    ...
-def platform(aliased: bool = False, terse: bool = False) -> str:
-    """
-    Returns a single string identifying the underlying platform
-    with as much useful information as possible (but no more :).
-
-    The output is intended to be human readable rather than
-    machine parseable. It may look different on different
-    platforms and this is intended.
-
-    If "aliased" is true, the function will use aliases for
-    various platforms that report system names which differ from
-    their common names, e.g. SunOS will be reported as
-    Solaris. The system_alias() function is used to implement
-    this.
-
-    Setting terse to true causes the function to return only the
-    absolute minimum information needed to identify the platform.
-    """
-    ...
-
-if sys.version_info >= (3, 10):
-    def freedesktop_os_release() -> dict[str, str]:
-        """
-        Return operation system identification from freedesktop.org os-release
-    
-        """
-        ...
+def uname() -> uname_result: ...
+def system() -> str: ...
+def node() -> str: ...
+def release() -> str: ...
+def version() -> str: ...
+def machine() -> str: ...
+def processor() -> str: ...
+def python_implementation() -> str: ...
+def python_version() -> str: ...
+def python_version_tuple() -> tuple[str, str, str]: ...
+def python_branch() -> str: ...
+def python_revision() -> str: ...
+def python_build() -> tuple[str, str]: ...
+def python_compiler() -> str: ...
+def platform(aliased: bool = False, terse: bool = False) -> str: ...
+def freedesktop_os_release() -> dict[str, str]: ...
 
 if sys.version_info >= (3, 13):
     class AndroidVer(NamedTuple):

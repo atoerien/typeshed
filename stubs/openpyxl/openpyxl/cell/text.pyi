@@ -1,8 +1,7 @@
 """Richtext definition"""
 
 from _typeshed import ConvertibleToFloat, ConvertibleToInt, Incomplete
-from typing import ClassVar, Literal
-from typing_extensions import TypeAlias
+from typing import ClassVar, Literal, TypeAlias
 
 from openpyxl.descriptors.base import Alias, Integer, NoneSet, Typed, _ConvertibleToBool
 from openpyxl.descriptors.nested import NestedString, NestedText, _NestedNoneSetParam

@@ -108,13 +108,16 @@ from _typeshed import SupportsRichComparisonT
 from collections.abc import Callable, Hashable, Iterable, Sequence, Sized
 from decimal import Decimal
 from fractions import Fraction
-from typing import Literal, NamedTuple, Protocol, SupportsFloat, SupportsIndex, TypeVar, type_check_only
-from typing_extensions import Self, TypeAlias
+from typing import Literal, NamedTuple, Protocol, SupportsFloat, SupportsIndex, TypeAlias, TypeVar, type_check_only
+from typing_extensions import Self
 
 __all__ = [
     "StatisticsError",
+    "covariance",
+    "correlation",
     "fmean",
     "geometric_mean",
+    "linear_regression",
     "mean",
     "harmonic_mean",
     "pstdev",
@@ -131,8 +134,6 @@ __all__ = [
     "quantiles",
 ]
 
-if sys.version_info >= (3, 10):
-    __all__ += ["covariance", "correlation", "linear_regression"]
 if sys.version_info >= (3, 13):
     __all__ += ["kde", "kde_random"]
 
@@ -172,141 +173,12 @@ else:
         """
         Convert data to floats and compute the arithmetic mean.
 
-        This runs faster than the mean() function and it always returns a float.
-        If the input dataset is empty, it raises a StatisticsError.
-
-        >>> fmean([3.5, 4.0, 5.25])
-        4.25
-        """
-        ...
-
-def geometric_mean(data: Iterable[SupportsFloat]) -> float:
-    """
-    Convert data to floats and compute the geometric mean.
-
-    Raises a StatisticsError if the input dataset is empty
-    or if it contains a negative value.
-
-    Returns zero if the product of inputs is zero.
-
-    No special efforts are made to achieve exact results.
-    (However, this may change in the future.)
-
-    >>> round(geometric_mean([54, 24, 36]), 9)
-    36.0
-    """
-    ...
-def mean(data: Iterable[_NumberT]) -> _NumberT:
-    """
-    Return the sample arithmetic mean of data.
-
-    >>> mean([1, 2, 3, 4, 4])
-    2.8
-
-    >>> from fractions import Fraction as F
-    >>> mean([F(3, 7), F(1, 21), F(5, 3), F(1, 3)])
-    Fraction(13, 21)
-
-    >>> from decimal import Decimal as D
-    >>> mean([D("0.5"), D("0.75"), D("0.625"), D("0.375")])
-    Decimal('0.5625')
-
-    If ``data`` is empty, StatisticsError will be raised.
-    """
-    ...
-
-if sys.version_info >= (3, 10):
-    def harmonic_mean(data: Iterable[_NumberT], weights: Iterable[_Number] | None = None) -> _NumberT:
-        """
-        Return the harmonic mean of data.
-
-        The harmonic mean is the reciprocal of the arithmetic mean of the
-        reciprocals of the data.  It can be used for averaging ratios or
-        rates, for example speeds.
-
-        Suppose a car travels 40 km/hr for 5 km and then speeds-up to
-        60 km/hr for another 5 km. What is the average speed?
-
-            >>> harmonic_mean([40, 60])
-            48.0
-
-        Suppose a car travels 40 km/hr for 5 km, and when traffic clears,
-        speeds-up to 60 km/hr for the remaining 30 km of the journey. What
-        is the average speed?
-
-            >>> harmonic_mean([40, 60], weights=[5, 30])
-            56.0
-
-        If ``data`` is empty, or any element is less than zero,
-        ``harmonic_mean`` will raise ``StatisticsError``.
-        """
-        ...
-
-else:
-    def harmonic_mean(data: Iterable[_NumberT]) -> _NumberT:
-        """
-        Return the harmonic mean of data.
-
-        The harmonic mean, sometimes called the subcontrary mean, is the
-        reciprocal of the arithmetic mean of the reciprocals of the data,
-        and is often appropriate when averaging quantities which are rates
-        or ratios, for example speeds. Example:
-
-        Suppose an investor purchases an equal value of shares in each of
-        three companies, with P/E (price/earning) ratios of 2.5, 3 and 10.
-        What is the average P/E ratio for the investor's portfolio?
-
-        >>> harmonic_mean([2.5, 3, 10])  # For an equal investment portfolio.
-        3.6
-
-        Using the arithmetic mean would give an average of about 5.167, which
-        is too high.
-
-        If ``data`` is empty, or any element is less than zero,
-        ``harmonic_mean`` will raise ``StatisticsError``.
-        """
-        ...
-
-def median(data: Iterable[_NumberT]) -> _NumberT:
-    """
-    Return the median (middle value) of numeric data.
-
-    When the number of data points is odd, return the middle data point.
-    When the number of data points is even, the median is interpolated by
-    taking the average of the two middle values:
-
-    >>> median([1, 3, 5])
-    3
-    >>> median([1, 3, 5, 7])
-    4.0
-    """
-    ...
-def median_low(data: Iterable[SupportsRichComparisonT]) -> SupportsRichComparisonT:
-    """
-    Return the low median of numeric data.
-
-    When the number of data points is odd, the middle value is returned.
-    When it is even, the smaller of the two middle values is returned.
-
-    >>> median_low([1, 3, 5])
-    3
-    >>> median_low([1, 3, 5, 7])
-    3
-    """
-    ...
-def median_high(data: Iterable[SupportsRichComparisonT]) -> SupportsRichComparisonT:
-    """
-    Return the high median of data.
-
-    When the number of data points is odd, the middle value is returned.
-    When it is even, the larger of the two middle values is returned.
-
-    >>> median_high([1, 3, 5])
-    3
-    >>> median_high([1, 3, 5, 7])
-    5
-    """
-    ...
+def geometric_mean(data: Iterable[SupportsFloat]) -> float: ...
+def mean(data: Iterable[_NumberT]) -> _NumberT: ...
+def harmonic_mean(data: Iterable[_NumberT], weights: Iterable[_Number] | None = None) -> _NumberT: ...
+def median(data: Iterable[_NumberT]) -> _NumberT: ...
+def median_low(data: Iterable[SupportsRichComparisonT]) -> SupportsRichComparisonT: ...
+def median_high(data: Iterable[SupportsRichComparisonT]) -> SupportsRichComparisonT: ...
 
 if sys.version_info >= (3, 11):
     def median_grouped(data: Iterable[SupportsFloat], interval: SupportsFloat = 1.0) -> float:
@@ -715,50 +587,14 @@ if sys.version_info >= (3, 12):
         """
         ...
 
-elif sys.version_info >= (3, 10):
-    def correlation(x: Sequence[_Number], y: Sequence[_Number], /) -> float:
-        """
-        Pearson's correlation coefficient
+else:
+    def correlation(x: Sequence[_Number], y: Sequence[_Number], /) -> float: ...
 
-        Return the Pearson's correlation coefficient for two inputs. Pearson's
-        correlation coefficient *r* takes values between -1 and +1. It measures the
-        strength and direction of the linear relationship, where +1 means very
-        strong, positive linear relationship, -1 very strong, negative linear
-        relationship, and 0 no linear relationship.
+def covariance(x: Sequence[_Number], y: Sequence[_Number], /) -> float: ...
 
-        >>> x = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-        >>> y = [9, 8, 7, 6, 5, 4, 3, 2, 1]
-        >>> correlation(x, x)
-        1.0
-        >>> correlation(x, y)
-        -1.0
-        """
-        ...
-
-if sys.version_info >= (3, 10):
-    def covariance(x: Sequence[_Number], y: Sequence[_Number], /) -> float:
-        """
-        Covariance
-
-        Return the sample covariance of two inputs *x* and *y*. Covariance
-        is a measure of the joint variability of two inputs.
-
-        >>> x = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-        >>> y = [1, 2, 3, 1, 2, 3, 1, 2, 3]
-        >>> covariance(x, y)
-        0.75
-        >>> z = [9, 8, 7, 6, 5, 4, 3, 2, 1]
-        >>> covariance(x, z)
-        -7.5
-        >>> covariance(z, x)
-        -7.5
-        """
-        ...
-
-    class LinearRegression(NamedTuple):
-        """LinearRegression(slope, intercept)"""
-        slope: float
-        intercept: float
+class LinearRegression(NamedTuple):
+    slope: float
+    intercept: float
 
 if sys.version_info >= (3, 11):
     def linear_regression(
@@ -803,7 +639,7 @@ if sys.version_info >= (3, 11):
         """
         ...
 
-elif sys.version_info >= (3, 10):
+else:
     def linear_regression(
         regressor: _SizedIterable[_Number], dependent_variable: _SizedIterable[_Number], /
     ) -> LinearRegression:

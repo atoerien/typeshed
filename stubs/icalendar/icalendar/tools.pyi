@@ -1,8 +1,8 @@
 """Utility functions for icalendar."""
 
 import datetime
-from typing import Final
-from typing_extensions import TypeGuard, TypeIs, deprecated
+from typing import Final, TypeGuard
+from typing_extensions import TypeIs, deprecated
 
 from pytz.tzinfo import BaseTzInfo
 

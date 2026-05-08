@@ -1,8 +1,7 @@
 """Contains the Nextgen Pythonic Protobuf Text Format APIs."""
 
 from collections.abc import Callable
-from typing import TypeVar
-from typing_extensions import TypeAlias
+from typing import TypeAlias, TypeVar
 
 from google.protobuf.descriptor_pool import DescriptorPool
 from google.protobuf.message import Message

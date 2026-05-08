@@ -1,8 +1,7 @@
 """Input/output functions for Shapely geometries."""
 
 from _typeshed import Incomplete
-from typing import Literal, overload
-from typing_extensions import TypeAlias
+from typing import Literal, TypeAlias, overload
 
 import numpy as np
 from numpy.typing import NDArray

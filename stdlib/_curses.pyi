@@ -1,8 +1,7 @@
 import sys
 from _typeshed import ReadOnlyBuffer, SupportsRead, SupportsWrite
 from curses import _ncurses_version
-from typing import Any, Final, final, overload
-from typing_extensions import TypeAlias
+from typing import Any, Final, TypeAlias, final, overload
 
 # NOTE: This module is ordinarily only available on Unix, but the windows-curses
 # package makes it available on Windows as well with the same contents.
@@ -96,13 +95,12 @@ BUTTON4_PRESSED: Final[int]
 BUTTON4_RELEASED: Final[int]
 BUTTON4_TRIPLE_CLICKED: Final[int]
 # Darwin ncurses doesn't provide BUTTON5_* constants prior to 3.12.10 and 3.13.3
-if sys.version_info >= (3, 10):
-    if sys.version_info >= (3, 12) or sys.platform != "darwin":
-        BUTTON5_PRESSED: Final[int]
-        BUTTON5_RELEASED: Final[int]
-        BUTTON5_CLICKED: Final[int]
-        BUTTON5_DOUBLE_CLICKED: Final[int]
-        BUTTON5_TRIPLE_CLICKED: Final[int]
+if sys.version_info >= (3, 12) or sys.platform != "darwin":
+    BUTTON5_PRESSED: Final[int]
+    BUTTON5_RELEASED: Final[int]
+    BUTTON5_CLICKED: Final[int]
+    BUTTON5_DOUBLE_CLICKED: Final[int]
+    BUTTON5_TRIPLE_CLICKED: Final[int]
 BUTTON_ALT: Final[int]
 BUTTON_CTRL: Final[int]
 BUTTON_SHIFT: Final[int]
@@ -380,84 +378,16 @@ def erasechar() -> bytes:
     """Return the user's current erase character."""
     ...
 def filter() -> None: ...
-def flash() -> None:
-    """
-    Flash the screen.
-
-    That is, change it to reverse-video and then change it back in a short interval.
-    """
-    ...
-def flushinp() -> None:
-    """
-    Flush all input buffers.
-
-    This throws away any typeahead that has been typed by the user and has not
-    yet been processed by the program.
-    """
-    ...
-def get_escdelay() -> int:
-    """
-    Gets the curses ESCDELAY setting.
-
-    Gets the number of milliseconds to wait after reading an escape character,
-    to distinguish between an individual escape character entered on the
-    keyboard from escape sequences sent by cursor and function keys.
-    """
-    ...
-def get_tabsize() -> int:
-    """
-    Gets the curses TABSIZE setting.
-
-    Gets the number of columns used by the curses library when converting a tab
-    character to spaces as it adds the tab to a window.
-    """
-    ...
-def getmouse() -> tuple[int, int, int, int, int]:
-    """
-    Retrieve the queued mouse event.
-
-    After getch() returns KEY_MOUSE to signal a mouse event, this function
-    returns a 5-tuple (id, x, y, z, bstate).
-    """
-    ...
-def getsyx() -> tuple[int, int]:
-    """
-    Return the current coordinates of the virtual screen cursor.
-
-    Return a (y, x) tuple.  If leaveok is currently true, return (-1, -1).
-    """
-    ...
-def getwin(file: SupportsRead[bytes], /) -> window:
-    """
-    Read window related data stored in the file by an earlier putwin() call.
-
-    The routine then creates and initializes a new window using that data,
-    returning the new window object.
-    """
-    ...
-def halfdelay(tenths: int, /) -> None:
-    """
-    Enter half-delay mode.
-
-      tenths
-        Maximal blocking delay in tenths of seconds (1 - 255).
-
-    Use nocbreak() to leave half-delay mode.
-    """
-    ...
-def has_colors() -> bool:
-    """Return True if the terminal can display colors; otherwise, return False."""
-    ...
-
-if sys.version_info >= (3, 10):
-    def has_extended_color_support() -> bool:
-        """
-        Return True if the module supports extended colors; otherwise, return False.
-
-        Extended color support allows more than 256 color-pairs for terminals
-        that support more than 16 colors (e.g. xterm-256color).
-        """
-        ...
+def flash() -> None: ...
+def flushinp() -> None: ...
+def get_escdelay() -> int: ...
+def get_tabsize() -> int: ...
+def getmouse() -> tuple[int, int, int, int, int]: ...
+def getsyx() -> tuple[int, int]: ...
+def getwin(file: SupportsRead[bytes], /) -> window: ...
+def halfdelay(tenths: int, /) -> None: ...
+def has_colors() -> bool: ...
+def has_extended_color_support() -> bool: ...
 
 if sys.version_info >= (3, 14):
     def assume_default_colors(fg: int, bg: int, /) -> None:

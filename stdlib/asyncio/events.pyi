@@ -14,8 +14,8 @@ from collections.abc import Callable, Sequence
 from concurrent.futures import Executor
 from contextvars import Context
 from socket import AddressFamily, AddressInfo, SocketKind, _Address, _RetAddress, socket
-from typing import IO, Any, Literal, Protocol, TypeVar, overload, type_check_only
-from typing_extensions import Self, TypeAlias, TypeVarTuple, Unpack, deprecated
+from typing import IO, Any, Literal, Protocol, TypeAlias, TypeVar, overload, type_check_only
+from typing_extensions import Self, TypeVarTuple, Unpack, deprecated
 
 from . import _AwaitableLike, _CoroutineLike
 from .base_events import Server
@@ -904,18 +904,8 @@ class AbstractEventLoop:
             ssl: _SSLContext = None,
             ssl_handshake_timeout: float | None = None,
             ssl_shutdown_timeout: float | None = None,
-        ) -> tuple[Transport, _ProtocolT]:
-            """
-            Handle an accepted connection.
-
-            This is used by servers that accept connections outside of
-            asyncio, but use asyncio to handle connections.
-
-            This method is a coroutine.  When completed, the coroutine
-            returns a (transport, protocol) pair.
-            """
-            ...
-    elif sys.version_info >= (3, 10):
+        ) -> tuple[Transport, _ProtocolT]: ...
+    else:
         async def connect_accepted_socket(
             self,
             protocol_factory: Callable[[], _ProtocolT],

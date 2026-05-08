@@ -50,8 +50,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 from collections.abc import Callable
-from typing import Any, Literal, Protocol, type_check_only
-from typing_extensions import TypeAlias
+from typing import Any, Literal, Protocol, TypeAlias, type_check_only
 
 import numpy as np
 from numpy.typing import ArrayLike, NDArray

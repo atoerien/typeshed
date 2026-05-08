@@ -1,10 +1,4 @@
-"""
-This module provides access to mathematical functions for complex
-numbers.
-"""
-
-from typing import Final, SupportsComplex, SupportsFloat, SupportsIndex
-from typing_extensions import TypeAlias
+from typing import Final, SupportsComplex, SupportsFloat, SupportsIndex, TypeAlias
 
 e: Final[float]
 pi: Final[float]

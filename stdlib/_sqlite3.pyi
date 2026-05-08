@@ -18,8 +18,8 @@ from sqlite3 import (
     Warning as Warning,
     _IsolationLevel,
 )
-from typing import Any, Final, Literal, TypeVar, overload
-from typing_extensions import TypeAlias, deprecated
+from typing import Any, Final, Literal, TypeAlias, TypeVar, overload
+from typing_extensions import deprecated
 
 if sys.version_info >= (3, 11):
     from sqlite3 import Blob as Blob
@@ -379,29 +379,5 @@ if sys.version_info < (3, 12):
         """
         ...
 
-if sys.version_info >= (3, 10):
-    def register_adapter(type: type[_T], adapter: _Adapter[_T], /) -> None:
-        """Register a function to adapt Python objects to SQLite values."""
-        ...
-    def register_converter(typename: str, converter: _Converter, /) -> None:
-        """Register a function to convert SQLite values to Python objects."""
-        ...
-
-else:
-    def register_adapter(type: type[_T], caster: _Adapter[_T], /) -> None:
-        """
-        register_adapter(type, callable)
-
-        Registers an adapter with sqlite3's adapter registry.
-        """
-        ...
-    def register_converter(name: str, converter: _Converter, /) -> None:
-        """
-        register_converter(typename, callable)
-
-        Registers a converter with sqlite3.
-        """
-        ...
-
-if sys.version_info < (3, 10):
-    OptimizedUnicode = str  # undocumented
+def register_adapter(type: type[_T], adapter: _Adapter[_T], /) -> None: ...
+def register_converter(typename: str, converter: _Converter, /) -> None: ...

@@ -13,8 +13,8 @@ development, with a few basic heading and text styles.
 """
 
 from _typeshed import Incomplete
-from typing import Any, ClassVar, Literal, TypeVar, overload
-from typing_extensions import Self, TypeAlias
+from typing import Any, ClassVar, Literal, TypeAlias, TypeVar, overload
+from typing_extensions import Self
 
 from reportlab.lib.colors import Color
 

@@ -1,8 +1,7 @@
 """Public API for tf._api.v2.types.experimental namespace"""
 
 import abc
-from typing import Any, Generic, TypeVar, overload
-from typing_extensions import ParamSpec
+from typing import Any, Generic, ParamSpec, TypeVar, overload
 
 import tensorflow as tf
 from tensorflow._aliases import ContainerGeneric

@@ -16,15 +16,7 @@ from typing import Any, Final, final
 if sys.platform != "win32":
     @final
     class struct_passwd(structseq[Any], tuple[str, str, int, int, str, str, str]):
-        """
-        pwd.struct_passwd: Results from getpw*() routines.
-
-        This object may be accessed either as a tuple of
-          (pw_name,pw_passwd,pw_uid,pw_gid,pw_gecos,pw_dir,pw_shell)
-        or via the object attributes as named in the above tuple.
-        """
-        if sys.version_info >= (3, 10):
-            __match_args__: Final = ("pw_name", "pw_passwd", "pw_uid", "pw_gid", "pw_gecos", "pw_dir", "pw_shell")
+        __match_args__: Final = ("pw_name", "pw_passwd", "pw_uid", "pw_gid", "pw_gecos", "pw_dir", "pw_shell")
 
         @property
         def pw_name(self) -> str:

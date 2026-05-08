@@ -2,7 +2,8 @@
 
 import sys
 from _typeshed import ReadableBuffer
-from typing_extensions import TypeAlias, deprecated
+from typing import TypeAlias
+from typing_extensions import deprecated
 
 # Many functions in binascii accept buffer objects
 # or ASCII-only strings.

@@ -31,6 +31,8 @@ __all__ = [
     "Timer",
     "ThreadError",
     "ExceptHookArgs",
+    "getprofile",
+    "gettrace",
     "setprofile",
     "settrace",
     "local",
@@ -38,9 +40,6 @@ __all__ = [
     "excepthook",
     "get_native_id",
 ]
-
-if sys.version_info >= (3, 10):
-    __all__ += ["getprofile", "gettrace"]
 
 if sys.version_info >= (3, 12):
     __all__ += ["setprofile_all_threads", "settrace_all_threads"]
@@ -144,34 +143,9 @@ if sys.version_info >= (3, 12):
         """
         ...
 
-if sys.version_info >= (3, 10):
-    def gettrace() -> TraceFunction | None:
-        """Get the trace function as set by threading.settrace()."""
-        ...
-    def getprofile() -> ProfileFunction | None:
-        """Get the profiler function as set by threading.setprofile()."""
-        ...
-
-def stack_size(size: int = 0, /) -> int:
-    """
-    Return the thread stack size used when creating new threads.  The
-    optional size argument specifies the stack size (in bytes) to be used
-    for subsequently created threads, and must be 0 (use platform or
-    configured default) or a positive integer value of at least 32,768 (32k).
-    If changing the thread stack size is unsupported, a ThreadError
-    exception is raised.  If the specified size is invalid, a ValueError
-    exception is raised, and the stack size is unmodified.  32k bytes
-     currently the minimum supported stack size value to guarantee
-    sufficient stack space for the interpreter itself.
-
-    Note that some platforms may have particular restrictions on values for
-    the stack size, such as requiring a minimum stack size larger than 32 KiB or
-    requiring allocation in multiples of the system memory page size
-    - platform documentation should be referred to for more information
-    (4 KiB pages are common; using multiples of 4096 for the stack size is
-    the suggested approach in the absence of more specific information).
-    """
-    ...
+def gettrace() -> TraceFunction | None: ...
+def getprofile() -> ProfileFunction | None: ...
+def stack_size(size: int = 0, /) -> int: ...
 
 TIMEOUT_MAX: Final[float]
 
@@ -668,8 +642,7 @@ class Event:
         ...
 
 excepthook: Callable[[_ExceptHookArgs], object]
-if sys.version_info >= (3, 10):
-    __excepthook__: Callable[[_ExceptHookArgs], object]
+__excepthook__: Callable[[_ExceptHookArgs], object]
 ExceptHookArgs = _ExceptHookArgs
 
 class Timer(Thread):

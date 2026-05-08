@@ -29,7 +29,7 @@ from collections.abc import (
 )
 from contextlib import AbstractAsyncContextManager as AsyncContextManager, AbstractContextManager as ContextManager
 from re import Match as Match, Pattern as Pattern
-from types import GenericAlias, ModuleType
+from types import GenericAlias, ModuleType, UnionType
 from typing import (  # noqa: Y022,Y037,Y038,Y039,UP035,RUF100
     IO as IO,
     TYPE_CHECKING as TYPE_CHECKING,
@@ -40,6 +40,7 @@ from typing import (  # noqa: Y022,Y037,Y038,Y039,UP035,RUF100
     Callable as Callable,
     ChainMap as ChainMap,
     ClassVar as ClassVar,
+    Concatenate as Concatenate,
     Counter as Counter,
     DefaultDict as DefaultDict,
     Deque as Deque,
@@ -50,25 +51,27 @@ from typing import (  # noqa: Y022,Y037,Y038,Y039,UP035,RUF100
     List as List,
     NoReturn as NoReturn,
     Optional as Optional,
+    ParamSpecArgs as ParamSpecArgs,
+    ParamSpecKwargs as ParamSpecKwargs,
     Set as Set,
     Text as Text,
     TextIO as TextIO,
     Tuple as Tuple,
     Type as Type,
+    TypeAlias as TypeAlias,
     TypedDict as TypedDict,
+    TypeGuard as TypeGuard,
     TypeVar as _TypeVar,
     Union as Union,
     _Alias,
     _SpecialForm,
     cast as cast,
+    is_typeddict as is_typeddict,
     no_type_check as no_type_check,
     no_type_check_decorator as no_type_check_decorator,
     overload as overload,
     type_check_only,
 )
-
-if sys.version_info >= (3, 10):
-    from types import UnionType
 
 # Please keep order the same as at runtime.
 __all__ = [
@@ -352,77 +355,9 @@ else:
         """
         Return type hints for an object.
 
-        This is often the same as obj.__annotations__, but it handles
-        forward references encoded as string literals, adds Optional[t] if a
-        default value equal to None is set and recursively replaces all
-        'Annotated[T, ...]', 'Required[T]' or 'NotRequired[T]' with 'T'
-        (unless 'include_extras=True').
-
-        The argument may be a module, class, method, or function. The annotations
-        are returned as a dictionary. For classes, annotations include also
-        inherited members.
-
-        TypeError is raised if the argument is not of a type that can contain
-        annotations, and an empty dictionary is returned if no annotations are
-        present.
-
-        BEWARE -- the behavior of globalns and localns is counterintuitive
-        (unless you are familiar with how eval() and exec() work).  The
-        search order is locals first, then globals.
-
-        - If no dict arguments are passed, an attempt is made to use the
-          globals from obj (or the respective module's globals for classes),
-          and these are also used as the locals.  If the object does not appear
-          to have globals, an empty dictionary is used.
-
-        - If one dict argument is passed, it is used for both globals and
-          locals.
-
-        - If two dict arguments are passed, they specify globals and
-          locals, respectively.
-        """
-        ...
-
-def get_args(tp: AnnotationForm) -> tuple[AnnotationForm, ...]:
-    """
-    Get type arguments with all substitutions performed.
-
-    For unions, basic simplifications used by Union constructor are performed.
-
-    Examples::
-
-        >>> T = TypeVar('T')
-        >>> assert get_args(Dict[str, int]) == (str, int)
-        >>> assert get_args(int) == ()
-        >>> assert get_args(Union[int, Union[T, int], str][int]) == (int, str)
-        >>> assert get_args(Union[int, Tuple[T, int]][str]) == (int, Tuple[str, int])
-        >>> assert get_args(Callable[[], T][int]) == ([], int)
-    """
-    ...
-
-if sys.version_info >= (3, 10):
-    @overload
-    def get_origin(tp: UnionType) -> type[UnionType]:
-        """
-        Get the unsubscripted version of a type.
-
-        This supports generic types, Callable, Tuple, Union, Literal, Final, ClassVar,
-        Annotated, and others. Return None for unsupported types.
-
-        Examples::
-
-            >>> P = ParamSpec('P')
-            >>> assert get_origin(Literal[42]) is Literal
-            >>> assert get_origin(int) is None
-            >>> assert get_origin(ClassVar[int]) is ClassVar
-            >>> assert get_origin(Generic) is Generic
-            >>> assert get_origin(Generic[T]) is Generic
-            >>> assert get_origin(Union[T, int]) is Union
-            >>> assert get_origin(List[Tuple[T, T]][int]) is list
-            >>> assert get_origin(P.args) is P
-        """
-        ...
-
+def get_args(tp: AnnotationForm) -> tuple[AnnotationForm, ...]: ...
+@overload
+def get_origin(tp: UnionType) -> type[UnionType]: ...
 @overload
 def get_origin(tp: GenericAlias) -> type:
     """
@@ -489,70 +424,6 @@ def get_origin(tp: AnnotationForm) -> AnnotationForm | None:
 
 Annotated: _SpecialForm
 _AnnotatedAlias: Any  # undocumented
-
-# New and changed things in 3.10
-if sys.version_info >= (3, 10):
-    from typing import (
-        Concatenate as Concatenate,
-        ParamSpecArgs as ParamSpecArgs,
-        ParamSpecKwargs as ParamSpecKwargs,
-        TypeAlias as TypeAlias,
-        TypeGuard as TypeGuard,
-        is_typeddict as is_typeddict,
-    )
-else:
-    @final
-    class ParamSpecArgs:
-        """
-        The args for a ParamSpec object.
-
-        Given a ParamSpec object P, P.args is an instance of ParamSpecArgs.
-
-        ParamSpecArgs objects have a reference back to their ParamSpec:
-
-        P.args.__origin__ is P
-
-        This type is meant for runtime introspection and has no special meaning to
-        static type checkers.
-        """
-        @property
-        def __origin__(self) -> ParamSpec: ...
-        def __init__(self, origin: ParamSpec) -> None: ...
-
-    @final
-    class ParamSpecKwargs:
-        """
-        The kwargs for a ParamSpec object.
-
-        Given a ParamSpec object P, P.kwargs is an instance of ParamSpecKwargs.
-
-        ParamSpecKwargs objects have a reference back to their ParamSpec:
-
-        P.kwargs.__origin__ is P
-
-        This type is meant for runtime introspection and has no special meaning to
-        static type checkers.
-        """
-        @property
-        def __origin__(self) -> ParamSpec: ...
-        def __init__(self, origin: ParamSpec) -> None: ...
-
-    Concatenate: _SpecialForm
-    TypeAlias: _SpecialForm
-    TypeGuard: _SpecialForm
-    def is_typeddict(tp: object) -> bool:
-        """
-        Check if an annotation is a TypedDict class
-
-        For example::
-            class Film(TypedDict):
-                title: str
-                year: int
-
-            is_typeddict(Film)  # => True
-            is_typeddict(Union[list, str])  # => False
-        """
-        ...
 
 # New and changed things in 3.11
 if sys.version_info >= (3, 11):
@@ -765,11 +636,10 @@ else:
         """
         def __init__(self, name: str, tp: AnnotationForm) -> None: ...
         def __call__(self, obj: _T, /) -> _T: ...
+        def __or__(self, other: Any) -> _SpecialForm: ...
+        def __ror__(self, other: Any) -> _SpecialForm: ...
         __supertype__: type | NewType
         __name__: str
-        if sys.version_info >= (3, 10):
-            def __or__(self, other: Any) -> _SpecialForm: ...
-            def __ror__(self, other: Any) -> _SpecialForm: ...
 
 if sys.version_info >= (3, 12):
     from collections.abc import Buffer as Buffer
@@ -1091,13 +961,8 @@ else:
         ) -> None: ...
         def has_default(self) -> bool: ...
         def __typing_prepare_subst__(self, alias: Any, args: Any) -> tuple[Any, ...]: ...
-        if sys.version_info >= (3, 10):
-            def __or__(self, right: Any) -> _SpecialForm:
-                """Return self|value."""
-                ...
-            def __ror__(self, left: Any) -> _SpecialForm:
-                """Return value|self."""
-                ...
+        def __or__(self, right: Any) -> _SpecialForm: ...
+        def __ror__(self, left: Any) -> _SpecialForm: ...
         if sys.version_info >= (3, 11):
             def __typing_subst__(self, arg: Any) -> Any: ...
 
@@ -1125,19 +990,14 @@ else:
             covariant: bool = False,
             default: AnnotationForm = ...,
         ) -> None: ...
+        def __or__(self, right: Any) -> _SpecialForm: ...
+        def __ror__(self, left: Any) -> _SpecialForm: ...
         @property
         def args(self) -> ParamSpecArgs: ...
         @property
         def kwargs(self) -> ParamSpecKwargs: ...
         def has_default(self) -> bool: ...
         def __typing_prepare_subst__(self, alias: Any, args: Any) -> tuple[Any, ...]: ...
-        if sys.version_info >= (3, 10):
-            def __or__(self, right: Any) -> _SpecialForm:
-                """Return self|value."""
-                ...
-            def __ror__(self, left: Any) -> _SpecialForm:
-                """Return value|self."""
-                ...
 
     @final
     class TypeVarTuple:
@@ -1205,9 +1065,8 @@ else:
         # Returns typing._GenericAlias, which isn't stubbed.
         def __getitem__(self, parameters: Incomplete | tuple[Incomplete, ...]) -> AnnotationForm: ...
         def __init_subclass__(cls, *args: Unused, **kwargs: Unused) -> NoReturn: ...
-        if sys.version_info >= (3, 10):
-            def __or__(self, right: Any, /) -> _SpecialForm: ...
-            def __ror__(self, left: Any, /) -> _SpecialForm: ...
+        def __or__(self, right: Any, /) -> _SpecialForm: ...
+        def __ror__(self, left: Any, /) -> _SpecialForm: ...
 
 # PEP 727
 class Doc:
@@ -1516,6 +1375,6 @@ class Sentinel:
     if sys.version_info >= (3, 14):
         def __or__(self, other: Any) -> UnionType: ...  # other can be any type form legal for unions
         def __ror__(self, other: Any) -> UnionType: ...  # other can be any type form legal for unions
-    elif sys.version_info >= (3, 10):
+    else:
         def __or__(self, other: Any) -> _SpecialForm: ...  # other can be any type form legal for unions
         def __ror__(self, other: Any) -> _SpecialForm: ...  # other can be any type form legal for unions

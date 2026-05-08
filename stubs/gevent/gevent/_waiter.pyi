@@ -1,8 +1,7 @@
 """Low-level waiting primitives."""
 
 from types import TracebackType
-from typing import Generic, TypeVar, final, overload
-from typing_extensions import TypeAlias
+from typing import Generic, TypeAlias, TypeVar, final, overload
 
 from gevent.event import _ValueSource
 from gevent.hub import Hub

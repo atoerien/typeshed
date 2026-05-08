@@ -8,7 +8,8 @@ default, MySQLdb uses the Cursor class.
 from _typeshed import Incomplete
 from collections.abc import Iterable
 from re import Pattern
-from typing_extensions import LiteralString, TypeAlias
+from typing import TypeAlias
+from typing_extensions import LiteralString
 
 from .connections import _Literal
 

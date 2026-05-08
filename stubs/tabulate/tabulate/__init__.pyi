@@ -1,8 +1,8 @@
 """Pretty-print tabular data."""
 
 from collections.abc import Callable, Container, Iterable, Mapping, Sequence
-from typing import Any, Final, Literal, NamedTuple
-from typing_extensions import Self, TypeAlias
+from typing import Any, Final, Literal, NamedTuple, TypeAlias
+from typing_extensions import Self
 
 __all__ = ["tabulate", "tabulate_formats", "simple_separated_format"]
 

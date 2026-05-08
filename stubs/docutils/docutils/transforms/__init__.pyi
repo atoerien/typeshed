@@ -19,8 +19,7 @@ choose to perform on the parsed document.
 
 from _typeshed import Incomplete
 from collections.abc import Iterable, Mapping
-from typing import Any, ClassVar, Final
-from typing_extensions import TypeAlias
+from typing import Any, ClassVar, Final, TypeAlias
 
 from docutils import ApplicationError, TransformSpec, nodes
 from docutils.languages import LanguageImporter

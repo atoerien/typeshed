@@ -1,7 +1,4 @@
-"""STRtree spatial index for efficient spatial queries."""
-
-from typing import Any, Literal, SupportsIndex, overload
-from typing_extensions import TypeAlias
+from typing import Any, Literal, SupportsIndex, TypeAlias, overload
 
 import numpy as np
 from numpy.typing import NDArray

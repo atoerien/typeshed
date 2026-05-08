@@ -6,8 +6,7 @@ since your modifications would be overwritten.
 """
 
 from collections.abc import Callable
-from typing import Any
-from typing_extensions import TypeAlias
+from typing import Any, TypeAlias
 
 import numpy as np
 from tensorflow import Tensor

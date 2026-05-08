@@ -5,8 +5,7 @@
 
 import sys
 from collections.abc import Awaitable, Coroutine, Generator
-from typing import Any, TypeVar
-from typing_extensions import TypeAlias
+from typing import Any, TypeAlias, TypeVar
 
 # As at runtime, this depends on all submodules defining __all__ accurately.
 from .base_events import *

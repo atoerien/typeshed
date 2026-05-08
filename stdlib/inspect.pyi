@@ -54,8 +54,21 @@ from types import (
     TracebackType,
     WrapperDescriptorType,
 )
-from typing import Any, ClassVar, Final, Literal, NamedTuple, Protocol, TypeVar, overload, type_check_only
-from typing_extensions import ParamSpec, Self, TypeAlias, TypeGuard, TypeIs, deprecated, disjoint_base
+from typing import (
+    Any,
+    ClassVar,
+    Final,
+    Literal,
+    NamedTuple,
+    ParamSpec,
+    Protocol,
+    TypeAlias,
+    TypeGuard,
+    TypeVar,
+    overload,
+    type_check_only,
+)
+from typing_extensions import Self, TypeIs, deprecated, disjoint_base
 
 if sys.version_info >= (3, 14):
     from annotationlib import Format
@@ -717,7 +730,7 @@ if sys.version_info >= (3, 14):
         """Get a signature object for the passed callable."""
         ...
 
-elif sys.version_info >= (3, 10):
+else:
     def signature(
         obj: _IntrospectableCallable,
         *,
@@ -729,17 +742,8 @@ elif sys.version_info >= (3, 10):
         """Get a signature object for the passed callable."""
         ...
 
-else:
-    def signature(obj: _IntrospectableCallable, *, follow_wrapped: bool = True) -> Signature:
-        """Get a signature object for the passed callable."""
-        ...
-
-class _void:
-    """A private marker - used in Parameter & Signature."""
-    ...
-class _empty:
-    """Marker object for Signature.empty and Parameter.empty."""
-    ...
+class _void: ...
+class _empty: ...
 
 class Signature:
     """
@@ -811,10 +815,8 @@ class Signature:
             locals: Mapping[str, Any] | None = None,
             eval_str: bool = False,
             annotation_format: Format = Format.VALUE,  # noqa: Y011
-        ) -> Self:
-            """Constructs Signature for the given callable object."""
-            ...
-    elif sys.version_info >= (3, 10):
+        ) -> Self: ...
+    else:
         @classmethod
         def from_callable(
             cls,
@@ -824,14 +826,7 @@ class Signature:
             globals: Mapping[str, Any] | None = None,
             locals: Mapping[str, Any] | None = None,
             eval_str: bool = False,
-        ) -> Self:
-            """Constructs Signature for the given callable object."""
-            ...
-    else:
-        @classmethod
-        def from_callable(cls, obj: _IntrospectableCallable, *, follow_wrapped: bool = True) -> Self:
-            """Constructs Signature for the given callable object."""
-            ...
+        ) -> Self: ...
     if sys.version_info >= (3, 14):
         def format(self, *, max_width: int | None = None, quote_annotation_strings: bool = True) -> str:
             """
@@ -865,7 +860,7 @@ class Signature:
 
 if sys.version_info >= (3, 14):
     from annotationlib import get_annotations as get_annotations
-elif sys.version_info >= (3, 10):
+else:
     def get_annotations(
         obj: Callable[..., object] | type[object] | ModuleType,  # any callable, class, or module
         *,

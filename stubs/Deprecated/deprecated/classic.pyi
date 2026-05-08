@@ -8,8 +8,7 @@ Classic ``@deprecated`` decorator to deprecate old python classes, functions or 
 """
 
 from collections.abc import Callable
-from typing import Any, Literal, TypeVar, overload
-from typing_extensions import TypeAlias
+from typing import Any, Literal, TypeAlias, TypeVar, overload
 
 _F = TypeVar("_F", bound=Callable[..., Any])
 _Actions: TypeAlias = Literal["default", "error", "ignore", "always", "module", "once"]

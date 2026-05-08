@@ -1,7 +1,4 @@
-"""Read an xlsx file into Python"""
-
-from typing import Final, Literal
-from typing_extensions import TypeAlias
+from typing import Final, Literal, TypeAlias
 from zipfile import ZipFile
 
 from openpyxl import _ZipFileFileProtocol

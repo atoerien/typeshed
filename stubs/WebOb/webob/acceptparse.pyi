@@ -7,8 +7,8 @@ The four headers are ``Accept``, ``Accept-Charset``, ``Accept-Encoding`` and
 
 from _typeshed import SupportsItems
 from collections.abc import Callable, Iterable, Iterator, Sequence
-from typing import Any, Literal, NamedTuple, Protocol, TypeVar, overload, type_check_only
-from typing_extensions import Self, TypeAlias
+from typing import Any, Literal, NamedTuple, Protocol, TypeAlias, TypeVar, overload, type_check_only
+from typing_extensions import Self
 
 from webob._types import AsymmetricPropertyWithDelete
 
