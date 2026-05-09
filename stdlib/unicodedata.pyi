@@ -1,3 +1,13 @@
+"""
+This module provides access to the Unicode Character Database which
+defines character properties for all Unicode characters. The data in
+this database is based on the UnicodeData.txt file version
+16.0.0 which is publicly available from ftp://ftp.unicode.org/.
+
+The module uses the same names and symbols as defined by the
+UnicodeData File Format 16.0.0.
+"""
+
 import sys
 from _typeshed import ReadOnlyBuffer
 from collections.abc import Iterator
@@ -77,8 +87,16 @@ def digit(chr: str, default: _T, /) -> int | _T:
 
 _EastAsianWidth: TypeAlias = Literal["F", "H", "W", "Na", "A", "N"]
 
-def east_asian_width(chr: str, /) -> _EastAsianWidth: ...
-def is_normalized(form: _NormalizationForm, unistr: str, /) -> bool: ...
+def east_asian_width(chr: str, /) -> _EastAsianWidth:
+    """Returns the east asian width assigned to the character chr as string."""
+    ...
+def is_normalized(form: _NormalizationForm, unistr: str, /) -> bool:
+    """
+    Return whether the Unicode string unistr is in the normal form 'form'.
+
+    Valid values for form are 'NFC', 'NFKC', 'NFD', and 'NFKD'.
+    """
+    ...
 
 if sys.version_info >= (3, 15):
     def block(chr: str, /) -> str: ...
@@ -89,8 +107,22 @@ if sys.version_info >= (3, 15):
     def isxidcontinue(chr: str, /) -> bool: ...
     def iter_graphemes(unistr: str, start: int = 0, end: int = sys.maxsize, /) -> Iterator[str]: ...
 
-def lookup(name: str | ReadOnlyBuffer, /) -> str: ...
-def mirrored(chr: str, /) -> int: ...
+def lookup(name: str | ReadOnlyBuffer, /) -> str:
+    """
+    Look up character by name.
+
+    If a character with the given name is found, return the
+    corresponding character.  If not found, KeyError is raised.
+    """
+    ...
+def mirrored(chr: str, /) -> int:
+    """
+    Returns the mirrored property assigned to the character chr as integer.
+
+    Returns 1 if the character has been identified as a "mirrored"
+    character in bidirectional text, 0 otherwise.
+    """
+    ...
 @overload
 def name(chr: str, /) -> str:
     """

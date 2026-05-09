@@ -15,7 +15,9 @@ class _GraphqlVariables(TypedDict, total=False):
 class PayPalPurchaseUnitInput:
     """Payee and Amount of the item purchased."""
     def __init__(self, amount: MonetaryAmountInput | None = None, payee: PayPalPayeeInput | None = None) -> None: ...
-    def to_graphql_variables(self) -> _GraphqlVariables: ...
+    def to_graphql_variables(self) -> _GraphqlVariables:
+        """Returns a dictionary representing the input object, to pass as variables to a GraphQL mutation."""
+        ...
     @staticmethod
     def builder(amount: MonetaryAmountInput) -> Builder:
         """

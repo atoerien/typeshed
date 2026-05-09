@@ -738,10 +738,24 @@ def no_type_check(arg: _F) -> _F:
 if sys.version_info < (3, 15):
     if sys.version_info >= (3, 13):
         @deprecated("Deprecated since Python 3.13; removed in Python 3.15.")
-        def no_type_check_decorator(decorator: Callable[_P, _T]) -> Callable[_P, _T]: ...
+        def no_type_check_decorator(decorator: Callable[_P, _T]) -> Callable[_P, _T]:
+            """
+            Decorator to give another decorator the @no_type_check effect.
+
+            This wraps the decorator with something that wraps the decorated
+            function in @no_type_check.
+            """
+            ...
 
     else:
-        def no_type_check_decorator(decorator: Callable[_P, _T]) -> Callable[_P, _T]: ...
+        def no_type_check_decorator(decorator: Callable[_P, _T]) -> Callable[_P, _T]:
+            """
+            Decorator to give another decorator the @no_type_check effect.
+
+            This wraps the decorator with something that wraps the decorated
+            function in @no_type_check.
+            """
+            ...
 
 if sys.version_info >= (3, 15):
     def disjoint_base(cls: _TC) -> _TC: ...
@@ -2225,7 +2239,9 @@ if sys.version_info >= (3, 12):
             """Return value|self."""
             ...
         if sys.version_info >= (3, 14):
-            def __iter__(self) -> Any: ...  # Unpack[Self]
+            def __iter__(self) -> Any:
+                """Implement iter(self)."""
+                ...
             @property
             def evaluate_value(self) -> EvaluateFunc: ...
 

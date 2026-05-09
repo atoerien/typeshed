@@ -12,7 +12,9 @@ class PayPalPayeeInput:
     The merchant is also known as the payee.
     """
     def __init__(self, email_address: str | None = None, client_id: str | None = None) -> None: ...
-    def to_graphql_variables(self) -> _GraphqlVariables: ...
+    def to_graphql_variables(self) -> _GraphqlVariables:
+        """Returns a dictionary representing the input object, to pass as variables to a GraphQL mutation."""
+        ...
     @staticmethod
     def builder() -> Builder:
         """Creates a builder instance for fluent construction of PayPalPayeeInput objects."""

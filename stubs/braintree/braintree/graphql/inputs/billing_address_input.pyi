@@ -10,6 +10,7 @@ class _GraphqlVariables(TypedDict, total=False):
     streetAddress: str
 
 class BillingAddressInput:
+    """Represents billing address information for a payer."""
     def __init__(
         self,
         country_code_alpha2: str | None = None,
@@ -19,4 +20,6 @@ class BillingAddressInput:
         region: str | None = None,
         street_address: str | None = None,
     ) -> None: ...
-    def to_graphql_variables(self) -> _GraphqlVariables: ...
+    def to_graphql_variables(self) -> _GraphqlVariables:
+        """Returns a dictionary representing the input object, to pass as variables to a GraphQL mutation."""
+        ...

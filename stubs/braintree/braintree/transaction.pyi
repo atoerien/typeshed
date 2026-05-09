@@ -310,7 +310,16 @@ class Transaction(Resource):
         """
         ...
     @staticmethod
-    def void(transaction_id, params=None): ...
+    def void(transaction_id, params=None):
+        """
+        Voids an existing transaction.
+
+        It expects a transaction_id and optional params.::
+
+            result = braintree.Transaction.void("my_transaction_id")
+            result = braintree.Transaction.void("my_transaction_id", {"api_request_key": "key"})
+        """
+        ...
     @staticmethod
     def create(params):
         """

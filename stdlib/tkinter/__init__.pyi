@@ -774,46 +774,105 @@ class Misc:
         """
         ...
     focus = focus_set
-    def focus_force(self) -> None: ...
-    def focus_get(self) -> Misc | None: ...
-    def focus_displayof(self) -> Misc | None: ...
-    def focus_lastfor(self) -> Misc | None: ...
-    def tk_focusFollowsMouse(self) -> None: ...
-    def tk_focusNext(self) -> Misc | None: ...
-    def tk_focusPrev(self) -> Misc | None: ...
+    def focus_force(self) -> None:
+        """
+        Direct input focus to this widget even if the
+        application does not have the focus. Use with
+        caution!
+        """
+        ...
+    def focus_get(self) -> Misc | None:
+        """
+        Return the widget which has currently the focus in the
+        application.
+
+        Use focus_displayof to allow working with several
+        displays. Return None if application does not have
+        the focus.
+        """
+        ...
+    def focus_displayof(self) -> Misc | None:
+        """
+        Return the widget which has currently the focus on the
+        display where this widget is located.
+
+        Return None if the application does not have the focus.
+        """
+        ...
+    def focus_lastfor(self) -> Misc | None:
+        """
+        Return the widget which would have the focus if top level
+        for this widget gets the focus from the window manager.
+        """
+        ...
+    def tk_focusFollowsMouse(self) -> None:
+        """
+        The widget under mouse will get automatically focus. Can not
+        be disabled easily.
+        """
+        ...
+    def tk_focusNext(self) -> Misc | None:
+        """
+        Return the next widget in the focus order which follows
+        widget which has currently the focus.
+
+        The focus order first goes to the next child, then to
+        the children of the child recursively and then to the
+        next sibling which is higher in the stacking order.  A
+        widget is omitted if it has the takefocus option set
+        to 0.
+        """
+        ...
+    def tk_focusPrev(self) -> Misc | None:
+        """Return previous widget in the focus order. See tk_focusNext for details."""
+        ...
     if sys.version_info >= (3, 14):
         # .after() can be called without the "func" argument, but it is basically never what you want.
         # It behaves like time.sleep() and freezes the GUI app.
-        def after(self, ms: int | Literal["idle"], func: Callable[_P, object], *args: _P.args, **kwargs: _P.kwargs) -> str: ...
+        def after(self, ms: int | Literal["idle"], func: Callable[_P, object], *args: _P.args, **kwargs: _P.kwargs) -> str:
+            """
+            Call function once after given time.
+
+            MS specifies the time in milliseconds. FUNC gives the
+            function which shall be called. Additional parameters
+            are given as parameters to the function call.  Return
+            identifier to cancel scheduling with after_cancel.
+            """
+            ...
         # after_idle is essentially partialmethod(after, "idle")
-        def after_idle(self, func: Callable[_P, object], *args: _P.args, **kwargs: _P.kwargs) -> str: ...
+        def after_idle(self, func: Callable[_P, object], *args: _P.args, **kwargs: _P.kwargs) -> str:
+            """
+            Call FUNC once if the Tcl main loop has no event to
+            process.
+
+            Return an identifier to cancel the scheduling with
+            after_cancel.
+            """
+            ...
     else:
         # .after() can be called without the "func" argument, but it is basically never what you want.
         # It behaves like time.sleep() and freezes the GUI app.
-        def after(self, ms: int | Literal["idle"], func: Callable[[Unpack[_Ts]], object], *args: Unpack[_Ts]) -> str: ...
+        def after(self, ms: int | Literal["idle"], func: Callable[[Unpack[_Ts]], object], *args: Unpack[_Ts]) -> str:
+            """
+            Call function once after given time.
+
+            MS specifies the time in milliseconds. FUNC gives the
+            function which shall be called. Additional parameters
+            are given as parameters to the function call.  Return
+            identifier to cancel scheduling with after_cancel.
+            """
+            ...
         # after_idle is essentially partialmethod(after, "idle")
-        def after_idle(self, func: Callable[[Unpack[_Ts]], object], *args: Unpack[_Ts]) -> str: ...
+        def after_idle(self, func: Callable[[Unpack[_Ts]], object], *args: Unpack[_Ts]) -> str:
+            """
+            Call FUNC once if the Tcl main loop has no event to
+            process.
 
-    def after_cancel(self, id: str) -> None: ...
-    if sys.version_info >= (3, 13):
-        def after_info(self, id: str | None = None) -> tuple[str, ...]: ...
+            Return an identifier to cancel the scheduling with
+            after_cancel.
+            """
+            ...
 
-        MS specifies the time in milliseconds. FUNC gives the
-        function which shall be called. Additional parameters
-        are given as parameters to the function call.  Return
-        identifier to cancel scheduling with after_cancel.
-        """
-        ...
-    # after_idle is essentially partialmethod(after, "idle")
-    def after_idle(self, func: Callable[[Unpack[_Ts]], object], *args: Unpack[_Ts]) -> str:
-        """
-        Call FUNC once if the Tcl main loop has no event to
-        process.
-
-        Return an identifier to cancel the scheduling with
-        after_cancel.
-        """
-        ...
     def after_cancel(self, id: str) -> None:
         """
         Cancel scheduling of function identified with ID.
@@ -7509,7 +7568,14 @@ class OptionMenu(Menubutton):
             *values: str,
             command: Callable[[StringVar], object] | None = ...,
             name: str | None = None,
-        ) -> None: ...
+        ) -> None:
+            """
+            Construct an optionmenu widget with the parent MASTER, with
+            the option textvariable set to VARIABLE, the initially selected
+            value VALUE, the other menu values VALUES and an additional
+            keyword argument command.
+            """
+            ...
     else:
         def __init__(
             # differs from other widgets
@@ -7519,7 +7585,14 @@ class OptionMenu(Menubutton):
             value: str,
             *values: str,
             command: Callable[[StringVar], object] | None = ...,
-        ) -> None: ...
+        ) -> None:
+            """
+            Construct an optionmenu widget with the parent MASTER, with
+            the option textvariable set to VARIABLE, the initially selected
+            value VALUE, the other menu values VALUES and an additional
+            keyword argument command.
+            """
+            ...
     # configure, config, cget are inherited from Menubutton
     # destroy and __getitem__ are overridden, signature does not change
 

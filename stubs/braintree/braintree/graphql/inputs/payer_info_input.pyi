@@ -15,6 +15,7 @@ class _GraphqlVariables(TypedDict, total=False):
     surname: str
 
 class PayerInfoInput:
+    """Represents payer information for a local payment."""
     def __init__(
         self,
         billing_address: dict[str, Incomplete] | None = None,
@@ -25,4 +26,6 @@ class PayerInfoInput:
         shipping_address: dict[str, Incomplete] | None = None,
         surname: str | None = None,
     ) -> None: ...
-    def to_graphql_variables(self) -> _GraphqlVariables: ...
+    def to_graphql_variables(self) -> _GraphqlVariables:
+        """Returns a dictionary representing the input object, to pass as variables to a GraphQL mutation."""
+        ...

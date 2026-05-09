@@ -1734,7 +1734,13 @@ class str(Sequence[str]):
         """
         ...
     @overload
-    def zfill(self, width: SupportsIndex, /) -> str: ...  # type: ignore[misc]
+    def zfill(self, width: SupportsIndex, /) -> str:
+        """
+        Pad a numeric string with zeros on the left, to fill a field of the given width.
+
+        The string is never truncated.
+        """
+        ...
     if sys.version_info >= (3, 15):
         @staticmethod
         @overload
@@ -1752,7 +1758,19 @@ class str(Sequence[str]):
     else:
         @staticmethod
         @overload
-        def maketrans(x: dict[int, _T] | dict[str, _T] | dict[str | int, _T], /) -> dict[int, _T]: ...
+        def maketrans(x: dict[int, _T] | dict[str, _T] | dict[str | int, _T], /) -> dict[int, _T]:
+            """
+            Return a translation table usable for str.translate().
+
+            If there is only one argument, it must be a dictionary mapping Unicode
+            ordinals (integers) or characters to Unicode ordinals, strings or None.
+            Character keys will be then converted to ordinals.
+            If there are two arguments, they must be strings of equal length, and
+            in the resulting dictionary, each character in x will be mapped to the
+            character at the same position in y. If there is a third argument, it
+            must be a string, whose characters will be mapped to None in the result.
+            """
+            ...
 
     @staticmethod
     @overload
@@ -1990,27 +2008,161 @@ class bytes(Sequence[int]):
         ...
     def index(
         self, sub: ReadableBuffer | SupportsIndex, start: SupportsIndex | None = None, end: SupportsIndex | None = None, /
-    ) -> int: ...
-    def isalnum(self) -> bool: ...
-    def isalpha(self) -> bool: ...
-    def isascii(self) -> bool: ...
-    def isdigit(self) -> bool: ...
-    def islower(self) -> bool: ...
-    def isspace(self) -> bool: ...
-    def istitle(self) -> bool: ...
-    def isupper(self) -> bool: ...
-    def join(self, iterable_of_bytes: Iterable[ReadableBuffer], /) -> bytes: ...
-    def ljust(self, width: SupportsIndex, fillchar: bytes | bytearray = b" ", /) -> bytes: ...
-    def lower(self) -> bytes: ...
-    def lstrip(self, bytes: ReadableBuffer | None = None, /) -> bytes: ...
-    def partition(self, sep: ReadableBuffer, /) -> tuple[bytes, bytes, bytes]: ...
+    ) -> int:
+        """
+        Return the lowest index in B where subsection 'sub' is found, such that 'sub' is contained within B[start,end].
+
+          start
+            Optional start position. Default: start of the bytes.
+          end
+            Optional stop position. Default: end of the bytes.
+
+        Raise ValueError if the subsection is not found.
+        """
+        ...
+    def isalnum(self) -> bool:
+        """
+        B.isalnum() -> bool
+
+        Return True if all characters in B are alphanumeric
+        and there is at least one character in B, False otherwise.
+        """
+        ...
+    def isalpha(self) -> bool:
+        """
+        B.isalpha() -> bool
+
+        Return True if all characters in B are alphabetic
+        and there is at least one character in B, False otherwise.
+        """
+        ...
+    def isascii(self) -> bool:
+        """
+        B.isascii() -> bool
+
+        Return True if B is empty or all characters in B are ASCII,
+        False otherwise.
+        """
+        ...
+    def isdigit(self) -> bool:
+        """
+        B.isdigit() -> bool
+
+        Return True if all characters in B are digits
+        and there is at least one character in B, False otherwise.
+        """
+        ...
+    def islower(self) -> bool:
+        """
+        B.islower() -> bool
+
+        Return True if all cased characters in B are lowercase and there is
+        at least one cased character in B, False otherwise.
+        """
+        ...
+    def isspace(self) -> bool:
+        """
+        B.isspace() -> bool
+
+        Return True if all characters in B are whitespace
+        and there is at least one character in B, False otherwise.
+        """
+        ...
+    def istitle(self) -> bool:
+        """
+        B.istitle() -> bool
+
+        Return True if B is a titlecased string and there is at least one
+        character in B, i.e. uppercase characters may only follow uncased
+        characters and lowercase characters only cased ones. Return False
+        otherwise.
+        """
+        ...
+    def isupper(self) -> bool:
+        """
+        B.isupper() -> bool
+
+        Return True if all cased characters in B are uppercase and there is
+        at least one cased character in B, False otherwise.
+        """
+        ...
+    def join(self, iterable_of_bytes: Iterable[ReadableBuffer], /) -> bytes:
+        """
+        Concatenate any number of bytes objects.
+
+        The bytes whose method is called is inserted in between each pair.
+
+        The result is returned as a new bytes object.
+
+        Example: b'.'.join([b'ab', b'pq', b'rs']) -> b'ab.pq.rs'.
+        """
+        ...
+    def ljust(self, width: SupportsIndex, fillchar: bytes | bytearray = b" ", /) -> bytes:
+        """
+        Return a left-justified string of length width.
+
+        Padding is done using the specified fill character.
+        """
+        ...
+    def lower(self) -> bytes:
+        """
+        B.lower() -> copy of B
+
+        Return a copy of B with all ASCII characters converted to lowercase.
+        """
+        ...
+    def lstrip(self, bytes: ReadableBuffer | None = None, /) -> bytes:
+        """
+        Strip leading bytes contained in the argument.
+
+        If the argument is omitted or None, strip leading  ASCII whitespace.
+        """
+        ...
+    def partition(self, sep: ReadableBuffer, /) -> tuple[bytes, bytes, bytes]:
+        """
+        Partition the bytes into three parts using the given separator.
+
+        This will search for the separator sep in the bytes. If the separator is found,
+        returns a 3-tuple containing the part before the separator, the separator
+        itself, and the part after it.
+
+        If the separator is not found, returns a 3-tuple containing the original bytes
+        object and two empty bytes objects.
+        """
+        ...
     if sys.version_info >= (3, 15):
         def replace(self, old: ReadableBuffer, new: ReadableBuffer, /, count: SupportsIndex = -1) -> bytes: ...
     else:
-        def replace(self, old: ReadableBuffer, new: ReadableBuffer, count: SupportsIndex = -1, /) -> bytes: ...
+        def replace(self, old: ReadableBuffer, new: ReadableBuffer, count: SupportsIndex = -1, /) -> bytes:
+            """
+            Return a copy with all occurrences of substring old replaced by new.
 
-    def removeprefix(self, prefix: ReadableBuffer, /) -> bytes: ...
-    def removesuffix(self, suffix: ReadableBuffer, /) -> bytes: ...
+              count
+                Maximum number of occurrences to replace.
+                -1 (the default value) means replace all occurrences.
+
+            If the optional argument count is given, only the first count occurrences are
+            replaced.
+            """
+            ...
+
+    def removeprefix(self, prefix: ReadableBuffer, /) -> bytes:
+        """
+        Return a bytes object with the given prefix string removed if present.
+
+        If the bytes starts with the prefix string, return bytes[len(prefix):].
+        Otherwise, return a copy of the original bytes.
+        """
+        ...
+    def removesuffix(self, suffix: ReadableBuffer, /) -> bytes:
+        """
+        Return a bytes object with the given suffix string removed if present.
+
+        If the bytes ends with the suffix string and that suffix is not empty,
+        return bytes[:-len(prefix)].  Otherwise, return a copy of the original
+        bytes.
+        """
+        ...
     def rfind(
         self, sub: ReadableBuffer | SupportsIndex, start: SupportsIndex | None = None, end: SupportsIndex | None = None, /
     ) -> int:
@@ -2405,29 +2557,188 @@ class bytearray(MutableSequence[int]):
         ...
     def index(
         self, sub: ReadableBuffer | SupportsIndex, start: SupportsIndex | None = None, end: SupportsIndex | None = None, /
-    ) -> int: ...
-    def insert(self, index: SupportsIndex, item: SupportsIndex, /) -> None: ...
-    def isalnum(self) -> bool: ...
-    def isalpha(self) -> bool: ...
-    def isascii(self) -> bool: ...
-    def isdigit(self) -> bool: ...
-    def islower(self) -> bool: ...
-    def isspace(self) -> bool: ...
-    def istitle(self) -> bool: ...
-    def isupper(self) -> bool: ...
-    def join(self, iterable_of_bytes: Iterable[ReadableBuffer], /) -> bytearray: ...
-    def ljust(self, width: SupportsIndex, fillchar: bytes | bytearray = b" ", /) -> bytearray: ...
-    def lower(self) -> bytearray: ...
-    def lstrip(self, bytes: ReadableBuffer | None = None, /) -> bytearray: ...
-    def partition(self, sep: ReadableBuffer, /) -> tuple[bytearray, bytearray, bytearray]: ...
-    def pop(self, index: int = -1, /) -> int: ...
-    def remove(self, value: int, /) -> None: ...
-    def removeprefix(self, prefix: ReadableBuffer, /) -> bytearray: ...
-    def removesuffix(self, suffix: ReadableBuffer, /) -> bytearray: ...
+    ) -> int:
+        """
+        Return the lowest index in B where subsection 'sub' is found, such that 'sub' is contained within B[start:end].
+
+          start
+            Optional start position. Default: start of the bytes.
+          end
+            Optional stop position. Default: end of the bytes.
+
+        Raise ValueError if the subsection is not found.
+        """
+        ...
+    def insert(self, index: SupportsIndex, item: SupportsIndex, /) -> None:
+        """
+        Insert a single item into the bytearray before the given index.
+
+        index
+          The index where the value is to be inserted.
+        item
+          The item to be inserted.
+        """
+        ...
+    def isalnum(self) -> bool:
+        """
+        B.isalnum() -> bool
+
+        Return True if all characters in B are alphanumeric
+        and there is at least one character in B, False otherwise.
+        """
+        ...
+    def isalpha(self) -> bool:
+        """
+        B.isalpha() -> bool
+
+        Return True if all characters in B are alphabetic
+        and there is at least one character in B, False otherwise.
+        """
+        ...
+    def isascii(self) -> bool:
+        """
+        B.isascii() -> bool
+
+        Return True if B is empty or all characters in B are ASCII,
+        False otherwise.
+        """
+        ...
+    def isdigit(self) -> bool:
+        """
+        B.isdigit() -> bool
+
+        Return True if all characters in B are digits
+        and there is at least one character in B, False otherwise.
+        """
+        ...
+    def islower(self) -> bool:
+        """
+        B.islower() -> bool
+
+        Return True if all cased characters in B are lowercase and there is
+        at least one cased character in B, False otherwise.
+        """
+        ...
+    def isspace(self) -> bool:
+        """
+        B.isspace() -> bool
+
+        Return True if all characters in B are whitespace
+        and there is at least one character in B, False otherwise.
+        """
+        ...
+    def istitle(self) -> bool:
+        """
+        B.istitle() -> bool
+
+        Return True if B is a titlecased string and there is at least one
+        character in B, i.e. uppercase characters may only follow uncased
+        characters and lowercase characters only cased ones. Return False
+        otherwise.
+        """
+        ...
+    def isupper(self) -> bool:
+        """
+        B.isupper() -> bool
+
+        Return True if all cased characters in B are uppercase and there is
+        at least one cased character in B, False otherwise.
+        """
+        ...
+    def join(self, iterable_of_bytes: Iterable[ReadableBuffer], /) -> bytearray:
+        """
+        Concatenate any number of bytes/bytearray objects.
+
+        The bytearray whose method is called is inserted in between each pair.
+
+        The result is returned as a new bytearray object.
+        """
+        ...
+    def ljust(self, width: SupportsIndex, fillchar: bytes | bytearray = b" ", /) -> bytearray:
+        """
+        Return a left-justified string of length width.
+
+        Padding is done using the specified fill character.
+        """
+        ...
+    def lower(self) -> bytearray:
+        """
+        B.lower() -> copy of B
+
+        Return a copy of B with all ASCII characters converted to lowercase.
+        """
+        ...
+    def lstrip(self, bytes: ReadableBuffer | None = None, /) -> bytearray:
+        """
+        Strip leading bytes contained in the argument.
+
+        If the argument is omitted or None, strip leading ASCII whitespace.
+        """
+        ...
+    def partition(self, sep: ReadableBuffer, /) -> tuple[bytearray, bytearray, bytearray]:
+        """
+        Partition the bytearray into three parts using the given separator.
+
+        This will search for the separator sep in the bytearray. If the separator is
+        found, returns a 3-tuple containing the part before the separator, the
+        separator itself, and the part after it as new bytearray objects.
+
+        If the separator is not found, returns a 3-tuple containing the copy of the
+        original bytearray object and two empty bytearray objects.
+        """
+        ...
+    def pop(self, index: int = -1, /) -> int:
+        """
+        Remove and return a single item from B.
+
+          index
+            The index from where to remove the item.
+            -1 (the default value) means remove the last item.
+
+        If no index argument is given, will pop the last item.
+        """
+        ...
+    def remove(self, value: int, /) -> None:
+        """
+        Remove the first occurrence of a value in the bytearray.
+
+        value
+          The value to remove.
+        """
+        ...
+    def removeprefix(self, prefix: ReadableBuffer, /) -> bytearray:
+        """
+        Return a bytearray with the given prefix string removed if present.
+
+        If the bytearray starts with the prefix string, return
+        bytearray[len(prefix):].  Otherwise, return a copy of the original
+        bytearray.
+        """
+        ...
+    def removesuffix(self, suffix: ReadableBuffer, /) -> bytearray:
+        """
+        Return a bytearray with the given suffix string removed if present.
+
+        If the bytearray ends with the suffix string and that suffix is not
+        empty, return bytearray[:-len(suffix)].  Otherwise, return a copy of
+        the original bytearray.
+        """
+        ...
     if sys.version_info >= (3, 15):
         def replace(self, old: ReadableBuffer, new: ReadableBuffer, /, count: SupportsIndex = -1) -> bytearray: ...
     else:
-        def replace(self, old: ReadableBuffer, new: ReadableBuffer, count: SupportsIndex = -1, /) -> bytearray: ...
+        def replace(self, old: ReadableBuffer, new: ReadableBuffer, count: SupportsIndex = -1, /) -> bytearray:
+            """
+            Return a copy with all occurrences of substring old replaced by new.
+
+              count
+                Maximum number of occurrences to replace.
+                -1 (the default value) means replace all occurrences.
+
+            If the optional argument count is given, only the first count occurrences are
+            replaced.
+            """
+            ...
 
     def rfind(
         self, sub: ReadableBuffer | SupportsIndex, start: SupportsIndex | None = None, end: SupportsIndex | None = None, /
@@ -2526,16 +2837,69 @@ class bytearray(MutableSequence[int]):
         start: SupportsIndex | None = None,
         end: SupportsIndex | None = None,
         /,
-    ) -> bool: ...
-    def strip(self, bytes: ReadableBuffer | None = None, /) -> bytearray: ...
-    def swapcase(self) -> bytearray: ...
-    def title(self) -> bytearray: ...
-    def translate(self, table: ReadableBuffer | None, /, delete: bytes = b"") -> bytearray: ...
+    ) -> bool:
+        """
+        Return True if the bytearray starts with the specified prefix, False otherwise.
+
+        prefix
+          A bytes or a tuple of bytes to try.
+        start
+          Optional start position. Default: start of the bytearray.
+        end
+          Optional stop position. Default: end of the bytearray.
+        """
+        ...
+    def strip(self, bytes: ReadableBuffer | None = None, /) -> bytearray:
+        """
+        Strip leading and trailing bytes contained in the argument.
+
+        If the argument is omitted or None, strip leading and trailing ASCII whitespace.
+        """
+        ...
+    def swapcase(self) -> bytearray:
+        """
+        B.swapcase() -> copy of B
+
+        Return a copy of B with uppercase ASCII characters converted
+        to lowercase ASCII and vice versa.
+        """
+        ...
+    def title(self) -> bytearray:
+        """
+        B.title() -> copy of B
+
+        Return a titlecased version of B, i.e. ASCII words start with uppercase
+        characters, all remaining cased characters have lowercase.
+        """
+        ...
+    def translate(self, table: ReadableBuffer | None, /, delete: bytes = b"") -> bytearray:
+        """
+        Return a copy with each character mapped by the given translation table.
+
+          table
+            Translation table, which must be a bytes object of length 256.
+
+        All characters occurring in the optional argument delete are removed.
+        The remaining characters are mapped through the given translation table.
+        """
+        ...
     if sys.version_info >= (3, 15):
         def take_bytes(self, n: int | None = None, /) -> bytes: ...
 
-    def upper(self) -> bytearray: ...
-    def zfill(self, width: SupportsIndex, /) -> bytearray: ...
+    def upper(self) -> bytearray:
+        """
+        B.upper() -> copy of B
+
+        Return a copy of B with all ASCII characters converted to uppercase.
+        """
+        ...
+    def zfill(self, width: SupportsIndex, /) -> bytearray:
+        """
+        Pad a numeric string with zeros on the left, to fill a field of the given width.
+
+        The original string is never truncated.
+        """
+        ...
     if sys.version_info >= (3, 14):
         @classmethod
         def fromhex(cls, string: str | ReadableBuffer, /) -> Self:
@@ -2966,7 +3330,16 @@ class slice(Generic[_StartT_co, _StopT_co, _StepT_co]):
     else:
         __hash__: ClassVar[None]  # type: ignore[assignment]
 
-    def indices(self, len: SupportsIndex, /) -> tuple[int, int, int]: ...
+    def indices(self, len: SupportsIndex, /) -> tuple[int, int, int]:
+        """
+        S.indices(len) -> (start, stop, stride)
+
+        Assuming a sequence of length len, calculate the start and stop
+        indices, and the stride length of the extended slice described by
+        S. Out of bounds indices are clipped in a manner consistent with the
+        handling of normal slices.
+        """
+        ...
     if sys.version_info >= (3, 15):
         def __class_getitem__(cls, item: Any, /) -> GenericAlias: ...
 
@@ -3381,7 +3754,9 @@ class dict(MutableMapping[_KT, _VT]):
         """Return a reverse iterator over the dict keys."""
         ...
     __hash__: ClassVar[None]  # type: ignore[assignment]
-    def __class_getitem__(cls, item: Any, /) -> GenericAlias: ...
+    def __class_getitem__(cls, item: Any, /) -> GenericAlias:
+        """See PEP 585"""
+        ...
     if sys.version_info >= (3, 15):
         def __or__(self, value: dict[_T1, _T2] | frozendict[_T1, _T2], /) -> dict[_KT | _T1, _VT | _T2]: ...
         @overload
@@ -3389,8 +3764,12 @@ class dict(MutableMapping[_KT, _VT]):
         @overload
         def __ror__(self, value: frozendict[_T1, _T2], /) -> frozendict[_KT | _T1, _VT | _T2]: ...
     else:
-        def __or__(self, value: dict[_T1, _T2], /) -> dict[_KT | _T1, _VT | _T2]: ...
-        def __ror__(self, value: dict[_T1, _T2], /) -> dict[_KT | _T1, _VT | _T2]: ...
+        def __or__(self, value: dict[_T1, _T2], /) -> dict[_KT | _T1, _VT | _T2]:
+            """Return self|value."""
+            ...
+        def __ror__(self, value: dict[_T1, _T2], /) -> dict[_KT | _T1, _VT | _T2]:
+            """Return value|self."""
+            ...
     # dict.__ior__ should be kept roughly in line with MutableMapping.update()
     @overload  # type: ignore[misc]
     def __ior__(self, value: SupportsKeysAndGetItem[_KT, _VT], /) -> Self:
@@ -3798,21 +4177,69 @@ class property:
         """Delete an attribute of instance."""
         ...
 
-def abs(x: SupportsAbs[_T], /) -> _T: ...
-def all(iterable: Iterable[object], /) -> bool: ...
-def any(iterable: Iterable[object], /) -> bool: ...
-def ascii(obj: object, /) -> str: ...
+def abs(x: SupportsAbs[_T], /) -> _T:
+    """Return the absolute value of the argument."""
+    ...
+def all(iterable: Iterable[object], /) -> bool:
+    """
+    Return True if bool(x) is True for all values x in the iterable.
+
+    If the iterable is empty, return True.
+    """
+    ...
+def any(iterable: Iterable[object], /) -> bool:
+    """
+    Return True if bool(x) is True for any x in the iterable.
+
+    If the iterable is empty, return False.
+    """
+    ...
+def ascii(obj: object, /) -> str:
+    r"""
+    Return an ASCII-only representation of an object.
+
+    As repr(), return a string containing a printable representation of an
+    object, but escape the non-ASCII characters in the string returned by
+    repr() using \\x, \\u or \\U escapes. This generates a string similar
+    to that returned by repr() in Python 2.
+    """
+    ...
 
 if sys.version_info >= (3, 15):
     def bin(integer: SupportsIndex, /) -> str: ...
 
 else:
-    def bin(number: SupportsIndex, /) -> str: ...
+    def bin(number: SupportsIndex, /) -> str:
+        """
+        Return the binary representation of an integer.
 
-def breakpoint(*args: Any, **kws: Any) -> None: ...
-def callable(obj: object, /) -> TypeIs[Callable[..., object]]: ...
-def chr(i: SupportsIndex, /) -> str: ...
-def aiter(async_iterable: SupportsAiter[_SupportsAnextT_co], /) -> _SupportsAnextT_co: ...
+        >>> bin(2796202)
+        '0b1010101010101010101010'
+        """
+        ...
+
+def breakpoint(*args: Any, **kws: Any) -> None:
+    """
+    Call sys.breakpointhook(*args, **kws).  sys.breakpointhook() must accept
+    whatever arguments are passed.
+
+    By default, this drops you into the pdb debugger.
+    """
+    ...
+def callable(obj: object, /) -> TypeIs[Callable[..., object]]:
+    """
+    Return whether the object is callable (i.e., some kind of function).
+
+    Note that classes are callable, as are instances of classes with a
+    __call__() method.
+    """
+    ...
+def chr(i: SupportsIndex, /) -> str:
+    """Return a Unicode string of one character with ordinal i; 0 <= i <= 0x10ffff."""
+    ...
+def aiter(async_iterable: SupportsAiter[_SupportsAnextT_co], /) -> _SupportsAnextT_co:
+    """Return an AsyncIterator for an AsyncIterable object."""
+    ...
 @type_check_only
 class _SupportsSynchronousAnext(Protocol[_AwaitableT_co]):
     def __anext__(self) -> _AwaitableT_co: ...
@@ -3902,7 +4329,22 @@ else:
         optimize: int = -1,
         *,
         _feature_version: int = -1,
-    ) -> CodeType: ...
+    ) -> CodeType:
+        """
+        Compile source into a code object that can be executed by exec() or eval().
+
+        The source code may represent a Python module, statement or expression.
+        The filename will be used for run-time error messages.
+        The mode must be 'exec' to compile a module, 'single' to compile a
+        single (interactive) statement, or 'eval' to compile an expression.
+        The flags argument, if present, controls which future statements influence
+        the compilation of the code.
+        The dont_inherit argument, if true, stops the compilation inheriting
+        the effects of any future statements in effect in the code calling
+        compile; if absent or false these statements do influence the compilation,
+        in addition to any features explicitly specified.
+        """
+        ...
     @overload
     def compile(
         source: str | ReadableBuffer | _ast.Module | _ast.Expression | _ast.Interactive,
@@ -3912,7 +4354,22 @@ else:
         dont_inherit: bool = False,
         optimize: int = -1,
         _feature_version: int = -1,
-    ) -> CodeType: ...
+    ) -> CodeType:
+        """
+        Compile source into a code object that can be executed by exec() or eval().
+
+        The source code may represent a Python module, statement or expression.
+        The filename will be used for run-time error messages.
+        The mode must be 'exec' to compile a module, 'single' to compile a
+        single (interactive) statement, or 'eval' to compile an expression.
+        The flags argument, if present, controls which future statements influence
+        the compilation of the code.
+        The dont_inherit argument, if true, stops the compilation inheriting
+        the effects of any future statements in effect in the code calling
+        compile; if absent or false these statements do influence the compilation,
+        in addition to any features explicitly specified.
+        """
+        ...
     @overload
     def compile(
         source: str | ReadableBuffer | _ast.Module | _ast.Expression | _ast.Interactive,
@@ -3923,7 +4380,22 @@ else:
         optimize: int = -1,
         *,
         _feature_version: int = -1,
-    ) -> _ast.AST: ...
+    ) -> _ast.AST:
+        """
+        Compile source into a code object that can be executed by exec() or eval().
+
+        The source code may represent a Python module, statement or expression.
+        The filename will be used for run-time error messages.
+        The mode must be 'exec' to compile a module, 'single' to compile a
+        single (interactive) statement, or 'eval' to compile an expression.
+        The flags argument, if present, controls which future statements influence
+        the compilation of the code.
+        The dont_inherit argument, if true, stops the compilation inheriting
+        the effects of any future statements in effect in the code calling
+        compile; if absent or false these statements do influence the compilation,
+        in addition to any features explicitly specified.
+        """
+        ...
     @overload
     def compile(
         source: str | ReadableBuffer | _ast.Module | _ast.Expression | _ast.Interactive,
@@ -3934,7 +4406,22 @@ else:
         optimize: int = -1,
         *,
         _feature_version: int = -1,
-    ) -> Any: ...
+    ) -> Any:
+        """
+        Compile source into a code object that can be executed by exec() or eval().
+
+        The source code may represent a Python module, statement or expression.
+        The filename will be used for run-time error messages.
+        The mode must be 'exec' to compile a module, 'single' to compile a
+        single (interactive) statement, or 'eval' to compile an expression.
+        The flags argument, if present, controls which future statements influence
+        the compilation of the code.
+        The dont_inherit argument, if true, stops the compilation inheriting
+        the effects of any future statements in effect in the code calling
+        compile; if absent or false these statements do influence the compilation,
+        in addition to any features explicitly specified.
+        """
+        ...
 
 copyright: _sitebuiltins._Printer
 credits: _sitebuiltins._Printer
@@ -4219,10 +4706,34 @@ if sys.version_info >= (3, 15):
     def hex(integer: SupportsIndex, /) -> str: ...
 
 else:
-    def hex(number: SupportsIndex, /) -> str: ...
+    def hex(number: SupportsIndex, /) -> str:
+        """
+        Return the hexadecimal representation of an integer.
 
-def id(obj: object, /) -> int: ...
-def input(prompt: object = "", /) -> str: ...
+        >>> hex(12648430)
+        '0xc0ffee'
+        """
+        ...
+
+def id(obj: object, /) -> int:
+    """
+    Return the identity of an object.
+
+    This is guaranteed to be unique among simultaneously existing objects.
+    (CPython uses the object's memory address.)
+    """
+    ...
+def input(prompt: object = "", /) -> str:
+    """
+    Read a string from standard input.  The trailing newline is stripped.
+
+    The prompt string, if given, is printed to standard output without a
+    trailing newline before reading input.
+
+    If the user hits EOF (*nix: Ctrl-D, Windows: Ctrl-Z+Return), raise EOFError.
+    On *nix systems, readline is used if available.
+    """
+    ...
 @type_check_only
 class _GetItemIterable(Protocol[_T_co]):
     def __getitem__(self, i: int, /) -> _T_co: ...
@@ -4583,13 +5094,27 @@ def next(i: SupportsNext[_T], /) -> _T:
     """
     ...
 @overload
-def next(i: SupportsNext[_T], default: _VT, /) -> _T | _VT: ...
+def next(i: SupportsNext[_T], default: _VT, /) -> _T | _VT:
+    """
+    next(iterator[, default])
+
+    Return the next item from the iterator. If default is given and the iterator
+    is exhausted, it is returned instead of raising StopIteration.
+    """
+    ...
 
 if sys.version_info >= (3, 15):
     def oct(integer: SupportsIndex, /) -> str: ...
 
 else:
-    def oct(number: SupportsIndex, /) -> str: ...
+    def oct(number: SupportsIndex, /) -> str:
+        """
+        Return the octal representation of an integer.
+
+        >>> oct(342391)
+        '0o1234567'
+        """
+        ...
 
 _Opener: TypeAlias = Callable[[str, int], int]
 
@@ -5768,7 +6293,13 @@ def round(number: _SupportsRound2[_T], ndigits: SupportsIndex) -> _T:
 
 # See https://github.com/python/typeshed/pull/6292#discussion_r748875189
 # for why arg 3 of `setattr` should be annotated with `Any` and not `object`
-def setattr(obj: object, name: str, value: Any, /) -> None: ...
+def setattr(obj: object, name: str, value: Any, /) -> None:
+    """
+    Sets the named attribute on the given object to the specified value.
+
+    setattr(x, 'y', v) is equivalent to ``x.y = v``
+    """
+    ...
 
 if sys.version_info >= (3, 15):
     @final
@@ -5933,7 +6464,25 @@ def __import__(
     locals: Mapping[str, object] | None = None,
     fromlist: Sequence[str] | None = (),
     level: int = 0,
-) -> types.ModuleType: ...
+) -> types.ModuleType:
+    """
+    Import a module.
+
+    Because this function is meant for use by the Python
+    interpreter and not for general use, it is better to use
+    importlib.import_module() to programmatically import a module.
+
+    The globals argument is only used to determine the context;
+    they are not modified.  The locals argument is unused.  The fromlist
+    should be a list of names to emulate ``from name import ...``, or an
+    empty list to emulate ``import name``.
+    When importing a module from a package, note that __import__('A.B', ...)
+    returns package A when fromlist is empty, but its submodule B when
+    fromlist is not empty.  The level argument is used to determine whether to
+    perform absolute or relative imports: 0 is absolute, while a positive number
+    is the number of parent directories to search relative to the current module.
+    """
+    ...
 
 if sys.version_info >= (3, 15):
     def __lazy_import__(
@@ -5944,7 +6493,13 @@ if sys.version_info >= (3, 15):
         level: int = 0,
     ) -> Any: ...
 
-def __build_class__(func: Callable[[], CellType | Any], name: str, /, *bases: Any, metaclass: Any = ..., **kwds: Any) -> Any: ...
+def __build_class__(func: Callable[[], CellType | Any], name: str, /, *bases: Any, metaclass: Any = ..., **kwds: Any) -> Any:
+    """
+    __build_class__(func, name, /, *bases, [metaclass], **kwds) -> class
+
+    Internal helper function used by the class statement.
+    """
+    ...
 
 # Backwards compatibility hack for folks who relied on the ellipsis type
 # existing in typeshed in Python 3.9 and earlier.
@@ -6053,8 +6608,12 @@ class ImportError(Exception):
 if sys.version_info >= (3, 15):
     class ImportCycleError(ImportError): ...
 
-class LookupError(Exception): ...
-class MemoryError(Exception): ...
+class LookupError(Exception):
+    """Base class for lookup errors."""
+    ...
+class MemoryError(Exception):
+    """Out of memory."""
+    ...
 
 @disjoint_base
 class NameError(Exception):

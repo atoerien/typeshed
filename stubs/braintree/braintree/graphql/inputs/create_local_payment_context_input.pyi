@@ -21,6 +21,7 @@ class _GraphqlVariables(TypedDict):
     paymentContext: _PaymentContext
 
 class CreateLocalPaymentContextInput:
+    """Represents input for creating a local payment context."""
     def __init__(
         self,
         amount: dict[str, Incomplete] | None = None,
@@ -33,4 +34,6 @@ class CreateLocalPaymentContextInput:
         return_url: str | None = None,
         type: str | None = None,
     ) -> None: ...
-    def to_graphql_variables(self) -> _GraphqlVariables: ...
+    def to_graphql_variables(self) -> _GraphqlVariables:
+        """Returns a dictionary representing the input object, to pass as variables to a GraphQL mutation."""
+        ...

@@ -40,4 +40,6 @@ class ThreadedConnectionPool(AbstractConnectionPool):
     """A connection pool that works with the threading module."""
     # This subclass has a default value for conn which doesn't exist
     # in the SimpleConnectionPool class, nor in the documentation
-    def putconn(self, conn: connection | None = None, key: Hashable | None = None, close: bool = False) -> None: ...
+    def putconn(self, conn: connection | None = None, key: Hashable | None = None, close: bool = False) -> None:
+        """Put away an unused connection."""
+        ...
