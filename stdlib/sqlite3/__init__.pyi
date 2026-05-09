@@ -102,6 +102,9 @@ from typing_extensions import Self, disjoint_base
 if sys.version_info < (3, 14):
     from sqlite3.dbapi2 import version_info as version_info
 
+if sys.version_info >= (3, 15):
+    from sqlite3.dbapi2 import SQLITE_KEYWORDS as SQLITE_KEYWORDS
+
 if sys.version_info >= (3, 12):
     from sqlite3.dbapi2 import (
         LEGACY_TRANSACTION_CONTROL as LEGACY_TRANSACTION_CONTROL,
@@ -365,44 +368,11 @@ class Connection:
         """
         Close the database connection.
 
-        Any pending transaction is not committed implicitly.
-        """
-        ...
-    if sys.version_info >= (3, 11):
-        def blobopen(self, table: str, column: str, row: int, /, *, readonly: bool = False, name: str = "main") -> Blob:
-            """
-            Open and return a BLOB object.
-
-            table
-              Table name.
-            column
-              Column name.
-            rowid
-              Row id.
-            readonly
-              Open the BLOB without write permissions.
-            name
-              Database name.
-            """
-            ...
-
-    def commit(self) -> None:
-        """
-        Commit any pending transaction to the database.
-
-        If there is no open transaction, this method is a no-op.
-        """
-        ...
-    def create_aggregate(self, name: str, n_arg: int, aggregate_class: Callable[[], _AggregateProtocol]) -> None:
-        """
-        Creates a new aggregate.
-
-        Note: Passing keyword arguments 'name', 'n_arg' and 'aggregate_class'
-        to _sqlite3.Connection.create_aggregate() is deprecated. Parameters
-        'name', 'n_arg' and 'aggregate_class' will become positional-only in
-        Python 3.15.
-        """
-        ...
+    def commit(self) -> None: ...
+    if sys.version_info >= (3, 15):
+        def create_aggregate(self, name: str, n_arg: int, aggregate_class: Callable[[], _AggregateProtocol], /) -> None: ...
+    else:
+        def create_aggregate(self, name: str, n_arg: int, aggregate_class: Callable[[], _AggregateProtocol]) -> None: ...
     if sys.version_info >= (3, 11):
         # num_params determines how many params will be passed to the aggregate class. We provide an overload
         # for the case where num_params = 1, which is expected to be the common case.
@@ -448,111 +418,42 @@ class Connection:
             """
             Creates or redefines an aggregate window function. Non-standard.
 
-            name
-              The name of the SQL aggregate window function to be created or
-              redefined.
-            num_params
-              The number of arguments the step and inverse methods takes.
-            aggregate_class
-              A class with step(), finalize(), value(), and inverse() methods.
-              Set to None to clear the window function.
-            """
-            ...
-
-    def create_collation(self, name: str, callback: Callable[[str, str], SupportsIndex] | None, /) -> None:
-        """Creates a collation function."""
-        ...
-    def create_function(
-        self, name: str, narg: int, func: Callable[..., _SqliteData] | None, *, deterministic: bool = False
-    ) -> None:
-        """
-        Creates a new function.
-
-        Note: Passing keyword arguments 'name', 'narg' and 'func' to
-        _sqlite3.Connection.create_function() is deprecated. Parameters
-        'name', 'narg' and 'func' will become positional-only in Python 3.15.
-        """
-        ...
-    @overload
-    def cursor(self, factory: None = None) -> Cursor:
-        """Return a cursor for the connection."""
-        ...
-    @overload
-    def cursor(self, factory: Callable[[Connection], _CursorT]) -> _CursorT:
-        """Return a cursor for the connection."""
-        ...
-    def execute(self, sql: str, parameters: _Parameters = ..., /) -> Cursor:
-        """Executes an SQL statement."""
-        ...
-    def executemany(self, sql: str, parameters: Iterable[_Parameters], /) -> Cursor:
-        """Repeatedly executes an SQL statement."""
-        ...
-    def executescript(self, sql_script: str, /) -> Cursor:
-        """Executes multiple SQL statements at once."""
-        ...
-    def interrupt(self) -> None:
-        """Abort any pending database operation."""
-        ...
-    if sys.version_info >= (3, 13):
-        def iterdump(self, *, filter: str | None = None) -> Generator[str]:
-            """
-            Returns iterator to the dump of the database in an SQL text format.
-
-            filter
-              An optional LIKE pattern for database objects to dump
-            """
-            ...
+    def create_collation(self, name: str, callback: Callable[[str, str], SupportsIndex] | None, /) -> None: ...
+    if sys.version_info >= (3, 15):
+        def create_function(
+            self, name: str, narg: int, func: Callable[..., _SqliteData] | None, /, *, deterministic: bool = False
+        ) -> None: ...
     else:
-        def iterdump(self) -> Generator[str]:
-            """Returns iterator to the dump of the database in an SQL text format."""
-            ...
+        def create_function(
+            self, name: str, narg: int, func: Callable[..., _SqliteData] | None, *, deterministic: bool = False
+        ) -> None: ...
 
-    def rollback(self) -> None:
-        """
-        Roll back to the start of any pending transaction.
+    @overload
+    def cursor(self, factory: None = None) -> Cursor: ...
+    @overload
+    def cursor(self, factory: Callable[[Connection], _CursorT]) -> _CursorT: ...
+    def execute(self, sql: str, parameters: _Parameters = ..., /) -> Cursor: ...
+    def executemany(self, sql: str, parameters: Iterable[_Parameters], /) -> Cursor: ...
+    def executescript(self, sql_script: str, /) -> Cursor: ...
+    def interrupt(self) -> None: ...
+    if sys.version_info >= (3, 13):
+        def iterdump(self, *, filter: str | None = None) -> Generator[str]: ...
+    else:
+        def iterdump(self) -> Generator[str]: ...
 
-        If there is no open transaction, this method is a no-op.
-        """
-        ...
-    def set_authorizer(
-        self, authorizer_callback: Callable[[int, str | None, str | None, str | None, str | None], int] | None
-    ) -> None:
-        """
-        Set authorizer callback.
-
-        Note: Passing keyword argument 'authorizer_callback' to
-        _sqlite3.Connection.set_authorizer() is deprecated. Parameter
-        'authorizer_callback' will become positional-only in Python 3.15.
-        """
-        ...
-    def set_progress_handler(self, progress_handler: Callable[[], int | None] | None, n: int) -> None:
-        """
-        Set progress handler callback.
-
-          progress_handler
-            A callable that takes no arguments.
-            If the callable returns non-zero, the current query is terminated,
-            and an exception is raised.
-          n
-            The number of SQLite virtual machine instructions that are
-            executed between invocations of 'progress_handler'.
-
-        If 'progress_handler' is None or 'n' is 0, the progress handler is disabled.
-
-        Note: Passing keyword argument 'progress_handler' to
-        _sqlite3.Connection.set_progress_handler() is deprecated. Parameter
-        'progress_handler' will become positional-only in Python 3.15.
-        """
-        ...
-    def set_trace_callback(self, trace_callback: Callable[[str], object] | None) -> None:
-        """
-        Set a trace callback called for each SQL statement (passed as unicode).
-
-        Note: Passing keyword argument 'trace_callback' to
-        _sqlite3.Connection.set_trace_callback() is deprecated. Parameter
-        'trace_callback' will become positional-only in Python 3.15.
-        """
-        ...
+    def rollback(self) -> None: ...
+    if sys.version_info >= (3, 15):
+        def set_authorizer(
+            self, authorizer_callback: Callable[[int, str | None, str | None, str | None, str | None], int] | None, /
+        ) -> None: ...
+        def set_progress_handler(self, progress_handler: Callable[[], int | None] | None, /, n: int) -> None: ...
+        def set_trace_callback(self, trace_callback: Callable[[str], object] | None, /) -> None: ...
+    else:
+        def set_authorizer(
+            self, authorizer_callback: Callable[[int, str | None, str | None, str | None, str | None], int] | None
+        ) -> None: ...
+        def set_progress_handler(self, progress_handler: Callable[[], int | None] | None, n: int) -> None: ...
+        def set_trace_callback(self, trace_callback: Callable[[str], object] | None) -> None: ...
     # enable_load_extension and load_extension is not available on python distributions compiled
     # without sqlite3 loadable extension support. see footnotes https://docs.python.org/3/library/sqlite3.html#f1
     def enable_load_extension(self, enable: bool, /) -> None:

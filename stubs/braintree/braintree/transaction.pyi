@@ -310,15 +310,7 @@ class Transaction(Resource):
         """
         ...
     @staticmethod
-    def void(transaction_id):
-        """
-        Voids an existing transaction.
-
-        It expects a transaction_id.::
-
-            result = braintree.Transaction.void("my_transaction_id")
-        """
-        ...
+    def void(transaction_id, params=None): ...
     @staticmethod
     def create(params):
         """
@@ -385,6 +377,7 @@ class Transaction(Resource):
     tax_amount: Decimal | None
     discount_amount: Decimal | None
     shipping_amount: Decimal | None
+    surcharge_amount: Decimal | None
     billing_details: Address
     credit_card_details: CreditCard
     packages: list[PackageDetails]

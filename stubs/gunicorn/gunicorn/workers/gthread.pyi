@@ -32,22 +32,8 @@ class TConn:
     def __init__(self, cfg: Config, sock: socket.socket, client: _AddressType, server: _AddressType) -> None: ...
     def init(self) -> None: ...
     def set_timeout(self) -> None: ...
-    def wait_for_data(self, timeout: float | None) -> bool:
-        """
-        Wait for data to be available on the socket.
-
-        Uses selectors to wait for the socket to become readable within
-        the given timeout. This prevents slow clients from blocking
-        thread pool slots indefinitely.
-
-        Args:
-            timeout: Maximum time to wait in seconds.
-
-        Returns:
-            True if data is available, False if timeout expired.
-        """
-        ...
-    def close(self) -> None: ...
+    def wait_for_data(self, timeout: float | None) -> bool: ...
+    def close(self, graceful: bool = False) -> None: ...
 
 class PollableMethodQueue:
     """

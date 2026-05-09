@@ -120,7 +120,10 @@ def get_platform() -> str:
     """
     ...
 
-if sys.version_info >= (3, 12):
+if sys.version_info >= (3, 15):
+    def is_python_build() -> bool: ...
+
+elif sys.version_info >= (3, 12):
     @overload
     def is_python_build() -> bool: ...
     @overload

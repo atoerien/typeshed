@@ -66,6 +66,8 @@ if sys.version_info >= (3, 12):
         "NOVEMBER",
         "DECEMBER",
     ]
+if sys.version_info >= (3, 15):
+    __all__ += ["standalone_month_name", "standalone_month_abbr"]
 
 _LocaleType: TypeAlias = tuple[str | None, str | None]
 
@@ -260,27 +262,18 @@ class HTMLCalendar(Calendar):
     cssclass_month: ClassVar[str]
     cssclass_year: ClassVar[str]
     cssclass_year_head: ClassVar[str]
-    def formatday(self, day: int, weekday: int) -> str:
-        """Return a day as a table cell."""
-        ...
-    def formatweek(self, theweek: int) -> str:
-        """Return a complete week as a table row."""
-        ...
-    def formatweekday(self, day: int) -> str:
-        """Return a weekday name as a table header."""
-        ...
-    def formatweekheader(self) -> str:
-        """Return a header for a week as a table row."""
-        ...
-    def formatmonthname(self, theyear: int, themonth: int, withyear: bool = True) -> str:
-        """Return a month name as a table row."""
-        ...
-    def formatmonth(self, theyear: int, themonth: int, withyear: bool = True) -> str:
-        """Return a formatted month as a table."""
-        ...
-    def formatyear(self, theyear: int, width: int = 3) -> str:
-        """Return a formatted year as a table of tables."""
-        ...
+    def formatday(self, day: int, weekday: int) -> str: ...
+    def formatweek(self, theweek: int) -> str: ...
+    def formatweekday(self, day: int) -> str: ...
+    def formatweekheader(self) -> str: ...
+    def formatmonthname(self, theyear: int, themonth: int, withyear: bool = True) -> str: ...
+    def formatmonth(self, theyear: int, themonth: int, withyear: bool = True) -> str: ...
+    if sys.version_info >= (3, 15):
+        def formatmonthpage(
+            self, theyear: int, themonth: int, width: int = 3, css: str | None = "calendar.css", encoding: str | None = None
+        ) -> bytes: ...
+
+    def formatyear(self, theyear: int, width: int = 3) -> str: ...
     def formatyearpage(
         self, theyear: int, width: int = 3, css: str | None = "calendar.css", encoding: str | None = None
     ) -> bytes:
@@ -381,3 +374,7 @@ else:
     SUNDAY: Final = 6
 
 EPOCH: Final = 1970
+
+if sys.version_info >= (3, 15):
+    standalone_month_name: Sequence[str]
+    standalone_month_abbr: Sequence[str]

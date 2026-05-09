@@ -33,6 +33,9 @@ from types import GenericAlias
 from typing import Any, ClassVar, Generic, NoReturn, SupportsIndex, TypeVar, final, overload, type_check_only
 from typing_extensions import Self, disjoint_base
 
+if sys.version_info >= (3, 15):
+    from builtins import frozendict
+
 __all__ = ["ChainMap", "Counter", "OrderedDict", "UserDict", "UserList", "UserString", "defaultdict", "deque", "namedtuple"]
 
 _S = TypeVar("_S")
@@ -822,33 +825,28 @@ class OrderedDict(dict[_KT, _VT]):
         """
         ...
     @overload
-    def pop(self, key: _KT, default: _T) -> _VT | _T:
-        """
-        od.pop(key[,default]) -> v, remove specified key and return the corresponding value.
-
-        If the key is not found, return the default if given; otherwise,
-        raise a KeyError.
-        """
-        ...
-    def __eq__(self, value: object, /) -> bool:
-        """Return self==value."""
-        ...
-    @overload
-    def __or__(self, value: dict[_KT, _VT], /) -> Self:
-        """Return self|value."""
-        ...
-    @overload
-    def __or__(self, value: dict[_T1, _T2], /) -> OrderedDict[_KT | _T1, _VT | _T2]:
-        """Return self|value."""
-        ...
-    @overload
-    def __ror__(self, value: dict[_KT, _VT], /) -> Self:
-        """Return value|self."""
-        ...
-    @overload
-    def __ror__(self, value: dict[_T1, _T2], /) -> OrderedDict[_KT | _T1, _VT | _T2]:
-        """Return value|self."""
-        ...
+    def pop(self, key: _KT, default: _T) -> _VT | _T: ...
+    def __eq__(self, value: object, /) -> bool: ...
+    if sys.version_info >= (3, 15):
+        @overload
+        def __or__(self, value: dict[_KT, _VT] | frozendict[_KT, _VT], /) -> Self: ...
+        @overload
+        def __or__(self, value: dict[_T1, _T2] | frozendict[_T1, _T2], /) -> OrderedDict[_KT | _T1, _VT | _T2]: ...
+        @overload  # type: ignore[override]
+        def __ror__(self, value: dict[_KT, _VT] | frozendict[_KT, _VT], /) -> Self: ...  # type: ignore[override,misc]
+        @overload
+        def __ror__(  # type: ignore[misc]
+            self, value: dict[_T1, _T2] | frozendict[_T1, _T2], /
+        ) -> OrderedDict[_KT | _T1, _VT | _T2]: ...
+    else:
+        @overload
+        def __or__(self, value: dict[_KT, _VT], /) -> Self: ...
+        @overload
+        def __or__(self, value: dict[_T1, _T2], /) -> OrderedDict[_KT | _T1, _VT | _T2]: ...
+        @overload
+        def __ror__(self, value: dict[_KT, _VT], /) -> Self: ...
+        @overload
+        def __ror__(self, value: dict[_T1, _T2], /) -> OrderedDict[_KT | _T1, _VT | _T2]: ...  # type: ignore[misc]
 
 @disjoint_base
 class defaultdict(dict[_KT, _VT]):
@@ -895,32 +893,17 @@ class defaultdict(dict[_KT, _VT]):
         /,
         **kwargs: _VT,
     ) -> None: ...
-    def __missing__(self, key: _KT, /) -> _VT:
-        """
-        __missing__(key) # Called by __getitem__ for missing key; pseudo-code:
-        if self.default_factory is None: raise KeyError((key,))
-        self[key] = value = self.default_factory()
-        return value
-        """
-        ...
-    def __copy__(self) -> Self:
-        """D.copy() -> a shallow copy of D."""
-        ...
-    def copy(self) -> Self:
-        """D.copy() -> a shallow copy of D."""
-        ...
+    def __missing__(self, key: _KT, /) -> _VT: ...
+    def __copy__(self) -> Self: ...
+    def copy(self) -> Self: ...
+    # defaultdict rejects frozendict in its direct __or__/__ror__ methods, even though dict accepts it.
+    # See https://github.com/python/cpython/issues/149534.
+    @overload  # type: ignore[override]
+    def __or__(self, value: dict[_KT, _VT], /) -> Self: ...
     @overload
-    def __or__(self, value: dict[_KT, _VT], /) -> Self:
-        """Return self|value."""
-        ...
-    @overload
-    def __or__(self, value: dict[_T1, _T2], /) -> defaultdict[_KT | _T1, _VT | _T2]:
-        """Return self|value."""
-        ...
-    @overload
-    def __ror__(self, value: dict[_KT, _VT], /) -> Self:
-        """Return value|self."""
-        ...
+    def __or__(self, value: dict[_T1, _T2], /) -> defaultdict[_KT | _T1, _VT | _T2]: ...
+    @overload  # type: ignore[override]
+    def __ror__(self, value: dict[_KT, _VT], /) -> Self: ...
     @overload
     def __ror__(self, value: dict[_T1, _T2], /) -> defaultdict[_KT | _T1, _VT | _T2]:
         """Return value|self."""

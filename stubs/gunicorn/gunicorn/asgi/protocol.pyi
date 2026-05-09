@@ -54,13 +54,7 @@ class _BodyReceieverReceiveReturnType(TypedDict):
     more_body: NotRequired[bool]
 
 class BodyReceiver:
-    """
-    Body receiver for callback-based parsers.
-
-    Body chunks are fed directly via the feed() method from parser callbacks.
-    Uses Future-based waiting for efficient async receive().
-    """
-    __slots__ = ("_chunks", "_complete", "_body_finished", "_closed", "_waiter", "request", "protocol")
+    __slots__ = ("_chunks", "_complete", "_body_finished", "_closed", "_body_wait_expired", "_waiter", "request", "protocol")
     request: CallbackRequest
     protocol: ASGIProtocol
 

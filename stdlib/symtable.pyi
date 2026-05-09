@@ -119,36 +119,14 @@ class SymbolTable:
         ...
 
 class Function(SymbolTable):
-    def get_parameters(self) -> tuple[str, ...]:
-        """
-        Return a tuple of parameters to the function.
-        
-        """
-        ...
-    def get_locals(self) -> tuple[str, ...]:
-        """
-        Return a tuple of locals in the function.
-        
-        """
-        ...
-    def get_globals(self) -> tuple[str, ...]:
-        """
-        Return a tuple of globals in the function.
-        
-        """
-        ...
-    def get_frees(self) -> tuple[str, ...]:
-        """
-        Return a tuple of free variables in the function.
-        
-        """
-        ...
-    def get_nonlocals(self) -> tuple[str, ...]:
-        """
-        Return a tuple of nonlocals in the function.
-        
-        """
-        ...
+    def get_parameters(self) -> tuple[str, ...]: ...
+    def get_locals(self) -> tuple[str, ...]: ...
+    def get_globals(self) -> tuple[str, ...]: ...
+    def get_frees(self) -> tuple[str, ...]: ...
+    if sys.version_info >= (3, 15):
+        def get_cells(self) -> tuple[str, ...]: ...
+
+    def get_nonlocals(self) -> tuple[str, ...]: ...
 
 class Class(SymbolTable):
     if sys.version_info >= (3, 14):
@@ -248,18 +226,10 @@ class Symbol:
         """Return *True* if a symbol is assigned to."""
         ...
     if sys.version_info >= (3, 14):
-        def is_comp_iter(self) -> bool:
-            """
-            Return *True* if the symbol is a comprehension iteration variable.
-        
-            """
-            ...
-        def is_comp_cell(self) -> bool:
-            """
-            Return *True* if the symbol is a cell in an inlined comprehension.
-        
-            """
-            ...
+        def is_comp_iter(self) -> bool: ...
+        def is_comp_cell(self) -> bool: ...
+    if sys.version_info >= (3, 15):
+        def is_cell(self) -> bool: ...
 
     def is_namespace(self) -> bool:
         """

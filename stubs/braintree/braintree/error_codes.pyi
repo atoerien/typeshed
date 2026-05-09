@@ -63,6 +63,7 @@ class ErrorCodes:
         MerchantNotConfigured: Final = "93514"
         MerchantKeysAlreadyConfigured: Final = "93515"
         MerchantKeysNotConfigured: Final = "93516"
+        NetworkTransactionIdNotAllowed: Final = "93532"
         CertificateInvalid: Final = "93517"
         CertificateMismatch: Final = "93519"
         InvalidToken: Final = "83520"
@@ -70,6 +71,18 @@ class ErrorCodes:
         KeyMismatchStoringCertificate: Final = "93522"
         CustomerIdIsInvalid: Final = "93528"
         BillingAddressFormatIsInvalid: Final = "93529"
+
+        class Options:
+            class Verification:
+                AccountTypeIsInvalid: Final = "93538"
+                AccountTypeNotSupported: Final = "93543"
+                AmountCannotBeNegative: Final = "93535"
+                AmountFormatIsInvalid: Final = "93534"
+                AmountIsTooLarge: Final = "93537"
+                AmountNotSupportedByProcessor: Final = "93536"
+                MerchantAccountIdIsInvalid: Final = "93540"
+                MerchantAccountIsSuspended: Final = "93541"
+                NotSupportedByProcessor: Final = "93533"
 
     class AuthorizationFingerprint:
         MissingFingerprint: Final = "93201"
@@ -167,6 +180,8 @@ class ErrorCodes:
         IdIsNotAllowed: Final = "91611"
         IdIsRequired: Final = "91613"
         IdIsTooLong: Final = "91612"
+        InternationalPhoneCountryCodeIsInvalid: Final = "91625"
+        InternationalPhoneNationalNumberIsInvalid: Final = "91626"
         LastNameIsTooLong: Final = "81613"
         PhoneIsTooLong: Final = "81614"
         VaultedPaymentInstrumentNonceBelongsToDifferentCustomer: Final = "91617"
@@ -488,6 +503,12 @@ class ErrorCodes:
         DiscountAmountFormatIsInvalid: Final = "915159"
         DiscountAmountIsTooLarge: Final = "915161"
         ExchangeRateQuoteIdIsTooLong: Final = "915229"
+        ApiRequestKeyTooLong: Final = "915230"
+        ApiRequestKeyNotAllowed: Final = "915231"
+        ApiRequestKeyCanBeReusedOnlyWithTheSameRequest: Final = "915232"
+        ApiRequestKeyIsInFlight: Final = "915233"
+        ApiRequestKeyWithFailedRequest: Final = "915234"
+        ApiRequestKeyServerError: Final = "915235"
         FailedAuthAdjustmentAllowRetry: Final = "95603"
         FailedAuthAdjustmentHardDecline: Final = "95602"
         FinalAuthSubmitForSettlementForDifferentAmount: Final = "95601"

@@ -4,6 +4,7 @@ Compatible with the 'profile' module.
 """
 
 import _lsprof
+import sys
 from _typeshed import StrOrBytesPath, Unused
 from collections.abc import Callable, Mapping
 from types import CodeType
@@ -61,4 +62,5 @@ class Profile(_lsprof.Profiler):
     def __enter__(self) -> Self: ...
     def __exit__(self, *exc_info: Unused) -> None: ...
 
-def label(code: str | CodeType) -> _Label: ...  # undocumented
+if sys.version_info < (3, 15):
+    def label(code: str | CodeType) -> _Label: ...  # undocumented
