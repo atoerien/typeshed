@@ -63,7 +63,7 @@ oauthlib==3.3.*
 grpcio-channelz==1.*
 portpicker==1.6.*
 html5lib[all]==1.1.*
-pika==1.3.*
+pika==1.4.*
 singledispatch==4.1.*
 pyflakes==3.4.*
 xlrd==2.0.*
@@ -119,7 +119,7 @@ google-cloud-ndb==2.4.*
 RPi.GPIO==0.7.*
 python-jenkins~=1.8.3
 Flask-Migrate==4.1.*
-regex==2026.4.4
+regex==2026.5.9
 console-menu==0.8.*
 ldap3==2.9.*
 requests[socks]~=2.33.0
