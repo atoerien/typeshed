@@ -21,7 +21,7 @@ def encode_short_string(pieces: list[bytes], value: str | bytes) -> int:
 def decode_short_string(encoded: bytes, offset: int) -> tuple[str, int]:
     """
     Decode a short string value from ``encoded`` data at ``offset``.
-        
+    
     """
     ...
 def encode_table(pieces: list[bytes], table: _ArgumentMapping) -> int:

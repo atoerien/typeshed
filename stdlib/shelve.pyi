@@ -76,6 +76,12 @@ if sys.version_info >= (3, 15):
     class ShelveError(Exception): ...
 
 class Shelf(MutableMapping[str, _VT]):
+    """
+    Base class for shelf implementations.
+
+    This is initialized with a dictionary-like object.
+    See the module's __doc__ string for an overview of the interface.
+    """
     if sys.version_info >= (3, 15):
         def __init__(
             self,
@@ -139,6 +145,12 @@ class BsdDbShelf(Shelf[_VT]):
     def last(self) -> tuple[str, _VT]: ...
 
 class DbfilenameShelf(Shelf[_VT]):
+    """
+    Shelf implementation using the "dbm" generic dbm interface.
+
+    This is initialized with the filename for the dbm database.
+    See the module's __doc__ string for an overview of the interface.
+    """
     if sys.version_info >= (3, 15):
         def __init__(
             self,

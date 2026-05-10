@@ -147,6 +147,7 @@ class _Timer:
         ...
 
 class PollEvents:
+    """Event flags for I/O"""
     READ: Final[int]
     WRITE: Final[int]
     ERROR: Final[int]

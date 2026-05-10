@@ -48,7 +48,7 @@ class _CallbackResult:
     def __bool__(self) -> bool:
         """
         Called by python runtime to implement truth value testing and the
-        built-in operation bool(); NOTE: python 3.x
+        built-in operation bool()
         """
         ...
     __nonzero__: Incomplete
@@ -201,7 +201,7 @@ class BlockingConnection:
     connection when client makes a resource-consuming request on that connection
     or its channel (e.g., `Basic.Publish`); subsequently, RabbitMQ suspsends
     processing requests from that connection until the affected resources are
-    restored. See http://www.rabbitmq.com/connection-blocked.html. This
+    restored. See https://www.rabbitmq.com/connection-blocked.html. This
     may impact `BlockingConnection` and `BlockingChannel` operations in a
     way that users might not be expecting. For example, if the user dispatches
     `BlockingChannel.basic_publish` in non-publisher-confirmation mode while
@@ -343,7 +343,7 @@ class BlockingConnection:
         ...
     def update_secret(self, new_secret, reason) -> None:
         """
-        RabbitMQ AMQP extension - This method updates the secret used to authenticate this connection. 
+        RabbitMQ AMQP extension - This method updates the secret used to authenticate this connection.
         It is used when secrets have an expiration date and need to be renewed, like OAuth 2 tokens.
 
         :param string new_secret: The new secret
@@ -712,7 +712,7 @@ class BlockingChannel:
 
         For more information, please reference:
 
-        http://www.rabbitmq.com/amqp-0-9-1-reference.html#channel.flow
+        https://www.rabbitmq.com/amqp-0-9-1-reference.html#channel.flow
 
         :param bool active: Turn flow on (True) or off (False)
         :returns: True if broker will start or continue sending; False if not
@@ -752,10 +752,95 @@ class BlockingChannel:
         exclusive: bool = False,
         consumer_tag: str | None = None,
         arguments: dict[str, Any] | None = None,
-    ) -> str: ...
-    def basic_cancel(self, consumer_tag: str) -> Sequence[tuple[Basic.Deliver, BasicProperties, bytes]]: ...
-    def start_consuming(self) -> None: ...
-    def stop_consuming(self, consumer_tag: str | None = None) -> None: ...
+    ) -> str:
+        """
+        Sends the AMQP command Basic.Consume to the broker and binds messages
+        for the consumer_tag to the consumer callback. If you do not pass in
+        a consumer_tag, one will be automatically generated for you. Returns
+        the consumer tag.
+
+        NOTE: the consumer callbacks are dispatched only in the scope of
+        specially-designated methods: see
+        `BlockingConnection.process_data_events` and
+        `BlockingChannel.start_consuming`.
+
+        For more information about Basic.Consume, see:
+        https://www.rabbitmq.com/amqp-0-9-1-reference.html#basic.consume
+
+        :param str queue: The queue from which to consume
+        :param callable on_message_callback: Required function for dispatching messages
+            to user, having the signature:
+            on_message_callback(channel, method, properties, body)
+            - channel: BlockingChannel
+            - method: spec.Basic.Deliver
+            - properties: spec.BasicProperties
+            - body: bytes
+        :param bool auto_ack: if set to True, automatic acknowledgement mode will be used
+                              (see https://www.rabbitmq.com/confirms.html). This corresponds
+                              with the 'no_ack' parameter in the basic.consume AMQP 0.9.1
+                              method
+        :param bool exclusive: Don't allow other consumers on the queue
+        :param str consumer_tag: You may specify your own consumer tag; if left
+          empty, a consumer tag will be generated automatically
+        :param dict arguments: Custom key/value pair arguments for the consumer
+        :returns: consumer tag
+        :rtype: str
+        :raises pika.exceptions.DuplicateConsumerTag: if consumer with given
+            consumer_tag is already present.
+        """
+        ...
+    def basic_cancel(self, consumer_tag: str) -> Sequence[tuple[Basic.Deliver, BasicProperties, bytes]]:
+        """
+        This method cancels a consumer. This does not affect already
+        delivered messages, but it does mean the server will not send any more
+        messages for that consumer. The client may receive an arbitrary number
+        of messages in between sending the cancel method and receiving the
+        cancel-ok reply.
+
+        NOTE: When cancelling an auto_ack=False consumer, this implementation
+        automatically Nacks and suppresses any incoming messages that have not
+        yet been dispatched to the consumer's callback. However, when cancelling
+        a auto_ack=True consumer, this method will return any pending messages
+        that arrived before broker confirmed the cancellation.
+
+        :param str consumer_tag: Identifier for the consumer; the result of
+            passing a consumer_tag that was created on another channel is
+            undefined (bad things will happen)
+        :returns: (NEW IN pika 0.10.0) empty sequence for a auto_ack=False
+            consumer; for a auto_ack=True consumer, returns a (possibly empty)
+            sequence of pending messages that arrived before broker confirmed
+            the cancellation (this is done instead of via consumer's callback in
+            order to prevent reentrancy/recursion. Each message is three-tuple:
+            (method, properties, body)
+            - method: spec.Basic.Deliver
+            - properties: spec.BasicProperties
+            - body: bytes
+        :rtype: list
+        """
+        ...
+    def start_consuming(self) -> None:
+        """
+        Processes I/O events and dispatches timers and `basic_consume`
+        callbacks until all consumers are cancelled.
+
+        NOTE: this blocking function may not be called from the scope of a
+        pika callback, because dispatching `basic_consume` callbacks from this
+        context would constitute recursion.
+
+        :raises pika.exceptions.ReentrancyError: if called from the scope of a
+            `BlockingConnection` or `BlockingChannel` callback
+        :raises ChannelClosed: when this channel is closed by broker.
+        """
+        ...
+    def stop_consuming(self, consumer_tag: str | None = None) -> None:
+        """
+        Cancels all consumers, signalling the `start_consuming` loop to
+        exit.
+
+        NOTE: pending non-ackable messages will be lost; pending ackable
+        messages will be rejected.
+        """
+        ...
     def consume(
         self,
         queue: str,
@@ -764,14 +849,127 @@ class BlockingChannel:
         arguments: dict[str, Any] | None = None,
         inactivity_timeout: float | None = None,
         consumer_tag: str | None = None,
-    ) -> Generator[tuple[Basic.Deliver | None, BasicProperties | None, bytes | None]]: ...
-    def get_waiting_message_count(self) -> int: ...
-    def cancel(self) -> int: ...
-    def basic_ack(self, delivery_tag: int = 0, multiple: bool = False) -> None: ...
-    def basic_nack(self, delivery_tag: int = 0, multiple: bool = False, requeue: bool = True) -> None: ...
+    ) -> Generator[tuple[Basic.Deliver | None, BasicProperties | None, bytes | None]]:
+        """
+        Blocking consumption of a queue instead of via a callback. This
+        method is a generator that yields each message as a tuple of method,
+        properties, and body. The active generator iterator terminates when the
+        consumer is cancelled by client via `BlockingChannel.cancel()` or by
+        broker.
+
+        Example:
+        ::
+            for method, properties, body in channel.consume('queue'):
+                print(body)
+                channel.basic_ack(method.delivery_tag)
+
+        You should call `BlockingChannel.cancel()` when you escape out of the
+        generator loop.
+
+        If you don't cancel this consumer, then next call on the same channel
+        to `consume()` with the exact same (queue, auto_ack, exclusive) parameters
+        will resume the existing consumer generator; however, calling with
+        different parameters will result in an exception.
+
+        :param str queue: The queue name to consume
+        :param bool auto_ack: Tell the broker to not expect a ack/nack response
+        :param bool exclusive: Don't allow other consumers on the queue
+        :param dict arguments: Custom key/value pair arguments for the consumer
+        :param float inactivity_timeout: if a number is given (in
+            seconds), will cause the method to yield (None, None, None) after the
+            given period of inactivity; this permits for pseudo-regular maintenance
+            activities to be carried out by the user while waiting for messages
+            to arrive. If None is given (default), then the method blocks until
+            the next event arrives. NOTE that timing granularity is limited by
+            the timer resolution of the underlying implementation.
+            NEW in pika 0.10.0.
+        :param str consumer_tag: Specify your own consumer tag
+
+        :yields: tuple(spec.Basic.Deliver, spec.BasicProperties, str or unicode)
+
+        :raises ValueError: if consumer-creation parameters don't match those
+            of the existing queue consumer generator, if any.
+            NEW in pika 0.10.0
+        :raises ChannelClosed: when this channel is closed by broker.
+        """
+        ...
+    def get_waiting_message_count(self) -> int:
+        """
+        Returns the number of messages that may be retrieved from the current
+        queue consumer generator via `BlockingChannel.consume` without blocking.
+        NEW in pika 0.10.0
+
+        :returns: The number of waiting messages
+        :rtype: int
+        """
+        ...
+    def cancel(self) -> int:
+        """
+        Cancel the queue consumer created by `BlockingChannel.consume`,
+        rejecting all pending ackable messages.
+
+        NOTE: If you're looking to cancel a consumer issued with
+        BlockingChannel.basic_consume then you should call
+        BlockingChannel.basic_cancel.
+
+        :returns: The number of messages requeued by Basic.Nack.
+            NEW in 0.10.0: returns 0
+        :rtype: int
+        """
+        ...
+    def basic_ack(self, delivery_tag: int = 0, multiple: bool = False) -> None:
+        """
+        Acknowledge one or more messages. When sent by the client, this
+        method acknowledges one or more messages delivered via the Deliver or
+        Get-Ok methods. When sent by server, this method acknowledges one or
+        more messages published with the Publish method on a channel in
+        confirm mode. The acknowledgement can be for a single message or a
+        set of messages up to and including a specific message.
+
+        :param int delivery_tag: The server-assigned delivery tag
+        :param bool multiple: If set to True, the delivery tag is treated as
+                              "up to and including", so that multiple messages
+                              can be acknowledged with a single method. If set
+                              to False, the delivery tag refers to a single
+                              message. If the multiple field is 1, and the
+                              delivery tag is zero, this indicates
+                              acknowledgement of all outstanding messages.
+        """
+        ...
+    def basic_nack(self, delivery_tag: int = 0, multiple: bool = False, requeue: bool = True) -> None:
+        """
+        This method allows a client to reject one or more incoming messages.
+        It can be used to interrupt and cancel large incoming messages, or
+        return untreatable messages to their original queue.
+
+        :param int delivery_tag: The server-assigned delivery tag
+        :param bool multiple: If set to True, the delivery tag is treated as
+                              "up to and including", so that multiple messages
+                              can be acknowledged with a single method. If set
+                              to False, the delivery tag refers to a single
+                              message. If the multiple field is 1, and the
+                              delivery tag is zero, this indicates
+                              acknowledgement of all outstanding messages.
+        :param bool requeue: If requeue is true, the server will attempt to
+                             requeue the message. If requeue is false or the
+                             requeue attempt fails the messages are discarded or
+                             dead-lettered.
+        """
+        ...
     def basic_get(
         self, queue: str, auto_ack: bool = False
-    ) -> tuple[Basic.GetOk | None, BasicProperties | None, bytes | None]: ...
+    ) -> tuple[Basic.GetOk | None, BasicProperties | None, bytes | None]:
+        """
+        Get a single message from the AMQP broker. Returns a sequence with
+        the method frame, message properties, and body.
+
+        :param str queue: Name of queue from which to get a message
+        :param bool auto_ack: Tell the broker to not expect a reply
+        :returns: a three-tuple; (None, None, None) if the queue was empty;
+            otherwise (method, properties, body); NOTE: body may be None
+        :rtype: (spec.Basic.GetOk|None, spec.BasicProperties|None, bytes|None)
+        """
+        ...
     def basic_publish(
         self,
         exchange: str,
@@ -786,7 +984,7 @@ class BlockingChannel:
 
         For more information on basic_publish and what the parameters do, see:
 
-            http://www.rabbitmq.com/amqp-0-9-1-reference.html#basic.publish
+            https://www.rabbitmq.com/amqp-0-9-1-reference.html#basic.publish
 
         NOTE: mandatory may be enabled even without delivery
           confirmation, but in the absence of delivery confirmation the
@@ -880,18 +1078,76 @@ class BlockingChannel:
         auto_delete: bool = False,
         internal: bool = False,
         arguments: dict[str, Any] | None = None,
-    ) -> None: ...
-    def exchange_delete(self, exchange: str | None = None, if_unused: bool = False) -> Method[Exchange.DeleteOk]: ...
+    ) -> None:
+        """
+        This method creates an exchange if it does not already exist, and if
+        the exchange exists, verifies that it is of the correct and expected
+        class.
+
+        If passive set, the server will reply with Declare-Ok if the exchange
+        already exists with the same name, and raise an error if not and if the
+        exchange does not already exist, the server MUST raise a channel
+        exception with reply code 404 (not found).
+
+        :param str exchange: The exchange name consists of a non-empty sequence of
+                          these characters: letters, digits, hyphen, underscore,
+                          period, or colon.
+        :param str exchange_type: The exchange type to use
+        :param bool passive: Perform a declare or just check to see if it exists
+        :param bool durable: Survive a reboot of RabbitMQ
+        :param bool auto_delete: Remove when no more queues are bound to it
+        :param bool internal: Can only be published to by other exchanges
+        :param dict arguments: Custom key/value pair arguments for the exchange
+        :returns: Method frame from the Exchange.Declare-ok response
+        :rtype: `pika.frame.Method` having `method` attribute of type
+            `spec.Exchange.DeclareOk`
+        """
+        ...
+    def exchange_delete(self, exchange: str | None = None, if_unused: bool = False) -> Method[Exchange.DeleteOk]:
+        """
+        Delete the exchange.
+
+        :param str exchange: The exchange name
+        :param bool if_unused: only delete if the exchange is unused
+        :returns: Method frame from the Exchange.Delete-ok response
+        :rtype: `pika.frame.Method` having `method` attribute of type
+            `spec.Exchange.DeleteOk`
+        """
+        ...
     def exchange_bind(
         self, destination: str, source: str, routing_key: str = "", arguments: dict[str, Any] | None = None
-    ) -> Method[Exchange.BindOk]: ...
+    ) -> Method[Exchange.BindOk]:
+        """
+        Bind an exchange to another exchange.
+
+        :param str destination: The destination exchange to bind
+        :param str source: The source exchange to bind to
+        :param str routing_key: The routing key to bind on
+        :param dict arguments: Custom key/value pair arguments for the binding
+        :returns: Method frame from the Exchange.Bind-ok response
+        :rtype: `pika.frame.Method` having `method` attribute of type
+          `spec.Exchange.BindOk`
+        """
+        ...
     def exchange_unbind(
         self,
         destination: str | None = None,
         source: str | None = None,
         routing_key: str = "",
         arguments: dict[str, Any] | None = None,
-    ) -> Method[Exchange.UnbindOk]: ...
+    ) -> Method[Exchange.UnbindOk]:
+        """
+        Unbind an exchange from another exchange.
+
+        :param str destination: The destination exchange to unbind
+        :param str source: The source exchange to unbind from
+        :param str routing_key: The routing key to unbind
+        :param dict arguments: Custom key/value pair arguments for the binding
+        :returns: Method frame from the Exchange.Unbind-ok response
+        :rtype: `pika.frame.Method` having `method` attribute of type
+            `spec.Exchange.UnbindOk`
+        """
+        ...
     def queue_declare(
         self,
         queue: str,
@@ -900,15 +1156,110 @@ class BlockingChannel:
         exclusive: bool = False,
         auto_delete: bool = False,
         arguments: dict[str, Any] | None = None,
-    ) -> Method[Queue.DeclareOk]: ...
-    def queue_delete(self, queue: str, if_unused: bool = False, if_empty: bool = False) -> Method[Queue.DeleteOk]: ...
-    def queue_purge(self, queue: str) -> Method[Queue.PurgeOk]: ...
+    ) -> Method[Queue.DeclareOk]:
+        """
+        Declare queue, create if needed. This method creates or checks a
+        queue. When creating a new queue the client can specify various
+        properties that control the durability of the queue and its contents,
+        and the level of sharing for the queue.
+
+        Use an empty string as the queue name for the broker to auto-generate
+        one. Retrieve this auto-generated queue name from the returned
+        `spec.Queue.DeclareOk` method frame.
+
+        :param str queue: The queue name; if empty string, the broker will
+            create a unique queue name
+        :param bool passive: Only check to see if the queue exists and raise
+          `ChannelClosed` if it doesn't
+        :param bool durable: Survive reboots of the broker
+        :param bool exclusive: Only allow access by the current connection
+        :param bool auto_delete: Delete after consumer cancels or disconnects
+        :param dict arguments: Custom key/value arguments for the queue
+        :returns: Method frame from the Queue.Declare-ok response
+        :rtype: `pika.frame.Method` having `method` attribute of type
+            `spec.Queue.DeclareOk`
+        """
+        ...
+    def queue_delete(self, queue: str, if_unused: bool = False, if_empty: bool = False) -> Method[Queue.DeleteOk]:
+        """
+        Delete a queue from the broker.
+
+        :param str queue: The queue to delete
+        :param bool if_unused: only delete if it's unused
+        :param bool if_empty: only delete if the queue is empty
+        :returns: Method frame from the Queue.Delete-ok response
+        :rtype: `pika.frame.Method` having `method` attribute of type
+            `spec.Queue.DeleteOk`
+        """
+        ...
+    def queue_purge(self, queue: str) -> Method[Queue.PurgeOk]:
+        """
+        Purge all of the messages from the specified queue
+
+        :param str queue: The queue to purge
+        :returns: Method frame from the Queue.Purge-ok response
+        :rtype: `pika.frame.Method` having `method` attribute of type
+            `spec.Queue.PurgeOk`
+        """
+        ...
     def queue_bind(
         self, queue: str, exchange: str, routing_key: str | None = None, arguments: dict[str, Any] | None = None
-    ) -> Method[Queue.BindOk]: ...
+    ) -> Method[Queue.BindOk]:
+        """
+        Bind the queue to the specified exchange
+
+        :param str queue: The queue to bind to the exchange
+        :param str exchange: The source exchange to bind to
+        :param str routing_key: The routing key to bind on
+        :param dict arguments: Custom key/value pair arguments for the binding
+
+        :returns: Method frame from the Queue.Bind-ok response
+        :rtype: `pika.frame.Method` having `method` attribute of type
+            `spec.Queue.BindOk`
+        """
+        ...
     def queue_unbind(
         self, queue: str, exchange: str, routing_key: str | None = None, arguments: dict[str, Any] | None = None
-    ) -> Method[Queue.UnbindOk]: ...
-    def tx_select(self) -> Method[Tx.SelectOk]: ...
-    def tx_commit(self) -> Method[Tx.CommitOk]: ...
-    def tx_rollback(self) -> Method[Tx.RollbackOk]: ...
+    ) -> Method[Queue.UnbindOk]:
+        """
+        Unbind a queue from an exchange.
+
+        :param str queue: The queue to unbind from the exchange
+        :param str exchange: The source exchange to bind from
+        :param str routing_key: The routing key to unbind
+        :param dict arguments: Custom key/value pair arguments for the binding
+
+        :returns: Method frame from the Queue.Unbind-ok response
+        :rtype: `pika.frame.Method` having `method` attribute of type
+            `spec.Queue.UnbindOk`
+        """
+        ...
+    def tx_select(self) -> Method[Tx.SelectOk]:
+        """
+        Select standard transaction mode. This method sets the channel to use
+        standard transactions. The client must use this method at least once on
+        a channel before using the Commit or Rollback methods.
+
+        :returns: Method frame from the Tx.Select-ok response
+        :rtype: `pika.frame.Method` having `method` attribute of type
+            `spec.Tx.SelectOk`
+        """
+        ...
+    def tx_commit(self) -> Method[Tx.CommitOk]:
+        """
+        Commit a transaction.
+
+        :returns: Method frame from the Tx.Commit-ok response
+        :rtype: `pika.frame.Method` having `method` attribute of type
+            `spec.Tx.CommitOk`
+        """
+        ...
+    def tx_rollback(self) -> Method[Tx.RollbackOk]:
+        """
+        Rollback a transaction.
+
+        :returns: Method frame from the Tx.Rollback-ok response
+        :rtype: `pika.frame.Method` having `method` attribute of type
+            `spec.Tx.RollbackOk`
+        """
+        ...

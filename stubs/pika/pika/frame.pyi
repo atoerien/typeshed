@@ -54,7 +54,7 @@ class Method(Frame, Generic[_M]):
         """
         Return the AMQP binary encoded value of the frame
 
-        :rtype: str
+        :rtype: bytes
         """
         ...
 
@@ -78,7 +78,7 @@ class Header(Frame):
         """
         Return the AMQP binary encoded value of the frame
 
-        :rtype: str
+        :rtype: bytes
         """
         ...
 
@@ -93,14 +93,14 @@ class Body(Frame):
         Parameters:
 
         - channel_number: int
-        - fragment: unicode or str
+        - fragment: bytes
         """
         ...
     def marshal(self) -> bytes:
         """
         Return the AMQP binary encoded value of the frame
 
-        :rtype: str
+        :rtype: bytes
         """
         ...
 
@@ -117,7 +117,7 @@ class Heartbeat(Frame):
         """
         Return the AMQP binary encoded value of the frame
 
-        :rtype: str
+        :rtype: bytes
         """
         ...
 
@@ -145,7 +145,7 @@ class ProtocolHeader(AMQPObject):
         Return the full AMQP wire protocol frame data representation of the
         ProtocolHeader frame
 
-        :rtype: str
+        :rtype: bytes
         """
         ...
 
@@ -154,7 +154,7 @@ def decode_frame(data_in: bytes) -> tuple[int, Frame | None]:
     Receives raw socket data and attempts to turn it into a frame.
     Returns bytes used to make the frame and the frame
 
-    :param str data_in: The raw data stream
+    :param bytes data_in: The raw data stream
     :rtype: tuple(bytes consumed, frame)
     :raises: pika.exceptions.InvalidFrameError
     """

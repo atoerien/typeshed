@@ -355,7 +355,7 @@ class ConnectionParameters(Parameters):
         :param str host: Hostname or IP Address to connect to
         :param int port: TCP port to connect to
         :param str virtual_host: RabbitMQ virtual host to use
-        :param pika.credentials.Credentials credentials: auth credentials
+        :param pika.credentials.PlainCredentials credentials: auth credentials
         :param int channel_max: Maximum number of channels to allow
         :param int frame_max: The maximum byte size for an AMQP frame
         :param int|None|callable heartbeat: Controls AMQP heartbeat timeout negotiation
@@ -610,7 +610,7 @@ class Connection(AbstractBase, metaclass=abc.ABCMeta):
         ...
     def update_secret(self, new_secret, reason, callback=None) -> None:
         """
-        RabbitMQ AMQP extension - This method updates the secret used to authenticate this connection. 
+        RabbitMQ AMQP extension - This method updates the secret used to authenticate this connection.
         It is used when secrets have an expiration date and need to be renewed, like OAuth 2 tokens.
         Pass a callback to be notified of the response from the server.
 

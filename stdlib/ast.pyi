@@ -843,6 +843,7 @@ class Assert(stmt):
             ...
 
 class Import(stmt):
+    """Import(alias* names)"""
     if sys.version_info >= (3, 15):
         __match_args__ = ("names", "is_lazy")
     else:
@@ -862,9 +863,12 @@ class Import(stmt):
         def __replace__(self, *, names: list[alias] = ..., is_lazy: bool | None = ..., **kwargs: Unpack[_Attributes]) -> Self: ...
 
     elif sys.version_info >= (3, 14):
-        def __replace__(self, *, names: list[alias] = ..., **kwargs: Unpack[_Attributes]) -> Self: ...
+        def __replace__(self, *, names: list[alias] = ..., **kwargs: Unpack[_Attributes]) -> Self:
+            """Return a copy of the AST node with new values for the specified fields."""
+            ...
 
 class ImportFrom(stmt):
+    """ImportFrom(identifier? module, alias* names, int? level)"""
     if sys.version_info >= (3, 15):
         __match_args__ = ("module", "names", "level", "is_lazy")
     else:

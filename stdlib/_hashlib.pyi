@@ -143,9 +143,36 @@ def compare_digest(a: ReadableBuffer, b: ReadableBuffer, /) -> bool:
     """
     ...
 @overload
-def compare_digest(a: AnyStr, b: AnyStr, /) -> bool: ...
-def get_fips_mode() -> int: ...
-def hmac_new(key: ReadableBuffer, msg: ReadableBuffer = b"", digestmod: _DigestMod = None) -> HMAC: ...
+def compare_digest(a: AnyStr, b: AnyStr, /) -> bool:
+    """
+    Return 'a == b'.
+
+    This function uses an approach designed to prevent
+    timing analysis, making it appropriate for cryptography.
+
+    a and b must both be of the same type: either str (ASCII only),
+    or any bytes-like object.
+
+    Note: If a and b are of different lengths, or if an error occurs,
+    a timing attack could theoretically reveal information about the
+    types and lengths of a and b--but not their values.
+    """
+    ...
+def get_fips_mode() -> int:
+    """
+    Determine the OpenSSL FIPS mode of operation.
+
+    For OpenSSL 3.0.0 and newer it returns the state of the default provider
+    in the default OSSL context. It's not quite the same as FIPS_mode() but good
+    enough for unittests.
+
+    Effectively any non-zero return value indicates FIPS mode;
+    values other than 1 may have additional significance.
+    """
+    ...
+def hmac_new(key: ReadableBuffer, msg: ReadableBuffer = b"", digestmod: _DigestMod = None) -> HMAC:
+    """Return a new hmac object."""
+    ...
 
 if sys.version_info >= (3, 13):
     def new(
@@ -226,7 +253,52 @@ else:
         """
         Return a new hash object using the named algorithm.
 
-def hmac_digest(key: ReadableBuffer, msg: ReadableBuffer, digest: str) -> bytes: ...
+        An optional string argument may be provided and will be
+        automatically hashed.
+
+        The MD5 and SHA1 algorithms are always supported.
+        """
+        ...
+    def openssl_md5(string: ReadableBuffer = b"", *, usedforsecurity: bool = True) -> HASH:
+        """Returns a md5 hash object; optionally initialized with a string"""
+        ...
+    def openssl_sha1(string: ReadableBuffer = b"", *, usedforsecurity: bool = True) -> HASH:
+        """Returns a sha1 hash object; optionally initialized with a string"""
+        ...
+    def openssl_sha224(string: ReadableBuffer = b"", *, usedforsecurity: bool = True) -> HASH:
+        """Returns a sha224 hash object; optionally initialized with a string"""
+        ...
+    def openssl_sha256(string: ReadableBuffer = b"", *, usedforsecurity: bool = True) -> HASH:
+        """Returns a sha256 hash object; optionally initialized with a string"""
+        ...
+    def openssl_sha384(string: ReadableBuffer = b"", *, usedforsecurity: bool = True) -> HASH:
+        """Returns a sha384 hash object; optionally initialized with a string"""
+        ...
+    def openssl_sha512(string: ReadableBuffer = b"", *, usedforsecurity: bool = True) -> HASH:
+        """Returns a sha512 hash object; optionally initialized with a string"""
+        ...
+    def openssl_sha3_224(string: ReadableBuffer = b"", *, usedforsecurity: bool = True) -> HASH:
+        """Returns a sha3-224 hash object; optionally initialized with a string"""
+        ...
+    def openssl_sha3_256(string: ReadableBuffer = b"", *, usedforsecurity: bool = True) -> HASH:
+        """Returns a sha3-256 hash object; optionally initialized with a string"""
+        ...
+    def openssl_sha3_384(string: ReadableBuffer = b"", *, usedforsecurity: bool = True) -> HASH:
+        """Returns a sha3-384 hash object; optionally initialized with a string"""
+        ...
+    def openssl_sha3_512(string: ReadableBuffer = b"", *, usedforsecurity: bool = True) -> HASH:
+        """Returns a sha3-512 hash object; optionally initialized with a string"""
+        ...
+    def openssl_shake_128(string: ReadableBuffer = b"", *, usedforsecurity: bool = True) -> HASHXOF:
+        """Returns a shake-128 variable hash object; optionally initialized with a string"""
+        ...
+    def openssl_shake_256(string: ReadableBuffer = b"", *, usedforsecurity: bool = True) -> HASHXOF:
+        """Returns a shake-256 variable hash object; optionally initialized with a string"""
+        ...
+
+def hmac_digest(key: ReadableBuffer, msg: ReadableBuffer, digest: str) -> bytes:
+    """Single-shot HMAC."""
+    ...
 def pbkdf2_hmac(
     hash_name: str, password: ReadableBuffer, salt: ReadableBuffer, iterations: int, dklen: int | None = None
 ) -> bytes:

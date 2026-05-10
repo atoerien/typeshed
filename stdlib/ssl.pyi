@@ -444,7 +444,12 @@ class SSLSocket(socket.socket):
     def sendto(self, data: ReadableBuffer, flags_or_addr: int, addr: socket._Address) -> int: ...
     def shutdown(self, how: int) -> None: ...
     @deprecated("Deprecated since Python 3.6. Use `SSLSocket.recv` method instead.")
-    def read(self, len: int = 1024, buffer: WriteableBuffer | None = None) -> bytes: ...
+    def read(self, len: int = 1024, buffer: WriteableBuffer | None = None) -> bytes:
+        """
+        Read up to LEN bytes and return them.
+        Return zero-length string on EOF.
+        """
+        ...
     @deprecated("Deprecated since Python 3.6. Use `SSLSocket.send` method instead.")
     def write(self, data: ReadableBuffer) -> int:
         """
@@ -476,17 +481,52 @@ class SSLSocket(socket.socket):
         """
         ...
     @overload
-    def getpeercert(self, binary_form: bool) -> _PeerCertRetType: ...
-    def cipher(self) -> tuple[str, str, int] | None: ...
-    def shared_ciphers(self) -> list[tuple[str, str, int]] | None: ...
-    def compression(self) -> str | None: ...
+    def getpeercert(self, binary_form: bool) -> _PeerCertRetType:
+        """
+        Returns a formatted version of the data in the certificate provided
+        by the other end of the SSL channel.
+
+        Return None if no certificate was provided, {} if a certificate was
+        provided, but not validated.
+        """
+        ...
+    def cipher(self) -> tuple[str, str, int] | None:
+        """
+        Return the currently selected cipher as a 3-tuple ``(name,
+        ssl_version, secret_bits)``.
+        """
+        ...
+    def shared_ciphers(self) -> list[tuple[str, str, int]] | None:
+        """
+        Return a list of ciphers shared by the client during the handshake or
+        None if this is not a valid server connection.
+        """
+        ...
+    def compression(self) -> str | None:
+        """
+        Return the current compression algorithm in use, or ``None`` if
+        compression was not negotiated or not supported by one of the peers.
+        """
+        ...
     if sys.version_info >= (3, 15):
         def group(self) -> str | None: ...
         def client_sigalg(self) -> str | None: ...
         def server_sigalg(self) -> str | None: ...
 
-    def get_channel_binding(self, cb_type: str = "tls-unique") -> bytes | None: ...
-    def selected_alpn_protocol(self) -> str | None: ...
+    def get_channel_binding(self, cb_type: str = "tls-unique") -> bytes | None:
+        """
+        Get channel binding data for current connection.  Raise ValueError
+        if the requested `cb_type` is not supported.  Return bytes of the data
+        or None if the data is not available (e.g. before the handshake).
+        """
+        ...
+    def selected_alpn_protocol(self) -> str | None:
+        """
+        Return the currently selected ALPN protocol as a string, or ``None``
+        if a next protocol was not negotiated or if ALPN is not supported by one
+        of the peers.
+        """
+        ...
     @deprecated("Deprecated since Python 3.10. Use ALPN instead.")
     def selected_npn_protocol(self) -> str | None:
         """
@@ -789,8 +829,22 @@ class SSLObject:
         """Was the client session reused during handshake"""
         ...
     def __init__(self, *args: Any, **kwargs: Any) -> None: ...
-    def read(self, len: int = 1024, buffer: WriteableBuffer | None = None) -> bytes: ...
-    def write(self, data: ReadableBuffer) -> int: ...
+    def read(self, len: int = 1024, buffer: WriteableBuffer | None = None) -> bytes:
+        """
+        Read up to 'len' bytes from the SSL object and return them.
+
+        If 'buffer' is provided, read into this buffer and return the number of
+        bytes read.
+        """
+        ...
+    def write(self, data: ReadableBuffer) -> int:
+        """
+        Write 'data' to the SSL object and return the number of bytes
+        written.
+
+        The 'data' argument must support the buffer interface.
+        """
+        ...
     @overload
     def getpeercert(self, binary_form: Literal[False] = False) -> _PeerCertRetDictType | None:
         """
@@ -829,20 +883,58 @@ class SSLObject:
         """
         ...
     @deprecated("Deprecated since Python 3.10. Use ALPN instead.")
-    def selected_npn_protocol(self) -> str | None: ...
-    def cipher(self) -> tuple[str, str, int] | None: ...
-    def shared_ciphers(self) -> list[tuple[str, str, int]] | None: ...
-    def compression(self) -> str | None: ...
+    def selected_npn_protocol(self) -> str | None:
+        """
+        Return the currently selected NPN protocol as a string, or ``None``
+        if a next protocol was not negotiated or if NPN is not supported by one
+        of the peers.
+        """
+        ...
+    def cipher(self) -> tuple[str, str, int] | None:
+        """
+        Return the currently selected cipher as a 3-tuple ``(name,
+        ssl_version, secret_bits)``.
+        """
+        ...
+    def shared_ciphers(self) -> list[tuple[str, str, int]] | None:
+        """
+        Return a list of ciphers shared by the client during the handshake or
+        None if this is not a valid server connection.
+        """
+        ...
+    def compression(self) -> str | None:
+        """
+        Return the current compression algorithm in use, or ``None`` if
+        compression was not negotiated or not supported by one of the peers.
+        """
+        ...
     if sys.version_info >= (3, 15):
         def group(self) -> str | None: ...
         def client_sigalg(self) -> str | None: ...
         def server_sigalg(self) -> str | None: ...
 
-    def pending(self) -> int: ...
-    def do_handshake(self) -> None: ...
-    def unwrap(self) -> None: ...
-    def version(self) -> str | None: ...
-    def get_channel_binding(self, cb_type: str = "tls-unique") -> bytes | None: ...
+    def pending(self) -> int:
+        """Return the number of bytes that can be read immediately."""
+        ...
+    def do_handshake(self) -> None:
+        """Start the SSL/TLS handshake."""
+        ...
+    def unwrap(self) -> None:
+        """Start the SSL shutdown handshake."""
+        ...
+    def version(self) -> str | None:
+        """
+        Return a string identifying the protocol version used by the
+        current SSL channel. 
+        """
+        ...
+    def get_channel_binding(self, cb_type: str = "tls-unique") -> bytes | None:
+        """
+        Get channel binding data for current connection.  Raise ValueError
+        if the requested `cb_type` is not supported.  Return bytes of the data
+        or None if the data is not available (e.g. before the handshake).
+        """
+        ...
     def verify_client_post_handshake(self) -> None: ...
     if sys.version_info >= (3, 13):
         def get_verified_chain(self) -> list[bytes]:

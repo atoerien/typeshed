@@ -369,7 +369,9 @@ class Pattern(Generic[AnyStr]):
         """Matches zero or more characters at the beginning of the string."""
         ...
     @overload
-    def match(self, string: AnyStr, pos: int = 0, endpos: int = sys.maxsize) -> Match[AnyStr] | None: ...
+    def match(self, string: AnyStr, pos: int = 0, endpos: int = sys.maxsize) -> Match[AnyStr] | None:
+        """Matches zero or more characters at the beginning of the string."""
+        ...
     if sys.version_info >= (3, 15):
         prefixmatch = match
 
@@ -487,6 +489,7 @@ class Pattern(Generic[AnyStr]):
 # ----- re variables and constants -----
 
 class RegexFlag(enum.IntFlag):
+    """An enumeration."""
     A = 256
     ASCII = A
     DEBUG = 128
@@ -567,7 +570,12 @@ def match(pattern: str | Pattern[str], string: str, flags: _FlagsType = 0) -> Ma
     """
     ...
 @overload
-def match(pattern: bytes | Pattern[bytes], string: ReadableBuffer, flags: _FlagsType = 0) -> Match[bytes] | None: ...
+def match(pattern: bytes | Pattern[bytes], string: ReadableBuffer, flags: _FlagsType = 0) -> Match[bytes] | None:
+    """
+    Try to apply the pattern at the start of the string, returning
+    a Match object, or None if no match was found.
+    """
+    ...
 
 if sys.version_info >= (3, 15):
     @overload

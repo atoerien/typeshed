@@ -24,19 +24,35 @@ class Method(AMQPObject):
     # so it's more convenient to use that here as well.
     @property
     def synchronous(self) -> bool: ...
-    def get_properties(self) -> Properties: ...
-    def get_body(self) -> bytes: ...
-    def encode(self) -> list[bytes]: ...
-    def decode(self, encoded: bytes, offset: int = 0) -> Method: ...
+    def get_properties(self) -> Properties:
+        """
+        Return the properties if they are set.
 
         :rtype: pika.frame.Properties
         """
         ...
-    def get_body(self) -> str:
+    def get_body(self) -> bytes:
         """
         Return the message body if it is set.
 
         :rtype: str|unicode
+        """
+        ...
+    def encode(self) -> list[bytes]:
+        """
+        Encode the method into a binary format.
+
+        :rtype: List[bytes]
+        """
+        ...
+    def decode(self, encoded: bytes, offset: int = 0) -> Method:
+        """
+        Decode the method from a binary format.
+
+        :param bytes encoded: The encoded method data
+        :param int offset: The offset to start decoding from
+
+        :rtype: Method
         """
         ...
 

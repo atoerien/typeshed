@@ -68,7 +68,7 @@ class PlainCredentials:
         Validate that this type of authentication is supported
 
         :param spec.Connection.Start start: Connection.Start method
-        :rtype: tuple(str|None, str|None)
+        :rtype: tuple(str|None, bytes|None)
         """
         ...
     def erase_credentials(self) -> None:
@@ -92,7 +92,7 @@ class ExternalCredentials:
         Validate that this type of authentication is supported
 
         :param spec.Connection.Start start: Connection.Start method
-        :rtype: tuple(str or None, str or None)
+        :rtype: tuple(str|None, bytes|None)
         """
         ...
     def erase_credentials(self) -> None:
