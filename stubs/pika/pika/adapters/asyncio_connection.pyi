@@ -1,13 +1,14 @@
-"""Use pika with the Asyncio EventLoop"""
-
-from asyncio import AbstractEventLoop
-from collections.abc import Callable
+from _typeshed import Incomplete
+from asyncio import AbstractEventLoop, Future, Handle
+from collections.abc import Callable, Sequence
 from logging import Logger
 from typing_extensions import Self
 
-from ..connection import Parameters
+from ..connection import Connection, Parameters
 from .base_connection import BaseConnection
-from .utils import connection_workflow, io_services_utils, nbio_interface
+from .utils import io_services_utils
+from .utils.connection_workflow import AbstractAMQPConnectionWorkflow, AMQPConnectorException
+from .utils.nbio_interface import AbstractFileDescriptorServices, AbstractIOReference, AbstractIOServices, AbstractTimerReference
 
 LOGGER: Logger
 
@@ -53,137 +54,44 @@ class AsyncioConnection(BaseConnection):
     @classmethod
     def create_connection(
         cls,
-        connection_configs,
-        on_done,
+        connection_configs: Sequence[Parameters],
+        on_done: Callable[[Connection | AMQPConnectorException], object],
         custom_ioloop: AbstractEventLoop | None = None,
-        workflow: connection_workflow.AbstractAMQPConnectionWorkflow | None = None,
-    ):
-        """
-        Implement
-        :py:classmethod::`pika.adapters.BaseConnection.create_connection()`.
-        """
-        ...
+        workflow: AbstractAMQPConnectionWorkflow | None = None,
+    ) -> AbstractAMQPConnectionWorkflow: ...
 
 class _AsyncioIOServicesAdapter(
     io_services_utils.SocketConnectionMixin,
     io_services_utils.StreamingConnectionMixin,
-    nbio_interface.AbstractIOServices,
-    nbio_interface.AbstractFileDescriptorServices,
+    AbstractIOServices,
+    AbstractFileDescriptorServices,
 ):
-    """
-    Implements
-    :py:class:`.utils.nbio_interface.AbstractIOServices` interface
-    on top of `asyncio`.
+    def __init__(self, loop: AbstractEventLoop | None = None) -> None: ...
+    def get_native_ioloop(self) -> AbstractEventLoop: ...
+    def close(self) -> None: ...
+    def run(self) -> None: ...
+    def stop(self) -> None: ...
+    def add_callback_threadsafe(self, callback: Callable[[], object]) -> None: ...
+    def call_later(self, delay: float, callback: Callable[[], object]) -> _TimerHandle: ...
+    def getaddrinfo(
+        self,
+        host: str,
+        port: int,
+        on_done: Callable[..., object],
+        family: int = 0,
+        socktype: int = 0,
+        proto: int = 0,
+        flags: int = 0,
+    ) -> AbstractIOReference: ...
+    def set_reader(self, fd: int, on_readable: Callable[[], object]) -> None: ...
+    def remove_reader(self, fd: int) -> bool: ...
+    def set_writer(self, fd: int, on_writable: Callable[[], object]) -> None: ...
+    def remove_writer(self, fd: int) -> bool: ...
 
-    NOTE:
-    :py:class:`.utils.nbio_interface.AbstractFileDescriptorServices`
-    interface is only required by the mixins.
-    """
-    def __init__(self, loop: AbstractEventLoop | None = None) -> None:
-        """
-        :param asyncio.AbstractEventLoop | None loop: If None, gets default
-            event loop from asyncio.
-        """
-        ...
-    def get_native_ioloop(self):
-        """
-        Implement
-        :py:meth:`.utils.nbio_interface.AbstractIOServices.get_native_ioloop()`.
-        """
-        ...
-    def close(self) -> None:
-        """
-        Implement
-        :py:meth:`.utils.nbio_interface.AbstractIOServices.close()`.
-        """
-        ...
-    def run(self) -> None:
-        """
-        Implement :py:meth:`.utils.nbio_interface.AbstractIOServices.run()`.
-
-        
-        """
-        ...
-    def stop(self) -> None:
-        """
-        Implement :py:meth:`.utils.nbio_interface.AbstractIOServices.stop()`.
-
-        
-        """
-        ...
-    def add_callback_threadsafe(self, callback) -> None:
-        """
-        Implement
-        :py:meth:`.utils.nbio_interface.AbstractIOServices.add_callback_threadsafe()`.
-        """
-        ...
-    def call_later(self, delay, callback):
-        """
-        Implement
-        :py:meth:`.utils.nbio_interface.AbstractIOServices.call_later()`.
-        """
-        ...
-    def getaddrinfo(self, host, port, on_done, family: int = 0, socktype: int = 0, proto: int = 0, flags: int = 0):
-        """
-        Implement
-        :py:meth:`.utils.nbio_interface.AbstractIOServices.getaddrinfo()`.
-        """
-        ...
-    def set_reader(self, fd, on_readable) -> None:
-        """
-        Implement
-        :py:meth:`.utils.nbio_interface.AbstractFileDescriptorServices.set_reader()`.
-        """
-        ...
-    def remove_reader(self, fd):
-        """
-        Implement
-        :py:meth:`.utils.nbio_interface.AbstractFileDescriptorServices.remove_reader()`.
-        """
-        ...
-    def set_writer(self, fd, on_writable) -> None:
-        """
-        Implement
-        :py:meth:`.utils.nbio_interface.AbstractFileDescriptorServices.set_writer()`.
-        """
-        ...
-    def remove_writer(self, fd):
-        """
-        Implement
-        :py:meth:`.utils.nbio_interface.AbstractFileDescriptorServices.remove_writer()`.
-        """
-        ...
-
-class _TimerHandle(nbio_interface.AbstractTimerReference):
-    """
-    This module's adaptation of `nbio_interface.AbstractTimerReference`.
-
-    
-    """
-    def __init__(self, handle) -> None:
-        """:param asyncio.Handle handle:"""
-        ...
+class _TimerHandle(AbstractTimerReference):
+    def __init__(self, handle: Handle) -> None: ...
     def cancel(self) -> None: ...
 
-class _AsyncioIOReference(nbio_interface.AbstractIOReference):
-    """
-    This module's adaptation of `nbio_interface.AbstractIOReference`.
-
-    
-    """
-    def __init__(self, future, on_done) -> None:
-        """
-        :param asyncio.Future future:
-        :param callable on_done: user callback that takes the completion result
-            or exception as its only arg. It will not be called if the operation
-            was cancelled.
-        """
-        ...
-    def cancel(self):
-        """
-        Cancel pending operation
-
-        :returns: False if was already done or cancelled; True otherwise
-        :rtype: bool
-        """
-        ...
+class _AsyncioIOReference(AbstractIOReference):
+    def __init__(self, future: Future[Incomplete], on_done: Callable[[BaseConnection | BaseException], object]) -> None: ...
+    def cancel(self) -> bool: ...

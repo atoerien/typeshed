@@ -471,47 +471,19 @@ class TestCase:
     @overload
     def assertWarnsRegex(
         self, expected_warning: type[Warning] | tuple[type[Warning], ...], expected_regex: str | Pattern[str], *, msg: Any = ...
-    ) -> _AssertWarnsContext:
-        """
-        Asserts that the message in a triggered warning matches a regexp.
-        Basic functioning is similar to assertWarns() with the addition
-        that only warnings whose messages also match the regular expression
-        are considered successful matches.
+    ) -> _AssertWarnsContext: ...
+    if sys.version_info >= (3, 15):
+        def assertLogs(
+            self,
+            logger: str | logging.Logger | None = None,
+            level: int | str | None = None,
+            formatter: logging.Formatter | None = None,
+        ) -> _AssertLogsContext[_LoggingWatcher]: ...
+    else:
+        def assertLogs(
+            self, logger: str | logging.Logger | None = None, level: int | str | None = None
+        ) -> _AssertLogsContext[_LoggingWatcher]: ...
 
-        Args:
-            expected_warning: Warning class expected to be triggered.
-            expected_regex: Regex (re.Pattern object or string) expected
-                    to be found in error message.
-            args: Function to be called and extra positional args.
-            kwargs: Extra kwargs.
-            msg: Optional message used in case of failure. Can only be used
-                    when assertWarnsRegex is used as a context manager.
-        """
-        ...
-    def assertLogs(
-        self, logger: str | logging.Logger | None = None, level: int | str | None = None
-    ) -> _AssertLogsContext[_LoggingWatcher]:
-        """
-        Fail unless a log message of level *level* or higher is emitted
-        on *logger_name* or its children.  If omitted, *level* defaults to
-        INFO and *logger* defaults to the root logger.
-
-        This method must be used as a context manager, and will yield
-        a recording object with two attributes: `output` and `records`.
-        At the end of the context manager, the `output` attribute will
-        be a list of the matching formatted log messages and the
-        `records` attribute will be a list of the corresponding LogRecord
-        objects.
-
-        Example::
-
-            with self.assertLogs('foo', level='INFO') as cm:
-                logging.getLogger('foo').info('first message')
-                logging.getLogger('foo.bar').error('second message')
-            self.assertEqual(cm.output, ['INFO:foo:first message',
-                                         'ERROR:foo.bar:second message'])
-        """
-        ...
     def assertNoLogs(
         self, logger: str | logging.Logger | None = None, level: int | str | None = None
     ) -> _AssertLogsContext[None]:

@@ -42,7 +42,7 @@ def mac_ver(
     """
     ...
 
-if sys.version_info >= (3, 13):
+if sys.version_info < (3, 15):
     @deprecated("Deprecated since Python 3.13; will be removed in Python 3.15.")
     def java_ver(
         release: str = "",
@@ -62,55 +62,8 @@ if sys.version_info >= (3, 13):
         """
         ...
 
-else:
-    def java_ver(
-        release: str = "",
-        vendor: str = "",
-        vminfo: tuple[str, str, str] = ("", "", ""),
-        osinfo: tuple[str, str, str] = ("", "", ""),
-    ) -> tuple[str, str, tuple[str, str, str], tuple[str, str, str]]:
-        """
-        Version interface for Jython.
-
-        Returns a tuple (release, vendor, vminfo, osinfo) with vminfo being
-        a tuple (vm_name, vm_release, vm_vendor) and osinfo being a
-        tuple (os_name, os_version, os_arch).
-
-        Values which cannot be determined are set to the defaults
-        given as parameters (which all default to '').
-        """
-        ...
-
-def system_alias(system: str, release: str, version: str) -> tuple[str, str, str]:
-    """
-    Returns (system, release, version) aliased to common
-    marketing names used for some systems.
-
-    It also does some reordering of the information in some cases
-    where it would otherwise cause confusion.
-    """
-    ...
-def architecture(executable: str = sys.executable, bits: str = "", linkage: str = "") -> tuple[str, str]:
-    """
-    Queries the given executable (defaults to the Python interpreter
-    binary) for various architecture information.
-
-    Returns a tuple (bits, linkage) which contains information about
-    the bit architecture and the linkage format used for the
-    executable. Both values are returned as strings.
-
-    Values that cannot be determined are returned as given by the
-    parameter presets. If bits is given as '', the sizeof(pointer)
-    (or sizeof(long) on Python version < 1.5.2) is used as
-    indicator for the supported pointer size.
-
-    The function relies on the system's "file" command to do the
-    actual work. This is available on most if not all Unix
-    platforms. On some non-Unix platforms where the "file" command
-    does not exist and the executable is set to the Python interpreter
-    binary defaults from _default_architecture are used.
-    """
-    ...
+def system_alias(system: str, release: str, version: str) -> tuple[str, str, str]: ...
+def architecture(executable: str = sys.executable, bits: str = "", linkage: str = "") -> tuple[str, str]: ...
 
 # This class is not exposed. It calls itself platform.uname_result_base.
 # At runtime it only has 5 fields.

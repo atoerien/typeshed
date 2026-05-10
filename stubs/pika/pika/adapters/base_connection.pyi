@@ -10,8 +10,8 @@ from collections.abc import Callable
 from logging import Logger
 from typing_extensions import Self
 
-from ..adapters.utils import nbio_interface
-from ..connection import Connection
+from ..adapters.utils.nbio_interface import AbstractIOServices, AbstractStreamProtocol
+from ..connection import Connection, Parameters
 
 LOGGER: Logger
 
@@ -23,36 +23,13 @@ class BaseConnection(Connection, metaclass=abc.ABCMeta):
     """
     def __init__(
         self,
-        parameters,
+        parameters: Parameters | None,
         on_open_callback: Callable[[Self], object] | None,
         on_open_error_callback: Callable[[Self, BaseException], object] | None,
         on_close_callback: Callable[[Self, BaseException], object] | None,
-        nbio,
-        internal_connection_workflow: bool,
-    ) -> None:
-        """
-        Create a new instance of the Connection object.
-
-        :param None|pika.connection.Parameters parameters: Connection parameters
-        :param None|method on_open_callback: Method to call on connection open
-        :param None | method on_open_error_callback: Called if the connection
-            can't be established or connection establishment is interrupted by
-            `Connection.close()`: on_open_error_callback(Connection, exception).
-        :param None | method on_close_callback: Called when a previously fully
-            open connection is closed:
-            `on_close_callback(Connection, exception)`, where `exception` is
-            either an instance of `exceptions.ConnectionClosed` if closed by
-            user or broker or exception of another type that describes the cause
-            of connection failure.
-        :param pika.adapters.utils.nbio_interface.AbstractIOServices nbio:
-            asynchronous services
-        :param bool internal_connection_workflow: True for autonomous connection
-            establishment which is default; False for externally-managed
-            connection workflow via the `create_connection()` factory.
-        :raises: RuntimeError
-        :raises: ValueError
-        """
-        ...
+        nbio: AbstractIOServices,
+        internal_connection_workflow: bool = True,
+    ) -> None: ...
     @classmethod
     @abc.abstractmethod
     def create_connection(cls, connection_configs, on_done, custom_ioloop=None, workflow=None):
@@ -92,12 +69,7 @@ class BaseConnection(Connection, metaclass=abc.ABCMeta):
         """
         ...
 
-class _StreamingProtocolShim(nbio_interface.AbstractStreamProtocol):
-    """
-    Shim for callbacks from transport so that we BaseConnection can
-    delegate to private methods, thus avoiding contamination of API with
-    methods that look public, but aren't.
-    """
+class _StreamingProtocolShim(AbstractStreamProtocol):
     connection_made: Incomplete
     connection_lost: Incomplete
     eof_received: Incomplete
