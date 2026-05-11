@@ -595,129 +595,32 @@ class Counter(dict[_T, int], Generic[_T]):
         """
         ...
     @overload
-    def update(self, iterable: None = None, /, **kwargs: int) -> None:
-        """
-        Like dict.update() but add counts instead of replacing them.
+    def update(self, iterable: None = None, /, **kwargs: int) -> None: ...
+    def total(self) -> int: ...
+    def __missing__(self, key: _T) -> int: ...
+    def __delitem__(self, elem: object) -> None: ...
+    def __eq__(self, other: object) -> bool: ...
+    def __ne__(self, other: object) -> bool: ...
+    def __le__(self, other: Counter[Any]) -> bool: ...
+    def __lt__(self, other: Counter[Any]) -> bool: ...
+    def __ge__(self, other: Counter[Any]) -> bool: ...
+    def __gt__(self, other: Counter[Any]) -> bool: ...
+    def __add__(self, other: Counter[_S]) -> Counter[_T | _S]: ...
+    def __sub__(self, other: Counter[_T]) -> Counter[_T]: ...
+    def __and__(self, other: Counter[_T]) -> Counter[_T]: ...
+    def __or__(self, other: Counter[_S]) -> Counter[_T | _S]: ...  # type: ignore[override]
+    if sys.version_info >= (3, 15):
+        def __xor__(self, other: Counter[_S]) -> Counter[_T | _S]: ...  # type: ignore[override]
 
-        Source can be an iterable, a dictionary, or another Counter instance.
-
-        >>> c = Counter('which')
-        >>> c.update('witch')           # add elements from another iterable
-        >>> d = Counter('watch')
-        >>> c.update(d)                 # add elements from another counter
-        >>> c['h']                      # four 'h' in which, witch, and watch
-        4
-        """
-        ...
-    def total(self) -> int:
-        """Sum of the counts"""
-        ...
-    def __missing__(self, key: _T) -> int:
-        """The count of elements not in the Counter is zero."""
-        ...
-    def __delitem__(self, elem: object) -> None:
-        """Like dict.__delitem__() but does not raise KeyError for missing values."""
-        ...
-    def __eq__(self, other: object) -> bool:
-        """True if all counts agree. Missing counts are treated as zero."""
-        ...
-    def __ne__(self, other: object) -> bool:
-        """True if any counts disagree. Missing counts are treated as zero."""
-        ...
-    def __le__(self, other: Counter[Any]) -> bool:
-        """True if all counts in self are a subset of those in other."""
-        ...
-    def __lt__(self, other: Counter[Any]) -> bool:
-        """True if all counts in self are a proper subset of those in other."""
-        ...
-    def __ge__(self, other: Counter[Any]) -> bool:
-        """True if all counts in self are a superset of those in other."""
-        ...
-    def __gt__(self, other: Counter[Any]) -> bool:
-        """True if all counts in self are a proper superset of those in other."""
-        ...
-    def __add__(self, other: Counter[_S]) -> Counter[_T | _S]:
-        """
-        Add counts from two counters.
-
-        >>> Counter('abbb') + Counter('bcc')
-        Counter({'b': 4, 'c': 2, 'a': 1})
-        """
-        ...
-    def __sub__(self, other: Counter[_T]) -> Counter[_T]:
-        """
-        Subtract count, but keep only results with positive counts.
-
-        >>> Counter('abbbc') - Counter('bccd')
-        Counter({'b': 2, 'a': 1})
-        """
-        ...
-    def __and__(self, other: Counter[_T]) -> Counter[_T]:
-        """
-        Intersection is the minimum of corresponding counts.
-
-        >>> Counter('abbb') & Counter('bcc')
-        Counter({'b': 1})
-        """
-        ...
-    def __or__(self, other: Counter[_S]) -> Counter[_T | _S]:
-        """
-        Union is the maximum of value in either of the input counters.
-
-        >>> Counter('abbb') | Counter('bcc')
-        Counter({'b': 3, 'c': 2, 'a': 1})
-        """
-        ...
-    def __pos__(self) -> Counter[_T]:
-        """Adds an empty counter, effectively stripping negative and zero counts"""
-        ...
-    def __neg__(self) -> Counter[_T]:
-        """
-        Subtracts from an empty counter.  Strips positive and zero counts,
-        and flips the sign on negative counts.
-        """
-        ...
+    def __pos__(self) -> Counter[_T]: ...
+    def __neg__(self) -> Counter[_T]: ...
     # several type: ignores because __iadd__ is supposedly incompatible with __add__, etc.
-    def __iadd__(self, other: SupportsItems[_T, int]) -> Self:
-        """
-        Inplace add from another counter, keeping only positive counts.
-
-        >>> c = Counter('abbb')
-        >>> c += Counter('bcc')
-        >>> c
-        Counter({'b': 4, 'c': 2, 'a': 1})
-        """
-        ...
-    def __isub__(self, other: SupportsItems[_T, int]) -> Self:
-        """
-        Inplace subtract counter, but keep only results with positive counts.
-
-        >>> c = Counter('abbbc')
-        >>> c -= Counter('bccd')
-        >>> c
-        Counter({'b': 2, 'a': 1})
-        """
-        ...
-    def __iand__(self, other: SupportsItems[_T, int]) -> Self:
-        """
-        Inplace intersection is the minimum of corresponding counts.
-
-        >>> c = Counter('abbb')
-        >>> c &= Counter('bcc')
-        >>> c
-        Counter({'b': 1})
-        """
-        ...
-    def __ior__(self, other: SupportsItems[_T, int]) -> Self:
-        """
-        Inplace union is the maximum of value from either counter.
-
-        >>> c = Counter('abbb')
-        >>> c |= Counter('bcc')
-        >>> c
-        Counter({'b': 3, 'c': 2, 'a': 1})
-        """
-        ...
+    def __iadd__(self, other: SupportsItems[_T, int]) -> Self: ...  # type: ignore[misc]
+    def __isub__(self, other: SupportsItems[_T, int]) -> Self: ...
+    def __iand__(self, other: SupportsItems[_T, int]) -> Self: ...
+    def __ior__(self, other: SupportsItems[_T, int]) -> Self: ...  # type: ignore[override,misc]
+    if sys.version_info >= (3, 15):
+        def __ixor__(self, other: Counter[_T]) -> Self: ...  # type: ignore[misc]
 
 # The pure-Python implementations of the "views" classes
 # These are exposed at runtime in `collections/__init__.py`

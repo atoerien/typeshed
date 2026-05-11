@@ -737,12 +737,5 @@ def purge() -> None:
     ...
 
 if sys.version_info < (3, 13):
-    if sys.version_info >= (3, 11):
-        @deprecated("Deprecated since Python 3.11; removed in Python 3.13. Use `re.compile()` instead.")
-        def template(pattern: AnyStr | Pattern[AnyStr], flags: _FlagsType = 0) -> Pattern[AnyStr]:
-            """Compile a template pattern, returning a Pattern object, deprecated"""
-            ...
-    else:
-        def template(pattern: AnyStr | Pattern[AnyStr], flags: _FlagsType = 0) -> Pattern[AnyStr]:
-            """Compile a template pattern, returning a Pattern object"""
-            ...
+    @deprecated("Deprecated since Python 3.11; removed in Python 3.13. Use `re.compile()` instead.")
+    def template(pattern: AnyStr | Pattern[AnyStr], flags: _FlagsType = 0) -> Pattern[AnyStr]: ...  # undocumented

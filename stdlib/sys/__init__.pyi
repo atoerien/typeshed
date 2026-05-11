@@ -77,18 +77,30 @@ from _typeshed.importlib import MetaPathFinderProtocol, PathEntryFinderProtocol
 from builtins import object as _object
 from collections.abc import AsyncGenerator, Callable, Sequence
 from io import TextIOWrapper
-from types import FrameType, ModuleType, TracebackType
+from types import FrameType, ModuleType, SimpleNamespace, TracebackType
 from typing import Any, Final, Literal, NoReturn, Protocol, TextIO, TypeAlias, TypeVar, final, overload, type_check_only
 from typing_extensions import LiteralString, deprecated
 
 _T = TypeVar("_T")
+_LazyImportMode: TypeAlias = Literal["normal", "all", "none"]
+_LazyImportFilter: TypeAlias = Callable[[str, str, tuple[str, ...] | None], bool]
 
 # see https://github.com/python/typeshed/issues/8513#issue-1333671093 for the rationale behind this alias
 _ExitCode: TypeAlias = str | int | None
 
+if sys.version_info >= (3, 15):
+    @type_check_only
+    class _AbiInfo(SimpleNamespace):
+        pointer_bits: int
+        free_threaded: bool
+        debug: bool
+        byteorder: Literal["little", "big"]
+
 # ----- sys variables -----
 if sys.platform != "win32":
     abiflags: str
+if sys.version_info >= (3, 15):
+    abi_info: _AbiInfo
 argv: list[str]
 base_exec_prefix: str
 base_prefix: str
@@ -113,6 +125,8 @@ maxsize: int
 maxunicode: int
 meta_path: list[MetaPathFinderProtocol]
 modules: dict[str, ModuleType]
+if sys.version_info >= (3, 15):
+    lazy_modules: dict[str, set[str]]
 orig_argv: list[str]
 path: list[str]
 path_hooks: list[Callable[[str], PathEntryFinderProtocol]]
@@ -540,74 +554,21 @@ if sys.platform != "win32":
         """
         Return the current value of the flags that are used for dlopen calls.
 
-        The flag constants are defined in the os module.
-        """
-        ...
+def getfilesystemencoding() -> LiteralString: ...
+def getfilesystemencodeerrors() -> LiteralString: ...
 
-def getfilesystemencoding() -> LiteralString:
-    """Return the encoding used to convert Unicode filenames to OS filenames."""
-    ...
-def getfilesystemencodeerrors() -> LiteralString:
-    """Return the error mode used Unicode to OS filename conversion."""
-    ...
-def getrefcount(object: Any, /) -> int:
-    """
-    Return the reference count of object.
+if sys.version_info >= (3, 15):
+    def get_lazy_imports() -> _LazyImportMode: ...
+    def get_lazy_imports_filter() -> _LazyImportFilter | None: ...
 
-    The count returned is generally one higher than you might expect,
-    because it includes the (temporary) reference as an argument to
-    getrefcount().
-    """
-    ...
-def getrecursionlimit() -> int:
-    """
-    Return the current value of the recursion limit.
-
-    The recursion limit is the maximum depth of the Python interpreter
-    stack.  This limit prevents infinite recursion from causing an overflow
-    of the C stack and crashing Python.
-    """
-    ...
-def getsizeof(obj: object, default: int = ...) -> int:
-    """
-    getsizeof(object [, default]) -> int
-
-    Return the size of object in bytes.
-    """
-    ...
-def getswitchinterval() -> float:
-    """Return the current thread switch interval; see sys.setswitchinterval()."""
-    ...
-def getprofile() -> ProfileFunction | None:
-    """
-    Return the profiling function set with sys.setprofile.
-
-    See the profiler chapter in the library manual.
-    """
-    ...
-def setprofile(function: ProfileFunction | None, /) -> None:
-    """
-    Set the profiling function.
-
-    It will be called on each function call and return.  See the profiler
-    chapter in the library manual.
-    """
-    ...
-def gettrace() -> TraceFunction | None:
-    """
-    Return the global debug tracing function set with sys.settrace.
-
-    See the debugger chapter in the library manual.
-    """
-    ...
-def settrace(function: TraceFunction | None, /) -> None:
-    """
-    Set the global debug tracing function.
-
-    It will be called on each function call.  See the debugger chapter
-    in the library manual.
-    """
-    ...
+def getrefcount(object: Any, /) -> int: ...
+def getrecursionlimit() -> int: ...
+def getsizeof(obj: object, default: int = ...) -> int: ...
+def getswitchinterval() -> float: ...
+def getprofile() -> ProfileFunction | None: ...
+def setprofile(function: ProfileFunction | None, /) -> None: ...
+def gettrace() -> TraceFunction | None: ...
+def settrace(function: TraceFunction | None, /) -> None: ...
 
 if sys.platform == "win32":
     # A tuple of length 5, even though it has more than 5 attributes.
@@ -809,6 +770,10 @@ def set_int_max_str_digits(maxdigits: int) -> None:
 def get_int_max_str_digits() -> int:
     """Return the maximum string digits limit for non-binary int<->str conversions."""
     ...
+
+if sys.version_info >= (3, 15):
+    def set_lazy_imports(mode: _LazyImportMode) -> None: ...
+    def set_lazy_imports_filter(filter: _LazyImportFilter | None) -> None: ...
 
 if sys.version_info >= (3, 12):
     if sys.version_info >= (3, 13):

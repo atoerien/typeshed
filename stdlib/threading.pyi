@@ -4,11 +4,11 @@ import _thread
 import sys
 from _thread import _ExceptHookArgs, get_native_id as get_native_id
 from _typeshed import ProfileFunction, TraceFunction
-from collections.abc import Callable, Iterable, Mapping
+from collections.abc import Callable, Iterable, Iterator, Mapping
 from contextvars import Context
 from types import TracebackType
 from typing import Any, Final, TypeVar, final
-from typing_extensions import deprecated
+from typing_extensions import Self, deprecated
 
 _T = TypeVar("_T")
 
@@ -43,6 +43,9 @@ __all__ = [
 
 if sys.version_info >= (3, 12):
     __all__ += ["setprofile_all_threads", "settrace_all_threads"]
+
+if sys.version_info >= (3, 15):
+    __all__ += ["concurrent_tee", "serialize_iterator", "synchronized_iterator"]
 
 _profile_hook: ProfileFunction | None
 
@@ -129,46 +132,23 @@ if sys.version_info >= (3, 12):
         Set a profile function for all threads started from the threading module
         and all Python threads that are currently executing.
 
-        The func will be passed to sys.setprofile() for each thread, before its
-        run() method is called.
-        """
-        ...
-    def settrace_all_threads(func: TraceFunction | None) -> None:
-        """
-        Set a trace function for all threads started from the threading module
-        and all Python threads that are currently executing.
+def gettrace() -> TraceFunction | None: ...
+def getprofile() -> ProfileFunction | None: ...
 
-        The func will be passed to sys.settrace() for each thread, before its run()
-        method is called.
-        """
-        ...
+if sys.version_info >= (3, 15):
+    @final
+    class serialize_iterator(Iterator[_T]):
+        def __init__(self, iterable: Iterable[_T]) -> None: ...
+        def __iter__(self) -> Self: ...
+        def __next__(self) -> _T: ...
+        def send(self, value: Any, /) -> _T: ...
+        def throw(self, typ: type[BaseException], val: BaseException | object = ..., tb: TracebackType | None = ...) -> _T: ...
+        def close(self) -> None: ...
 
-def gettrace() -> TraceFunction | None:
-    """Get the trace function as set by threading.settrace()."""
-    ...
-def getprofile() -> ProfileFunction | None:
-    """Get the profiler function as set by threading.setprofile()."""
-    ...
-def stack_size(size: int = 0, /) -> int:
-    """
-    Return the thread stack size used when creating new threads.  The
-    optional size argument specifies the stack size (in bytes) to be used
-    for subsequently created threads, and must be 0 (use platform or
-    configured default) or a positive integer value of at least 32,768 (32k).
-    If changing the thread stack size is unsupported, a ThreadError
-    exception is raised.  If the specified size is invalid, a ValueError
-    exception is raised, and the stack size is unmodified.  32k bytes
-     currently the minimum supported stack size value to guarantee
-    sufficient stack space for the interpreter itself.
+    def synchronized_iterator(func: Callable[..., Iterable[_T]]) -> Callable[..., Iterator[_T]]: ...
+    def concurrent_tee(iterable: Iterable[_T], n: int = 2) -> tuple[Iterator[_T], ...]: ...
 
-    Note that some platforms may have particular restrictions on values for
-    the stack size, such as requiring a minimum stack size larger than 32 KiB or
-    requiring allocation in multiples of the system memory page size
-    - platform documentation should be referred to for more information
-    (4 KiB pages are common; using multiples of 4096 for the stack size is
-    the suggested approach in the absence of more specific information).
-    """
-    ...
+def stack_size(size: int = 0, /) -> int: ...
 
 TIMEOUT_MAX: Final[float]
 

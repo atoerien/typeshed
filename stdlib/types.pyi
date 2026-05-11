@@ -14,6 +14,7 @@ from collections.abc import (
     Iterator,
     KeysView,
     Mapping,
+    MutableMapping,
     MutableSequence,
     ValuesView,
 )
@@ -63,6 +64,9 @@ if sys.version_info >= (3, 12):
 
 if sys.version_info >= (3, 13):
     __all__ += ["CapsuleType"]
+
+if sys.version_info >= (3, 15):
+    __all__ += ["FrameLocalsProxyType", "LazyImportType"]
 
 # Note, all classes "defined" here require special handling.
 
@@ -178,9 +182,11 @@ class CodeType:
     def co_name(self) -> str: ...
     @property
     def co_firstlineno(self) -> int: ...
-    @property
-    @deprecated("Deprecated since Python 3.10; will be removed in Python 3.15. Use `CodeType.co_lines()` instead.")
-    def co_lnotab(self) -> bytes: ...
+    if sys.version_info < (3, 15):
+        @property
+        @deprecated("Deprecated since Python 3.10; will be removed in Python 3.15. Use `CodeType.co_lines()` instead.")
+        def co_lnotab(self) -> bytes: ...
+
     @property
     def co_freevars(self) -> tuple[str, ...]: ...
     @property
@@ -464,6 +470,9 @@ class GeneratorType(Generator[_YieldT_co, _SendT_contra, _ReturnT_co]):
     if sys.version_info >= (3, 11):
         @property
         def gi_suspended(self) -> bool: ...
+    if sys.version_info >= (3, 15):
+        @property
+        def gi_state(self) -> Literal["GEN_CREATED", "GEN_SUSPENDED", "GEN_RUNNING", "GEN_CLOSED"]: ...
     __name__: str
     __qualname__: str
     def __iter__(self) -> Self:
@@ -526,6 +535,9 @@ class AsyncGeneratorType(AsyncGenerator[_YieldT_co, _SendT_contra]):
     if sys.version_info >= (3, 12):
         @property
         def ag_suspended(self) -> bool: ...
+    if sys.version_info >= (3, 15):
+        @property
+        def ag_state(self) -> Literal["AGEN_CREATED", "AGEN_SUSPENDED", "AGEN_RUNNING", "AGEN_CLOSED"]: ...
 
     def __aiter__(self) -> Self:
         """Return an awaitable, that resolves in asynchronous iterator."""
@@ -590,6 +602,9 @@ class CoroutineType(Coroutine[_YieldT_co, _SendT_nd_contra, _ReturnT_nd_co]):
     if sys.version_info >= (3, 11):
         @property
         def cr_suspended(self) -> bool: ...
+    if sys.version_info >= (3, 15):
+        @property
+        def cr_state(self) -> Literal["CORO_CREATED", "CORO_SUSPENDED", "CORO_RUNNING", "CORO_CLOSED"]: ...
 
     def close(self) -> None:
         """close() -> raise GeneratorExit inside coroutine."""
@@ -797,13 +812,13 @@ class FrameType:
     # but you should probably file a bug report with CPython if you encounter it being None in the wild.
     # An `int | None` annotation here causes too many false-positive errors, so applying `int | Any`.
     @property
-    def f_lineno(self) -> int | MaybeNone:
-        """Return the current line number in the frame."""
-        ...
-    @property
-    def f_locals(self) -> dict[str, Any]:
-        """Return the mapping used by the frame to look up local variables."""
-        ...
+    def f_lineno(self) -> int | MaybeNone: ...
+    if sys.version_info >= (3, 15):
+        @property
+        def f_locals(self) -> FrameLocalsProxyType | dict[str, Any]: ...
+    else:
+        @property
+        def f_locals(self) -> dict[str, Any]: ...
     f_trace: Callable[[FrameType, str, Any], Any] | None
     f_trace_lines: bool
     f_trace_opcodes: bool
@@ -815,6 +830,28 @@ class FrameType:
         def f_generator(self) -> GeneratorType[Any, Any, Any] | CoroutineType[Any, Any, Any] | None:
             """Return the generator or coroutine associated with this frame, or None."""
             ...
+
+if sys.version_info >= (3, 15):
+    @final
+    class FrameLocalsProxyType(MutableMapping[str, Any]):
+        def __new__(cls, frame: FrameType, /) -> Self: ...
+        def __getitem__(self, key: str, /) -> Any: ...
+        def __setitem__(self, key: str, value: Any, /) -> None: ...
+        def __delitem__(self, key: str, /) -> None: ...
+        def __iter__(self) -> Iterator[str]: ...
+        def __len__(self) -> int: ...
+        def __contains__(self, key: object, /) -> bool: ...
+        def __reversed__(self) -> Iterator[str]: ...
+        def copy(self) -> dict[str, Any]: ...
+        def pop(self, key: str, default: Any = ..., /) -> Any: ...
+        def setdefault(self, key: str, default: Any = ..., /) -> Any: ...
+        def update(self, object: SupportsKeysAndGetItem[str, Any] | Iterable[tuple[str, Any]], /) -> None: ...  # type: ignore[override]
+
+    @final
+    class LazyImportType:
+        @property
+        def __name__(self) -> str: ...
+        def resolve(self) -> Any: ...
 
 @final
 class GetSetDescriptorType:

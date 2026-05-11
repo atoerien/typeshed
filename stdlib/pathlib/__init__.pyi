@@ -192,13 +192,8 @@ class PurePath(PathLike[str]):
             """
             ...
     if sys.version_info >= (3, 14):
-        def is_relative_to(self, other: StrPath) -> bool:
-            """
-            Return True if the path is relative to another path or False.
-        
-            """
-            ...
-    elif sys.version_info >= (3, 12):
+        def is_relative_to(self, other: StrPath) -> bool: ...
+    else:
         @overload
         def is_relative_to(self, other: StrPath, /) -> bool:
             """
@@ -208,19 +203,7 @@ class PurePath(PathLike[str]):
             ...
         @overload
         @deprecated("Passing additional arguments is deprecated since Python 3.12; removed in Python 3.14.")
-        def is_relative_to(self, other: StrPath, /, *_deprecated: StrPath) -> bool:
-            """
-            Return True if the path is relative to another path or False.
-        
-            """
-            ...
-    else:
-        def is_relative_to(self, *other: StrPath) -> bool:
-            """
-            Return True if the path is relative to another path or False.
-        
-            """
-            ...
+        def is_relative_to(self, other: StrPath, /, *_deprecated: StrPath) -> bool: ...
 
     if sys.version_info >= (3, 12):
         def match(self, path_pattern: str, *, case_sensitive: bool | None = None) -> bool:

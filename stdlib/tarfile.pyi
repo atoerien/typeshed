@@ -1731,22 +1731,13 @@ class TarInfo:
     uname: str
     gname: str
     pax_headers: Mapping[str, str]
-    def __init__(self, name: str = "") -> None:
-        """
-        Construct a TarInfo object. name is the optional name
-        of the member.
-        """
-        ...
-    if sys.version_info >= (3, 13):
-        @property
-        @deprecated("Deprecated since Python 3.13; will be removed in Python 3.16.")
-        def tarfile(self) -> TarFile | None: ...
-        @tarfile.setter
-        @deprecated("Deprecated since Python 3.13; will be removed in Python 3.16.")
-        def tarfile(self, tarfile: TarFile | None) -> None: ...
-    else:
-        tarfile: TarFile | None
-
+    def __init__(self, name: str = "") -> None: ...
+    @property
+    @deprecated("Deprecated since Python 3.13; will be removed in Python 3.16.")
+    def tarfile(self) -> TarFile | None: ...
+    @tarfile.setter
+    @deprecated("Deprecated since Python 3.13; will be removed in Python 3.16.")
+    def tarfile(self, tarfile: TarFile | None) -> None: ...
     @classmethod
     def frombuf(cls, buf: bytes | bytearray, encoding: str, errors: str) -> Self:
         """
