@@ -812,13 +812,17 @@ class FrameType:
     # but you should probably file a bug report with CPython if you encounter it being None in the wild.
     # An `int | None` annotation here causes too many false-positive errors, so applying `int | Any`.
     @property
-    def f_lineno(self) -> int | MaybeNone: ...
+    def f_lineno(self) -> int | MaybeNone:
+        """Return the current line number in the frame."""
+        ...
     if sys.version_info >= (3, 15):
         @property
         def f_locals(self) -> FrameLocalsProxyType | dict[str, Any]: ...
     else:
         @property
-        def f_locals(self) -> dict[str, Any]: ...
+        def f_locals(self) -> dict[str, Any]:
+            """Return the mapping used by the frame to look up local variables."""
+            ...
     f_trace: Callable[[FrameType, str, Any], Any] | None
     f_trace_lines: bool
     f_trace_opcodes: bool

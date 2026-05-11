@@ -1731,7 +1731,12 @@ class TarInfo:
     uname: str
     gname: str
     pax_headers: Mapping[str, str]
-    def __init__(self, name: str = "") -> None: ...
+    def __init__(self, name: str = "") -> None:
+        """
+        Construct a TarInfo object. name is the optional name
+        of the member.
+        """
+        ...
     @property
     @deprecated("Deprecated since Python 3.13; will be removed in Python 3.16.")
     def tarfile(self) -> TarFile | None: ...

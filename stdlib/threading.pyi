@@ -132,8 +132,26 @@ if sys.version_info >= (3, 12):
         Set a profile function for all threads started from the threading module
         and all Python threads that are currently executing.
 
-def gettrace() -> TraceFunction | None: ...
-def getprofile() -> ProfileFunction | None: ...
+        The func will be passed to sys.setprofile() for each thread, before its
+        run() method is called.
+        """
+        ...
+    def settrace_all_threads(func: TraceFunction | None) -> None:
+        """
+        Set a trace function for all threads started from the threading module
+        and all Python threads that are currently executing.
+
+        The func will be passed to sys.settrace() for each thread, before its run()
+        method is called.
+        """
+        ...
+
+def gettrace() -> TraceFunction | None:
+    """Get the trace function as set by threading.settrace()."""
+    ...
+def getprofile() -> ProfileFunction | None:
+    """Get the profiler function as set by threading.setprofile()."""
+    ...
 
 if sys.version_info >= (3, 15):
     @final
@@ -148,7 +166,26 @@ if sys.version_info >= (3, 15):
     def synchronized_iterator(func: Callable[..., Iterable[_T]]) -> Callable[..., Iterator[_T]]: ...
     def concurrent_tee(iterable: Iterable[_T], n: int = 2) -> tuple[Iterator[_T], ...]: ...
 
-def stack_size(size: int = 0, /) -> int: ...
+def stack_size(size: int = 0, /) -> int:
+    """
+    Return the thread stack size used when creating new threads.  The
+    optional size argument specifies the stack size (in bytes) to be used
+    for subsequently created threads, and must be 0 (use platform or
+    configured default) or a positive integer value of at least 32,768 (32k).
+    If changing the thread stack size is unsupported, a ThreadError
+    exception is raised.  If the specified size is invalid, a ValueError
+    exception is raised, and the stack size is unmodified.  32k bytes
+     currently the minimum supported stack size value to guarantee
+    sufficient stack space for the interpreter itself.
+
+    Note that some platforms may have particular restrictions on values for
+    the stack size, such as requiring a minimum stack size larger than 32 KiB or
+    requiring allocation in multiples of the system memory page size
+    - platform documentation should be referred to for more information
+    (4 KiB pages are common; using multiples of 4096 for the stack size is
+    the suggested approach in the absence of more specific information).
+    """
+    ...
 
 TIMEOUT_MAX: Final[float]
 

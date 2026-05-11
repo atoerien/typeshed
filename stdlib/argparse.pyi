@@ -168,7 +168,12 @@ class _ActionsContainer:
         dest: str | None = ...,
         version: str = ...,
         **kwargs: Any,
-    ) -> Action: ...
+    ) -> Action:
+        """
+        add_argument(dest, ..., name=value, ...)
+        add_argument(option_string, option_string, ..., name=value, ...)
+        """
+        ...
     @overload
     def add_argument_group(
         self,
@@ -729,6 +734,22 @@ class Namespace(_AttributeHolder):
 
 @deprecated("Deprecated since Python 3.14. Open files after parsing arguments instead.")
 class FileType:
+    """
+    Deprecated factory for creating file object types
+
+    Instances of FileType are typically passed as type= arguments to the
+    ArgumentParser add_argument() method.
+
+    Keyword Arguments:
+        - mode -- A string indicating how the file is to be opened. Accepts the
+            same values as the builtin open() function.
+        - bufsize -- The file's desired buffer size. Accepts the same values as
+            the builtin open() function.
+        - encoding -- The file's encoding. Accepts the same values as the
+            builtin open() function.
+        - errors -- A string indicating how encoding and decoding errors are to
+            be handled. Accepts the same value as the builtin open() function.
+    """
     # undocumented
     _mode: str
     _bufsize: int

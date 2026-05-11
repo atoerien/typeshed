@@ -1,3 +1,52 @@
+"""
+Tool for measuring execution time of small code snippets.
+
+This module avoids a number of common traps for measuring execution
+times.  See also Tim Peters' introduction to the Algorithms chapter in
+the Python Cookbook, published by O'Reilly.
+
+Library usage: see the Timer class.
+
+Command line usage:
+    python timeit.py [-n N] [-r N] [-s S] [-p] [-h] [--] [statement]
+
+Options:
+  -n/--number N: how many times to execute 'statement' (default: see below)
+  -r/--repeat N: how many times to repeat the timer (default 5)
+  -s/--setup S: statement to be executed once initially (default 'pass').
+                Execution time of this setup statement is NOT timed.
+  -p/--process: use time.process_time() (default is time.perf_counter())
+  -v/--verbose: print raw timing results; repeat for more digits precision
+  -u/--unit: set the output time unit (nsec, usec, msec, or sec)
+  -h/--help: print this usage message and exit
+  --: separate options from statement, use when statement starts with -
+  statement: statement to be timed (default 'pass')
+
+A multi-line statement may be given by specifying each line as a
+separate argument; indented lines are possible by enclosing an
+argument in quotes and using leading spaces.  Multiple -s options are
+treated similarly.
+
+If -n is not given, a suitable number of loops is calculated by trying
+increasing numbers from the sequence 1, 2, 5, 10, 20, 50, ... until the
+total time is at least 0.2 seconds.
+
+Note: there is a certain baseline overhead associated with executing a
+pass statement.  It differs between versions.  The code here doesn't try
+to hide it, but you should be aware of it.  The baseline overhead can be
+measured by invoking the program without arguments.
+
+Classes:
+
+    Timer
+
+Functions:
+
+    timeit(string, string) -> float
+    repeat(string, string) -> list
+    default_timer() -> float
+"""
+
 import sys
 import time
 from collections.abc import Callable, Sequence
@@ -34,16 +83,79 @@ class Timer:
         setup: _Stmt = "pass",
         timer: _Timer = time.perf_counter,
         globals: dict[str, Any] | None = None,
-    ) -> None: ...
-    def print_exc(self, file: IO[str] | None = None) -> None: ...
-    def timeit(self, number: int = 1000000) -> float: ...
-    def repeat(self, repeat: int = 5, number: int = 1000000) -> list[float]: ...
+    ) -> None:
+        """Constructor.  See class doc string."""
+        ...
+    def print_exc(self, file: IO[str] | None = None) -> None:
+        """
+        Helper to print a traceback from the timed code.
+
+        Typical use:
+
+            t = Timer(...)       # outside the try/except
+            try:
+                t.timeit(...)    # or t.repeat(...)
+            except:
+                t.print_exc()
+
+        The advantage over the standard traceback is that source lines
+        in the compiled template will be displayed.
+
+        The optional file argument directs where the traceback is
+        sent; it defaults to sys.stderr.
+        """
+        ...
+    def timeit(self, number: int = 1000000) -> float:
+        """
+        Time 'number' executions of the main statement.
+
+        To be precise, this executes the setup statement once, and
+        then returns the time it takes to execute the main statement
+        a number of times, as float seconds if using the default timer.   The
+        argument is the number of times through the loop, defaulting
+        to one million.  The main statement, the setup statement and
+        the timer function to be used are passed to the constructor.
+        """
+        ...
+    def repeat(self, repeat: int = 5, number: int = 1000000) -> list[float]:
+        """
+        Call timeit() a few times.
+
+        This is a convenience function that calls the timeit()
+        repeatedly, returning a list of results.  The first argument
+        specifies how many times to call timeit(), defaulting to 5;
+        the second argument specifies the timer argument, defaulting
+        to one million.
+
+        Note: it's tempting to calculate mean and standard deviation
+        from the result vector and report these.  However, this is not
+        very useful.  In a typical case, the lowest value gives a
+        lower bound for how fast your machine can run the given code
+        snippet; higher values in the result vector are typically not
+        caused by variability in Python's speed, but by other
+        processes interfering with your timing accuracy.  So the min()
+        of the result is probably the only number you should be
+        interested in.  After that, you should look at the entire
+        vector and apply common sense rather than statistics.
+        """
+        ...
     if sys.version_info >= (3, 15):
         def autorange(
             self, callback: Callable[[int, float], object] | None = None, target_time: float = 0.2
         ) -> tuple[int, float]: ...
     else:
-        def autorange(self, callback: Callable[[int, float], object] | None = None) -> tuple[int, float]: ...
+        def autorange(self, callback: Callable[[int, float], object] | None = None) -> tuple[int, float]:
+            """
+            Return the number of loops and time taken so that total time >= 0.2.
+
+            Calls the timeit method with increasing numbers from the sequence
+            1, 2, 5, 10, 20, 50, ... until the time taken is at least 0.2
+            second.  Returns (number, time_taken).
+
+            If *callback* is given and is not None, it will be called after
+            each trial with two arguments: ``callback(number, time_taken)``.
+            """
+            ...
 
 def timeit(
     stmt: _Stmt = "pass",

@@ -554,21 +554,79 @@ if sys.platform != "win32":
         """
         Return the current value of the flags that are used for dlopen calls.
 
-def getfilesystemencoding() -> LiteralString: ...
-def getfilesystemencodeerrors() -> LiteralString: ...
+        The flag constants are defined in the os module.
+        """
+        ...
+
+def getfilesystemencoding() -> LiteralString:
+    """Return the encoding used to convert Unicode filenames to OS filenames."""
+    ...
+def getfilesystemencodeerrors() -> LiteralString:
+    """Return the error mode used Unicode to OS filename conversion."""
+    ...
 
 if sys.version_info >= (3, 15):
     def get_lazy_imports() -> _LazyImportMode: ...
     def get_lazy_imports_filter() -> _LazyImportFilter | None: ...
 
-def getrefcount(object: Any, /) -> int: ...
-def getrecursionlimit() -> int: ...
-def getsizeof(obj: object, default: int = ...) -> int: ...
-def getswitchinterval() -> float: ...
-def getprofile() -> ProfileFunction | None: ...
-def setprofile(function: ProfileFunction | None, /) -> None: ...
-def gettrace() -> TraceFunction | None: ...
-def settrace(function: TraceFunction | None, /) -> None: ...
+def getrefcount(object: Any, /) -> int:
+    """
+    Return the reference count of object.
+
+    The count returned is generally one higher than you might expect,
+    because it includes the (temporary) reference as an argument to
+    getrefcount().
+    """
+    ...
+def getrecursionlimit() -> int:
+    """
+    Return the current value of the recursion limit.
+
+    The recursion limit is the maximum depth of the Python interpreter
+    stack.  This limit prevents infinite recursion from causing an overflow
+    of the C stack and crashing Python.
+    """
+    ...
+def getsizeof(obj: object, default: int = ...) -> int:
+    """
+    getsizeof(object [, default]) -> int
+
+    Return the size of object in bytes.
+    """
+    ...
+def getswitchinterval() -> float:
+    """Return the current thread switch interval; see sys.setswitchinterval()."""
+    ...
+def getprofile() -> ProfileFunction | None:
+    """
+    Return the profiling function set with sys.setprofile.
+
+    See the profiler chapter in the library manual.
+    """
+    ...
+def setprofile(function: ProfileFunction | None, /) -> None:
+    """
+    Set the profiling function.
+
+    It will be called on each function call and return.  See the profiler
+    chapter in the library manual.
+    """
+    ...
+def gettrace() -> TraceFunction | None:
+    """
+    Return the global debug tracing function set with sys.settrace.
+
+    See the debugger chapter in the library manual.
+    """
+    ...
+def settrace(function: TraceFunction | None, /) -> None:
+    """
+    Set the global debug tracing function.
+
+    It will be called on each function call.  See the debugger chapter
+    in the library manual.
+    """
+    ...
 
 if sys.platform == "win32":
     # A tuple of length 5, even though it has more than 5 attributes.

@@ -155,7 +155,12 @@ class Function(SymbolTable):
 
 class Class(SymbolTable):
     @deprecated("Deprecated since Python 3.14; will be removed in Python 3.16.")
-    def get_methods(self) -> tuple[str, ...]: ...
+    def get_methods(self) -> tuple[str, ...]:
+        """
+        Return a tuple of methods declared in the class.
+        
+        """
+        ...
 
 class Symbol:
     def __init__(

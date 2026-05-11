@@ -90,44 +90,25 @@ if sys.version_info < (3, 12):
 
 if sys.version_info < (3, 14):
     @deprecated("Deprecated since Python 3.12; removed in Python 3.14. Use `importlib.util.find_spec()` instead.")
-    def find_loader(fullname: str) -> LoaderProtocol | None: ...
+    def find_loader(fullname: str) -> LoaderProtocol | None:
+        """
+        Find a "loader" object for fullname
+
+        This is a backwards compatibility wrapper around
+        importlib.util.find_spec that converts most failures to ImportError
+        and only returns the loader rather than the full spec
+        """
+        ...
     @deprecated("Deprecated since Python 3.12; removed in Python 3.14. Use `importlib.util.find_spec()` instead.")
-    def get_loader(module_or_name: str) -> LoaderProtocol | None: ...
+    def get_loader(module_or_name: str) -> LoaderProtocol | None:
+        """
+        Get a "loader" object for module_or_name
 
-            This is a backwards compatibility wrapper around
-            importlib.util.find_spec that converts most failures to ImportError
-            and only returns the loader rather than the full spec
-            """
-            ...
-        @deprecated("Deprecated since Python 3.12; removed in Python 3.14. Use `importlib.util.find_spec()` instead.")
-        def get_loader(module_or_name: str) -> LoaderProtocol | None:
-            """
-            Get a "loader" object for module_or_name
-
-            Returns None if the module cannot be found or imported.
-            If the named module is not already imported, its containing package
-            (if any) is imported, in order to establish the package __path__.
-            """
-            ...
-    else:
-        def find_loader(fullname: str) -> LoaderProtocol | None:
-            """
-            Find a "loader" object for fullname
-
-            This is a backwards compatibility wrapper around
-            importlib.util.find_spec that converts most failures to ImportError
-            and only returns the loader rather than the full spec
-            """
-            ...
-        def get_loader(module_or_name: str) -> LoaderProtocol | None:
-            """
-            Get a "loader" object for module_or_name
-
-            Returns None if the module cannot be found or imported.
-            If the named module is not already imported, its containing package
-            (if any) is imported, in order to establish the package __path__.
-            """
-            ...
+        Returns None if the module cannot be found or imported.
+        If the named module is not already imported, its containing package
+        (if any) is imported, in order to establish the package __path__.
+        """
+        ...
 
 def get_importer(path_item: StrOrBytesPath) -> PathEntryFinderProtocol | None:
     """
