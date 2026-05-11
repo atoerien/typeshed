@@ -162,6 +162,7 @@ retry==0.9.*
 croniter==6.2.2
 pexpect==4.9.*
 Send2Trash==2.1.*
+pyphen==0.17.2
 punq==0.7.*
 xmltodict~=1.0.1
 waitress~=3.0.1
