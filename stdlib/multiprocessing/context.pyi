@@ -182,18 +182,48 @@ class BaseContext:
     @overload
     def Array(
         self, typecode_or_type: str | type[_CData], size_or_initializer: int | Sequence[Any], *, lock: bool | _LockLike = True
-    ) -> Any: ...
-    def freeze_support(self) -> None: ...
-    def get_logger(self) -> Logger: ...
-    def log_to_stderr(self, level: _LoggingLevel | None = None) -> Logger: ...
-    def allow_connection_pickling(self) -> None: ...
-    def set_executable(self, executable: str) -> None: ...
+    ) -> Any:
+        """Returns a synchronized shared array"""
+        ...
+    def freeze_support(self) -> None:
+        """
+        Check whether this is a fake forked process in a frozen executable.
+        If so then run code specified by commandline and exit.
+        """
+        ...
+    def get_logger(self) -> Logger:
+        """
+        Return package logger -- if it does not already exist then
+        it is created.
+        """
+        ...
+    def log_to_stderr(self, level: _LoggingLevel | None = None) -> Logger:
+        """Turn on logging and add a handler which prints to stderr"""
+        ...
+    def allow_connection_pickling(self) -> None:
+        """
+        Install support for sending connections and sockets
+        between processes
+        """
+        ...
+    def set_executable(self, executable: str) -> None:
+        """
+        Sets the path to a python.exe or pythonw.exe binary used to run
+        child processes instead of sys.executable when using the 'spawn'
+        start method.  Useful for people embedding Python.
+        """
+        ...
     if sys.version_info >= (3, 15):
         def set_forkserver_preload(
             self, module_names: list[str], *, on_error: Literal["ignore", "warn", "fail"] = "ignore"
         ) -> None: ...
     else:
-        def set_forkserver_preload(self, module_names: list[str]) -> None: ...
+        def set_forkserver_preload(self, module_names: list[str]) -> None:
+            """
+            Set list of module names to try to load in forkserver process.
+            This is really just a hint.
+            """
+            ...
 
     @overload
     def get_context(self, method: None = None) -> DefaultContext: ...

@@ -37,6 +37,15 @@ if sys.version_info >= (3, 13):
     __all__ += ["UnsupportedOperation"]
 
 class PurePath(PathLike[str]):
+    """
+    Base class for manipulating paths without I/O.
+
+    PurePath represents a filesystem path and offers operations which
+    don't imply any actual filesystem I/O.  Depending on your system,
+    instantiating a PurePath will return either a PurePosixPath or a
+    PureWindowsPath object.  You can also instantiate either of these classes
+    directly, regardless of your system.
+    """
     if sys.version_info < (3, 15):
         if sys.version_info >= (3, 13):
             __slots__ = (
@@ -159,17 +168,34 @@ class PurePath(PathLike[str]):
         """
         ...
     @deprecated("Deprecated since Python 3.14; will be removed in Python 3.19. Use `Path.as_uri()` instead.")
-    def as_uri(self) -> str: ...
-    def is_absolute(self) -> bool: ...
+    def as_uri(self) -> str:
+        """Return the path as a URI."""
+        ...
+    def is_absolute(self) -> bool:
+        """
+        True if the path is absolute (has both a root and, if applicable,
+        a drive).
+        """
+        ...
     if sys.version_info < (3, 15):
         if sys.version_info >= (3, 13):
             @deprecated(
                 "Deprecated since Python 3.13; will be removed in Python 3.15. "
                 "Use `os.path.isreserved()` to detect reserved paths on Windows."
             )
-            def is_reserved(self) -> bool: ...
+            def is_reserved(self) -> bool:
+                """
+                Return True if the path contains one of the special names reserved
+                by the system, if any.
+                """
+                ...
         else:
-            def is_reserved(self) -> bool: ...
+            def is_reserved(self) -> bool:
+                """
+                Return True if the path contains one of the special names reserved
+                by the system, if any.
+                """
+                ...
     if sys.version_info >= (3, 14):
         def is_relative_to(self, other: StrPath) -> bool:
             """

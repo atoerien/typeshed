@@ -13,9 +13,15 @@ class Template:  # TODO: consider making `Template` generic on `TypeVarTuple`
     interpolations: tuple[Interpolation[Any], ...]
 
     def __new__(cls, *args: str | Interpolation[Any]) -> Template: ...
-    def __iter__(self) -> Iterator[str | Interpolation[Any]]: ...
-    def __add__(self, other: Template, /) -> Template: ...
-    def __class_getitem__(cls, item: Any, /) -> GenericAlias: ...
+    def __iter__(self) -> Iterator[str | Interpolation[Any]]:
+        """Implement iter(self)."""
+        ...
+    def __add__(self, other: Template, /) -> Template:
+        """Return self+value."""
+        ...
+    def __class_getitem__(cls, item: Any, /) -> GenericAlias:
+        """See PEP 585"""
+        ...
     @property
     def values(self) -> tuple[Any, ...]:
         """Values of interpolations"""
@@ -23,6 +29,7 @@ class Template:  # TODO: consider making `Template` generic on `TypeVarTuple`
 
 @final
 class Interpolation(Generic[_T]):
+    """Interpolation object"""
     value: _T
     expression: str
     conversion: Literal["a", "r", "s"] | None
@@ -33,7 +40,9 @@ class Interpolation(Generic[_T]):
     def __new__(
         cls, value: _T, expression: str = "", conversion: Literal["a", "r", "s"] | None = None, format_spec: str = ""
     ) -> Interpolation[_T]: ...
-    def __class_getitem__(cls, item: Any, /) -> GenericAlias: ...
+    def __class_getitem__(cls, item: Any, /) -> GenericAlias:
+        """See PEP 585"""
+        ...
 
 @overload
 def convert(obj: _T, /, conversion: None) -> _T:

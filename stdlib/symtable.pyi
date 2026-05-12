@@ -15,7 +15,14 @@ if sys.version_info >= (3, 15):
     def symtable(code: str, filename: str, compile_type: str, *, module: str | None = None) -> SymbolTable: ...
 
 else:
-    def symtable(code: str, filename: str, compile_type: str) -> SymbolTable: ...
+    def symtable(code: str, filename: str, compile_type: str) -> SymbolTable:
+        """
+        Return the toplevel *SymbolTable* for the source code.
+
+        *filename* is the name of the file with the code
+        and *compile_type* is the *compile()* mode argument.
+        """
+        ...
 
 if sys.version_info >= (3, 13):
     from enum import StrEnum

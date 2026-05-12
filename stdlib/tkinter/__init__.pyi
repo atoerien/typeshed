@@ -1764,8 +1764,16 @@ class Misc:
         def place_content(self) -> list[Widget]: ...
         content = pack_content
 
-    def event_add(self, virtual: str, *sequences: str) -> None: ...
-    def event_delete(self, virtual: str, *sequences: str) -> None: ...
+    def event_add(self, virtual: str, *sequences: str) -> None:
+        """
+        Bind a virtual event VIRTUAL (of the form <<Name>>)
+        to an event SEQUENCE such that the virtual event is triggered
+        whenever SEQUENCE occurs.
+        """
+        ...
+    def event_delete(self, virtual: str, *sequences: str) -> None:
+        """Unbind a virtual event VIRTUAL from SEQUENCE."""
+        ...
     def event_generate(
         self,
         sequence: str,
@@ -7233,9 +7241,25 @@ class Text(Widget, XView, YView):
         index2: str | float | _tkinter.Tcl_Obj | Widget,
         chars: str,
         *args: str | list[str] | tuple[str, ...],
-    ) -> None: ...
-    def scan_mark(self, x: int, y: int) -> None: ...
-    def scan_dragto(self, x: int, y: int) -> None: ...
+    ) -> None:
+        """
+        Replaces the range of characters between index1 and index2 with
+        the given characters and tags specified by args.
+
+        See the method insert for some more information about args, and the
+        method delete for information about the indices.
+        """
+        ...
+    def scan_mark(self, x: int, y: int) -> None:
+        """Remember the current X, Y coordinates."""
+        ...
+    def scan_dragto(self, x: int, y: int) -> None:
+        """
+        Adjust the view of the text to 10 times the
+        difference between X and Y and the coordinates given in
+        scan_mark.
+        """
+        ...
     if sys.version_info >= (3, 15):
         def search(
             self,
@@ -7283,9 +7307,17 @@ class Text(Widget, XView, YView):
             nocase: bool | None = None,
             count: Variable | None = None,
             elide: bool | None = None,
-        ) -> str: ...  # returns empty string for not found
+        ) -> str:
+            """
+            Search PATTERN beginning from INDEX until STOPINDEX.
+            Return the index of the first character of a match or an
+            empty string.
+            """
+            ...
 
-    def see(self, index: str | float | _tkinter.Tcl_Obj | Widget) -> None: ...
+    def see(self, index: str | float | _tkinter.Tcl_Obj | Widget) -> None:
+        """Scroll such that the character at INDEX is visible."""
+        ...
     def tag_add(
         self, tagName: str, index1: str | float | _tkinter.Tcl_Obj | Widget, *args: str | float | _tkinter.Tcl_Obj | Widget
     ) -> None:

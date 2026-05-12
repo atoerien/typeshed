@@ -7,6 +7,9 @@ class _DummyLock:
 
 def allocate_lock() -> _DummyLock:
     """
+    allocate_lock() -> lock object
+    (allocate() is an obsolete synonym)
+
     Create a new lock object. See help(type(threading.Lock())) for
     information about locks.
     """

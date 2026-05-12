@@ -588,7 +588,21 @@ class Pdb(Bdb, Cmd):
     else:
         def print_stack_entry(self, frame_lineno: tuple[FrameType, int], prompt_prefix: str = "\n-> ") -> None: ...
 
-    def lookupmodule(self, filename: str) -> str | None: ...
+    def lookupmodule(self, filename: str) -> str | None:
+        """
+        Helper function for break/clear parsing -- may be overridden.
+
+        lookupmodule() translates (possibly incomplete) file or module name
+        into an absolute file name.
+
+        filename could be in format of:
+            * an absolute path like '/path/to/file.py'
+            * a relative path like 'file.py' or 'dir/file.py'
+            * a module name like 'module' or 'package.module'
+
+        files and modules will be searched in sys.path.
+        """
+        ...
     if sys.version_info < (3, 11):
         def _runscript(self, filename: str) -> None: ...
 

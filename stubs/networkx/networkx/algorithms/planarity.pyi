@@ -105,9 +105,30 @@ def check_planarity(G: Graph[_Node], counterexample: bool = False):
     """
     ...
 @_dispatchable
-def get_counterexample(G: Graph[_Node, _NodeData, _EdgeData]) -> Graph[_Node, _NodeData, _EdgeData]: ...
+def get_counterexample(G: Graph[_Node, _NodeData, _EdgeData]) -> Graph[_Node, _NodeData, _EdgeData]:
+    """
+    Obtains a Kuratowski subgraph.
+
+    Raises nx.NetworkXException if G is planar.
+
+    The function removes edges such that the graph is still not planar.
+    At some point the removal of any edge would make the graph planar.
+    This subgraph must be a Kuratowski subgraph.
+
+    Parameters
+    ----------
+    G : NetworkX graph
+
+    Returns
+    -------
+    subgraph : NetworkX graph
+        A Kuratowski subgraph that proves that G is not planar.
+    """
+    ...
 @_dispatchable
-def get_counterexample_recursive(G: Graph[_Node, _NodeData, _EdgeData]) -> Graph[_Node, _NodeData, _EdgeData]: ...
+def get_counterexample_recursive(G: Graph[_Node, _NodeData, _EdgeData]) -> Graph[_Node, _NodeData, _EdgeData]:
+    """Recursive version of :meth:`get_counterexample`."""
+    ...
 
 class Interval:
     """

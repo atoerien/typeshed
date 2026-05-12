@@ -150,11 +150,94 @@ def iter_modules(path: Iterable[StrOrBytesPath] | None = None, prefix: str = "")
 def read_code(stream: SupportsRead[bytes]) -> Any: ...  # undocumented
 def walk_packages(
     path: Iterable[StrOrBytesPath] | None = None, prefix: str = "", onerror: Callable[[str], object] | None = None
-) -> Iterator[ModuleInfo]: ...
-def get_data(package: str, resource: str) -> bytes | None: ...
+) -> Iterator[ModuleInfo]:
+    """
+    Yields ModuleInfo for all modules recursively
+    on path, or, if path is None, all accessible modules.
+
+    'path' should be either None or a list of paths to look for
+    modules in.
+
+    'prefix' is a string to output on the front of every module name
+    on output.
+
+    Note that this function must import all *packages* (NOT all
+    modules!) on the given path, in order to access the __path__
+    attribute to find submodules.
+
+    'onerror' is a function which gets called with one argument (the
+    name of the package which was being imported) if any exception
+    occurs while trying to import a package.  If no onerror function is
+    supplied, ImportErrors are caught and ignored, while all other
+    exceptions are propagated, terminating the search.
+
+    Examples:
+
+    # list all modules python can access
+    walk_packages()
+
+    # list all submodules of ctypes
+    walk_packages(ctypes.__path__, ctypes.__name__+'.')
+    """
+    ...
+def get_data(package: str, resource: str) -> bytes | None:
+    """
+    Get a resource from a package.
+
+    This is a wrapper round the PEP 302 loader get_data API. The package
+    argument should be the name of a package, in standard module format
+    (foo.bar). The resource argument should be in the form of a relative
+    filename, using '/' as the path separator. The parent directory name '..'
+    is not allowed, and nor is a rooted name (starting with a '/').
+
+    The function returns a binary string, which is the contents of the
+    specified resource.
+
+    For packages located in the filesystem, which have already been imported,
+    this is the rough equivalent of
+
+        d = os.path.dirname(sys.modules[package].__file__)
+        data = open(os.path.join(d, resource), 'rb').read()
+
+    If the package cannot be located or loaded, or it uses a PEP 302 loader
+    which does not support get_data(), then None is returned.
+    """
+    ...
 
 if sys.version_info >= (3, 15):
     def resolve_name(name: str, *, strict: bool = False) -> Any: ...
 
 else:
-    def resolve_name(name: str) -> Any: ...
+    def resolve_name(name: str) -> Any:
+        """
+        Resolve a name to an object.
+
+        It is expected that `name` will be a string in one of the following
+        formats, where W is shorthand for a valid Python identifier and dot stands
+        for a literal period in these pseudo-regexes:
+
+        W(.W)*
+        W(.W)*:(W(.W)*)?
+
+        The first form is intended for backward compatibility only. It assumes that
+        some part of the dotted name is a package, and the rest is an object
+        somewhere within that package, possibly nested inside other objects.
+        Because the place where the package stops and the object hierarchy starts
+        can't be inferred by inspection, repeated attempts to import must be done
+        with this form.
+
+        In the second form, the caller makes the division point clear through the
+        provision of a single colon: the dotted name to the left of the colon is a
+        package to be imported, and the dotted name to the right is the object
+        hierarchy within that package. Only one import is needed in this form. If
+        it ends with the colon, then a module object is returned.
+
+        The function will return an object (which might be a module), or raise one
+        of the following exceptions:
+
+        ValueError - if `name` isn't in a recognised format
+        ImportError - if an import failed when it shouldn't have
+        AttributeError - if a failure occurred when traversing the object hierarchy
+                         within the imported package to get to the desired object.
+        """
+        ...

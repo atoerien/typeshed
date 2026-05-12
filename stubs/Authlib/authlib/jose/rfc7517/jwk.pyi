@@ -25,7 +25,13 @@ class JsonWebKey:
             str | bytes | float | Iterable[SupportsIndex] | SupportsIndex | SupportsBytes | ReadableBuffer | Mapping[str, object]
         ),
         options: Mapping[str, object] | None = None,
-    ) -> Key: ...
+    ) -> Key:
+        """
+        Import a Key from bytes, string, PEM or dict.
+
+        :return: Key instance
+        """
+        ...
     @classmethod
     def import_key_set(cls, raw: str | Collection[str] | dict[str, object]) -> KeySet:
         """

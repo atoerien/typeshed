@@ -312,14 +312,82 @@ def find_cliques_recursive(G: Graph[_Node], nodes: Iterable[Incomplete] | None =
 @_dispatchable
 def make_max_clique_graph(
     G: Graph[_Node], create_using: Graph[_Node, _NodeData, _EdgeData] | None = None
-) -> Graph[_Node, _NodeData, _EdgeData]: ...
+) -> Graph[_Node, _NodeData, _EdgeData]:
+    """
+    Returns the maximal clique graph of the given graph.
+
+    The nodes of the maximal clique graph of `G` are the cliques of
+    `G` and an edge joins two cliques if the cliques are not disjoint.
+
+    Parameters
+    ----------
+    G : NetworkX graph
+
+    create_using : NetworkX graph constructor, optional (default=nx.Graph)
+       Graph type to create. If graph instance, then cleared before populated.
+
+    Returns
+    -------
+    NetworkX graph
+        A graph whose nodes are the cliques of `G` and whose edges
+        join two cliques if they are not disjoint.
+
+    Notes
+    -----
+    This function behaves like the following code::
+
+        import networkx as nx
+
+        G = nx.make_clique_bipartite(G)
+        cliques = [v for v in G.nodes() if G.nodes[v]["bipartite"] == 0]
+        G = nx.bipartite.projected_graph(G, cliques)
+        G = nx.relabel_nodes(G, {-v: v - 1 for v in G})
+
+    It should be faster, though, since it skips all the intermediate
+    steps.
+    """
+    ...
 @_dispatchable
 def make_clique_bipartite(
     G: Graph[_Node, _NodeData, _EdgeData],
     fpos: bool | None = None,
     create_using: Graph[_Node, _NodeData, _EdgeData] | None = None,
     name=None,
-) -> Graph[_Node]: ...
+) -> Graph[_Node]:
+    """
+    Returns the bipartite clique graph corresponding to `G`.
+
+    In the returned bipartite graph, the "bottom" nodes are the nodes of
+    `G` and the "top" nodes represent the maximal cliques of `G`.
+    There is an edge from node *v* to clique *C* in the returned graph
+    if and only if *v* is an element of *C*.
+
+    Parameters
+    ----------
+    G : NetworkX graph
+        An undirected graph.
+
+    fpos : bool
+        If True or not None, the returned graph will have an
+        additional attribute, `pos`, a dictionary mapping node to
+        position in the Euclidean plane.
+
+    create_using : NetworkX graph constructor, optional (default=nx.Graph)
+       Graph type to create. If graph instance, then cleared before populated.
+
+    Returns
+    -------
+    NetworkX graph
+        A bipartite graph whose "bottom" set is the nodes of the graph
+        `G`, whose "top" set is the cliques of `G`, and whose edges
+        join nodes of `G` to the cliques that contain them.
+
+        The nodes of the graph `G` have the node attribute
+        'bipartite' set to 1 and the nodes representing cliques
+        have the node attribute 'bipartite' set to 0, as is the
+        convention for bipartite graphs in NetworkX.
+    """
+    ...
 @overload
 def node_clique_number(
     G: Graph[_Node], nodes=None, cliques: Iterable[Incomplete] | None = None, separate_nodes=False

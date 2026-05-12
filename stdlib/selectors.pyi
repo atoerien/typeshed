@@ -43,14 +43,97 @@ class BaseSelector(metaclass=ABCMeta):
     efficient implementation on the current platform.
     """
     @abstractmethod
-    def register(self, fileobj: FileDescriptorLike, events: int, data: Any = None) -> SelectorKey: ...
+    def register(self, fileobj: FileDescriptorLike, events: int, data: Any = None) -> SelectorKey:
+        """
+        Register a file object.
+
+        Parameters:
+        fileobj -- file object or file descriptor
+        events  -- events to monitor (bitwise mask of EVENT_READ|EVENT_WRITE)
+        data    -- attached data
+
+        Returns:
+        SelectorKey instance
+
+        Raises:
+        ValueError if events is invalid
+        KeyError if fileobj is already registered
+        OSError if fileobj is closed or otherwise is unacceptable to
+                the underlying system call (if a system call is made)
+
+        Note:
+        OSError may or may not be raised
+        """
+        ...
     @abstractmethod
-    def unregister(self, fileobj: FileDescriptorLike) -> SelectorKey: ...
-    def modify(self, fileobj: FileDescriptorLike, events: int, data: Any = None) -> SelectorKey: ...
+    def unregister(self, fileobj: FileDescriptorLike) -> SelectorKey:
+        """
+        Unregister a file object.
+
+        Parameters:
+        fileobj -- file object or file descriptor
+
+        Returns:
+        SelectorKey instance
+
+        Raises:
+        KeyError if fileobj is not registered
+
+        Note:
+        If fileobj is registered but has since been closed this does
+        *not* raise OSError (even if the wrapped syscall does)
+        """
+        ...
+    def modify(self, fileobj: FileDescriptorLike, events: int, data: Any = None) -> SelectorKey:
+        """
+        Change a registered file object monitored events or attached data.
+
+        Parameters:
+        fileobj -- file object or file descriptor
+        events  -- events to monitor (bitwise mask of EVENT_READ|EVENT_WRITE)
+        data    -- attached data
+
+        Returns:
+        SelectorKey instance
+
+        Raises:
+        Anything that unregister() or register() raises
+        """
+        ...
     @abstractmethod
-    def select(self, timeout: float | None = None) -> list[tuple[SelectorKey, int]]: ...
-    def close(self) -> None: ...
-    def get_key(self, fileobj: FileDescriptorLike) -> SelectorKey: ...
+    def select(self, timeout: float | None = None) -> list[tuple[SelectorKey, int]]:
+        """
+        Perform the actual selection, until some monitored file objects are
+        ready or a timeout expires.
+
+        Parameters:
+        timeout -- if timeout > 0, this specifies the maximum wait time, in
+                   seconds
+                   if timeout <= 0, the select() call won't block, and will
+                   report the currently ready file objects
+                   if timeout is None, select() will block until a monitored
+                   file object becomes ready
+
+        Returns:
+        list of (key, events) for ready file objects
+        `events` is a bitwise mask of EVENT_READ|EVENT_WRITE
+        """
+        ...
+    def close(self) -> None:
+        """
+        Close the selector.
+
+        This must be called to make sure that any underlying resource is freed.
+        """
+        ...
+    def get_key(self, fileobj: FileDescriptorLike) -> SelectorKey:
+        """
+        Return the key associated to a registered file object.
+
+        Returns:
+        SelectorKey for this file object
+        """
+        ...
     @abstractmethod
     def get_map(self) -> Mapping[FileDescriptorLike, SelectorKey]:
         """Return a mapping of file objects to selector keys."""
@@ -59,15 +142,18 @@ class BaseSelector(metaclass=ABCMeta):
     def __exit__(self, *args: Unused) -> None: ...
 
 class _BaseSelectorImpl(BaseSelector, metaclass=ABCMeta):
+    """Base selector implementation."""
     def register(self, fileobj: FileDescriptorLike, events: int, data: Any = None) -> SelectorKey: ...
     def unregister(self, fileobj: FileDescriptorLike) -> SelectorKey: ...
     def modify(self, fileobj: FileDescriptorLike, events: int, data: Any = None) -> SelectorKey: ...
     def get_map(self) -> Mapping[FileDescriptorLike, SelectorKey]: ...
 
 class SelectSelector(_BaseSelectorImpl):
+    """Select-based selector."""
     def select(self, timeout: float | None = None) -> list[tuple[SelectorKey, int]]: ...
 
 class _PollLikeSelector(_BaseSelectorImpl):
+    """Base class shared between poll, epoll and devpoll selectors."""
     def select(self, timeout: float | None = None) -> list[tuple[SelectorKey, int]]: ...
 
 if sys.platform != "win32":
@@ -94,6 +180,7 @@ if sys.platform != "win32" and sys.platform != "linux":
 # The runtime logic is more fine-grained than a `sys.platform` check;
 # not really expressible in the stubs
 class DefaultSelector(_BaseSelectorImpl):
+    """Epoll-based selector."""
     def select(self, timeout: float | None = None) -> list[tuple[SelectorKey, int]]: ...
     if sys.platform != "win32":
         def fileno(self) -> int: ...
