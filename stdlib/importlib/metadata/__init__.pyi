@@ -31,6 +31,9 @@ __all__ = [
     "version",
 ]
 
+if sys.version_info >= (3, 15):
+    __all__ += ["PackagePath", "MetadataNotFound", "SimplePath"]
+
 _SimplePath: TypeAlias = SimplePath
 
 def packages_distributions() -> Mapping[str, list[str]]:
@@ -51,6 +54,9 @@ class PackageNotFoundError(ModuleNotFoundError):
     def name(self) -> str:
         """module name"""
         ...
+
+if sys.version_info >= (3, 15):
+    class MetadataNotFound(FileNotFoundError): ...
 
 if sys.version_info >= (3, 13):
     _EntryPointBase = object
@@ -412,7 +418,9 @@ class FileHash:
     value: str
     def __init__(self, spec: str) -> None: ...
 
-if sys.version_info >= (3, 12):
+if sys.version_info >= (3, 15):
+    _distribution_parent = abc.ABC
+elif sys.version_info >= (3, 12):
     class DeprecatedNonAbstract: ...
     _distribution_parent = DeprecatedNonAbstract
 else:

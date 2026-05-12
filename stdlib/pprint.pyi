@@ -1,122 +1,116 @@
-"""
-Support to pretty-print lists, tuples, & dictionaries recursively.
-
-Very simple, but useful, especially in debugging data structures.
-
-Classes
--------
-
-PrettyPrinter()
-    Handle pretty-printing operations onto a stream using a configured
-    set of formatting parameters.
-
-Functions
----------
-
-pformat()
-    Format a Python object into a pretty-printed representation.
-
-pprint()
-    Pretty-print a Python object to a stream [default is sys.stdout].
-
-saferepr()
-    Generate a 'standard' repr()-like value, but protect against recursive
-    data structures.
-"""
-
+import sys
 from _typeshed import SupportsWrite
 from collections import deque
 from typing import IO
 
 __all__ = ["pprint", "pformat", "isreadable", "isrecursive", "saferepr", "PrettyPrinter", "pp"]
 
-def pformat(
-    object: object,
-    indent: int = 1,
-    width: int = 80,
-    depth: int | None = None,
-    *,
-    compact: bool = False,
-    sort_dicts: bool = True,
-    underscore_numbers: bool = False,
-) -> str:
-    """Format a Python object into a pretty-printed representation."""
-    ...
-def pp(
-    object: object,
-    stream: IO[str] | None = None,
-    indent: int = 1,
-    width: int = 80,
-    depth: int | None = None,
-    *,
-    compact: bool = False,
-    sort_dicts: bool = False,
-    underscore_numbers: bool = False,
-) -> None:
-    """Pretty-print a Python object"""
-    ...
-def pprint(
-    object: object,
-    stream: IO[str] | None = None,
-    indent: int = 1,
-    width: int = 80,
-    depth: int | None = None,
-    *,
-    compact: bool = False,
-    sort_dicts: bool = True,
-    underscore_numbers: bool = False,
-) -> None:
-    """Pretty-print a Python object to a stream [default is sys.stdout]."""
-    ...
-def isreadable(object: object) -> bool:
-    """Determine if saferepr(object) is readable by eval()."""
-    ...
-def isrecursive(object: object) -> bool:
-    """Determine if object requires a recursive representation."""
-    ...
-def saferepr(object: object) -> str:
-    """Version of repr() which can handle recursive data structures."""
-    ...
-
-class PrettyPrinter:
-    def __init__(
-        self,
-        indent: int = 1,
-        width: int = 80,
+if sys.version_info >= (3, 15):
+    def pformat(
+        object: object,
+        indent: int = 4,
+        width: int = 88,
         depth: int | None = None,
-        stream: IO[str] | None = None,
         *,
         compact: bool = False,
         sort_dicts: bool = True,
         underscore_numbers: bool = False,
-    ) -> None:
-        """
-        Handle pretty printing operations onto a stream using a set of
-        configured parameters.
+    ) -> str: ...
 
-        indent
-            Number of spaces to indent for each level of nesting.
+else:
+    def pformat(
+        object: object,
+        indent: int = 1,
+        width: int = 80,
+        depth: int | None = None,
+        *,
+        compact: bool = False,
+        sort_dicts: bool = True,
+        underscore_numbers: bool = False,
+    ) -> str: ...
 
-        width
-            Attempted maximum number of columns in the output.
+if sys.version_info >= (3, 15):
+    def pp(
+        object: object,
+        stream: IO[str] | None = None,
+        indent: int = 4,
+        width: int = 88,
+        depth: int | None = None,
+        *,
+        compact: bool = False,
+        sort_dicts: bool = False,
+        underscore_numbers: bool = False,
+    ) -> None: ...
 
-        depth
-            The maximum depth to print out nested structures.
+else:
+    def pp(
+        object: object,
+        stream: IO[str] | None = None,
+        indent: int = 1,
+        width: int = 80,
+        depth: int | None = None,
+        *,
+        compact: bool = False,
+        sort_dicts: bool = False,
+        underscore_numbers: bool = False,
+    ) -> None: ...
 
-        stream
-            The desired output stream.  If omitted (or false), the standard
-            output stream available at construction will be used.
+if sys.version_info >= (3, 15):
+    def pprint(
+        object: object,
+        stream: IO[str] | None = None,
+        indent: int = 4,
+        width: int = 88,
+        depth: int | None = None,
+        *,
+        compact: bool = False,
+        sort_dicts: bool = True,
+        underscore_numbers: bool = False,
+    ) -> None: ...
 
-        compact
-            If true, several items will be combined in one line.
+else:
+    def pprint(
+        object: object,
+        stream: IO[str] | None = None,
+        indent: int = 1,
+        width: int = 80,
+        depth: int | None = None,
+        *,
+        compact: bool = False,
+        sort_dicts: bool = True,
+        underscore_numbers: bool = False,
+    ) -> None: ...
 
-        sort_dicts
-            If true, dict keys are sorted.
+def isreadable(object: object) -> bool: ...
+def isrecursive(object: object) -> bool: ...
+def saferepr(object: object) -> str: ...
 
-        underscore_numbers
-            If true, digit groups are separated with underscores.
-        """
-        ...
+class PrettyPrinter:
+    if sys.version_info >= (3, 15):
+        def __init__(
+            self,
+            indent: int = 4,
+            width: int = 88,
+            depth: int | None = None,
+            stream: IO[str] | None = None,
+            *,
+            compact: bool = False,
+            sort_dicts: bool = True,
+            underscore_numbers: bool = False,
+        ) -> None: ...
+    else:
+        def __init__(
+            self,
+            indent: int = 1,
+            width: int = 80,
+            depth: int | None = None,
+            stream: IO[str] | None = None,
+            *,
+            compact: bool = False,
+            sort_dicts: bool = True,
+            underscore_numbers: bool = False,
+        ) -> None: ...
+
     def pformat(self, object: object) -> str: ...
     def pprint(self, object: object) -> None: ...
     def isreadable(self, object: object) -> bool: ...

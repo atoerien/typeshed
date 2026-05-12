@@ -20,7 +20,7 @@ nx_agraph, nx_pydot
 from _typeshed import Incomplete
 from collections.abc import Callable, Collection, Iterable
 
-from networkx.classes.graph import Graph, _Data, _Node
+from networkx.classes.graph import Graph, _Data, _EdgeData, _Node, _NodeData
 from networkx.utils.backends import _dispatchable
 
 __all__ = [
@@ -34,47 +34,10 @@ __all__ = [
 ]
 
 def to_networkx_graph(
-    data: _Data[_Node], create_using: Graph[_Node] | Callable[[], Graph[_Node]] | None = None, multigraph_input: bool = False
-) -> Graph[_Node]:
-    """
-    Make a NetworkX graph from a known data structure.
-
-    The preferred way to call this is automatically
-    from the class constructor
-
-    >>> d = {0: {1: {"weight": 1}}}  # dict-of-dicts single edge (0,1)
-    >>> G = nx.Graph(d)
-
-    instead of the equivalent
-
-    >>> G = nx.from_dict_of_dicts(d)
-
-    Parameters
-    ----------
-    data : object to be converted
-
-        Current known types are:
-         any NetworkX graph
-         dict-of-dicts
-         dict-of-lists
-         container (e.g. set, list, tuple) of edges
-         iterator (e.g. itertools.chain) that produces edges
-         generator of edges
-         Pandas DataFrame (row per edge)
-         2D numpy array
-         scipy sparse array
-         pygraphviz agraph
-
-    create_using : NetworkX graph constructor, optional (default=nx.Graph)
-        Graph type to create. If graph instance, then cleared before populated.
-
-    multigraph_input : bool (default False)
-        If True and  data is a dict_of_dicts,
-        try to create a multigraph assuming dict_of_dict_of_lists.
-        If data and create_using are both multigraphs then create
-        a multigraph from a multigraph.
-    """
-    ...
+    data: _Data[_Node],
+    create_using: Graph[_Node, _NodeData, _EdgeData] | Callable[[], Graph[_Node, _NodeData, _EdgeData]] | None = None,
+    multigraph_input: bool = False,
+) -> Graph[_Node, _NodeData, _EdgeData]: ...
 @_dispatchable
 def to_dict_of_lists(G: Graph[_Node], nodelist: Collection[_Node] | None = None) -> dict[_Node, list[_Node]]:
     """

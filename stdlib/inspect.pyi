@@ -649,68 +649,22 @@ def getblock(lines: tuple[str, ...]) -> tuple[str, ...]:
     """Extract the block of code at the top of the given list of lines."""
     ...
 @overload
-def getblock(lines: Sequence[str]) -> Sequence[str]:
-    """Extract the block of code at the top of the given list of lines."""
-    ...
-def getdoc(object: object) -> str | None:
-    """
-    Get the documentation string for an object.
+def getblock(lines: Sequence[str]) -> Sequence[str]: ...
 
-    All tabs are expanded to spaces.  To clean up docstrings that are
-    indented to line up with blocks of code, any whitespace than can be
-    uniformly removed from the second line onwards is removed.
-    """
-    ...
-def getcomments(object: object) -> str | None:
-    """
-    Get lines of comments immediately preceding an object's source code.
+if sys.version_info >= (3, 15):
+    def getdoc(object: object, *, inherit_class_doc: bool = True, fallback_to_class_doc: bool = True) -> str | None: ...
 
-    Returns None when source can't be found.
-    """
-    ...
-def getfile(object: _SourceObjectType) -> str:
-    """Work out which source or compiled file an object was defined in."""
-    ...
-def getmodule(object: object, _filename: str | None = None) -> ModuleType | None:
-    """Return the module an object was defined in, or None if not found."""
-    ...
-def getsourcefile(object: _SourceObjectType) -> str | None:
-    """
-    Return the filename that can be used to locate an object's source.
-    Return None if no way can be identified to get the source.
-    """
-    ...
-def getsourcelines(object: _SourceObjectType) -> tuple[list[str], int]:
-    """
-    Return a list of source lines and starting line number for an object.
+else:
+    def getdoc(object: object) -> str | None: ...
 
-    The argument may be a module, class, method, function, traceback, frame,
-    or code object.  The source code is returned as a list of the lines
-    corresponding to the object and the line number indicates where in the
-    original source file the first line of code was found.  An OSError is
-    raised if the source code cannot be retrieved.
-    """
-    ...
-def getsource(object: _SourceObjectType) -> str:
-    """
-    Return the text of the source code for an object.
-
-    The argument may be a module, class, method, function, traceback, frame,
-    or code object.  The source code is returned as a single string.  An
-    OSError is raised if the source code cannot be retrieved.
-    """
-    ...
-def cleandoc(doc: str) -> str:
-    """
-    Clean up indentation from docstrings.
-
-    Any whitespace that can be uniformly removed from the second line
-    onwards is removed.
-    """
-    ...
-def indentsize(line: str) -> int:
-    """Return the indent size, in spaces, at the start of a line of text."""
-    ...
+def getcomments(object: object) -> str | None: ...
+def getfile(object: _SourceObjectType) -> str: ...
+def getmodule(object: object, _filename: str | None = None) -> ModuleType | None: ...
+def getsourcefile(object: _SourceObjectType) -> str | None: ...
+def getsourcelines(object: _SourceObjectType) -> tuple[list[str], int]: ...
+def getsource(object: _SourceObjectType) -> str: ...
+def cleandoc(doc: str) -> str: ...
+def indentsize(line: str) -> int: ...
 
 _IntrospectableCallable: TypeAlias = Callable[..., Any]
 
@@ -1141,24 +1095,11 @@ class FullArgSpec(NamedTuple):
     kwonlydefaults: dict[str, Any] | None
     annotations: dict[str, Any]
 
-def getfullargspec(func: object) -> FullArgSpec:
-    """
-    Get the names and default values of a callable object's parameters.
+if sys.version_info >= (3, 15):
+    def getfullargspec(func: object, *, annotation_format: Format = Format.VALUE) -> FullArgSpec: ...  # noqa: Y011
 
-    A tuple of seven things is returned:
-    (args, varargs, varkw, defaults, kwonlyargs, kwonlydefaults, annotations).
-    'args' is a list of the parameter names.
-    'varargs' and 'varkw' are the names of the * and ** parameters or None.
-    'defaults' is an n-tuple of the default values of the last n parameters.
-    'kwonlyargs' is a list of keyword-only parameter names.
-    'kwonlydefaults' is a dictionary mapping names from kwonlyargs to defaults.
-    'annotations' is a dictionary mapping parameter names to annotations.
-
-    Notable differences from inspect.signature():
-      - the "self" parameter is always reported, even for bound methods
-      - wrapper chains defined by __wrapped__ *not* unwrapped automatically
-    """
-    ...
+else:
+    def getfullargspec(func: object) -> FullArgSpec: ...
 
 class ArgInfo(NamedTuple):
     """ArgInfo(args, varargs, keywords, locals)"""

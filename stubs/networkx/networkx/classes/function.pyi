@@ -7,7 +7,7 @@ from typing import Literal, TypeVar, overload
 from networkx import _dispatchable
 from networkx.algorithms.planarity import PlanarEmbedding
 from networkx.classes.digraph import DiGraph
-from networkx.classes.graph import Graph, _NBunch, _Node
+from networkx.classes.graph import Graph, _EdgeData, _NBunch, _Node, _NodeData
 from networkx.classes.multigraph import MultiGraph
 
 __all__ = [
@@ -159,323 +159,19 @@ def is_directed(G: DiGraph[Hashable]) -> Literal[True]:
     """Return True if graph is directed."""
     ...
 @overload
-def is_directed(G: Graph[Hashable]) -> Literal[False]:
-    """Return True if graph is directed."""
-    ...
-def freeze(G: Graph[_Node]):
-    """
-    Modify graph to prevent further change by adding or removing
-    nodes or edges.
-
-    Node and edge data can still be modified.
-
-    Parameters
-    ----------
-    G : graph
-      A NetworkX graph
-
-    Examples
-    --------
-    >>> G = nx.path_graph(4)
-    >>> G = nx.freeze(G)
-    >>> try:
-    ...     G.add_edge(4, 5)
-    ... except nx.NetworkXError as err:
-    ...     print(str(err))
-    Frozen graph can't be modified
-
-    Notes
-    -----
-    To "unfreeze" a graph you must make a copy by creating a new graph object:
-
-    >>> graph = nx.path_graph(4)
-    >>> frozen_graph = nx.freeze(graph)
-    >>> unfrozen_graph = nx.Graph(frozen_graph)
-    >>> nx.is_frozen(unfrozen_graph)
-    False
-
-    See Also
-    --------
-    is_frozen
-    """
-    ...
-def is_frozen(G: Graph[Incomplete]) -> bool:
-    """
-    Returns True if graph is frozen.
-
-    Parameters
-    ----------
-    G : graph
-      A NetworkX graph
-
-    See Also
-    --------
-    freeze
-    """
-    ...
-def add_star(G_to_add_to, nodes_for_star, **attr) -> None:
-    """
-    Add a star to Graph G_to_add_to.
-
-    The first node in `nodes_for_star` is the middle of the star.
-    It is connected to all other nodes.
-
-    Parameters
-    ----------
-    G_to_add_to : graph
-        A NetworkX graph
-    nodes_for_star : iterable container
-        A container of nodes.
-    attr : keyword arguments, optional (default= no attributes)
-        Attributes to add to every edge in star.
-
-    See Also
-    --------
-    add_path, add_cycle
-
-    Examples
-    --------
-    >>> G = nx.Graph()
-    >>> nx.add_star(G, [0, 1, 2, 3])
-    >>> nx.add_star(G, [10, 11, 12], weight=2)
-    """
-    ...
-def add_path(G_to_add_to, nodes_for_path, **attr) -> None:
-    """
-    Add a path to the Graph G_to_add_to.
-
-    Parameters
-    ----------
-    G_to_add_to : graph
-        A NetworkX graph
-    nodes_for_path : iterable container
-        A container of nodes.  A path will be constructed from
-        the nodes (in order) and added to the graph.
-    attr : keyword arguments, optional (default= no attributes)
-        Attributes to add to every edge in path.
-
-    See Also
-    --------
-    add_star, add_cycle
-
-    Examples
-    --------
-    >>> G = nx.Graph()
-    >>> nx.add_path(G, [0, 1, 2, 3])
-    >>> nx.add_path(G, [10, 11, 12], weight=7)
-    """
-    ...
-def add_cycle(G_to_add_to, nodes_for_cycle, **attr) -> None:
-    """
-    Add a cycle to the Graph G_to_add_to.
-
-    Parameters
-    ----------
-    G_to_add_to : graph
-        A NetworkX graph
-    nodes_for_cycle: iterable container
-        A container of nodes.  A cycle will be constructed from
-        the nodes (in order) and added to the graph.
-    attr : keyword arguments, optional (default= no attributes)
-        Attributes to add to every edge in cycle.
-
-    See Also
-    --------
-    add_path, add_star
-
-    Examples
-    --------
-    >>> G = nx.Graph()  # or DiGraph, MultiGraph, MultiDiGraph, etc
-    >>> nx.add_cycle(G, [0, 1, 2, 3])
-    >>> nx.add_cycle(G, [10, 11, 12], weight=7)
-    """
-    ...
-def subgraph(G: Graph[_Node], nbunch):
-    """
-    Returns the subgraph induced on nodes in nbunch.
-
-    Parameters
-    ----------
-    G : graph
-       A NetworkX graph
-
-    nbunch : list, iterable
-       A container of nodes that will be iterated through once (thus
-       it should be an iterator or be iterable).  Each element of the
-       container should be a valid node type: any hashable type except
-       None.  If nbunch is None, return all edges data in the graph.
-       Nodes in nbunch that are not in the graph will be (quietly)
-       ignored.
-
-    Notes
-    -----
-    subgraph(G) calls G.subgraph()
-    """
-    ...
-def induced_subgraph(G: Graph[_Node], nbunch: _NBunch[_Node]) -> Graph[_Node]:
-    """
-    Returns a SubGraph view of `G` showing only nodes in nbunch.
-
-    The induced subgraph of a graph on a set of nodes N is the
-    graph with nodes N and edges from G which have both ends in N.
-
-    Parameters
-    ----------
-    G : NetworkX Graph
-    nbunch : node, container of nodes or None (for all nodes)
-
-    Returns
-    -------
-    subgraph : SubGraph View
-        A read-only view of the subgraph in `G` induced by the nodes.
-        Changes to the graph `G` will be reflected in the view.
-
-    Notes
-    -----
-    To create a mutable subgraph with its own copies of nodes
-    edges and attributes use `subgraph.copy()` or `Graph(subgraph)`
-
-    For an inplace reduction of a graph to a subgraph you can remove nodes:
-    `G.remove_nodes_from(n in G if n not in set(nbunch))`
-
-    If you are going to compute subgraphs of your subgraphs you could
-    end up with a chain of views that can be very slow once the chain
-    has about 15 views in it. If they are all induced subgraphs, you
-    can short-cut the chain by making them all subgraphs of the original
-    graph. The graph class method `G.subgraph` does this when `G` is
-    a subgraph. In contrast, this function allows you to choose to build
-    chains or not, as you wish. The returned subgraph is a view on `G`.
-
-    Examples
-    --------
-    >>> G = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-    >>> H = nx.induced_subgraph(G, [0, 1, 3])
-    >>> list(H.edges)
-    [(0, 1)]
-    >>> list(H.nodes)
-    [0, 1, 3]
-    """
-    ...
-def edge_subgraph(G: Graph[_Node], edges):
-    """
-    Returns a view of the subgraph induced by the specified edges.
-
-    The induced subgraph contains each edge in `edges` and each
-    node incident to any of those edges.
-
-    Parameters
-    ----------
-    G : NetworkX Graph
-    edges : iterable
-        An iterable of edges. Edges not present in `G` are ignored.
-
-    Returns
-    -------
-    subgraph : SubGraph View
-        A read-only edge-induced subgraph of `G`.
-        Changes to `G` are reflected in the view.
-
-    Notes
-    -----
-    To create a mutable subgraph with its own copies of nodes
-    edges and attributes use `subgraph.copy()` or `Graph(subgraph)`
-
-    If you create a subgraph of a subgraph recursively you can end up
-    with a chain of subgraphs that becomes very slow with about 15
-    nested subgraph views. Luckily the edge_subgraph filter nests
-    nicely so you can use the original graph as G in this function
-    to avoid chains. We do not rule out chains programmatically so
-    that odd cases like an `edge_subgraph` of a `restricted_view`
-    can be created.
-
-    Examples
-    --------
-    >>> G = nx.path_graph(5)
-    >>> H = G.edge_subgraph([(0, 1), (3, 4)])
-    >>> list(H.nodes)
-    [0, 1, 3, 4]
-    >>> list(H.edges)
-    [(0, 1), (3, 4)]
-    """
-    ...
-def restricted_view(G: Graph[_Node], nodes, edges):
-    """
-    Returns a view of `G` with hidden nodes and edges.
-
-    The resulting subgraph filters out node `nodes` and edges `edges`.
-    Filtered out nodes also filter out any of their edges.
-
-    Parameters
-    ----------
-    G : NetworkX Graph
-    nodes : iterable
-        An iterable of nodes. Nodes not present in `G` are ignored.
-    edges : iterable
-        An iterable of edges. Edges not present in `G` are ignored.
-
-    Returns
-    -------
-    subgraph : SubGraph View
-        A read-only restricted view of `G` filtering out nodes and edges.
-        Changes to `G` are reflected in the view.
-
-    Notes
-    -----
-    To create a mutable subgraph with its own copies of nodes
-    edges and attributes use `subgraph.copy()` or `Graph(subgraph)`
-
-    If you create a subgraph of a subgraph recursively you may end up
-    with a chain of subgraph views. Such chains can get quite slow
-    for lengths near 15. To avoid long chains, try to make your subgraph
-    based on the original graph.  We do not rule out chains programmatically
-    so that odd cases like an `edge_subgraph` of a `restricted_view`
-    can be created.
-
-    Examples
-    --------
-    >>> G = nx.path_graph(5)
-    >>> H = nx.restricted_view(G, [0], [(1, 2), (3, 4)])
-    >>> list(H.nodes)
-    [1, 2, 3, 4]
-    >>> list(H.edges)
-    [(2, 3)]
-    """
-    ...
-def to_directed(graph):
-    """
-    Returns a directed view of the graph `graph`.
-
-    Identical to graph.to_directed(as_view=True)
-    Note that graph.to_directed defaults to `as_view=False`
-    while this function always provides a view.
-    """
-    ...
-def to_undirected(graph):
-    """
-    Returns an undirected view of the graph `graph`.
-
-    Identical to graph.to_undirected(as_view=True)
-    Note that graph.to_undirected defaults to `as_view=False`
-    while this function always provides a view.
-    """
-    ...
-def create_empty_copy(G: Graph[_Node], with_data: bool = True):
-    """
-    Returns a copy of the graph G with all of the edges removed.
-
-    Parameters
-    ----------
-    G : graph
-       A NetworkX graph
-
-    with_data :  bool (default=True)
-       Propagate Graph and Nodes data to the new graph.
-
-    See Also
-    --------
-    empty_graph
-    """
-    ...
+def is_directed(G: Graph[Hashable]) -> Literal[False]: ...
+def freeze(G: Graph[_Node]): ...
+def is_frozen(G: Graph[Incomplete]) -> bool: ...
+def add_star(G_to_add_to, nodes_for_star, **attr) -> None: ...
+def add_path(G_to_add_to, nodes_for_path, **attr) -> None: ...
+def add_cycle(G_to_add_to, nodes_for_cycle, **attr) -> None: ...
+def subgraph(G: Graph[_Node], nbunch): ...
+def induced_subgraph(G: Graph[_Node, _NodeData, _EdgeData], nbunch: _NBunch[_Node]) -> Graph[_Node, _NodeData, _EdgeData]: ...
+def edge_subgraph(G: Graph[_Node], edges): ...
+def restricted_view(G: Graph[_Node], nodes, edges): ...
+def to_directed(graph): ...
+def to_undirected(graph): ...
+def create_empty_copy(G: Graph[_Node], with_data: bool = True): ...
 
 # incomplete: Can "Any scalar value" be enforced?
 @overload
@@ -1396,51 +1092,8 @@ def selfloop_edges(
     ...
 @overload
 def selfloop_edges(
-    G: Graph[_Node], data: Literal[True], keys: Literal[False] = False, default=None
-) -> Generator[tuple[_Node, _Node, dict[str, Incomplete]]]:
-    """
-    Returns an iterator over selfloop edges.
-
-    A selfloop edge has the same node at both ends.
-
-    Parameters
-    ----------
-    G : graph
-        A NetworkX graph.
-    data : string or bool, optional (default=False)
-        Return selfloop edges as two tuples (u, v) (data=False)
-        or three-tuples (u, v, datadict) (data=True)
-        or three-tuples (u, v, datavalue) (data='attrname')
-    keys : bool, optional (default=False)
-        If True, return edge keys with each edge.
-    default : value, optional (default=None)
-        Value used for edges that don't have the requested attribute.
-        Only relevant if data is not True or False.
-
-    Returns
-    -------
-    edgeiter : iterator over edge tuples
-        An iterator over all selfloop edges.
-
-    See Also
-    --------
-    nodes_with_selfloops, number_of_selfloops
-
-    Examples
-    --------
-    >>> G = nx.MultiGraph()  # or Graph, DiGraph, MultiDiGraph, etc
-    >>> ekey = G.add_edge(1, 1)
-    >>> ekey = G.add_edge(1, 2)
-    >>> list(nx.selfloop_edges(G))
-    [(1, 1)]
-    >>> list(nx.selfloop_edges(G, data=True))
-    [(1, 1, {})]
-    >>> list(nx.selfloop_edges(G, keys=True))
-    [(1, 1, 0)]
-    >>> list(nx.selfloop_edges(G, keys=True, data=True))
-    [(1, 1, 0, {})]
-    """
-    ...
+    G: Graph[_Node, _NodeData, _EdgeData], data: Literal[True], keys: Literal[False] = False, default=None
+) -> Generator[tuple[_Node, _Node, _EdgeData]]: ...
 @overload
 def selfloop_edges(
     G: Graph[_Node], data: str, keys: Literal[False] = False, default: _U | None = None
@@ -1584,51 +1237,8 @@ def selfloop_edges(
     ...
 @overload
 def selfloop_edges(
-    G: Graph[_Node], data: Literal[True], keys: Literal[True], default=None
-) -> Generator[tuple[_Node, _Node, int, dict[str, Incomplete]]]:
-    """
-    Returns an iterator over selfloop edges.
-
-    A selfloop edge has the same node at both ends.
-
-    Parameters
-    ----------
-    G : graph
-        A NetworkX graph.
-    data : string or bool, optional (default=False)
-        Return selfloop edges as two tuples (u, v) (data=False)
-        or three-tuples (u, v, datadict) (data=True)
-        or three-tuples (u, v, datavalue) (data='attrname')
-    keys : bool, optional (default=False)
-        If True, return edge keys with each edge.
-    default : value, optional (default=None)
-        Value used for edges that don't have the requested attribute.
-        Only relevant if data is not True or False.
-
-    Returns
-    -------
-    edgeiter : iterator over edge tuples
-        An iterator over all selfloop edges.
-
-    See Also
-    --------
-    nodes_with_selfloops, number_of_selfloops
-
-    Examples
-    --------
-    >>> G = nx.MultiGraph()  # or Graph, DiGraph, MultiDiGraph, etc
-    >>> ekey = G.add_edge(1, 1)
-    >>> ekey = G.add_edge(1, 2)
-    >>> list(nx.selfloop_edges(G))
-    [(1, 1)]
-    >>> list(nx.selfloop_edges(G, data=True))
-    [(1, 1, {})]
-    >>> list(nx.selfloop_edges(G, keys=True))
-    [(1, 1, 0)]
-    >>> list(nx.selfloop_edges(G, keys=True, data=True))
-    [(1, 1, 0, {})]
-    """
-    ...
+    G: Graph[_Node, _NodeData, _EdgeData], data: Literal[True], keys: Literal[True], default=None
+) -> Generator[tuple[_Node, _Node, int, _EdgeData]]: ...
 @overload
 def selfloop_edges(
     G: Graph[_Node], data: str, keys: Literal[True], default: _U | None = None

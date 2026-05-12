@@ -11,14 +11,11 @@ __all__ = ["symtable", "SymbolTable", "Class", "Function", "Symbol"]
 if sys.version_info >= (3, 13):
     __all__ += ["SymbolTableType"]
 
-def symtable(code: str, filename: str, compile_type: str) -> SymbolTable:
-    """
-    Return the toplevel *SymbolTable* for the source code.
+if sys.version_info >= (3, 15):
+    def symtable(code: str, filename: str, compile_type: str, *, module: str | None = None) -> SymbolTable: ...
 
-    *filename* is the name of the file with the code
-    and *compile_type* is the *compile()* mode argument.
-    """
-    ...
+else:
+    def symtable(code: str, filename: str, compile_type: str) -> SymbolTable: ...
 
 if sys.version_info >= (3, 13):
     from enum import StrEnum

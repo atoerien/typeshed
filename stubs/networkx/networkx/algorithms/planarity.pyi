@@ -4,7 +4,7 @@ from decimal import Decimal
 from typing import NoReturn
 
 from networkx.classes.digraph import DiGraph
-from networkx.classes.graph import Graph, _EdgePlus, _Node
+from networkx.classes.graph import Graph, _EdgeData, _EdgePlus, _Node, _NodeData
 from networkx.utils.backends import _dispatchable
 
 __all__ = ["check_planarity", "is_planar", "PlanarEmbedding"]
@@ -105,30 +105,9 @@ def check_planarity(G: Graph[_Node], counterexample: bool = False):
     """
     ...
 @_dispatchable
-def get_counterexample(G: Graph[_Node]) -> Graph[_Node]:
-    """
-    Obtains a Kuratowski subgraph.
-
-    Raises nx.NetworkXException if G is planar.
-
-    The function removes edges such that the graph is still not planar.
-    At some point the removal of any edge would make the graph planar.
-    This subgraph must be a Kuratowski subgraph.
-
-    Parameters
-    ----------
-    G : NetworkX graph
-
-    Returns
-    -------
-    subgraph : NetworkX graph
-        A Kuratowski subgraph that proves that G is not planar.
-    """
-    ...
+def get_counterexample(G: Graph[_Node, _NodeData, _EdgeData]) -> Graph[_Node, _NodeData, _EdgeData]: ...
 @_dispatchable
-def get_counterexample_recursive(G: Graph[_Node]) -> Graph[_Node]:
-    """Recursive version of :meth:`get_counterexample`."""
-    ...
+def get_counterexample_recursive(G: Graph[_Node, _NodeData, _EdgeData]) -> Graph[_Node, _NodeData, _EdgeData]: ...
 
 class Interval:
     """

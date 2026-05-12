@@ -4,7 +4,7 @@ from collections.abc import Callable, Generator, Iterable, Iterator
 from typing import Literal
 
 from networkx.classes.digraph import DiGraph
-from networkx.classes.graph import Graph, _Node
+from networkx.classes.graph import Graph, _EdgeData, _Node, _NodeData
 from networkx.utils.backends import _dispatchable
 
 __all__ = [
@@ -87,54 +87,12 @@ def dfs_edges(
     ...
 @_dispatchable
 def dfs_tree(
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     source: _Node | None = None,
     depth_limit: int | None = None,
     *,
     sort_neighbors: Callable[[Iterator[_Node]], Iterable[_Node]] | None = None,
-) -> DiGraph[_Node]:
-    """
-    Returns oriented tree constructed from a depth-first-search from source.
-
-    Parameters
-    ----------
-    G : NetworkX graph
-
-    source : node, optional
-       Specify starting node for depth-first search.
-
-    depth_limit : int, optional (default=len(G))
-       Specify the maximum search depth.
-
-    sort_neighbors : function (default=None)
-        A function that takes an iterator over nodes as the input, and
-        returns an iterable of the same nodes with a custom ordering.
-        For example, `sorted` will sort the nodes in increasing order.
-
-    Returns
-    -------
-    T : NetworkX DiGraph
-       An oriented tree
-
-    Examples
-    --------
-    >>> G = nx.path_graph(5)
-    >>> T = nx.dfs_tree(G, source=0, depth_limit=2)
-    >>> list(T.edges())
-    [(0, 1), (1, 2)]
-    >>> T = nx.dfs_tree(G, source=0)
-    >>> list(T.edges())
-    [(0, 1), (1, 2), (2, 3), (3, 4)]
-
-    See Also
-    --------
-    dfs_preorder_nodes
-    dfs_postorder_nodes
-    dfs_labeled_edges
-    :func:`~networkx.algorithms.traversal.edgedfs.edge_dfs`
-    :func:`~networkx.algorithms.traversal.breadth_first_search.bfs_tree`
-    """
-    ...
+) -> DiGraph[_Node, _NodeData, _EdgeData]: ...
 @_dispatchable
 def dfs_predecessors(
     G: Graph[_Node],
