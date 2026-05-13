@@ -143,19 +143,68 @@ class HTTPAdapter(BaseAdapter):
         # ssl_version (int), cert_reqs (str), ca_certs (str), ca_cert_dir (str),
         # ssl_context (ssl.SSLContext), socket_options (list), etc.
         # We use Any because the exact set is dynamic and not fully specified in stubs.
-    ) -> None: ...
+    ) -> None:
+        """
+        Initializes a urllib3 PoolManager.
+
+        This method should not be called from user code, and is only
+        exposed for use when subclassing the
+        :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.
+
+        :param connections: The number of urllib3 connection pools to cache.
+        :param maxsize: The maximum number of connections to save in the pool.
+        :param block: Block when no free connections are available.
+        :param pool_kwargs: Extra keyword arguments used to initialize the Pool Manager.
+        """
+        ...
     def proxy_manager_for(
         self,
         proxy: str,
         **proxy_kwargs: Any,  # Any: Same as pool_kwargs above, passed to ProxyManager or SOCKSProxyManager.
         # May include: ssl_context, cert_reqs, ca_certs, ca_cert_dir, etc.
     ) -> Any:  # Any: Returns either urllib3.ProxyManager (for HTTP/HTTPS proxies) or SOCKSProxyManager (for SOCKS).
+        """
+        Return urllib3 ProxyManager for the given proxy.
+
+        This method should not be called from user code, and is only
+        exposed for use when subclassing the
+        :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.
+
+        :param proxy: The proxy to return a urllib3 ProxyManager for.
+        :param proxy_kwargs: Extra keyword arguments used to configure the Proxy Manager.
+        :returns: ProxyManager
+        :rtype: urllib3.ProxyManager
+        """
         # The exact return type depends on the proxy scheme and is not needed by callers; using Any avoids
         # circular imports or complex union types. In practice, the object adheres to a common interface.
         ...
 
-    def cert_verify(self, conn, url, verify, cert): ...
-    def build_response(self, req: PreparedRequest, resp: urllib3.BaseHTTPResponse) -> Response: ...
+    def cert_verify(self, conn, url, verify, cert):
+        """
+        Verify a SSL certificate. This method should not be called from user
+        code, and is only exposed for use when subclassing the
+        :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.
+
+        :param conn: The urllib3 connection object associated with the cert.
+        :param url: The requested URL.
+        :param verify: Either a boolean, in which case it controls whether we verify
+            the server's TLS certificate, or a string, in which case it must be a path
+            to a CA bundle to use
+        :param cert: The SSL certificate to verify.
+        """
+        ...
+    def build_response(self, req: PreparedRequest, resp: urllib3.BaseHTTPResponse) -> Response:
+        """
+        Builds a :class:`Response <requests.Response>` object from a urllib3
+        response. This should not be called from user code, and is only exposed
+        for use when subclassing the
+        :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`
+
+        :param req: The :class:`PreparedRequest <PreparedRequest>` used to generate the response.
+        :param resp: The urllib3 response object.
+        :rtype: requests.Response
+        """
+        ...
     def build_connection_pool_key_attributes(
         self, request: PreparedRequest, verify: bool | str, cert: str | tuple[str, str] | None = None
     ) -> tuple[_HostParams, _PoolKwargs]:
@@ -237,9 +286,44 @@ class HTTPAdapter(BaseAdapter):
         """
         ...
     @deprecated("Use get_connection_with_tls_context() instead.")
-    def get_connection(self, url: _Uri, proxies: Mapping[str, str] | None = None) -> ConnectionPool: ...
-    def close(self) -> None: ...
-    def request_url(self, request: PreparedRequest, proxies: Mapping[str, str] | None) -> str: ...
+    def get_connection(self, url: _Uri, proxies: Mapping[str, str] | None = None) -> ConnectionPool:
+        """
+        DEPRECATED: Users should move to `get_connection_with_tls_context`
+        for all subclasses of HTTPAdapter using Requests>=2.32.2.
+
+        Returns a urllib3 connection for the given URL. This should not be
+        called from user code, and is only exposed for use when subclassing the
+        :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.
+
+        :param url: The URL to connect to.
+        :param proxies: (optional) A Requests-style dictionary of proxies used on this request.
+        :rtype: urllib3.ConnectionPool
+        """
+        ...
+    def close(self) -> None:
+        """
+        Disposes of any internal state.
+
+        Currently, this closes the PoolManager and any active ProxyManager,
+        which closes any pooled connections.
+        """
+        ...
+    def request_url(self, request: PreparedRequest, proxies: Mapping[str, str] | None) -> str:
+        """
+        Obtain the url to use when making the final request.
+
+        If the message is being sent through a HTTP proxy, the full URL has to
+        be used. Otherwise, we should only use the path portion of the URL.
+
+        This should not be called from user code, and is only exposed for use
+        when subclassing the
+        :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.
+
+        :param request: The :class:`PreparedRequest <PreparedRequest>` being sent.
+        :param proxies: A dictionary of schemes or schemes and hosts to proxy URLs.
+        :rtype: str
+        """
+        ...
     def add_headers(
         self,
         request: PreparedRequest,
@@ -247,8 +331,35 @@ class HTTPAdapter(BaseAdapter):
         # The kwargs mirror the send() parameters: stream (bool), timeout (float|tuple),
         # verify (bool|str), cert (str|tuple), proxies (dict). Base implementation ignores them.
         # Using Any allows subclasses to access these arguments without repeating the full signature.
-    ) -> None: ...
-    def proxy_headers(self, proxy: str) -> dict[str, str]: ...
+    ) -> None:
+        """
+        Add any headers needed by the connection. As of v2.0 this does
+        nothing by default, but is left for overriding by users that subclass
+        the :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.
+
+        This should not be called from user code, and is only exposed for use
+        when subclassing the
+        :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.
+
+        :param request: The :class:`PreparedRequest <PreparedRequest>` to add headers to.
+        :param kwargs: The keyword arguments from the call to send().
+        """
+        ...
+    def proxy_headers(self, proxy: str) -> dict[str, str]:
+        """
+        Returns a dictionary of the headers to add to any request sent
+        through a proxy. This works with urllib3 magic to ensure that they are
+        correctly sent to the proxy, rather than in a tunnelled request if
+        CONNECT is being used.
+
+        This should not be called from user code, and is only exposed for use
+        when subclassing the
+        :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.
+
+        :param proxy: The url of the proxy being used for this request.
+        :rtype: dict
+        """
+        ...
     def send(
         self,
         request: PreparedRequest,

@@ -1826,9 +1826,27 @@ class Misc:
         ...
     # See #4363 and #4891
     def __setitem__(self, key: str, value: Any) -> None: ...
-    def __getitem__(self, key: str) -> Any: ...
-    def cget(self, key: str) -> Any: ...
-    def configure(self, cnf: Any = None) -> Any: ...
+    def __getitem__(self, key: str) -> Any:
+        """Return the current value of the configuration option."""
+        ...
+    def cget(self, key: str) -> Any:
+        """Return the current value of the configuration option."""
+        ...
+    def configure(self, cnf: Any = None) -> Any:
+        """
+        Query or modify the configuration options of the widget.
+
+        If no arguments are specified, return a dictionary describing
+        all of the available options for the widget.
+
+        If an option name is specified, then return a tuple describing
+        the one named option.
+
+        If one or more keyword arguments are specified or a dictionary
+        is specified, then modify the widget option(s) to have the given
+        value(s).
+        """
+        ...
     config = configure
 
 class CallWrapper:

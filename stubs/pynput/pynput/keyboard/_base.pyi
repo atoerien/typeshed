@@ -158,10 +158,7 @@ class Key(enum.Enum):
     scroll_lock = cast(KeyCode, ...)
 
 class Controller:
-    """
-    A controller for sending virtual keyboard events to the system.
-    
-    """
+    """A controller for sending virtual keyboard events to the system."""
     _KeyCode: ClassVar[type[KeyCode]]  # undocumented
     _Key: ClassVar[type[Key]]  # undocumented
 

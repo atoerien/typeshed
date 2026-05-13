@@ -26,20 +26,14 @@ class Events(_util.Events[Any, Listener]):
         The device was scrolled.
     """
     class Move(_util.Events.Event):
-        """
-        A move event.
-        
-        """
+        """A move event."""
         x: int
         y: int
         injected: bool
         def __init__(self, x: int, y: int, injected: bool) -> None: ...
 
     class Click(_util.Events.Event):
-        """
-        A click event.
-        
-        """
+        """A click event."""
         x: int
         y: int
         button: Button
@@ -48,10 +42,7 @@ class Events(_util.Events[Any, Listener]):
         def __init__(self, x: int, y: int, button: Button, pressed: bool, injected: bool) -> None: ...
 
     class Scroll(_util.Events.Event):
-        """
-        A scroll event.
-        
-        """
+        """A scroll event."""
         x: int
         y: int
         dx: int

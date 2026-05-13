@@ -59,10 +59,7 @@ class Button(enum.Enum):
         x2 = 0  # Value unknown
 
 class Controller:
-    """
-    A controller for sending virtual mouse events to the system.
-    
-    """
+    """A controller for sending virtual mouse events to the system."""
     def __init__(self) -> None: ...
     @property
     def position(self) -> tuple[int, int]:
@@ -146,10 +143,7 @@ class Controller:
     def __exit__(
         self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None
     ) -> None:
-        """
-        Ends a series of clicks.
-        
-        """
+        """Ends a series of clicks."""
         ...
 
 class Listener(AbstractListener):

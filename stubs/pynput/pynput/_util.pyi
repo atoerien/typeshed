@@ -81,17 +81,11 @@ class AbstractListener(threading.Thread):
     def __init__(self, suppress: bool = False, **kwargs: Callable[..., bool | None] | None) -> None: ...
     @property
     def suppress(self) -> bool:
-        """
-        Whether to suppress events.
-        
-        """
+        """Whether to suppress events."""
         ...
     @property
     def running(self) -> bool:
-        """
-        Whether the listener is currently running.
-        
-        """
+        """Whether the listener is currently running."""
         ...
     def stop(self) -> None:
         """
@@ -110,16 +104,10 @@ class AbstractListener(threading.Thread):
         self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None
     ) -> None: ...
     def wait(self) -> None:
-        """
-        Waits for this listener to become ready.
-        
-        """
+        """Waits for this listener to become ready."""
         ...
     def run(self) -> None:
-        """
-        The thread runner method.
-        
-        """
+        """The thread runner method."""
         ...
     @classmethod
     def _emitter(cls, f: Callable[_P, _T]) -> Callable[_P, _T]:
@@ -157,10 +145,7 @@ class AbstractListener(threading.Thread):
     def join(self, timeout: float | None = None, *args: Any) -> None: ...
 
 class Events(Generic[_T, _AbstractListenerT]):
-    """
-    A base class to enable iterating over events.
-    
-    """
+    """A base class to enable iterating over events."""
     _Listener: type[_AbstractListenerT] | None  # undocumented
 
     class Event:

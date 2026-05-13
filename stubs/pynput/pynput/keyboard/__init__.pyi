@@ -26,19 +26,13 @@ class Events(_util.Events[Any, Listener]):
         A key was released.
     """
     class Press(_util.Events.Event):
-        """
-        A key press event.
-        
-        """
+        """A key press event."""
         key: Key | KeyCode | None
         injected: bool
         def __init__(self, key: Key | KeyCode | None, injected: bool) -> None: ...
 
     class Release(_util.Events.Event):
-        """
-        A key release event.
-        
-        """
+        """A key release event."""
         key: Key | KeyCode | None
         injected: bool
         def __init__(self, key: Key | KeyCode | None, injected: bool) -> None: ...
