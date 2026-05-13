@@ -200,85 +200,16 @@ def get_unicode_from_response(r):
 
 UNRESERVED_SET: frozenset[str]
 
-def unquote_unreserved(uri: str) -> str:
-    """
-    Un-escape any percent-escape sequences in a URI that are unreserved
-    characters. This leaves all reserved, illegal and non-ASCII bytes encoded.
-
-    :rtype: str
-    """
-    ...
-def requote_uri(uri: str) -> str:
-    """
-    Re-quote the given URI.
-
-    This function passes the given URI through an unquote/quote cycle to
-    ensure that it is fully and consistently quoted.
-
-    :rtype: str
-    """
-    ...
-def address_in_network(ip: str, net: str) -> bool:
-    """
-    This function allows you to check if an IP belongs to a network subnet
-
-    Example: returns True if ip = 192.168.1.1 and net = 192.168.1.0/24
-             returns False if ip = 192.168.1.1 and net = 192.168.100.0/24
-
-    :rtype: bool
-    """
-    ...
-def dotted_netmask(mask: int) -> str:
-    """
-    Converts mask from /xx format to xxx.xxx.xxx.xxx
-
-    Example: if mask is 24 function returns 255.255.255.0
-
-    :rtype: str
-    """
-    ...
-def is_ipv4_address(string_ip: str) -> bool:
-    """:rtype: bool"""
-    ...
-def is_valid_cidr(string_network: str) -> bool:
-    """
-    Very simple check of the cidr format in no_proxy variable.
-
-    :rtype: bool
-    """
-    ...
-def set_environ(env_name: str, value: None) -> _GeneratorContextManager[None]:
-    """
-    Set the environment variable 'env_name' to 'value'
-
-    Save previous value, yield, and then restore the previous value stored in
-    the environment variable 'env_name'.
-
-    If 'value' is None, do nothing
-    """
-    ...
-def should_bypass_proxies(url: _Uri, no_proxy: Iterable[str] | None) -> bool:
-    """
-    Returns whether we should bypass proxies or not.
-
-    :rtype: bool
-    """
-    ...
-def get_environ_proxies(url: _Uri, no_proxy: Iterable[str] | None = None) -> dict[Incomplete, Incomplete]:
-    """
-    Return a dict of environment proxies.
-
-    :rtype: dict
-    """
-    ...
-def select_proxy(url: _Uri, proxies: Mapping[str, str] | None) -> str:
-    """
-    Select a proxy for the url, if applicable.
-
-    :param url: The url being for the request
-    :param proxies: A dictionary of schemes or schemes and hosts to proxy URLs
-    """
-    ...
+def unquote_unreserved(uri: str) -> str: ...
+def requote_uri(uri: str) -> str: ...
+def address_in_network(ip: str, net: str) -> bool: ...
+def dotted_netmask(mask: int) -> str: ...
+def is_ipv4_address(string_ip: str) -> bool: ...
+def is_valid_cidr(string_network: str) -> bool: ...
+def set_environ(env_name: str, value: None) -> _GeneratorContextManager[None]: ...
+def should_bypass_proxies(url: _Uri, no_proxy: str | None) -> bool: ...
+def get_environ_proxies(url: _Uri, no_proxy: Iterable[str] | None = None) -> dict[Incomplete, Incomplete]: ...
+def select_proxy(url: _Uri, proxies: Mapping[str, str] | None) -> str | None: ...
 def resolve_proxies(
     request: Request | PreparedRequest, proxies: dict[str, str] | None, trust_env: bool = True
 ) -> dict[str, str]:
