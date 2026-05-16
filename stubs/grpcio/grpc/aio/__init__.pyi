@@ -1280,7 +1280,30 @@ class ServerInterceptor(metaclass=abc.ABCMeta):
         self,
         continuation: Callable[[HandlerCallDetails], Awaitable[RpcMethodHandler[_TRequest, _TResponse] | None]],
         handler_call_details: HandlerCallDetails,
-    ) -> RpcMethodHandler[_TRequest, _TResponse] | None: ...
+    ) -> RpcMethodHandler[_TRequest, _TResponse] | None:
+        """
+        Intercepts incoming RPCs before handing them over to a handler.
+
+        State can be passed from an interceptor to downstream interceptors
+        via contextvars. The first interceptor is called from an empty
+        contextvars.Context, and the same Context is used for downstream
+        interceptors and for the final handler call. Note that there are no
+        guarantees that interceptors and handlers will be called from the
+        same thread.
+
+        Args:
+            continuation: A function that takes a HandlerCallDetails and
+                proceeds to invoke the next interceptor in the chain, if any,
+                or the RPC handler lookup logic, with the call details passed
+                as an argument, and returns an RpcMethodHandler instance if
+                the RPC is considered serviced, or None otherwise.
+            handler_call_details: A HandlerCallDetails describing the RPC.
+
+        Returns:
+            An RpcMethodHandler with which the RPC may be serviced if the
+            interceptor chooses to service this RPC, or None otherwise.
+        """
+        ...
 
 # Multi-Callable Interfaces:
 
