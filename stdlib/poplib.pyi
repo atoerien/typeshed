@@ -147,8 +147,27 @@ class POP3:
         """Send RPOP command to access the mailbox with an alternate user."""
         ...
     timestamp: Pattern[str]
-    def apop(self, user: str, password: str) -> bytes: ...
-    def top(self, which: Any, howmuch: int) -> _LongResp: ...
+    def apop(self, user: str, password: str) -> bytes:
+        """
+        Authorisation
+
+        - only possible if server has supplied a timestamp in initial greeting.
+
+        Args:
+                user     - mailbox user;
+                password - mailbox password.
+
+        NB: mailbox is locked by server from here to 'quit()'
+        """
+        ...
+    def top(self, which: Any, howmuch: int) -> _LongResp:
+        """
+        Retrieve message header of message number 'which'
+        and first 'howmuch' lines of message body.
+
+        Result is in form ['response', ['line', ...], octets].
+        """
+        ...
 
     @overload
     def uidl(self) -> _LongResp:
@@ -161,11 +180,44 @@ class POP3:
         """
         ...
     @overload
-    def uidl(self, which: Any) -> bytes: ...
+    def uidl(self, which: Any) -> bytes:
+        """
+        Return message digest (unique id) list.
 
-    def utf8(self) -> bytes: ...
-    def capa(self) -> dict[str, _list[str]]: ...
-    def stls(self, context: ssl.SSLContext | None = None) -> bytes: ...
+        If 'which', result contains unique id for that message
+        in the form 'response mesgnum uid', otherwise result is
+        the list ['response', ['mesgnum uid', ...], octets]
+        """
+        ...
+
+    def utf8(self) -> bytes:
+        """
+        Try to enter UTF-8 mode (see RFC 6856). Returns server response.
+        
+        """
+        ...
+    def capa(self) -> dict[str, _list[str]]:
+        """
+        Return server capabilities (RFC 2449) as a dictionary
+        >>> c=poplib.POP3('localhost')
+        >>> c.capa()
+        {'IMPLEMENTATION': ['Cyrus', 'POP3', 'server', 'v2.2.12'],
+         'TOP': [], 'LOGIN-DELAY': ['0'], 'AUTH-RESP-CODE': [],
+         'EXPIRE': ['NEVER'], 'USER': [], 'STLS': [], 'PIPELINING': [],
+         'UIDL': [], 'RESP-CODES': []}
+        >>>
+
+        Really, according to RFC 2449, the cyrus folks should avoid
+        having the implementation split into multiple arguments...
+        """
+        ...
+    def stls(self, context: ssl.SSLContext | None = None) -> bytes:
+        """
+        Start a TLS session on the active connection as specified in RFC 2595.
+
+        context - a ssl.SSLContext
+        """
+        ...
 
 class POP3_SSL(POP3):
     """

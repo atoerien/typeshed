@@ -221,9 +221,13 @@ def adapt(obj: Any, proto: Any, /) -> Any:
     """Adapt given object to given protocol."""
     ...
 @overload
-def adapt(obj: Any, proto: Any, alt: _T, /) -> Any | _T: ...
+def adapt(obj: Any, proto: Any, alt: _T, /) -> Any | _T:
+    """Adapt given object to given protocol."""
+    ...
 
-def complete_statement(statement: str) -> bool: ...
+def complete_statement(statement: str) -> bool:
+    """Checks if a string contains a complete SQL statement."""
+    ...
 
 if sys.version_info >= (3, 12):
     @overload
@@ -287,7 +291,19 @@ if sys.version_info >= (3, 12):
         cached_statements: int = 128,
         uri: bool = False,
         autocommit: bool = ...,
-    ) -> _ConnectionT: ...
+    ) -> _ConnectionT:
+        """
+        Open a connection to the SQLite database file 'database'.
+
+        You can use ":memory:" to open a database connection to a database that
+        resides in RAM instead of on disk.
+
+        Note: Passing more than 1 positional argument to _sqlite3.connect() is
+        deprecated. Parameters 'timeout', 'detect_types', 'isolation_level',
+        'check_same_thread', 'factory', 'cached_statements' and 'uri' will
+        become keyword-only parameters in Python 3.15.
+        """
+        ...
 else:
     @overload
     def connect(

@@ -82,9 +82,13 @@ class Cell(StyleableObject):
         """Check string coding, length, and line break character"""
         ...
     @overload
-    def check_string(self, value: str | ReadableBuffer) -> str: ...
+    def check_string(self, value: str | ReadableBuffer) -> str:
+        """Check string coding, length, and line break character"""
+        ...
 
-    def check_error(self, value: object) -> str: ...
+    def check_error(self, value: object) -> str:
+        """Tries to convert Error" else N/A"""
+        ...
 
     @property
     def value(self) -> _CellGetValue:
@@ -96,21 +100,50 @@ class Cell(StyleableObject):
         """
         ...
     @value.setter
-    def value(self, value: _CellSetValue) -> None: ...
+    def value(self, value: _CellSetValue) -> None:
+        """
+        Get or set the value held in the cell.
+
+        :type: depends on the value (string, float, int or
+            :class:`datetime.datetime`)
+        """
+        ...
 
     @property
-    def internal_value(self) -> _CellGetValue: ...
+    def internal_value(self) -> _CellGetValue:
+        """Always returns the value for excel."""
+        ...
 
     @property
     def hyperlink(self) -> Hyperlink | None:
         """Return the hyperlink target or an empty string"""
         ...
     @hyperlink.setter
-    def hyperlink(self, val: Hyperlink | str | None) -> None: ...
+    def hyperlink(self, val: Hyperlink | str | None) -> None:
+        """Return the hyperlink target or an empty string"""
+        ...
 
     @property
-    def is_date(self) -> bool: ...
-    def offset(self, row: int = 0, column: int = 0) -> _CellOrMergedCell: ...
+    def is_date(self) -> bool:
+        """
+        True if the value is formatted as a date
+
+        :type: bool
+        """
+        ...
+    def offset(self, row: int = 0, column: int = 0) -> _CellOrMergedCell:
+        """
+        Returns a cell location relative to this cell.
+
+        :param row: number of rows to offset
+        :type row: int
+
+        :param column: number of columns to offset
+        :type column: int
+
+        :rtype: :class:`openpyxl.cell.Cell`
+        """
+        ...
 
     @property
     def comment(self) -> Comment | None:

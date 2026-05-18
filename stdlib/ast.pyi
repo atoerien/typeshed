@@ -1360,7 +1360,9 @@ class Constant(expr):
             ...
         @n.setter
         @deprecated("Removed in Python 3.14. Use `value` instead.")
-        def n(self, value: _ConstantValue) -> None: ...
+        def n(self, value: _ConstantValue) -> None:
+            """Deprecated. Use value instead."""
+            ...
 
         @property
         @deprecated("Removed in Python 3.14. Use `value` instead.")
@@ -2410,7 +2412,13 @@ elif sys.version_info >= (3, 13):
         type_comments: bool = False,
         feature_version: None | int | tuple[int, int] = None,
         optimize: Literal[-1, 0, 1, 2] = -1,
-    ) -> mod: ...
+    ) -> mod:
+        """
+        Parse the source into an AST node.
+        Equivalent to compile(source, filename, mode, PyCF_ONLY_AST).
+        Pass type_comments=True to get back type comments where the syntax allows.
+        """
+        ...
 else:
     @overload
     def parse(

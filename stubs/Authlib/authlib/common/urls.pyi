@@ -59,6 +59,15 @@ def extract_params(raw: dict[str, str]) -> _ExplodedQueryString:
     """
     ...
 @overload
-def extract_params(raw: _ExplodedQueryString | tuple[tuple[str, str], ...] | str) -> _ExplodedQueryString | None: ...
+def extract_params(raw: _ExplodedQueryString | tuple[tuple[str, str], ...] | str) -> _ExplodedQueryString | None:
+    """
+    Extract parameters and return them as a list of 2-tuples.
+
+    Will successfully extract parameters from urlencoded query strings,
+    dicts, or lists of 2-tuples. Empty strings/dicts/lists will return an
+    empty list of parameters. Any other input will result in a return
+    value of None.
+    """
+    ...
 
 def is_valid_url(url: str, fragments_allowed: bool = True) -> bool: ...

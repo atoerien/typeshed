@@ -57,12 +57,9 @@ def load(
     f: _PathLike | list[Any] | SupportsRead[str],  # list[_PathLike] is invariance
     _dict: type[dict[str, Any]] = ...,
     decoder: TomlDecoder[dict[str, Any]] | None = None,
-) -> dict[str, Any]: ...
-
-@overload
-def loads(s: str, _dict: type[_MutableMappingT], decoder: TomlDecoder[_MutableMappingT] | None = None) -> _MutableMappingT: ...
-@overload
-def loads(s: str, _dict: type[dict[str, Any]] = ..., decoder: TomlDecoder[dict[str, Any]] | None = None) -> dict[str, Any]: ...
+) -> dict[str, Any]:
+    """
+    Parses named file or files as toml and returns a dictionary
 
     Args:
         f: Path to the file to open, array of files to read into single dict
@@ -80,6 +77,7 @@ def loads(s: str, _dict: type[dict[str, Any]] = ..., decoder: TomlDecoder[dict[s
         (Python 2 / Python 3)          file paths is passed
     """
     ...
+
 @overload
 def loads(s: str, _dict: type[_MutableMappingT], decoder: TomlDecoder[_MutableMappingT] | None = None) -> _MutableMappingT:
     """

@@ -41,7 +41,9 @@ class GeometryCollection(BaseMultipartGeometry[_GeoT_co]):
         """Create a new GeometryCollection."""
         ...
     @overload
-    def __new__(self, geoms: OptGeoArrayLike = None) -> Self: ...
+    def __new__(self, geoms: OptGeoArrayLike = None) -> Self:
+        """Create a new GeometryCollection."""
+        ...
 
     # more precise base overrides
     @property

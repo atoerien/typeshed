@@ -62,7 +62,9 @@ class Client:
         """Adapter for all client's connections."""
         ...
     @adapter.setter
-    def adapter(self, adapter: Adapter[Any]) -> None: ...
+    def adapter(self, adapter: Adapter[Any]) -> None:
+        """Adapter for all client's connections."""
+        ...
 
     @property
     def url(self) -> str: ...
@@ -188,8 +190,33 @@ class Client:
         ...
     def write_data(
         self, path: str, *, data: dict[str, Any] | None = None, wrap_ttl: int | str | None = None
-    ) -> dict[str, Any] | Response: ...
-    def delete(self, path: str) -> None: ...
+    ) -> dict[str, Any] | Response:
+        """
+        Write data to a path. Similar to write() without restrictions on data keys.
+
+        Supported methods:
+            POST /<path>
+
+        :param path:
+        :type path: str
+        :param data:
+        :type data: dict | None
+        :param wrap_ttl:
+        :type wrap_ttl: str | None
+        :return:
+        :rtype:
+        """
+        ...
+    def delete(self, path: str) -> None:
+        """
+        DELETE /<path>
+
+        :param path:
+        :type path:
+        :return:
+        :rtype:
+        """
+        ...
 
     @overload
     def get_policy(self, name: str, parse: Literal[False] = False) -> str | None:
@@ -205,7 +232,18 @@ class Client:
         """
         ...
     @overload
-    def get_policy(self, name: str, parse: Literal[True]) -> dict[str, Any] | None: ...
+    def get_policy(self, name: str, parse: Literal[True]) -> dict[str, Any] | None:
+        """
+        Retrieve the policy body for the named policy.
+
+        :param name: The name of the policy to retrieve.
+        :type name: str | unicode
+        :param parse: Specifies whether to parse the policy body using pyhcl or not.
+        :type parse: bool
+        :return: The (optionally parsed) policy body for the specified policy.
+        :rtype: str | dict
+        """
+        ...
 
     def lookup_token(
         self, token: str | None = None, accessor: bool = False, wrap_ttl: int | str | None = None

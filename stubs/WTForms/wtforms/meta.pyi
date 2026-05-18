@@ -36,7 +36,25 @@ class _MultiDictLikeWithGetall(_MultiDictLikeBase, Protocol):
 _MultiDictLike: TypeAlias = _MultiDictLikeWithGetall | _MultiDictLikeWithGetlist
 
 class DefaultMeta:
-    def bind_field(self, form: BaseForm, unbound_field: UnboundField[_FieldT], options: MutableMapping[str, Any]) -> _FieldT: ...
+    """
+    This is the default Meta class which defines all the default values and
+    therefore also the 'API' of the class Meta interface.
+    """
+    def bind_field(self, form: BaseForm, unbound_field: UnboundField[_FieldT], options: MutableMapping[str, Any]) -> _FieldT:
+        """
+        bind_field allows potential customization of how fields are bound.
+
+        The default implementation simply passes the options to
+        :meth:`UnboundField.bind`.
+
+        :param form: The form.
+        :param unbound_field: The unbound field.
+        :param options:
+            A dictionary of options which are typically passed to the field.
+
+        :return: A bound field
+        """
+        ...
 
     @overload
     def wrap_formdata(self, form: BaseForm, formdata: None) -> None:
@@ -52,9 +70,26 @@ class DefaultMeta:
         """
         ...
     @overload
-    def wrap_formdata(self, form: BaseForm, formdata: _MultiDictLike) -> _MultiDictLikeWithGetlist: ...
+    def wrap_formdata(self, form: BaseForm, formdata: _MultiDictLike) -> _MultiDictLikeWithGetlist:
+        """
+        wrap_formdata allows doing custom wrappers of WTForms formdata.
 
-    def render_field(self, field: Field, render_kw: SupportsItems[str, Any]) -> Markup: ...
+        The default implementation detects webob-style multidicts and wraps
+        them, otherwise passes formdata back un-changed.
+
+        :param form: The form.
+        :param formdata: Form data.
+        :return: A form-input wrapper compatible with WTForms.
+        """
+        ...
+
+    def render_field(self, field: Field, render_kw: SupportsItems[str, Any]) -> Markup:
+        """
+        render_field allows customization of how widget rendering is done.
+
+        The default implementation calls ``field.widget(field, **render_kw)``
+        """
+        ...
     csrf: bool
     csrf_field_name: str
     csrf_secret: Any | None

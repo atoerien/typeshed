@@ -37,10 +37,22 @@ class FeedParser(Generic[_MessageT]):
         """
         ...
     @overload
-    def __init__(self, _factory: Callable[[], _MessageT], *, policy: Policy[_MessageT] = ...) -> None: ...
+    def __init__(self, _factory: Callable[[], _MessageT], *, policy: Policy[_MessageT] = ...) -> None:
+        """
+        _factory is called with no arguments to create a new message obj
 
-    def feed(self, data: str) -> None: ...
-    def close(self) -> _MessageT: ...
+        The policy keyword specifies a policy object that controls a number of
+        aspects of the parser's operation.  The default policy maintains
+        backward compatibility.
+        """
+        ...
+
+    def feed(self, data: str) -> None:
+        """Push more data into the parser."""
+        ...
+    def close(self) -> _MessageT:
+        """Parse all remaining data and return the root message object."""
+        ...
 
 class BytesFeedParser(FeedParser[_MessageT]):
     """Like FeedParser, but feed accepts bytes."""
@@ -55,6 +67,14 @@ class BytesFeedParser(FeedParser[_MessageT]):
         """
         ...
     @overload
-    def __init__(self, _factory: Callable[[], _MessageT], *, policy: Policy[_MessageT] = ...) -> None: ...
+    def __init__(self, _factory: Callable[[], _MessageT], *, policy: Policy[_MessageT] = ...) -> None:
+        """
+        _factory is called with no arguments to create a new message obj
+
+        The policy keyword specifies a policy object that controls a number of
+        aspects of the parser's operation.  The default policy maintains
+        backward compatibility.
+        """
+        ...
 
     def feed(self, data: bytes | bytearray) -> None: ...  # type: ignore[override]

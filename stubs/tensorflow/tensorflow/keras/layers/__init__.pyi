@@ -250,7 +250,9 @@ class Layer(tf.Module, Generic[_InputT_contra, _OutputT_co]):
         """Settable boolean, whether this layer should be trainable or not."""
         ...
     @trainable.setter
-    def trainable(self, value: bool) -> None: ...
+    def trainable(self, value: bool) -> None:
+        """Settable boolean, whether this layer should be trainable or not."""
+        ...
 
     def __init__(
         self,

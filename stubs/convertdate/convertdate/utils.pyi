@@ -9,9 +9,13 @@ def amod(a: float, b: int) -> int:
     """Modulus function which returns numerator if modulus is zero"""
     ...
 @overload
-def amod(a: float, b: float) -> float: ...
+def amod(a: float, b: float) -> float:
+    """Modulus function which returns numerator if modulus is zero"""
+    ...
 
-def jwday(j: float) -> int: ...
+def jwday(j: float) -> int:
+    """Calculate day of week from Julian day. Consider using ``calendar.weekday``!"""
+    ...
 
 @overload
 def weekday_before(weekday: int, jd: int) -> int: ...
@@ -31,7 +35,17 @@ def search_weekday(weekday: int, jd: int, direction: Literal[-1, 1], offset: int
     """
     ...
 @overload
-def search_weekday(weekday: int, jd: float, direction: Literal[-1, 1], offset: int) -> float: ...
+def search_weekday(weekday: int, jd: float, direction: Literal[-1, 1], offset: int) -> float:
+    """
+    Determine the Julian date for the next or previous weekday
+
+    Arguments:
+        weekday (int): Day of week desired, 0 = Monday
+        jd (float): Julian date to begin search
+        direction(int): 1 = next weekday, -1 = last weekday
+        offset(int): Offset from jd to begin search.
+    """
+    ...
 
 @overload
 def nearest_weekday(weekday: int, jd: int) -> int: ...

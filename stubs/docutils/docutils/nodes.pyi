@@ -66,9 +66,22 @@ class Node:
         """
         ...
     @document.setter
-    def document(self, value: document) -> None: ...
+    def document(self, value: document) -> None:
+        """
+        Return the `document` root node of the tree containing this Node.
+        
+        """
+        ...
 
-    def __bool__(self) -> Literal[True]: ...
+    def __bool__(self) -> Literal[True]:
+        """
+        Node instances are always true, even if they're empty.  A node is more
+        than a simple container.  Its boolean "truth" does not depend on
+        having one or more subnodes in the doctree.
+
+        Use `len()` to check node length.
+        """
+        ...
     def asdom(
         self, dom: _DomModule | None = None
     ) -> xml.dom.minidom.Document | xml.dom.minidom.Element | xml.dom.minidom.Text:
@@ -99,8 +112,43 @@ class Node:
         """Return a string representation of this Node."""
         ...
     def setup_child(self, child: Node) -> None: ...
-    def walk(self, visitor: NodeVisitor) -> bool: ...
-    def walkabout(self, visitor: NodeVisitor) -> bool: ...
+    def walk(self, visitor: NodeVisitor) -> bool:
+        """
+        Traverse a tree of `Node` objects, calling the
+        `dispatch_visit()` method of `visitor` when entering each
+        node.  (The `walkabout()` method is similar, except it also
+        calls the `dispatch_departure()` method before exiting each
+        node.)
+
+        This tree traversal supports limited in-place tree
+        modifications.  Replacing one node with one or more nodes is
+        OK, as is removing an element.  However, if the node removed
+        or replaced occurs after the current node, the old node will
+        still be traversed, and any new nodes will not.
+
+        Within ``visit`` methods (and ``depart`` methods for
+        `walkabout()`), `TreePruningException` subclasses may be raised
+        (`SkipChildren`, `SkipSiblings`, `SkipNode`, `SkipDeparture`).
+
+        Parameter `visitor`: A `NodeVisitor` object, containing a
+        ``visit`` implementation for each `Node` subclass encountered.
+
+        Return true if we should stop the traversal.
+        """
+        ...
+    def walkabout(self, visitor: NodeVisitor) -> bool:
+        """
+        Perform a tree traversal similarly to `Node.walk()` (which
+        see), except also call the `dispatch_departure()` method
+        before exiting each node.
+
+        Parameter `visitor`: A `NodeVisitor` object, containing a
+        ``visit`` and ``depart`` implementation for each `Node`
+        subclass encountered.
+
+        Return true if we should stop the traversal.
+        """
+        ...
 
     @overload
     def findall(
@@ -153,7 +201,46 @@ class Node:
         descend: bool = True,
         siblings: bool = False,
         ascend: bool = False,
-    ) -> Generator[Node]: ...
+    ) -> Generator[Node]:
+        """
+        Return an iterator yielding nodes following `self`:
+
+        * self (if `include_self` is true)
+        * all descendants in tree traversal order (if `descend` is true)
+        * the following siblings (if `siblings` is true) and their
+          descendants (if also `descend` is true)
+        * the following siblings of the parent (if `ascend` is true) and
+          their descendants (if also `descend` is true), and so on.
+
+        If `condition` is not None, the iterator yields only nodes
+        for which ``condition(node)`` is true.  If `condition` is a
+        type ``cls``, it is equivalent to a function consisting
+        of ``return isinstance(node, cls)``.
+
+        If `ascend` is true, assume `siblings` to be true as well.
+
+        If the tree structure is modified during iteration, the result
+        is undefined.
+
+        For example, given the following tree::
+
+            <paragraph>
+                <emphasis>      <--- emphasis.traverse() and
+                    <strong>    <--- strong.traverse() are called.
+                        Foo
+                    Bar
+                <reference name="Baz" refid="baz">
+                    Baz
+
+        Then tuple(emphasis.traverse()) equals ::
+
+            (<emphasis>, <strong>, <#text: Foo>, <#text: Bar>)
+
+        and list(strong.traverse(ascend=True) equals ::
+
+            [<strong>, <#text: Foo>, <#text: Bar>, <reference>, <#text: Baz>]
+        """
+        ...
 
     @overload
     @deprecated("The `nodes.Node.traverse()` is deprecated. Use `Node.findall()` instead.")
@@ -175,7 +262,13 @@ class Node:
         descend: bool = True,
         siblings: bool = False,
         ascend: bool = False,
-    ) -> list[Node]: ...
+    ) -> list[Node]:
+        """
+        Return list of nodes following `self`.
+
+        For looping, Node.findall() is faster and more memory efficient.
+        """
+        ...
 
     @overload
     def next_node(
@@ -197,10 +290,33 @@ class Node:
         descend: bool = True,
         siblings: bool = False,
         ascend: bool = False,
-    ) -> Node | None: ...
+    ) -> Node | None:
+        """
+        Return the first node in the iterator returned by findall(),
+        or None if the iterable is empty.
 
-    def validate(self, recursive: bool = True) -> None: ...
-    def validate_position(self) -> None: ...
+        Parameter list is the same as of `findall()`.  Note that `include_self`
+        defaults to False, though.
+        """
+        ...
+
+    def validate(self, recursive: bool = True) -> None:
+        """
+        Raise ValidationError if this node is not valid.
+
+        Override in subclasses that define validity constraints.
+        """
+        ...
+    def validate_position(self) -> None:
+        """
+        Hook for additional checks of the parent's content model.
+
+        Raise ValidationError, if `self` is at an invalid position.
+
+        Override in subclasses with complex validity constraints. See
+        `subtitle.validate_position()` and `transition.validate_position()`.
+        """
+        ...
 
 # Left out
 # - def ensure_str (deprecated)

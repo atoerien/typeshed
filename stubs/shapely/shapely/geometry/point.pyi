@@ -66,7 +66,9 @@ class Point(BaseGeometry):
         """Create a new Point geometry."""
         ...
     @overload  # three args: (x, y, z) tuple
-    def __new__(self, x: float, y: float, z: float, /) -> Self: ...
+    def __new__(self, x: float, y: float, z: float, /) -> Self:
+        """Create a new Point geometry."""
+        ...
 
     @property
     def x(self) -> float:

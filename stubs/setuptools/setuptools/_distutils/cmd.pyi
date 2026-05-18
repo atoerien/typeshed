@@ -135,15 +135,36 @@ class Command:
         ...
     # NOTE: Because this is private setuptools implementation and we don't re-expose all commands here,
     # we're not overloading each and every command possibility.
-    def get_finalized_command(self, command: str, create: bool = True) -> Command: ...
+    def get_finalized_command(self, command: str, create: bool = True) -> Command:
+        """
+        Wrapper around Distribution's 'get_command_obj()' method: find
+        (create if necessary and 'create' is true) the command object for
+        'command', call its 'ensure_finalized()' method, and return the
+        finalized command object.
+        """
+        ...
 
     @overload
     def reinitialize_command(self, command: str, reinit_subcommands: bool = False) -> Command: ...
     @overload
     def reinitialize_command(self, command: _CommandT, reinit_subcommands: bool = False) -> _CommandT: ...
 
-    def run_command(self, command: str) -> None: ...
-    def get_sub_commands(self) -> list[str]: ...
+    def run_command(self, command: str) -> None:
+        """
+        Run some other command: uses the 'run_command()' method of
+        Distribution, which creates and finalizes the command object if
+        necessary and then invokes its 'run()' method.
+        """
+        ...
+    def get_sub_commands(self) -> list[str]:
+        """
+        Determine the sub-commands that are relevant in the current
+        distribution (ie., that need to be run).  This is based on the
+        'sub_commands' class attribute: each tuple in that list may include
+        a method that we call to determine if the subcommand needs to be
+        run for the current distribution.  Return a list of command names.
+        """
+        ...
     def warn(self, msg: str) -> None: ...
     def execute(
         self, func: Callable[[Unpack[_Ts]], Unused], args: tuple[Unpack[_Ts]], msg: str | None = None, level: int = 1
@@ -175,7 +196,13 @@ class Command:
         preserve_times: bool = True,
         link: str | None = None,
         level: Unused = 1,
-    ) -> tuple[_BytesPathT | bytes, bool]: ...
+    ) -> tuple[_BytesPathT | bytes, bool]:
+        """
+        Copy a file respecting verbose, dry-run and force flags.  (The
+        former two default to whatever is in the Distribution object, and
+        the latter defaults to false for commands that don't define it.)
+        """
+        ...
 
     def copy_tree(
         self,
@@ -185,21 +212,30 @@ class Command:
         preserve_times: bool = True,
         preserve_symlinks: bool = False,
         level: Unused = 1,
-    ) -> list[str]: ...
+    ) -> list[str]:
+        """
+        Copy an entire directory tree respecting verbose, dry-run,
+        and force flags.
+        """
+        ...
 
     @overload
     def move_file(self, src: StrPath, dst: _StrPathT, level: Unused = 1) -> _StrPathT | str:
         """Move a file respecting dry-run flag."""
         ...
     @overload
-    def move_file(self, src: BytesPath, dst: _BytesPathT, level: Unused = 1) -> _BytesPathT | bytes: ...
+    def move_file(self, src: BytesPath, dst: _BytesPathT, level: Unused = 1) -> _BytesPathT | bytes:
+        """Move a file respecting dry-run flag."""
+        ...
 
     @overload
     def spawn(self, cmd: Sequence[StrOrBytesPath], search_path: Literal[False], level: Unused = 1) -> None:
         """Spawn an external command respecting dry-run flag."""
         ...
     @overload
-    def spawn(self, cmd: MutableSequence[bytes | StrPath], search_path: Literal[True] = True, level: Unused = 1) -> None: ...
+    def spawn(self, cmd: MutableSequence[bytes | StrPath], search_path: Literal[True] = True, level: Unused = 1) -> None:
+        """Spawn an external command respecting dry-run flag."""
+        ...
 
     @overload
     def make_archive(

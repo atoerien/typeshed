@@ -11,8 +11,24 @@ from html.parser import HTMLParser
 from re import Pattern
 from typing import Literal, overload
 
-def camel2under(camel_string: str) -> str: ...
-def under2camel(under_string: str) -> str: ...
+def camel2under(camel_string: str) -> str:
+    """
+    Converts a camelcased string to underscores. Useful for turning a
+    class name into a function name.
+
+    >>> camel2under('BasicParseTest')
+    'basic_parse_test'
+    """
+    ...
+def under2camel(under_string: str) -> str:
+    """
+    Converts an underscored string to camelcased. Useful for turning a
+    function name into a class name.
+
+    >>> under2camel('complex_tokenizer')
+    'ComplexTokenizer'
+    """
+    ...
 
 @overload
 def slugify(text: str, delim: str = "_", lower: bool = True, *, ascii: Literal[True]) -> bytes:
@@ -51,19 +67,172 @@ def slugify(text: str, delim: str, lower: bool, ascii: Literal[True]) -> bytes:
     """
     ...
 @overload
-def slugify(text: str, delim: str = "_", lower: bool = True, ascii: Literal[False] = False) -> str: ...
+def slugify(text: str, delim: str = "_", lower: bool = True, ascii: Literal[False] = False) -> str:
+    """
+    A basic function that turns text full of scary characters
+    (i.e., punctuation and whitespace), into a relatively safe
+    lowercased string separated only by the delimiter specified
+    by *delim*, which defaults to ``_``.
 
-def split_punct_ws(text: str) -> list[str]: ...
-def unit_len(sized_iterable: Sized, unit_noun: str = "item") -> str: ...
-def ordinalize(number: int | str, ext_only: bool = False) -> str: ...
-def cardinalize(unit_noun: str, count: int) -> str: ...
-def singularize(word: str) -> str: ...
-def pluralize(word: str) -> str: ...
-def find_hashtags(string: str) -> list[str]: ...
-def a10n(string: str) -> str: ...
-def strip_ansi(text: str) -> str: ...
-def asciify(text: str | bytes | bytearray, ignore: bool = False) -> bytes: ...
-def is_ascii(text: str) -> bool: ...
+    The *ascii* convenience flag will :func:`asciify` the slug if
+    you require ascii-only slugs.
+
+    >>> slugify('First post! Hi!!!!~1    ')
+    'first_post_hi_1'
+
+    >>> slugify("Kurt Gödel's pretty cool.", ascii=True) ==         b'kurt_goedel_s_pretty_cool'
+    True
+    """
+    ...
+
+def split_punct_ws(text: str) -> list[str]:
+    """
+    While :meth:`str.split` will split on whitespace,
+    :func:`split_punct_ws` will split on punctuation and
+    whitespace. This used internally by :func:`slugify`, above.
+
+    >>> split_punct_ws('First post! Hi!!!!~1    ')
+    ['First', 'post', 'Hi', '1']
+    """
+    ...
+def unit_len(sized_iterable: Sized, unit_noun: str = "item") -> str:
+    """
+    Returns a plain-English description of an iterable's
+    :func:`len()`, conditionally pluralized with :func:`cardinalize`,
+    detailed below.
+
+    >>> print(unit_len(range(10), 'number'))
+    10 numbers
+    >>> print(unit_len('aeiou', 'vowel'))
+    5 vowels
+    >>> print(unit_len([], 'worry'))
+    No worries
+    """
+    ...
+def ordinalize(number: int | str, ext_only: bool = False) -> str:
+    """
+    Turns *number* into its cardinal form, i.e., 1st, 2nd,
+    3rd, 4th, etc. If the last character isn't a digit, it returns the
+    string value unchanged.
+
+    Args:
+        number (int or str): Number to be cardinalized.
+        ext_only (bool): Whether to return only the suffix. Default ``False``.
+
+    >>> print(ordinalize(1))
+    1st
+    >>> print(ordinalize(3694839230))
+    3694839230th
+    >>> print(ordinalize('hi'))
+    hi
+    >>> print(ordinalize(1515))
+    1515th
+    """
+    ...
+def cardinalize(unit_noun: str, count: int) -> str:
+    """
+    Conditionally pluralizes a singular word *unit_noun* if
+    *count* is not one, preserving case when possible.
+
+    >>> vowels = 'aeiou'
+    >>> print(len(vowels), cardinalize('vowel', len(vowels)))
+    5 vowels
+    >>> print(3, cardinalize('Wish', 3))
+    3 Wishes
+    """
+    ...
+def singularize(word: str) -> str:
+    """
+    Semi-intelligently converts an English plural *word* to its
+    singular form, preserving case pattern.
+
+    >>> singularize('chances')
+    'chance'
+    >>> singularize('Activities')
+    'Activity'
+    >>> singularize('Glasses')
+    'Glass'
+    >>> singularize('FEET')
+    'FOOT'
+    """
+    ...
+def pluralize(word: str) -> str:
+    """
+    Semi-intelligently converts an English *word* from singular form to
+    plural, preserving case pattern.
+
+    >>> pluralize('friend')
+    'friends'
+    >>> pluralize('enemy')
+    'enemies'
+    >>> pluralize('Sheep')
+    'Sheep'
+    """
+    ...
+def find_hashtags(string: str) -> list[str]:
+    """
+    Finds and returns all hashtags in a string, with the hashmark
+    removed. Supports full-width hashmarks for Asian languages and
+    does not false-positive on URL anchors.
+
+    >>> find_hashtags('#atag http://asite/#ananchor')
+    ['atag']
+
+    ``find_hashtags`` also works with unicode hashtags.
+    """
+    ...
+def a10n(string: str) -> str:
+    """
+    That thing where "internationalization" becomes "i18n", what's it
+    called? Abbreviation? Oh wait, no: ``a10n``. (It's actually a form
+    of `numeronym`_.)
+
+    >>> a10n('abbreviation')
+    'a10n'
+    >>> a10n('internationalization')
+    'i18n'
+    >>> a10n('')
+    ''
+
+    .. _numeronym: http://en.wikipedia.org/wiki/Numeronym
+    """
+    ...
+def strip_ansi(text: str) -> str:
+    "Strips ANSI escape codes from *text*. Useful for the occasional\ntime when a log or redirected output accidentally captures console\ncolor codes and the like.\n\n>>> strip_ansi('\x1b[0m\x1b[1;36mart\x1b[46;34m')\n'art'\n\nSupports str, bytes and bytearray content as input. Returns the\nsame type as the input.\n\nThere's a lot of ANSI art available for testing on `sixteencolors.net`_.\nThis function does not interpret or render ANSI art, but you can do so with\n`ansi2img`_ or `escapes.js`_.\n\n.. _sixteencolors.net: http://sixteencolors.net\n.. _ansi2img: http://www.bedroomlan.org/projects/ansi2img\n.. _escapes.js: https://github.com/atdt/escapes.js"
+    ...
+def asciify(text: str | bytes | bytearray, ignore: bool = False) -> bytes:
+    """
+    Converts a unicode or bytestring, *text*, into a bytestring with
+    just ascii characters. Performs basic deaccenting for all you
+    Europhiles out there.
+
+    Also, a gentle reminder that this is a **utility**, primarily meant
+    for slugification. Whenever possible, make your application work
+    **with** unicode, not against it.
+
+    Args:
+        text (str): The string to be asciified.
+        ignore (bool): Configures final encoding to ignore remaining
+            unasciified string instead of replacing it.
+
+    >>> asciify('Beyoncé') == b'Beyonce'
+    True
+    """
+    ...
+def is_ascii(text: str) -> bool:
+    """
+    Check if a string or bytestring, *text*, is composed of ascii
+    characters only. Raises :exc:`ValueError` if argument is not text.
+
+    Args:
+        text (str): The string to be checked.
+
+    >>> is_ascii('Beyoncé')
+    False
+    >>> is_ascii('Beyonce')
+    True
+    """
+    ...
 
 class DeaccenterDict(dict[int, int]):
     """A small caching dictionary for deaccenting."""

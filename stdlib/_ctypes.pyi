@@ -148,9 +148,13 @@ class _Pointer(_PointerLike, _CData, Generic[_CT], metaclass=_PyCPointerType):
         """Return self[key]."""
         ...
     @overload
-    def __getitem__(self, key: slice[SupportsIndex | None], /) -> list[Any]: ...
+    def __getitem__(self, key: slice[SupportsIndex | None], /) -> list[Any]:
+        """Return self[key]."""
+        ...
 
-    def __setitem__(self, key: int, value: Any, /) -> None: ...
+    def __setitem__(self, key: int, value: Any, /) -> None:
+        """Set self[key] to value."""
+        ...
 
 if sys.version_info < (3, 14):
     @overload
@@ -166,9 +170,27 @@ if sys.version_info < (3, 14):
         """
         ...
     @overload
-    def POINTER(type: type[_CT], /) -> type[_Pointer[_CT]]: ...
+    def POINTER(type: type[_CT], /) -> type[_Pointer[_CT]]:
+        """
+        Create and return a new ctypes pointer type.
 
-    def pointer(obj: _CT, /) -> _Pointer[_CT]: ...
+          type
+            A ctypes type.
+
+        Pointer types are cached and reused internally,
+        so calling this function repeatedly is cheap.
+        """
+        ...
+
+    def pointer(obj: _CT, /) -> _Pointer[_CT]:
+        """
+        Create a new pointer instance, pointing to 'obj'.
+
+        The returned object is of the type POINTER(type(obj)). Note that if you
+        just want to pass a pointer to an object to a foreign function call, you
+        should use byref(obj) which is much faster.
+        """
+        ...
 
 # This class is not exposed. It calls itself _ctypes.CArgObject.
 @final
@@ -254,9 +276,13 @@ if sys.version_info >= (3, 14):
             """Return an attribute of instance, which is of type owner."""
             ...
         @overload
-        def __get__(self, instance: Any, owner: builtins.type[Any] | None = None, /) -> _GetT: ...
+        def __get__(self, instance: Any, owner: builtins.type[Any] | None = None, /) -> _GetT:
+            """Return an attribute of instance, which is of type owner."""
+            ...
 
-        def __set__(self, instance: Any, value: _SetT, /) -> None: ...
+        def __set__(self, instance: Any, value: _SetT, /) -> None:
+            """Set an attribute of instance to value."""
+            ...
 
     _CField = CField
 
@@ -401,14 +427,18 @@ class Array(_CData, Generic[_CT], metaclass=_PyCArrayType):
         """Return self[key]."""
         ...
     @overload
-    def __getitem__(self, key: slice[SupportsIndex | None], /) -> list[Any]: ...
+    def __getitem__(self, key: slice[SupportsIndex | None], /) -> list[Any]:
+        """Return self[key]."""
+        ...
 
     @overload
     def __setitem__(self, key: int, value: Any, /) -> None:
         """Set self[key] to value."""
         ...
     @overload
-    def __setitem__(self, key: slice[SupportsIndex | None], value: Iterable[Any], /) -> None: ...
+    def __setitem__(self, key: slice[SupportsIndex | None], value: Iterable[Any], /) -> None:
+        """Set self[key] to value."""
+        ...
 
     def __iter__(self) -> Iterator[Any]: ...
     # Can't inherit from Sized because the metaclass conflict between

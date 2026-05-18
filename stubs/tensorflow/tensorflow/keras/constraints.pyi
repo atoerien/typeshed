@@ -72,6 +72,8 @@ def get(identifier: str | dict[str, Any] | Constraint) -> Constraint:
     """Retrieve a Keras constraint object via an identifier."""
     ...
 @overload
-def get(identifier: Callable[[Tensor], Tensor]) -> Callable[[Tensor], Tensor]: ...
+def get(identifier: Callable[[Tensor], Tensor]) -> Callable[[Tensor], Tensor]:
+    """Retrieve a Keras constraint object via an identifier."""
+    ...
 
 def __getattr__(name: str): ...  # incomplete module

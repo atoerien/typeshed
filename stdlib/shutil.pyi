@@ -75,10 +75,40 @@ class RegistryError(Exception):
     """
     ...
 
-def copyfileobj(fsrc: SupportsRead[AnyStr], fdst: SupportsWrite[AnyStr], length: int = 0) -> None: ...
-def copyfile(src: StrOrBytesPath, dst: _StrOrBytesPathT, *, follow_symlinks: bool = True) -> _StrOrBytesPathT: ...
-def copymode(src: StrOrBytesPath, dst: StrOrBytesPath, *, follow_symlinks: bool = True) -> None: ...
-def copystat(src: StrOrBytesPath, dst: StrOrBytesPath, *, follow_symlinks: bool = True) -> None: ...
+def copyfileobj(fsrc: SupportsRead[AnyStr], fdst: SupportsWrite[AnyStr], length: int = 0) -> None:
+    """copy data from file-like object fsrc to file-like object fdst"""
+    ...
+def copyfile(src: StrOrBytesPath, dst: _StrOrBytesPathT, *, follow_symlinks: bool = True) -> _StrOrBytesPathT:
+    """
+    Copy data from src to dst in the most efficient way possible.
+
+    If follow_symlinks is not set and src is a symbolic link, a new
+    symlink will be created instead of copying the file it points to.
+    """
+    ...
+def copymode(src: StrOrBytesPath, dst: StrOrBytesPath, *, follow_symlinks: bool = True) -> None:
+    """
+    Copy mode bits from src to dst.
+
+    If follow_symlinks is not set, symlinks aren't followed if and only
+    if both `src` and `dst` are symlinks.  If `lchmod` isn't available
+    (e.g. Linux) this method does nothing.
+    """
+    ...
+def copystat(src: StrOrBytesPath, dst: StrOrBytesPath, *, follow_symlinks: bool = True) -> None:
+    """
+    Copy file metadata
+
+    Copy the permission bits, last access time, last modification time, and
+    flags from `src` to `dst`. On Linux, copystat() also copies the "extended
+    attributes" where possible. The file contents, owner, and group are
+    unaffected. `src` and `dst` are path-like objects or path names given as
+    strings.
+
+    If the optional flag `follow_symlinks` is not set, symlinks aren't
+    followed if and only if both `src` and `dst` are symlinks.
+    """
+    ...
 
 @overload
 def copy(src: StrPath, dst: _StrPathT, *, follow_symlinks: bool = True) -> _StrPathT | str:
@@ -95,7 +125,19 @@ def copy(src: StrPath, dst: _StrPathT, *, follow_symlinks: bool = True) -> _StrP
     """
     ...
 @overload
-def copy(src: BytesPath, dst: _BytesPathT, *, follow_symlinks: bool = True) -> _BytesPathT | bytes: ...
+def copy(src: BytesPath, dst: _BytesPathT, *, follow_symlinks: bool = True) -> _BytesPathT | bytes:
+    """
+    Copy data and mode bits ("cp src dst"). Return the file's destination.
+
+    The destination may be a directory.
+
+    If follow_symlinks is false, symlinks won't be followed. This
+    resembles GNU's "cp -P src dst".
+
+    If source and destination are the same file, a SameFileError will be
+    raised.
+    """
+    ...
 
 @overload
 def copy2(src: StrPath, dst: _StrPathT, *, follow_symlinks: bool = True) -> _StrPathT | str:
@@ -112,9 +154,28 @@ def copy2(src: StrPath, dst: _StrPathT, *, follow_symlinks: bool = True) -> _Str
     """
     ...
 @overload
-def copy2(src: BytesPath, dst: _BytesPathT, *, follow_symlinks: bool = True) -> _BytesPathT | bytes: ...
+def copy2(src: BytesPath, dst: _BytesPathT, *, follow_symlinks: bool = True) -> _BytesPathT | bytes:
+    """
+    Copy data and metadata. Return the file's destination.
 
-def ignore_patterns(*patterns: StrPath) -> Callable[[Any, list[str]], set[str]]: ...
+    Metadata is copied with copystat(). Please see the copystat function
+    for more information.
+
+    The destination may be a directory.
+
+    If follow_symlinks is false, symlinks won't be followed. This
+    resembles GNU's "cp -P src dst".
+    """
+    ...
+
+def ignore_patterns(*patterns: StrPath) -> Callable[[Any, list[str]], set[str]]:
+    """
+    Function that can be used as copytree() ignore parameter.
+
+    Patterns is a sequence of glob-style patterns
+    that are used to exclude files
+    """
+    ...
 def copytree(
     src: StrPath,
     dst: _StrPathT,
@@ -339,7 +400,21 @@ if sys.version_info >= (3, 13):
     @overload
     def chown(
         path: FileDescriptorOrPath, user: str | int, group: str | int, *, dir_fd: int | None = None, follow_symlinks: bool = True
-    ) -> None: ...
+    ) -> None:
+        """
+        Change owner user and group of the given path.
+
+        user and group can be the uid/gid or the user/group names, and in that case,
+        they are converted to their respective uid/gid.
+
+        If dir_fd is set, it should be an open file descriptor to the directory to
+        be used as the root of *path* if it is relative.
+
+        If follow_symlinks is set to False and the last element of the path is a
+        symbolic link, chown will modify the link itself and not the file being
+        referenced by the link.
+        """
+        ...
 else:
     @overload
     def chown(path: FileDescriptorOrPath, user: str | int, group: None = None) -> None:
@@ -396,7 +471,17 @@ def which(cmd: StrPath, mode: int = 1, path: StrPath | None = None) -> str | Non
     """
     ...
 @overload
-def which(cmd: bytes, mode: int = 1, path: StrPath | None = None) -> bytes | None: ...
+def which(cmd: bytes, mode: int = 1, path: StrPath | None = None) -> bytes | None:
+    """
+    Given a command, mode, and a PATH string, return the path which
+    conforms to the given mode on the PATH, or None if there is no such
+    file.
+
+    `mode` defaults to os.F_OK | os.X_OK. `path` defaults to the result
+    of os.environ.get("PATH"), or can be overridden with a custom search
+    path.
+    """
+    ...
 
 def make_archive(
     base_name: str,
@@ -408,8 +493,32 @@ def make_archive(
     owner: str | None = None,
     group: str | None = None,
     logger: Any | None = None,
-) -> str: ...
-def get_archive_formats() -> list[tuple[str, str]]: ...
+) -> str:
+    """
+    Create an archive file (eg. zip or tar).
+
+    'base_name' is the name of the file to create, minus any format-specific
+    extension; 'format' is the archive format: one of "zip", "tar", "gztar",
+    "bztar", "xztar", or "zstdtar".  Or any other registered format.
+
+    'root_dir' is a directory that will be the root directory of the
+    archive; ie. we typically chdir into 'root_dir' before creating the
+    archive.  'base_dir' is the directory where we start archiving from;
+    ie. 'base_dir' will be the common prefix of all files and
+    directories in the archive.  'root_dir' and 'base_dir' both default
+    to the current directory.  Returns the name of the archive file.
+
+    'owner' and 'group' are used when creating a tar archive. By default,
+    uses the current owner and group.
+    """
+    ...
+def get_archive_formats() -> list[tuple[str, str]]:
+    """
+    Returns a list of supported formats for archiving and unarchiving.
+
+    Each element of the returned sequence is a tuple (name, description)
+    """
+    ...
 
 @overload
 def register_archive_format(
@@ -428,12 +537,41 @@ def register_archive_format(
 @overload
 def register_archive_format(
     name: str, function: Callable[[str, str], object], extra_args: None = None, description: str = ""
-) -> None: ...
+) -> None:
+    """
+    Registers an archive format.
+
+    name is the name of the format. function is the callable that will be
+    used to create archives. If provided, extra_args is a sequence of
+    (name, value) tuples that will be passed as arguments to the callable.
+    description can be provided to describe the format, and will be returned
+    by the get_archive_formats() function.
+    """
+    ...
 
 def unregister_archive_format(name: str) -> None: ...
 def unpack_archive(
     filename: StrPath, extract_dir: StrPath | None = None, format: str | None = None, *, filter: _TarfileFilter | None = None
-) -> None: ...
+) -> None:
+    """
+    Unpack an archive.
+
+    `filename` is the name of the archive.
+
+    `extract_dir` is the name of the target directory, where the archive
+    is unpacked. If not provided, the current working directory is used.
+
+    `format` is the archive format: one of "zip", "tar", "gztar", "bztar",
+    "xztar", or "zstdtar".  Or any other registered format.  If not provided,
+    unpack_archive will use the filename extension and see if an unpacker
+    was registered for that extension.
+
+    In case none is found, a ValueError is raised.
+
+    If `filter` is given, it is passed to the underlying
+    extraction function.
+    """
+    ...
 
 @overload
 def register_unpack_format(
@@ -463,8 +601,54 @@ def register_unpack_format(
 @overload
 def register_unpack_format(
     name: str, extensions: list[str], function: Callable[[str, str], object], extra_args: None = None, description: str = ""
-) -> None: ...
+) -> None:
+    """
+    Registers an unpack format.
 
-def unregister_unpack_format(name: str) -> None: ...
-def get_unpack_formats() -> list[tuple[str, list[str], str]]: ...
-def get_terminal_size(fallback: tuple[int, int] = (80, 24)) -> os.terminal_size: ...
+    `name` is the name of the format. `extensions` is a list of extensions
+    corresponding to the format.
+
+    `function` is the callable that will be
+    used to unpack archives. The callable will receive archives to unpack.
+    If it's unable to handle an archive, it needs to raise a ReadError
+    exception.
+
+    If provided, `extra_args` is a sequence of
+    (name, value) tuples that will be passed as arguments to the callable.
+    description can be provided to describe the format, and will be returned
+    by the get_unpack_formats() function.
+    """
+    ...
+
+def unregister_unpack_format(name: str) -> None:
+    """Removes the pack format from the registry."""
+    ...
+def get_unpack_formats() -> list[tuple[str, list[str], str]]:
+    """
+    Returns a list of supported formats for unpacking.
+
+    Each element of the returned sequence is a tuple
+    (name, extensions, description)
+    """
+    ...
+def get_terminal_size(fallback: tuple[int, int] = (80, 24)) -> os.terminal_size:
+    """
+    Get the size of the terminal window.
+
+    For each of the two dimensions, the environment variable, COLUMNS
+    and LINES respectively, is checked. If the variable is defined and
+    the value is a positive integer, it is used.
+
+    When COLUMNS or LINES is not defined, which is the common case,
+    the terminal connected to sys.__stdout__ is queried
+    by invoking os.get_terminal_size.
+
+    If the terminal size cannot be successfully queried, either because
+    the system doesn't support querying, or because we are not
+    connected to a terminal, the value given in fallback parameter
+    is used. Fallback defaults to (80, 24) which is the default
+    size used by many terminal emulators.
+
+    The value returned is a named tuple of type os.terminal_size.
+    """
+    ...

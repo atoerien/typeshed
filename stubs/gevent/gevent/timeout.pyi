@@ -171,7 +171,9 @@ class Timeout(BaseException):
         ref: bool = True,
         priority: int = -1,
     ) -> None: ...
-    def start(self) -> None: ...
+    def start(self) -> None:
+        """Schedule the timeout."""
+        ...
 
     @overload
     @classmethod
@@ -193,7 +195,20 @@ class Timeout(BaseException):
         ...
     @overload
     @classmethod
-    def start_new(cls, timeout: _TimeoutT) -> _TimeoutT: ...
+    def start_new(cls, timeout: _TimeoutT) -> _TimeoutT:
+        """
+        Create a started :class:`Timeout`.
+
+        This is a shortcut, the exact action depends on *timeout*'s type:
+
+        * If *timeout* is a :class:`Timeout`, then call its :meth:`start` method
+          if it's not already begun.
+        * Otherwise, create a new :class:`Timeout` instance, passing (*timeout*, *exception*) as
+          arguments, then call its :meth:`start` method.
+
+        Returns the :class:`Timeout` instance.
+        """
+        ...
 
     @property
     def pending(self) -> bool:

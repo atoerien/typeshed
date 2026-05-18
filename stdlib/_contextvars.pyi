@@ -17,7 +17,9 @@ class ContextVar(Generic[_T]):
     @overload
     def __new__(cls, name: str, *, default: _T) -> Self: ...
 
-    def __hash__(self) -> int: ...
+    def __hash__(self) -> int:
+        """Return hash(self)."""
+        ...
     @property
     def name(self) -> str: ...
 
@@ -46,11 +48,39 @@ class ContextVar(Generic[_T]):
         """
         ...
     @overload
-    def get(self, default: _D, /) -> _D | _T: ...
+    def get(self, default: _D, /) -> _D | _T:
+        """
+        Return a value for the context variable for the current context.
 
-    def set(self, value: _T, /) -> Token[_T]: ...
-    def reset(self, token: Token[_T], /) -> None: ...
-    def __class_getitem__(cls, item: Any, /) -> GenericAlias: ...
+        If there is no value for the variable in the current context, the method will:
+         * return the value of the default argument of the method, if provided; or
+         * return the default value for the context variable, if it was created
+           with one; or
+         * raise a LookupError.
+        """
+        ...
+
+    def set(self, value: _T, /) -> Token[_T]:
+        """
+        Call to set a new value for the context variable in the current context.
+
+        The required value argument is the new value for the context variable.
+
+        Returns a Token object that can be used to restore the variable to its previous
+        value via the `ContextVar.reset()` method.
+        """
+        ...
+    def reset(self, token: Token[_T], /) -> None:
+        """
+        Reset the context variable.
+
+        The variable is reset to the value it had before the `ContextVar.set()` that
+        created the token was used.
+        """
+        ...
+    def __class_getitem__(cls, item: Any, /) -> GenericAlias:
+        """See PEP 585"""
+        ...
 
 @final
 class Token(Generic[_T]):
@@ -100,7 +130,14 @@ class Context(Mapping[ContextVar[Any], Any]):
         """
         ...
     @overload
-    def get(self, key: ContextVar[_T], default: _D, /) -> _T | _D: ...
+    def get(self, key: ContextVar[_T], default: _D, /) -> _T | _D:
+        """
+        Return the value for `key` if `key` has the value in the context object.
+
+        If `key` does not exist, return `default`. If `default` is not given,
+        return None.
+        """
+        ...
 
     def run(self, callable: Callable[_P, _T], *args: _P.args, **kwargs: _P.kwargs) -> _T: ...
     def copy(self) -> Context:

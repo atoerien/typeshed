@@ -956,16 +956,9 @@ def summarize_address_range(first: IPv6Address, last: IPv6Address) -> Iterator[I
 @overload
 def summarize_address_range(
     first: IPv4Address | IPv6Address, last: IPv4Address | IPv6Address
-) -> Iterator[IPv4Network] | Iterator[IPv6Network]: ...
-
-def collapse_addresses(addresses: Iterable[_N]) -> Iterator[_N]: ...
-
-@overload
-def get_mixed_type_key(obj: _A) -> tuple[int, _A]: ...
-@overload
-def get_mixed_type_key(obj: IPv4Network) -> tuple[int, IPv4Address, IPv4Address]: ...
-@overload
-def get_mixed_type_key(obj: IPv6Network) -> tuple[int, IPv6Address, IPv6Address]: ...
+) -> Iterator[IPv4Network] | Iterator[IPv6Network]:
+    """
+    Summarize a network range given the first and last IP addresses.
 
     Example:
         >>> list(summarize_address_range(IPv4Address('192.0.2.0'),
@@ -990,6 +983,7 @@ def get_mixed_type_key(obj: IPv6Network) -> tuple[int, IPv6Address, IPv6Address]
             If the version of the first address is not 4 or 6.
     """
     ...
+
 def collapse_addresses(addresses: Iterable[_N]) -> Iterator[_N]:
     """
     Collapse a list of IP objects.
@@ -1009,6 +1003,7 @@ def collapse_addresses(addresses: Iterable[_N]) -> Iterator[_N]:
         TypeError: If passed a list of mixed version objects.
     """
     ...
+
 @overload
 def get_mixed_type_key(obj: _A) -> tuple[int, _A]:
     """

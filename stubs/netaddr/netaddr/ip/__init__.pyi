@@ -16,14 +16,18 @@ class BaseIP:
     related subclasses.
     """
     __slots__ = ("_value", "_module", "__weakref__")
-    def __init__(self) -> None: ...
+    def __init__(self) -> None:
+        """Constructor."""
+        ...
 
     @property
     def value(self) -> int | None:
         """a positive integer representing the value of IP address/subnet."""
         ...
     @value.setter
-    def value(self, value: int) -> None: ...
+    def value(self, value: int) -> None:
+        """a positive integer representing the value of IP address/subnet."""
+        ...
 
     @abstractmethod
     def key(self) -> tuple[int, ...]:
@@ -476,8 +480,16 @@ class IPListMixin:
         """
         ...
     @property
-    def size(self) -> int: ...
-    def __len__(self) -> int: ...
+    def size(self) -> int:
+        """The total number of IP addresses within this ranged IP object."""
+        ...
+    def __len__(self) -> int:
+        """
+        :return: the number of IP addresses in this ranged IP object. Raises
+            an `IndexError` if size > system max int (a Python 2.x
+            limitation). Use the .size property for subnets of any size.
+        """
+        ...
 
     @overload
     def __getitem__(self, index: SupportsIndex) -> IPAddress:
@@ -496,10 +508,28 @@ class IPListMixin:
         """
         ...
     @overload
-    def __getitem__(self, index: SupportsIndex | slice) -> IPAddress | Iterator[IPAddress]: ...
+    def __getitem__(self, index: SupportsIndex | slice) -> IPAddress | Iterator[IPAddress]:
+        """
+        :return: The IP address(es) in this `IPNetwork` object referenced by
+            index or slice. As slicing can produce large sequences of objects
+            an iterator is returned instead of the more usual `list`.
+        """
+        ...
 
-    def __contains__(self, other: BaseIP | _IPAddressAddr) -> bool: ...
-    def __bool__(self) -> Literal[True]: ...
+    def __contains__(self, other: BaseIP | _IPAddressAddr) -> bool:
+        """
+        :param other: an `IPAddress` or ranged IP object.
+
+        :return: ``True`` if other falls within the boundary of this one,
+            ``False`` otherwise.
+        """
+        ...
+    def __bool__(self) -> Literal[True]:
+        """
+        Ranged IP objects always represent a sequence of at least one IP
+        address and are therefore always True in the boolean context.
+        """
+        ...
 
 def parse_ip_network(
     module: ModuleType, addr: tuple[int, int] | str, flags: int = 0, *, expand_partial: bool = False
@@ -543,14 +573,44 @@ class IPNetwork(BaseIP, IPListMixin):
     __slots__ = ("_prefixlen",)
     def __init__(
         self, addr: _IPNetworkAddr, version: Literal[4, 6] | None = None, flags: int = 0, *, expand_partial: bool = False
-    ) -> None: ...
+    ) -> None:
+        """
+        Constructor.
+
+        :param addr: an IPv4 or IPv6 address with optional CIDR prefix,
+            netmask or hostmask. May be an IP address in presentation
+            (string) format, an tuple containing and integer address and a
+            network prefix, or another IPAddress/IPNetwork object (copy
+            construction).
+
+        :param version: (optional) optimizes version detection if specified
+            and distinguishes between IPv4 and IPv6 for addresses with an
+            equivalent integer value.
+
+        :param flags: (optional) decides which rules are applied to the
+            interpretation of the addr value. Currently only supports the
+            :data:`NOHOST` option.
+
+        :param expand_partial: (optional) decides whether partial address is
+            expanded. Currently this is only effective for IPv4 address.
+
+            >>> IPNetwork('1.2.3.4/24')
+            IPNetwork('1.2.3.4/24')
+            >>> IPNetwork('1.2.3.4/24', flags=NOHOST)
+            IPNetwork('1.2.3.0/24')
+            >>> IPNetwork('10/24', expand_partial=True)
+            IPNetwork('10.0.0.0/24')
+        """
+        ...
 
     @property
     def prefixlen(self) -> int:
         """size of the bitmask used to separate the network from the host bits"""
         ...
     @prefixlen.setter
-    def prefixlen(self, value: int) -> None: ...
+    def prefixlen(self, value: int) -> None:
+        """size of the bitmask used to separate the network from the host bits"""
+        ...
 
     @property
     def ip(self) -> IPAddress:
@@ -576,14 +636,21 @@ class IPNetwork(BaseIP, IPListMixin):
         """
         ...
     @property
-    def last(self) -> int: ...
+    def last(self) -> int:
+        """
+        The integer value of last IP address found within this `IPNetwork`
+        object.
+        """
+        ...
 
     @property
     def netmask(self) -> IPAddress:
         """The subnet mask of this `IPNetwork` object."""
         ...
     @netmask.setter
-    def netmask(self, value: _IPAddressAddr) -> None: ...
+    def netmask(self, value: _IPAddressAddr) -> None:
+        """The subnet mask of this `IPNetwork` object."""
+        ...
 
     @property
     def hostmask(self) -> IPAddress:

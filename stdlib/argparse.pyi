@@ -168,7 +168,12 @@ class _ActionsContainer:
         dest: str | None = ...,
         version: str = ...,
         **kwargs: Any,
-    ) -> Action: ...
+    ) -> Action:
+        """
+        add_argument(dest, ..., name=value, ...)
+        add_argument(option_string, option_string, ..., name=value, ...)
+        """
+        ...
 
     @overload
     def add_argument_group(
@@ -367,7 +372,17 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
 
     def convert_arg_line_to_args(self, arg_line: str) -> list[str]: ...
     def exit(self, status: int = 0, message: str | None = None) -> NoReturn: ...
-    def error(self, message: str) -> NoReturn: ...
+    def error(self, message: str) -> NoReturn:
+        """
+        error(message: string)
+
+        Prints a usage message incorporating the message to stderr and
+        exits.
+
+        If you override this in a subclass, it should not return -- it
+        should either exit or raise an exception.
+        """
+        ...
 
     @overload
     def parse_intermixed_args(self, args: Iterable[str] | None = None, namespace: None = None) -> Namespace: ...

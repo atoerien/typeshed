@@ -159,7 +159,9 @@ class OptimizedFunctionGraph(google.protobuf.message.Message):
             "source",
             b"source",
         ],
-    ) -> None: ...
+    ) -> None:
+        """Clears a message field."""
+        ...
 
     @typing.overload
     def WhichOneof(

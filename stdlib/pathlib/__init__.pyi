@@ -509,28 +509,39 @@ class Path(PurePath):
 
     if sys.version_info >= (3, 14):
         @property
-        def info(self) -> PathInfo: ...
+        def info(self) -> PathInfo:
+            """
+            A PathInfo object that exposes the file type and other file attributes
+            of this path.
+            """
+            ...
 
         @overload
         def move_into(self, target_dir: _PathT) -> _PathT:
             """Move this file or directory tree into the given existing directory."""
             ...
         @overload
-        def move_into(self, target_dir: StrPath) -> Self: ...  # type: ignore[overload-overlap]
+        def move_into(self, target_dir: StrPath) -> Self:
+            """Move this file or directory tree into the given existing directory."""
+            ...
 
         @overload
         def move(self, target: _PathT) -> _PathT:
             """Recursively move this file or directory tree to the given destination."""
             ...
         @overload
-        def move(self, target: StrPath) -> Self: ...  # type: ignore[overload-overlap]
+        def move(self, target: StrPath) -> Self:
+            """Recursively move this file or directory tree to the given destination."""
+            ...
 
         @overload
         def copy_into(self, target_dir: _PathT, *, follow_symlinks: bool = True, preserve_metadata: bool = False) -> _PathT:
             """Copy this file or directory tree into the given existing directory."""
             ...
         @overload
-        def copy_into(self, target_dir: StrPath, *, follow_symlinks: bool = True, preserve_metadata: bool = False) -> Self: ...  # type: ignore[overload-overlap]
+        def copy_into(self, target_dir: StrPath, *, follow_symlinks: bool = True, preserve_metadata: bool = False) -> Self:
+            """Copy this file or directory tree into the given existing directory."""
+            ...
 
         @overload
         def copy(self, target: _PathT, *, follow_symlinks: bool = True, preserve_metadata: bool = False) -> _PathT:

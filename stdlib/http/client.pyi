@@ -262,10 +262,26 @@ class HTTPResponse(io.BufferedIOBase, BinaryIO):  # type: ignore[misc]  # incomp
         """
         ...
     @overload
-    def getheader(self, name: str, default: _T) -> str | _T: ...
+    def getheader(self, name: str, default: _T) -> str | _T:
+        """
+        Returns the value of the header matching *name*.
 
-    def getheaders(self) -> list[tuple[str, str]]: ...
-    def isclosed(self) -> bool: ...
+        If there are multiple matching headers, the values are
+        combined into a single string separated by commas and spaces.
+
+        If no matching header is found, returns *default* or None if
+        the *default* is not specified.
+
+        If the headers are unknown, raises http.client.ResponseNotReady.
+        """
+        ...
+
+    def getheaders(self) -> list[tuple[str, str]]:
+        """Return list of (header, value) tuples."""
+        ...
+    def isclosed(self) -> bool:
+        """True if the connection is closed."""
+        ...
     def __iter__(self) -> Iterator[bytes]: ...
     def __enter__(self) -> Self: ...
     def __exit__(

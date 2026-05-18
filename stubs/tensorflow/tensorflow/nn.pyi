@@ -1243,8 +1243,122 @@ def ctc_loss(
     unique: int | None = None,
     blank_index: int | None = None,
     name: str | None = None,
-) -> Tensor: ...
-def ctc_unique_labels(labels: Tensor, name: str | None = None) -> tuple[Tensor, Tensor]: ...
+) -> Tensor:
+    """
+    Computes CTC (Connectionist Temporal Classification) loss.
+
+    This op implements the CTC loss as presented in
+    [Graves et al., 2006](https://www.cs.toronto.edu/~graves/icml_2006.pdf)
+
+    Connectionist temporal classification (CTC) is a type of neural network output
+    and associated scoring function, for training recurrent neural networks (RNNs)
+    such as LSTM networks to tackle sequence problems where the timing is
+    variable. It can be used for tasks like on-line handwriting recognition or
+    recognizing phones in speech audio. CTC refers to the outputs and scoring, and
+    is independent of the underlying neural network structure.
+
+    Notes:
+
+    - This class performs the softmax operation for you, so `logits` should be
+      e.g. linear projections of outputs by an LSTM.
+    - Outputs true repeated classes with blanks in between, and can also output
+      repeated classes with no blanks in between that need to be collapsed by the
+      decoder.
+    - `labels` may be supplied as either a dense, zero-padded `Tensor` with a
+      vector of label sequence lengths OR as a `SparseTensor`.
+    - On TPU: Only dense padded `labels` are supported.
+    - On CPU and GPU: Caller may use `SparseTensor` or dense padded `labels`
+      but calling with a `SparseTensor` will be significantly faster.
+    - Default blank label is `0` instead of `num_labels - 1` (where `num_labels`
+      is the innermost dimension size of `logits`), unless overridden by
+      `blank_index`.
+
+    >>> tf.random.set_seed(50)
+    >>> batch_size = 8
+    >>> num_labels = 6
+    >>> max_label_length = 5
+    >>> num_frames = 12
+    >>> labels = tf.random.uniform([batch_size, max_label_length],
+    ...                            minval=1, maxval=num_labels, dtype=tf.int64)
+    >>> logits = tf.random.uniform([num_frames, batch_size, num_labels])
+    >>> label_length = tf.random.uniform([batch_size], minval=2,
+    ...                                  maxval=max_label_length, dtype=tf.int64)
+    >>> label_mask = tf.sequence_mask(label_length, maxlen=max_label_length,
+    ...                               dtype=label_length.dtype)
+    >>> labels *= label_mask
+    >>> logit_length = [num_frames] * batch_size
+    >>> with tf.GradientTape() as t:
+    ...   t.watch(logits)
+    ...   ref_loss = tf.nn.ctc_loss(
+    ...       labels=labels,
+    ...       logits=logits,
+    ...       label_length=label_length,
+    ...       logit_length=logit_length,
+    ...       blank_index=0)
+    >>> ref_grad = t.gradient(ref_loss, logits)
+
+    Args:
+      labels: `Tensor` of shape `[batch_size, max_label_seq_length]` or
+        `SparseTensor`.
+      logits: `Tensor` of shape `[frames, batch_size, num_labels]`. If
+        `logits_time_major == False`, shape is `[batch_size, frames, num_labels]`.
+      label_length: `Tensor` of shape `[batch_size]`. None, if `labels` is a
+        `SparseTensor`. Length of reference label sequence in `labels`.
+      logit_length: `Tensor` of shape `[batch_size]`. Length of input sequence in
+        `logits`.
+      logits_time_major: (optional) If True (default), `logits` is shaped [frames,
+        batch_size, num_labels]. If False, shape is
+        `[batch_size, frames, num_labels]`.
+      unique: (optional) Unique label indices as computed by
+        `ctc_unique_labels(labels)`.  If supplied, enable a faster, memory
+        efficient implementation on TPU.
+      blank_index: (optional) Set the class index to use for the blank label.
+        Negative values will start from `num_labels`, ie, `-1` will reproduce the
+        ctc_loss behavior of using `num_labels - 1` for the blank symbol. There is
+        some memory/performance overhead to switching from the default of 0 as an
+        additional shifted copy of `logits` may be created.
+      name: A name for this `Op`. Defaults to "ctc_loss_dense".
+
+    Returns:
+      loss: A 1-D `float Tensor` of shape `[batch_size]`, containing negative log
+      probabilities.
+
+    Raises:
+      ValueError: Argument `blank_index` must be provided when `labels` is a
+      `SparseTensor`.
+
+    References:
+        Connectionist Temporal Classification - Labeling Unsegmented Sequence Data
+        with Recurrent Neural Networks:
+          [Graves et al., 2006](https://dl.acm.org/citation.cfm?id=1143891)
+          ([pdf](http://www.cs.toronto.edu/~graves/icml_2006.pdf))
+
+        https://en.wikipedia.org/wiki/Connectionist_temporal_classification
+    """
+    ...
+def ctc_unique_labels(labels: Tensor, name: str | None = None) -> tuple[Tensor, Tensor]:
+    """
+    Get unique labels and indices for batched labels for `tf.nn.ctc_loss`.
+
+    For use with `tf.nn.ctc_loss` optional argument `unique`: This op can be
+    used to preprocess labels in input pipeline to for better speed/memory use
+    computing the ctc loss on TPU.
+
+    Example:
+      ctc_unique_labels([[3, 4, 4, 3]]) ->
+        unique labels padded with 0: [[3, 4, 0, 0]]
+        indices of original labels in unique: [0, 1, 1, 0]
+
+    Args:
+      labels: tensor of shape [batch_size, max_label_length] padded with 0.
+      name: A name for this `Op`. Defaults to "ctc_unique_labels".
+
+    Returns:
+      tuple of
+        - unique labels, tensor of shape `[batch_size, max_label_length]`
+        - indices into unique labels, shape `[batch_size, max_label_length]`
+    """
+    ...
 
 @overload
 def embedding_lookup(
@@ -1315,9 +1429,95 @@ def embedding_lookup(
 @overload
 def embedding_lookup(
     params: TensorCompatible, ids: RaggedTensor, max_norm: float | None = None, name: str | None = None
-) -> RaggedTensor: ...
+) -> RaggedTensor:
+    """
+    Looks up embeddings for the given `ids` from a list of tensors.
 
-def leaky_relu(features: TensorCompatible, alpha: float = 0.2, name: str | None = None) -> Tensor: ...
+    This function is used to perform parallel lookups on the list of tensors in
+    `params`.  It is a generalization of `tf.gather`, where `params` is
+    interpreted as a partitioning of a large embedding tensor.
+
+    If `len(params) > 1`, each element `id` of `ids` is partitioned between the
+    elements of `params` according to the "div" partition strategy, which means we
+    assign ids to partitions in a contiguous manner. For instance, 13 ids are
+    split across 5 partitions as:
+    `[[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10], [11, 12]]`.
+
+    If the id space does not evenly divide the number of partitions, each of the
+    first `(max_id + 1) % len(params)` partitions will be assigned one more id.
+
+    The results of the lookup are concatenated into a dense
+    tensor. The returned tensor has shape `shape(ids) + shape(params)[1:]`.
+
+    Args:
+      params: A single tensor representing the complete embedding tensor, or a
+        list of tensors all of same shape except for the first dimension,
+        representing sharded embedding tensors following "div" partition strategy.
+      ids: A `Tensor` with type `int32` or `int64` containing the ids to be looked
+        up in `params`.
+      max_norm: If not `None`, each embedding is clipped if its l2-norm is larger
+        than this value.
+      name: A name for the operation (optional).
+
+    Returns:
+      A `Tensor` with the same type as the tensors in `params`.
+
+      For instance, if `params` is a 5x2 matrix:
+
+      ```python
+      [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]]
+      ```
+
+      or a list of matrices:
+
+      ```python
+      params[0]: [[1, 2], [3, 4]]
+      params[1]: [[5, 6], [7, 8]]
+      params[2]: [[9, 10]]
+      ```
+
+      and `ids` is:
+
+      ```python
+      [0, 3, 4]
+      ```
+
+      The output will be a 3x2 matrix:
+
+      ```python
+      [[1, 2], [7, 8], [9, 10]]
+      ```
+
+    Raises:
+      ValueError: If `params` is empty.
+    """
+    ...
+
+def leaky_relu(features: TensorCompatible, alpha: float = 0.2, name: str | None = None) -> Tensor:
+    """
+    Compute the Leaky ReLU activation function.
+
+    Source: [Rectifier Nonlinearities Improve Neural Network Acoustic Models.
+    AL Maas, AY Hannun, AY Ng - Proc. ICML, 2013]
+    (https://ai.stanford.edu/~amaas/papers/relu_hybrid_icml2013_final.pdf).
+
+    Args:
+      features: A `Tensor` representing preactivation values. Must be one of
+        the following types: `float16`, `float32`, `float64`, `int32`, `int64`.
+      alpha: Slope of the activation function at x < 0.
+      name: A name for the operation (optional).
+
+    Returns:
+      The activation value.
+
+    References:
+      Rectifier Nonlinearities Improve Neural Network Acoustic Models:
+        [Maas et al., 2013]
+        (http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.693.1422)
+        ([pdf]
+        (http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.693.1422&rep=rep1&type=pdf))
+    """
+    ...
 def log_poisson_loss(
     targets: TensorCompatible, log_input: TensorCompatible, compute_full_loss: bool = False, name: str | None = None
 ) -> Tensor:

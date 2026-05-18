@@ -91,8 +91,22 @@ class BackdoorServer(StreamServer):
         do_handshake_on_connect: bool = True,
         suppress_ragged_eofs: bool = True,
         ciphers: str = ...,
-    ) -> None: ...
+    ) -> None:
+        """
+        :keyword locals: If given, a dictionary of "builtin" values that will be available
+            at the top-level.
+        :keyword banner: If geven, a string that will be printed to each connecting user.
+        """
+        ...
 
-    def handle(self, conn: _GeventSocket, _address: _Address) -> None: ...
+    def handle(self, conn: _GeventSocket, _address: _Address) -> None:
+        """
+        Interact with one remote user.
+
+        .. versionchanged:: 1.1b2 Each connection gets its own
+            ``locals`` dictionary. Previously they were shared in a
+            potentially unsafe manner.
+        """
+        ...
 
 __all__ = ["BackdoorServer"]

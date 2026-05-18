@@ -14,7 +14,9 @@ class _Protected:
         """Set a password on this sheet."""
         ...
     @overload
-    def set_password(self, value: str | None = "", *, already_hashed: Literal[True]) -> None: ...
+    def set_password(self, value: str | None = "", *, already_hashed: Literal[True]) -> None:
+        """Set a password on this sheet."""
+        ...
 
     @property
     def password(self) -> str | None:

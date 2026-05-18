@@ -9,8 +9,19 @@ class _SupportsUgettextAndUngettext(Protocol):
     def ugettext(self, string: str, /) -> str: ...
     def ungettext(self, singular: str, plural: str, n: int, /) -> str: ...
 
-def messages_path() -> str: ...
-def get_builtin_gnu_translations(languages: Iterable[str] | None = None) -> GNUTranslations: ...
+def messages_path() -> str:
+    """Determine the path to the 'messages' directory as best possible."""
+    ...
+def get_builtin_gnu_translations(languages: Iterable[str] | None = None) -> GNUTranslations:
+    """
+    Get a gettext.GNUTranslations object pointing at the
+    included translation files.
+
+    :param languages:
+        A list of languages to try, in order. If omitted or None, then
+        gettext will try to use locale information from the environment.
+    """
+    ...
 
 @overload
 def get_translations(

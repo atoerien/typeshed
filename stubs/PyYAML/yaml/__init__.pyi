@@ -120,7 +120,12 @@ def emit(
     width: int | _Inf | None = None,
     allow_unicode: bool | None = None,
     line_break: str | None = None,
-): ...
+):
+    """
+    Emit YAML parsing events into a stream.
+    If stream is None, return the produced string instead.
+    """
+    ...
 
 @overload
 def serialize_all(
@@ -182,7 +187,12 @@ def serialize_all(
     explicit_end: bool | None = None,
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
-) -> bytes: ...
+) -> bytes:
+    """
+    Serialize a sequence of representation trees into a YAML stream.
+    If stream is None, return the produced string instead.
+    """
+    ...
 
 @overload
 def serialize(
@@ -244,7 +254,12 @@ def serialize(
     explicit_end: bool | None = None,
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
-) -> bytes: ...
+) -> bytes:
+    """
+    Serialize a representation tree into a YAML stream.
+    If stream is None, return the produced string instead.
+    """
+    ...
 
 @overload
 def dump_all(
@@ -315,7 +330,12 @@ def dump_all(
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
     sort_keys: bool = True,
-) -> bytes: ...
+) -> bytes:
+    """
+    Serialize a sequence of Python objects into a YAML stream.
+    If stream is None, return the produced string instead.
+    """
+    ...
 
 @overload
 def dump(
@@ -386,7 +406,12 @@ def dump(
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
     sort_keys: bool = True,
-) -> bytes: ...
+) -> bytes:
+    """
+    Serialize a Python object into a YAML stream.
+    If stream is None, return the produced string instead.
+    """
+    ...
 
 @overload
 def safe_dump_all(
@@ -456,7 +481,13 @@ def safe_dump_all(
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
     sort_keys: bool = True,
-) -> bytes: ...
+) -> bytes:
+    """
+    Serialize a sequence of Python objects into a YAML stream.
+    Produce only basic YAML tags.
+    If stream is None, return the produced string instead.
+    """
+    ...
 
 @overload
 def safe_dump(
@@ -526,7 +557,13 @@ def safe_dump(
     version: tuple[int, int] | None = None,
     tags: Mapping[str, str] | None = None,
     sort_keys: bool = True,
-) -> bytes: ...
+) -> bytes:
+    """
+    Serialize a Python object into a YAML stream.
+    Produce only basic YAML tags.
+    If stream is None, return the produced string instead.
+    """
+    ...
 
 def add_implicit_resolver(
     tag: str,
@@ -548,7 +585,14 @@ def add_path_resolver(
     kind: type[Any] | None = None,
     Loader: type[BaseResolver] | None = None,
     Dumper: type[BaseResolver] = ...,
-) -> None: ...
+) -> None:
+    """
+    Add a path based resolver for the given tag.
+    A path is a list of keys that forms a path
+    to a node in the representation tree.
+    Keys can be string values, integers, or None.
+    """
+    ...
 
 @overload
 def add_constructor(
@@ -561,7 +605,13 @@ def add_constructor(
     """
     ...
 @overload
-def add_constructor(tag: str, constructor: Callable[[_Constructor, Node], Any], Loader: type[_Constructor]) -> None: ...
+def add_constructor(tag: str, constructor: Callable[[_Constructor, Node], Any], Loader: type[_Constructor]) -> None:
+    """
+    Add a constructor for the given tag.
+    Constructor is a function that accepts a Loader instance
+    and a node object and produces the corresponding Python object.
+    """
+    ...
 
 @overload
 def add_multi_constructor(
@@ -577,7 +627,14 @@ def add_multi_constructor(
 @overload
 def add_multi_constructor(
     tag_prefix: str, multi_constructor: Callable[[_Constructor, str, Node], Any], Loader: type[_Constructor]
-) -> None: ...
+) -> None:
+    """
+    Add a multi-constructor for the given tag prefix.
+    Multi-constructor is called for a node if its tag starts with tag_prefix.
+    Multi-constructor accepts a Loader instance, a tag suffix,
+    and a node object and produces the corresponding Python object.
+    """
+    ...
 
 @overload
 def add_representer(data_type: type[_T], representer: Callable[[Dumper, _T], Node]) -> None:
@@ -589,7 +646,14 @@ def add_representer(data_type: type[_T], representer: Callable[[Dumper, _T], Nod
     """
     ...
 @overload
-def add_representer(data_type: type[_T], representer: Callable[[_Representer, _T], Node], Dumper: type[_Representer]) -> None: ...
+def add_representer(data_type: type[_T], representer: Callable[[_Representer, _T], Node], Dumper: type[_Representer]) -> None:
+    """
+    Add a representer for the given type.
+    Representer is a function accepting a Dumper instance
+    and an instance of the given data type
+    and producing the corresponding representation node.
+    """
+    ...
 
 @overload
 def add_multi_representer(data_type: type[_T], multi_representer: Callable[[Dumper, _T], Node]) -> None:

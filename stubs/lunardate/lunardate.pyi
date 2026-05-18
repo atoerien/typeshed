@@ -130,8 +130,51 @@ class LunarDate:
         """
         ...
     @staticmethod
-    def fromSolarDate(year: SupportsIndex, month: SupportsIndex, day: SupportsIndex) -> LunarDate: ...
-    def toSolarDate(self) -> datetime.date: ...
+    def fromSolarDate(year: SupportsIndex, month: SupportsIndex, day: SupportsIndex) -> LunarDate:
+        """
+        >>> LunarDate.fromSolarDate(1900, 1, 31)
+        LunarDate(1900, 1, 1, 0)
+        >>> LunarDate.fromSolarDate(2008, 10, 2)
+        LunarDate(2008, 9, 4, 0)
+        >>> LunarDate.fromSolarDate(1976, 10, 1)
+        LunarDate(1976, 8, 8, 1)
+        >>> LunarDate.fromSolarDate(2033, 10, 23)
+        LunarDate(2033, 10, 1, 0)
+        >>> LunarDate.fromSolarDate(1956, 12, 2)
+        LunarDate(1956, 11, 1, 0)
+        """
+        ...
+    def toSolarDate(self) -> datetime.date:
+        """
+        >>> LunarDate(1900, 1, 1).toSolarDate()
+        datetime.date(1900, 1, 31)
+        >>> LunarDate(2008, 9, 4).toSolarDate()
+        datetime.date(2008, 10, 2)
+        >>> LunarDate(1976, 8, 8, 1).toSolarDate()
+        datetime.date(1976, 10, 1)
+        >>> LunarDate(1976, 7, 8, 1).toSolarDate()
+        Traceback (most recent call last):
+        ...
+        ValueError: month out of range
+        >>> LunarDate(1899, 1, 1).toSolarDate()
+        Traceback (most recent call last):
+        ...
+        ValueError: year out of range [1900, 2100)
+        >>> LunarDate(2004, 1, 30).toSolarDate()
+        Traceback (most recent call last):
+        ...
+        ValueError: day out of range
+        >>> LunarDate(2004, 13, 1).toSolarDate()
+        Traceback (most recent call last):
+        ...
+        ValueError: month out of range
+        >>> LunarDate(2100, 1, 1).toSolarDate()
+        Traceback (most recent call last):
+        ...
+        ValueError: year out of range [1900, 2100)
+        >>>
+        """
+        ...
 
     @overload
     def __sub__(self, other: LunarDate | datetime.date) -> datetime.timedelta: ...

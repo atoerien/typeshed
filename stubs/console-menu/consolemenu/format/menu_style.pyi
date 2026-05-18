@@ -33,7 +33,14 @@ class MenuStyle:
         """
         ...
     @margins.setter
-    def margins(self, margins: MenuMargins) -> None: ...
+    def margins(self, margins: MenuMargins) -> None:
+        """
+        The margins instance.
+
+        Returns:
+            :obj:`MenuMargins`: The MenuMargins instance.
+        """
+        ...
 
     @property
     def padding(self) -> MenuPadding:
@@ -45,7 +52,14 @@ class MenuStyle:
         """
         ...
     @padding.setter
-    def padding(self, padding: MenuPadding) -> None: ...
+    def padding(self, padding: MenuPadding) -> None:
+        """
+        The padding instance.
+
+        Returns:
+            :obj:`MenuPadding`: The MenuPadding instance.
+        """
+        ...
 
     @property
     def border_style(self) -> MenuBorderStyle:
@@ -57,7 +71,14 @@ class MenuStyle:
         """
         ...
     @border_style.setter
-    def border_style(self, border_style: MenuBorderStyle) -> None: ...
+    def border_style(self, border_style: MenuBorderStyle) -> None:
+        """
+        The border style instance.
+
+        Returns:
+            :obj:`MenuBorderStyle`: The MenuBorderStyle instance.
+        """
+        ...
 
     @property
     def border_style_factory(self) -> MenuBorderStyleFactory:

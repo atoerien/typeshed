@@ -22,7 +22,21 @@ __all__ = [
 ]
 
 @_dispatchable
-def has_path(G: Graph[_Node], source: _Node, target: _Node) -> bool: ...
+def has_path(G: Graph[_Node], source: _Node, target: _Node) -> bool:
+    """
+    Returns *True* if *G* has a path from *source* to *target*.
+
+    Parameters
+    ----------
+    G : NetworkX graph
+
+    source : node
+       Starting node for path
+
+    target : node
+       Ending node for path
+    """
+    ...
 
 @overload  # both source and target are specified => (s -> t)
 def shortest_path(
@@ -450,7 +464,100 @@ def shortest_path(  # source and target are not specified => generator of (t, {s
     *,
     backend: str | None = None,
     **backend_kwargs,
-) -> Generator[tuple[_Node, dict[str, list[_Node]]]]: ...
+) -> Generator[tuple[_Node, dict[str, list[_Node]]]]:
+    """
+    Compute shortest paths in the graph.
+
+    Parameters
+    ----------
+    G : NetworkX graph
+
+    source : node, optional
+        Starting node for path. If not specified, compute shortest
+        paths for each possible starting node.
+
+    target : node, optional
+        Ending node for path. If not specified, compute shortest
+        paths to all possible nodes.
+
+    weight : None, string or function, optional (default = None)
+        If None, every edge has weight/distance/cost 1.
+        If a string, use this edge attribute as the edge weight.
+        Any edge attribute not present defaults to 1.
+        If this is a function, the weight of an edge is the value
+        returned by the function. The function must accept exactly
+        three positional arguments: the two endpoints of an edge and
+        the dictionary of edge attributes for that edge.
+        The function must return a number.
+
+    method : string, optional (default = 'dijkstra')
+        The algorithm to use to compute the path.
+        Supported options: 'dijkstra', 'bellman-ford'.
+        Other inputs produce a ValueError.
+        If `weight` is None, unweighted graph methods are used, and this
+        suggestion is ignored.
+
+    Returns
+    -------
+    path: list or dictionary or iterator
+        All returned paths include both the source and target in the path.
+
+        If the source and target are both specified, return a single list
+        of nodes in a shortest path from the source to the target.
+
+        If only the source is specified, return a dictionary keyed by
+        targets with a list of nodes in a shortest path from the source
+        to one of the targets.
+
+        If only the target is specified, return a dictionary keyed by
+        sources with a list of nodes in a shortest path from one of the
+        sources to the target.
+
+        If neither the source nor target are specified, return an iterator
+        over (source, dictionary) where dictionary is keyed by target to
+        list of nodes in a shortest path from the source to the target.
+
+    Raises
+    ------
+    NodeNotFound
+        If `source` is not in `G`.
+
+    ValueError
+        If `method` is not among the supported options.
+
+    NetworkXNoPath
+       If `source` and `target` are specified but no path exists between them.
+
+    Examples
+    --------
+    >>> G = nx.path_graph(5)
+    >>> print(nx.shortest_path(G, source=0, target=4))
+    [0, 1, 2, 3, 4]
+    >>> p = nx.shortest_path(G, source=0)  # target not specified
+    >>> p[3]  # shortest path from source=0 to target=3
+    [0, 1, 2, 3]
+    >>> p = nx.shortest_path(G, target=4)  # source not specified
+    >>> p[1]  # shortest path from source=1 to target=4
+    [1, 2, 3, 4]
+    >>> p = dict(nx.shortest_path(G))  # source, target not specified
+    >>> p[2][4]  # shortest path from source=2 to target=4
+    [2, 3, 4]
+
+    Notes
+    -----
+    There may be more than one shortest path between a source and target.
+    This returns only one of them.
+
+    See Also
+    --------
+    all_pairs_shortest_path
+    all_pairs_dijkstra_path
+    all_pairs_bellman_ford_path
+    single_source_shortest_path
+    single_source_dijkstra_path
+    single_source_bellman_ford_path
+    """
+    ...
 
 @overload  # both source and target are specified => len(s -> t)
 def shortest_path_length(
@@ -886,7 +993,102 @@ def shortest_path_length(  # source and target are not specified => generator of
     *,
     backend: str | None = None,
     **backend_kwargs,
-) -> Generator[tuple[_Node, dict[_Node, float]]]: ...
+) -> Generator[tuple[_Node, dict[_Node, float]]]:
+    """
+    Compute shortest path lengths in the graph.
+
+    Parameters
+    ----------
+    G : NetworkX graph
+
+    source : node, optional
+        Starting node for path.
+        If not specified, compute shortest path lengths using all nodes as
+        source nodes.
+
+    target : node, optional
+        Ending node for path.
+        If not specified, compute shortest path lengths using all nodes as
+        target nodes.
+
+    weight : None, string or function, optional (default = None)
+        If None, every edge has weight/distance/cost 1.
+        If a string, use this edge attribute as the edge weight.
+        Any edge attribute not present defaults to 1.
+        If this is a function, the weight of an edge is the value
+        returned by the function. The function must accept exactly
+        three positional arguments: the two endpoints of an edge and
+        the dictionary of edge attributes for that edge.
+        The function must return a number.
+
+    method : string, optional (default = 'dijkstra')
+        The algorithm to use to compute the path length.
+        Supported options: 'dijkstra', 'bellman-ford'.
+        Other inputs produce a ValueError.
+        If `weight` is None, unweighted graph methods are used, and this
+        suggestion is ignored.
+
+    Returns
+    -------
+    length: number or iterator
+        If the source and target are both specified, return the length of
+        the shortest path from the source to the target.
+
+        If only the source is specified, return a dict keyed by target
+        to the shortest path length from the source to that target.
+
+        If only the target is specified, return a dict keyed by source
+        to the shortest path length from that source to the target.
+
+        If neither the source nor target are specified, return an iterator
+        over (source, dictionary) where dictionary is keyed by target to
+        shortest path length from source to that target.
+
+    Raises
+    ------
+    NodeNotFound
+        If `source` is not in `G`.
+
+    NetworkXNoPath
+        If no path exists between source and target.
+
+    ValueError
+        If `method` is not among the supported options.
+
+    Examples
+    --------
+    >>> G = nx.path_graph(5)
+    >>> nx.shortest_path_length(G, source=0, target=4)
+    4
+    >>> p = nx.shortest_path_length(G, source=0)  # target not specified
+    >>> p[4]
+    4
+    >>> p = nx.shortest_path_length(G, target=4)  # source not specified
+    >>> p[0]
+    4
+    >>> p = dict(nx.shortest_path_length(G))  # source,target not specified
+    >>> p[0][4]
+    4
+
+    Notes
+    -----
+    The length of the path is always 1 less than the number of nodes involved
+    in the path since the length measures the number of edges followed.
+
+    For digraphs this returns the shortest directed path length. To find path
+    lengths in the reverse direction use G.reverse(copy=False) first to flip
+    the edge orientation.
+
+    See Also
+    --------
+    all_pairs_shortest_path_length
+    all_pairs_dijkstra_path_length
+    all_pairs_bellman_ford_path_length
+    single_source_shortest_path_length
+    single_source_dijkstra_path_length
+    single_source_bellman_ford_path_length
+    """
+    ...
 
 @_dispatchable
 def average_shortest_path_length(

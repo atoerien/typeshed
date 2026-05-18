@@ -16,7 +16,17 @@ _Ts = TypeVarTuple("_Ts")
 
 error = RuntimeError
 
-def _count() -> int: ...
+def _count() -> int:
+    """
+    Return the number of currently running Python threads, excluding
+    the main thread. The returned number comprises all threads created
+    through `start_new_thread()` as well as `threading.Thread`, and not
+    yet finished.
+
+    This function is meant for internal and specialized purposes only.
+    In most applications `threading.enumerate()` should be used instead.
+    """
+    ...
 
 @final
 class RLock:
@@ -72,7 +82,19 @@ if sys.version_info >= (3, 13):
 
     def start_joinable_thread(
         function: Callable[[], object], handle: _ThreadHandle | None = None, daemon: bool = True
-    ) -> _ThreadHandle: ...
+    ) -> _ThreadHandle:
+        """
+        *For internal use only*: start a new thread.
+
+        Like start_new_thread(), this starts a new thread calling the given function.
+        Unlike start_new_thread(), this returns a handle object with methods to join
+        or detach the given thread.
+        This function is not for third-party code, please use the
+        `threading` module instead. During finalization the runtime will not wait for
+        the thread to exit if daemon is True. If handle is provided it must be a
+        newly created thread._ThreadHandle instance.
+        """
+        ...
 
     @final
     class lock:
@@ -250,7 +272,18 @@ def start_new_thread(function: Callable[[Unpack[_Ts]], object], args: tuple[Unpa
     """
     ...
 @overload
-def start_new_thread(function: Callable[..., object], args: tuple[Any, ...], kwargs: dict[str, Any], /) -> int: ...
+def start_new_thread(function: Callable[..., object], args: tuple[Any, ...], kwargs: dict[str, Any], /) -> int:
+    """
+    Start a new thread and return its identifier.
+
+    The thread will call the function with positional arguments from the
+    tuple args and keyword arguments taken from the optional dictionary
+    kwargs.  The thread exits when the function returns; the return value
+    is ignored.  The thread will also exit when the function raises an
+    unhandled exception; a stack trace will be printed unless the exception
+    is SystemExit.
+    """
+    ...
 
 @overload
 @deprecated("Obsolete synonym. Use `start_new_thread()` instead.")
@@ -259,10 +292,26 @@ def start_new(function: Callable[[Unpack[_Ts]], object], args: tuple[Unpack[_Ts]
     ...
 @overload
 @deprecated("Obsolete synonym. Use `start_new_thread()` instead.")
-def start_new(function: Callable[..., object], args: tuple[Any, ...], kwargs: dict[str, Any], /) -> int: ...  # undocumented
+def start_new(function: Callable[..., object], args: tuple[Any, ...], kwargs: dict[str, Any], /) -> int:
+    """An obsolete synonym of start_new_thread()."""
+    ...
 
-def interrupt_main(signum: signal.Signals = signal.SIGINT, /) -> None: ...
-def exit() -> NoReturn: ...
+def interrupt_main(signum: signal.Signals = signal.SIGINT, /) -> None:
+    """
+    Simulate the arrival of the given signal in the main thread,
+    where the corresponding signal handler will be executed.
+    If *signum* is omitted, SIGINT is assumed.
+    A subthread can use this function to interrupt the main thread.
+
+    Note: the default signal handler for SIGINT raises ``KeyboardInterrupt``.
+    """
+    ...
+def exit() -> NoReturn:
+    """
+    This is synonymous to ``raise SystemExit''.  It will cause the current
+    thread to exit silently unless the exception is caught.
+    """
+    ...
 @deprecated("Obsolete synonym. Use `exit()` instead.")
 def exit_thread() -> NoReturn:
     """An obsolete synonym of exit()."""
@@ -311,7 +360,13 @@ def stack_size(size: int = 0, /) -> int:
 
 TIMEOUT_MAX: Final[float]
 
-def get_native_id() -> int: ...  # only available on some platforms
+def get_native_id() -> int:
+    """
+    Return a non-negative integer identifying the thread as reported
+    by the OS (kernel). This may be used to uniquely identify a
+    particular thread within a system.
+    """
+    ...
 
 @final
 class _ExceptHookArgs(structseq[Any], tuple[type[BaseException], BaseException | None, TracebackType | None, Thread | None]):

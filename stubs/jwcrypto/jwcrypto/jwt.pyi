@@ -84,7 +84,41 @@ class JWT:
         default_claims=None,
         check_claims=None,
         expected_type=None,
-    ) -> None: ...
+    ) -> None:
+        """
+        Creates a JWT object.
+
+        :param header: A dict or a JSON string with the JWT Header data.
+        :param claims: A dict or a string with the JWT Claims data.
+        :param jwt: a 'raw' JWT token
+        :param key: A (:class:`jwcrypto.jwk.JWK`) key to deserialize
+         the token. A (:class:`jwcrypto.jwk.JWKSet`) can also be used.
+        :param algs: An optional list of allowed algorithms
+        :param default_claims: An optional dict with default values for
+         registered claims. A None value for NumericDate type claims
+         will cause generation according to system time. Only the values
+         from RFC 7519 - 4.1 are evaluated.
+        :param check_claims: An optional dict of claims that must be
+         present in the token, if the value is not None the claim must
+         match exactly.
+        :param expected_type: An optional string that defines what kind
+         of token to expect when validating a deserialized token.
+         Supported values: "JWS" or "JWE"
+         If left to None the code will try to detect what the expected
+         type is based on other parameters like 'algs' and will default
+         to JWS if no hints are found. It has no effect on token creation.
+
+        Note: either the header,claims or jwt,key parameters should be
+        provided as a deserialization operation (which occurs if the jwt
+        is provided) will wipe any header or claim provided by setting
+        those obtained from the deserialization of the jwt token.
+
+        Note: if check_claims is not provided the 'exp' and 'nbf' claims
+        are checked if they are set on the token but not enforced if not
+        set. Any other RFC 7519 registered claims are checked only for
+        format conformance.
+        """
+        ...
 
     @property
     def header(self) -> str: ...

@@ -20,7 +20,14 @@ class MenuPadding:
         """
         ...
     @left.setter
-    def left(self, left: int) -> None: ...
+    def left(self, left: int) -> None:
+        """
+        The left padding.
+
+        Returns:
+            int: The left padding.
+        """
+        ...
 
     @property
     def right(self) -> int:
@@ -32,7 +39,14 @@ class MenuPadding:
         """
         ...
     @right.setter
-    def right(self, right: int) -> None: ...
+    def right(self, right: int) -> None:
+        """
+        The right padding.
+
+        Returns:
+            int: The right padding.
+        """
+        ...
 
     @property
     def top(self) -> int:
@@ -44,7 +58,14 @@ class MenuPadding:
         """
         ...
     @top.setter
-    def top(self, top: int) -> None: ...
+    def top(self, top: int) -> None:
+        """
+        The top padding.
+
+        Returns:
+            int: The top padding.
+        """
+        ...
 
     @property
     def bottom(self) -> int:

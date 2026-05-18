@@ -215,7 +215,9 @@ class Real(Complex, _RealLike):
         """Finds the greatest Integral <= self."""
         ...
     @abstractmethod
-    def __ceil__(self) -> _IntegralLike: ...
+    def __ceil__(self) -> _IntegralLike:
+        """Finds the least Integral >= self."""
+        ...
 
     @abstractmethod
     @overload
@@ -229,10 +231,31 @@ class Real(Complex, _RealLike):
         ...
     @abstractmethod
     @overload
-    def __round__(self, ndigits: int) -> _RealLike: ...
+    def __round__(self, ndigits: int) -> _RealLike:
+        """
+        Rounds self to ndigits decimal places, defaulting to 0.
 
-    def __divmod__(self, other) -> tuple[_RealLike, _RealLike]: ...
-    def __rdivmod__(self, other) -> tuple[_RealLike, _RealLike]: ...
+        If ndigits is omitted or None, returns an Integral, otherwise
+        returns a Real. Rounds half toward even.
+        """
+        ...
+
+    def __divmod__(self, other) -> tuple[_RealLike, _RealLike]:
+        """
+        divmod(self, other): The pair (self // other, self % other).
+
+        Sometimes this can be computed faster than the pair of
+        operations.
+        """
+        ...
+    def __rdivmod__(self, other) -> tuple[_RealLike, _RealLike]:
+        """
+        divmod(other, self): The pair (other // self, other % self).
+
+        Sometimes this can be computed faster than the pair of
+        operations.
+        """
+        ...
     @abstractmethod
     def __floordiv__(self, other) -> _RealLike:
         """self // other: The floor() of self/other."""
@@ -414,7 +437,9 @@ class Integral(Rational, _IntegralLike):
         """-self"""
         ...
     @abstractmethod
-    def __abs__(self) -> _IntegralLike: ...
+    def __abs__(self) -> _IntegralLike:
+        """Returns the Real distance from 0. Called for abs(self)."""
+        ...
 
     @abstractmethod
     @overload

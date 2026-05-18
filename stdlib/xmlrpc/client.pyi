@@ -467,7 +467,12 @@ class ServerProxy:
         """
         ...
     @overload
-    def __call__(self, attr: str) -> Callable[[], None] | Transport: ...
+    def __call__(self, attr: str) -> Callable[[], None] | Transport:
+        """
+        A workaround to get special attributes on the ServerProxy
+        without interfering with the magic __getattr__
+        """
+        ...
 
     def __enter__(self) -> Self: ...
     def __exit__(

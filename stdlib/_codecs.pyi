@@ -97,7 +97,17 @@ def encode(obj: str, encoding: _StrToStrEncoding, errors: str = "strict") -> str
     """
     ...
 @overload
-def encode(obj: str, encoding: str = "utf-8", errors: str = "strict") -> bytes: ...
+def encode(obj: str, encoding: str = "utf-8", errors: str = "strict") -> bytes:
+    """
+    Encodes obj using the codec registered for encoding.
+
+    The default encoding is 'utf-8'.  errors may be given to set a
+    different error handling scheme.  Default is 'strict' meaning that encoding
+    errors raise a ValueError.  Other possible values are 'ignore', 'replace'
+    and 'backslashreplace' as well as any other name registered with
+    codecs.register_error that can handle ValueErrors.
+    """
+    ...
 
 @overload
 def decode(obj: ReadableBuffer, encoding: _BytesToBytesEncoding, errors: str = "strict") -> bytes:
@@ -156,9 +166,21 @@ def decode(obj: str, encoding: Literal["hex", "hex_codec"], errors: str = "stric
     """
     ...
 @overload
-def decode(obj: ReadableBuffer, encoding: str = "utf-8", errors: str = "strict") -> str: ...
+def decode(obj: ReadableBuffer, encoding: str = "utf-8", errors: str = "strict") -> str:
+    """
+    Decodes obj using the codec registered for encoding.
 
-def lookup(encoding: str, /) -> codecs.CodecInfo: ...
+    Default encoding is 'utf-8'.  errors may be given to set a
+    different error handling scheme.  Default is 'strict' meaning that encoding
+    errors raise a ValueError.  Other possible values are 'ignore', 'replace'
+    and 'backslashreplace' as well as any other name registered with
+    codecs.register_error that can handle ValueErrors.
+    """
+    ...
+
+def lookup(encoding: str, /) -> codecs.CodecInfo:
+    """Looks up a codec tuple in the Python codec registry and returns a CodecInfo object."""
+    ...
 def charmap_build(map: str, /) -> _CharMap: ...
 def ascii_decode(data: ReadableBuffer, errors: str | None = None, /) -> tuple[str, int]: ...
 def ascii_encode(str: str, errors: str | None = None, /) -> tuple[bytes, int]: ...

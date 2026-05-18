@@ -840,14 +840,72 @@ class socket:
     else:
         def __init__(self, family: int = ..., type: int = ..., proto: int = ..., fileno: SupportsIndex | None = None) -> None: ...
 
-    def bind(self, address: _Address, /) -> None: ...
-    def close(self) -> None: ...
-    def connect(self, address: _Address, /) -> None: ...
-    def connect_ex(self, address: _Address, /) -> int: ...
-    def detach(self) -> int: ...
-    def fileno(self) -> int: ...
-    def getpeername(self) -> _RetAddress: ...
-    def getsockname(self) -> _RetAddress: ...
+    def bind(self, address: _Address, /) -> None:
+        """
+        bind(address)
+
+        Bind the socket to a local address.  For IP sockets, the address is a
+        pair (host, port); the host must refer to the local host. For raw packet
+        sockets the address is a tuple (ifname, proto [,pkttype [,hatype [,addr]]])
+        """
+        ...
+    def close(self) -> None:
+        """
+        close()
+
+        Close the socket.  It cannot be used after this call.
+        """
+        ...
+    def connect(self, address: _Address, /) -> None:
+        """
+        connect(address)
+
+        Connect the socket to a remote address.  For IP sockets, the address
+        is a pair (host, port).
+        """
+        ...
+    def connect_ex(self, address: _Address, /) -> int:
+        """
+        connect_ex(address) -> errno
+
+        This is like connect(address), but returns an error code (the errno value)
+        instead of raising an exception when an error occurs.
+        """
+        ...
+    def detach(self) -> int:
+        """
+        detach()
+
+        Close the socket object without closing the underlying file descriptor.
+        The object cannot be used after this call, but the file descriptor
+        can be reused for other purposes.  The file descriptor is returned.
+        """
+        ...
+    def fileno(self) -> int:
+        """
+        fileno() -> integer
+
+        Return the integer file descriptor of the socket.
+        """
+        ...
+    def getpeername(self) -> _RetAddress:
+        """
+        getpeername() -> address info
+
+        Return the address of the remote endpoint.  For IP sockets, the address
+        info is a pair (hostaddr, port).
+        """
+        ...
+    def getsockname(self) -> _RetAddress:
+        """
+        getsockname() -> address info
+
+        Return the address of the local endpoint. The format depends on the
+        address family. For IPv4 sockets, the address info is a pair
+        (hostaddr, port). For IPv6 sockets, the address info is a 4-tuple
+        (hostaddr, port, flowinfo, scope_id).
+        """
+        ...
 
     @overload
     def getsockopt(self, level: int, optname: int, /) -> int:
@@ -860,10 +918,33 @@ class socket:
         """
         ...
     @overload
-    def getsockopt(self, level: int, optname: int, buflen: int, /) -> bytes: ...
+    def getsockopt(self, level: int, optname: int, buflen: int, /) -> bytes:
+        """
+        getsockopt(level, option[, buffersize]) -> value
 
-    def getblocking(self) -> bool: ...
-    def gettimeout(self) -> float | None: ...
+        Get a socket option.  See the Unix manual for level and option.
+        If a nonzero buffersize argument is given, the return value is a
+        string of that length; otherwise it is an integer.
+        """
+        ...
+
+    def getblocking(self) -> bool:
+        """
+        getblocking()
+
+        Returns True if socket is in blocking mode, or False if it
+        is in non-blocking mode.
+        """
+        ...
+    def gettimeout(self) -> float | None:
+        """
+        gettimeout() -> timeout
+
+        Returns the timeout in seconds (float) associated with socket
+        operations. A timeout of None indicates that timeouts on socket
+        operations are disabled.
+        """
+        ...
     if sys.platform == "win32":
         def ioctl(self, control: int, option: int | tuple[int, int, int] | bool, /) -> None: ...
 
@@ -932,10 +1013,75 @@ class socket:
             """
             recvmsg_into(buffers[, ancbufsize[, flags]]) -> (nbytes, ancdata, msg_flags, address)
 
-    def recvfrom_into(self, buffer: WriteableBuffer, nbytes: int = 0, flags: int = 0) -> tuple[int, _RetAddress]: ...
-    def recv_into(self, buffer: WriteableBuffer, nbytes: int = 0, flags: int = 0) -> int: ...
-    def send(self, data: ReadableBuffer, flags: int = 0, /) -> int: ...
-    def sendall(self, data: ReadableBuffer, flags: int = 0, /) -> None: ...
+            Receive normal data and ancillary data from the socket, scattering the
+            non-ancillary data into a series of buffers.  The buffers argument
+            must be an iterable of objects that export writable buffers
+            (e.g. bytearray objects); these will be filled with successive chunks
+            of the non-ancillary data until it has all been written or there are
+            no more buffers.  The ancbufsize argument sets the size in bytes of
+            the internal buffer used to receive the ancillary data; it defaults to
+            0, meaning that no ancillary data will be received.  Appropriate
+            buffer sizes for ancillary data can be calculated using CMSG_SPACE()
+            or CMSG_LEN(), and items which do not fit into the buffer might be
+            truncated or discarded.  The flags argument defaults to 0 and has the
+            same meaning as for recv().
+
+            The return value is a 4-tuple: (nbytes, ancdata, msg_flags, address).
+            The nbytes item is the total number of bytes of non-ancillary data
+            written into the buffers.  The ancdata item is a list of zero or more
+            tuples (cmsg_level, cmsg_type, cmsg_data) representing the ancillary
+            data (control messages) received: cmsg_level and cmsg_type are
+            integers specifying the protocol level and protocol-specific type
+            respectively, and cmsg_data is a bytes object holding the associated
+            data.  The msg_flags item is the bitwise OR of various flags
+            indicating conditions on the received message; see your system
+            documentation for details.  If the receiving socket is unconnected,
+            address is the address of the sending socket, if available; otherwise,
+            its value is unspecified.
+
+            If recvmsg_into() raises an exception after the system call returns,
+            it will first attempt to close any file descriptors received via the
+            SCM_RIGHTS mechanism.
+            """
+            ...
+
+    def recvfrom_into(self, buffer: WriteableBuffer, nbytes: int = 0, flags: int = 0) -> tuple[int, _RetAddress]:
+        """
+        recvfrom_into(buffer[, nbytes[, flags]]) -> (nbytes, address info)
+
+        Like recv_into(buffer[, nbytes[, flags]]) but also return the sender's address info.
+        """
+        ...
+    def recv_into(self, buffer: WriteableBuffer, nbytes: int = 0, flags: int = 0) -> int:
+        """
+        recv_into(buffer, [nbytes[, flags]]) -> nbytes_read
+
+        A version of recv() that stores its data into a buffer rather than creating
+        a new string.  Receive up to buffersize bytes from the socket.  If buffersize
+        is not specified (or 0), receive up to the size available in the given buffer.
+
+        See recv() for documentation about the flags.
+        """
+        ...
+    def send(self, data: ReadableBuffer, flags: int = 0, /) -> int:
+        """
+        send(data[, flags]) -> count
+
+        Send a data string to the socket.  For the optional flags
+        argument, see the Unix manual.  Return the number of bytes
+        sent; this may be less than len(data) if the network is busy.
+        """
+        ...
+    def sendall(self, data: ReadableBuffer, flags: int = 0, /) -> None:
+        """
+        sendall(data[, flags])
+
+        Send a data string to the socket.  For the optional flags
+        argument, see the Unix manual.  This calls send() repeatedly
+        until all data is sent.  If an error occurs, it's impossible
+        to tell how much data has been sent.
+        """
+        ...
 
     @overload
     def sendto(self, data: ReadableBuffer, address: _Address, /) -> int:
@@ -947,7 +1093,14 @@ class socket:
         """
         ...
     @overload
-    def sendto(self, data: ReadableBuffer, flags: int, address: _Address, /) -> int: ...
+    def sendto(self, data: ReadableBuffer, flags: int, address: _Address, /) -> int:
+        """
+        sendto(data[, flags], address) -> count
+
+        Like send(data, flags) but allows specifying the destination address.
+        For IP sockets, the address is a pair (hostaddr, port).
+        """
+        ...
 
     if sys.platform != "win32":
         def sendmsg(
@@ -981,8 +1134,25 @@ class socket:
             self, msg: Iterable[ReadableBuffer] = ..., *, op: int, iv: Any = ..., assoclen: int = ..., flags: int = 0
         ) -> int: ...
 
-    def setblocking(self, flag: bool, /) -> None: ...
-    def settimeout(self, value: float | None, /) -> None: ...
+    def setblocking(self, flag: bool, /) -> None:
+        """
+        setblocking(flag)
+
+        Set the socket to blocking (flag is true) or non-blocking (false).
+        setblocking(True) is equivalent to settimeout(None);
+        setblocking(False) is equivalent to settimeout(0.0).
+        """
+        ...
+    def settimeout(self, value: float | None, /) -> None:
+        """
+        settimeout(timeout)
+
+        Set a timeout on socket operations.  'timeout' can be a float,
+        giving in seconds, or None.  Setting a timeout of None disables
+        the timeout feature and is equivalent to setblocking(1).
+        Setting a timeout of zero is the same as setblocking(0).
+        """
+        ...
 
     @overload
     def setsockopt(self, level: int, optname: int, value: int | ReadableBuffer, /) -> None:
@@ -997,7 +1167,17 @@ class socket:
         """
         ...
     @overload
-    def setsockopt(self, level: int, optname: int, value: None, optlen: int, /) -> None: ...
+    def setsockopt(self, level: int, optname: int, value: None, optlen: int, /) -> None:
+        """
+        setsockopt(level, option, value: int)
+        setsockopt(level, option, value: buffer)
+        setsockopt(level, option, None, optlen: int)
+
+        Set a socket option.  See the Unix manual for level and option.
+        The value argument can either be an integer, a string buffer, or
+        None, optlen.
+        """
+        ...
 
     if sys.platform == "win32":
         def share(self, process_id: int, /) -> bytes: ...

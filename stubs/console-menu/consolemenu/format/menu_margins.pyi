@@ -21,7 +21,14 @@ class MenuMargins:
         """
         ...
     @left.setter
-    def left(self, left: int) -> None: ...
+    def left(self, left: int) -> None:
+        """
+        The left margin.
+
+        Returns:
+            int: The left margin.
+        """
+        ...
 
     @property
     def right(self) -> int:
@@ -33,7 +40,14 @@ class MenuMargins:
         """
         ...
     @right.setter
-    def right(self, right: int) -> None: ...
+    def right(self, right: int) -> None:
+        """
+        The right margin.
+
+        Returns:
+            int: The right margin.
+        """
+        ...
 
     @property
     def top(self) -> int:
@@ -45,7 +59,14 @@ class MenuMargins:
         """
         ...
     @top.setter
-    def top(self, top: int) -> None: ...
+    def top(self, top: int) -> None:
+        """
+        The top margin.
+
+        Returns:
+            int: The top margin.
+        """
+        ...
 
     @property
     def bottom(self) -> int:

@@ -38,13 +38,30 @@ class Index:
         """
         ...
     @overload
-    def __init__(self, space: Literal["l2", "ip", "cosine"], dim: int) -> None: ...
+    def __init__(self, space: Literal["l2", "ip", "cosine"], dim: int) -> None:
+        """
+        __init__(*args, **kwargs)
+        Overloaded function.
+
+        1. __init__(self: hnswlib.Index, params: dict) -> None
+
+        2. __init__(self: hnswlib.Index, index: hnswlib.Index) -> None
+
+        3. __init__(self: hnswlib.Index, space: str, dim: typing.SupportsInt | typing.SupportsIndex) -> None
+        """
+        ...
 
     def add_items(
         self, data: ArrayLike, ids: ArrayLike | None = None, num_threads: int = -1, replace_deleted: bool = False
-    ) -> None: ...
-    def get_current_count(self) -> int: ...
-    def get_ids_list(self) -> list[int]: ...
+    ) -> None:
+        """add_items(self: hnswlib.Index, data: object, ids: object = None, num_threads: typing.SupportsInt | typing.SupportsIndex = -1, replace_deleted: bool = False) -> None"""
+        ...
+    def get_current_count(self) -> int:
+        """get_current_count(self: hnswlib.Index) -> int"""
+        ...
+    def get_ids_list(self) -> list[int]:
+        """get_ids_list(self: hnswlib.Index) -> list[int]"""
+        ...
 
     @overload
     def get_items(self, ids: ArrayLike | None = ..., return_type: Literal["list"] = ...) -> list[float]:
@@ -57,10 +74,16 @@ class Index:
     @overload
     def get_items(
         self, ids: ArrayLike | None = None, return_type: Literal["numpy", "list"] = "numpy"
-    ) -> NDArray[np.float32] | list[float]: ...
+    ) -> NDArray[np.float32] | list[float]:
+        """get_items(self: hnswlib.Index, ids: object = None, return_type: str = 'numpy') -> object"""
+        ...
 
-    def get_max_elements(self) -> int: ...
-    def index_file_size(self) -> int: ...
+    def get_max_elements(self) -> int:
+        """get_max_elements(self: hnswlib.Index) -> int"""
+        ...
+    def index_file_size(self) -> int:
+        """index_file_size(self: hnswlib.Index) -> int"""
+        ...
     def init_index(
         self,
         max_elements: int,

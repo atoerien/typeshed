@@ -48,7 +48,13 @@ class egg_info(InfoCommon, Command):
     @tag_svn_revision.setter
     def tag_svn_revision(self, value) -> None: ...
 
-    def save_version_info(self, filename) -> None: ...
+    def save_version_info(self, filename) -> None:
+        """
+        Materialize the value of date into the
+        build tag. Install build keys in a deterministic order
+        to avoid arbitrary reordering on subsequent builds.
+        """
+        ...
     def finalize_options(self) -> None: ...
     def write_or_delete_file(self, what, filename, data, force: bool = False) -> None:
         """

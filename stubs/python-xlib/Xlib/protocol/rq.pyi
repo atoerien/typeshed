@@ -439,8 +439,25 @@ class Struct:
     structcode: str | None
     structvalues: int
     def __init__(self, *fields: Field) -> None: ...
-    def to_binary(self, *varargs: object, **keys: object) -> bytes: ...
-    def pack_value(self, value: tuple[object, ...] | dict[str, Any] | DictWrapper) -> bytes: ...
+    def to_binary(self, *varargs: object, **keys: object) -> bytes:
+        """
+        data = s.to_binary(...)
+
+        Convert Python values into the binary representation.  The
+        arguments will be all value fields with names, in the order
+        given when the Struct object was instantiated.  With one
+        exception: fields with default arguments will be last.
+
+        Returns the binary representation as the string DATA.
+        """
+        ...
+    def pack_value(self, value: tuple[object, ...] | dict[str, Any] | DictWrapper) -> bytes:
+        """
+        This function allows Struct objects to be used in List and
+        Object fields.  Each item represents the arguments to pass to
+        to_binary, either a tuple, a dictionary or a DictWrapper.
+        """
+        ...
 
     @overload
     def parse_value(self, val: SliceableBuffer, display: display.Display | None, rawdict: Literal[True]) -> dict[str, Any]:
@@ -452,7 +469,12 @@ class Struct:
     @overload
     def parse_value(
         self, val: SliceableBuffer, display: display.Display | None, rawdict: Literal[False] = False
-    ) -> DictWrapper: ...
+    ) -> DictWrapper:
+        """
+        This function is used by List and Object fields to convert
+        Struct objects with no var_fields into Python values.
+        """
+        ...
 
     @overload
     def parse_binary(
@@ -479,7 +501,25 @@ class Struct:
     @overload
     def parse_binary(
         self, data: SliceableBuffer, display: display.Display | None, rawdict: Literal[False] = False
-    ) -> tuple[DictWrapper, SliceableBuffer]: ...
+    ) -> tuple[DictWrapper, SliceableBuffer]:
+        """
+        values, remdata = s.parse_binary(data, display, rawdict = False)
+
+        Convert a binary representation of the structure into Python values.
+
+        DATA is a string or a buffer containing the binary data.
+        DISPLAY should be a Xlib.protocol.display.Display object if
+        there are any Resource fields or Lists with ResourceObjs.
+
+        The Python values are returned as VALUES.  If RAWDICT is true,
+        a Python dictionary is returned, where the keys are field
+        names and the values are the corresponding Python value.  If
+        RAWDICT is false, a DictWrapper will be returned where all
+        fields are available as attributes.
+
+        REMDATA are the remaining binary data, unused by the Struct object.
+        """
+        ...
 
     # Structs generate their attributes
     # TODO: Create a specific type-only class for all instances of `Struct`

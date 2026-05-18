@@ -99,8 +99,17 @@ if sys.platform == "win32":
     def enum_certificates(store_name: str) -> _EnumRetType: ...
     def enum_crls(store_name: str) -> _EnumRetType: ...
 
-def txt2obj(txt: str, name: bool = False) -> tuple[int, str, str, str]: ...
-def nid2obj(nid: int, /) -> tuple[int, str, str, str]: ...
+def txt2obj(txt: str, name: bool = False) -> tuple[int, str, str, str]:
+    """
+    Lookup NID, short name, long name and OID of an ASN1_OBJECT.
+
+    By default objects are looked up by OID. With name=True short and
+    long name are also matched.
+    """
+    ...
+def nid2obj(nid: int, /) -> tuple[int, str, str, str]:
+    """Lookup NID, short name, long name and OID of an ASN1_OBJECT by NID."""
+    ...
 
 @disjoint_base
 class _SSLContext:
@@ -117,7 +126,17 @@ class _SSLContext:
     verify_flags: int
     verify_mode: int
     def __new__(cls, protocol: int, /) -> Self: ...
-    def cert_store_stats(self) -> dict[str, int]: ...
+    def cert_store_stats(self) -> dict[str, int]:
+        """
+        Returns quantities of loaded X.509 certificates.
+
+        X.509 certificates with a CA extension and certificate revocation lists
+        inside the context's cert store.
+
+        NOTE: Certificates in a capath directory aren't loaded unless they have
+        been used at least once.
+        """
+        ...
 
     @overload
     def get_ca_certs(self, binary_form: Literal[False] = False) -> list[_PeerCertRetDictType]:
@@ -144,7 +163,17 @@ class _SSLContext:
         """
         ...
     @overload
-    def get_ca_certs(self, binary_form: bool = False) -> Any: ...
+    def get_ca_certs(self, binary_form: bool = False) -> Any:
+        """
+        Returns a list of dicts with information of loaded CA certs.
+
+        If the optional argument is True, returns a DER-encoded copy of the CA
+        certificate.
+
+        NOTE: Certificates in a capath directory aren't loaded unless they have
+        been used at least once.
+        """
+        ...
 
     def get_ciphers(self) -> list[_Cipher]: ...
     def load_cert_chain(

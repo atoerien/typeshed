@@ -18,7 +18,13 @@ class IniFile:
     errors: list[str]
     def __init__(self, filename: str | None = None) -> None: ...
     def __cmp__(self, other: IniFile) -> bool: ...
-    def parse(self, filename: str, headers: Iterable[str] | None = None) -> None: ...
+    def parse(self, filename: str, headers: Iterable[str] | None = None) -> None:
+        """
+        Parse an INI file.
+
+        headers -- list of headers the parser will try to select as a default header
+        """
+        ...
 
     @overload
     def get(

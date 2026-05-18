@@ -115,7 +115,16 @@ class tqdm_notebook(std_tqdm[_T]):
         delay: float | None = ...,
         display: bool = ...,
         **kwargs,
-    ) -> None: ...
+    ) -> None:
+        """
+        Supports the usual `tqdm.tqdm` parameters as well as those listed below.
+
+        Parameters
+        ----------
+        display  : Whether to call `display(self.container)` immediately
+            [default: True].
+        """
+        ...
 
     def __iter__(self) -> Iterator[_T]: ...
     def update(self, n: int = 1): ...  # type: ignore[override]

@@ -190,7 +190,12 @@ def cached(
     lock: AbstractContextManager[Any] | None = None,
     condition: _AbstractCondition | None = None,
     info: Literal[False] = ...,
-) -> Callable[[Callable[..., _R]], _cached_wrapper[_R]]: ...
+) -> Callable[[Callable[..., _R]], _cached_wrapper[_R]]:
+    """
+    Decorator to wrap a function with a memoizing callable that saves
+    results in a cache.
+    """
+    ...
 
 @type_check_only
 class _cachedmethod_wrapper(Generic[_R]):

@@ -224,7 +224,9 @@ class vCalAddress(str):
     @classmethod
     def from_ical(cls, ical: ICAL_TYPE) -> Self: ...
     @property
-    def email(self) -> str: ...
+    def email(self) -> str:
+        """The email address without mailto: at the start."""
+        ...
 
     @property
     def name(self) -> str:
@@ -255,7 +257,19 @@ class vCalAddress(str):
         """
         ...
     @name.deleter
-    def name(self) -> None: ...
+    def name(self) -> None:
+        """
+        Specify the common name to be associated with the calendar user specified.
+
+        Description:
+            This parameter can be specified on properties with a
+            CAL-ADDRESS value type.  The parameter specifies the common name
+            to be associated with the calendar user specified by the property.
+            The parameter value is text.  The parameter value can be used for
+            display text to be associated with the calendar address specified
+            by the property.
+        """
+        ...
 
     CN: property
     CUTYPE: property

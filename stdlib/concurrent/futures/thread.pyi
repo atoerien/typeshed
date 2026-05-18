@@ -177,7 +177,19 @@ class ThreadPoolExecutor(Executor):
         thread_name_prefix: str,
         initializer: Callable[[Unpack[_Ts]], object],
         initargs: tuple[Unpack[_Ts]],
-    ) -> None: ...
+    ) -> None:
+        """
+        Initializes a new ThreadPoolExecutor instance.
+
+        Args:
+            max_workers: The maximum number of threads that can be used to
+                execute the given calls.
+            thread_name_prefix: An optional name prefix to give our threads.
+            initializer: A callable used to initialize worker threads.
+            initargs: A tuple of arguments to pass to the initializer.
+            ctxkwargs: Additional arguments to cls.prepare_context().
+        """
+        ...
 
     def _adjust_thread_count(self) -> None: ...
     def _initializer_failed(self) -> None: ...

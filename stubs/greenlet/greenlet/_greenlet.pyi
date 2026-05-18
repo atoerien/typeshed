@@ -59,7 +59,27 @@ class greenlet:
     def run(self, value: Callable[..., Any]) -> None: ...
 
     def __init__(self, run: Callable[..., Any] | None = None, parent: greenlet | None = None) -> None: ...
-    def switch(self, *args: Any, **kwargs: Any) -> Any: ...
+    def switch(self, *args: Any, **kwargs: Any) -> Any:
+        """
+        switch(*args, **kwargs)
+
+        Switch execution to this greenlet.
+
+        If this greenlet has never been run, then this greenlet
+        will be switched to using the body of ``self.run(*args, **kwargs)``.
+
+        If the greenlet is active (has been run, but was switch()'ed
+        out before leaving its run function), then this greenlet will
+        be resumed and the return value to its switch call will be
+        None if no arguments are given, the given argument if one
+        argument is given, or the args tuple and keyword args dict if
+        multiple arguments are given.
+
+        If the greenlet is dead, or is the current greenlet then this
+        function will simply return the arguments using the same rules as
+        above.
+        """
+        ...
 
     @overload
     def throw(
@@ -83,9 +103,28 @@ class greenlet:
         """
         ...
     @overload
-    def throw(self, typ: BaseException = ..., val: None = None, tb: TracebackType | None = None, /) -> Any: ...
+    def throw(self, typ: BaseException = ..., val: None = None, tb: TracebackType | None = None, /) -> Any:
+        """
+        Switches execution to this greenlet, but immediately raises the
+        given exception in this greenlet.  If no argument is provided, the exception
+        defaults to `greenlet.GreenletExit`.  The normal exception
+        propagation rules apply, as described for `switch`.  Note that calling this
+        method is almost equivalent to the following::
 
-    def __bool__(self) -> bool: ...
+            def raiser():
+                raise typ, val, tb
+            g_raiser = greenlet(raiser, parent=g)
+            g_raiser.switch()
+
+        except that this trick does not work for the
+        `greenlet.GreenletExit` exception, which would not propagate
+        from ``g_raiser`` to ``g``.
+        """
+        ...
+
+    def __bool__(self) -> bool:
+        """True if self else False"""
+        ...
 
     # aliases for some module attributes/methods
     GreenletExit: type[GreenletExit]

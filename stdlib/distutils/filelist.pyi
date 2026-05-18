@@ -107,7 +107,33 @@ class FileList:
         anchor: bool | Literal[0, 1] = 1,
         prefix: str | None = None,
         is_regex: bool | Literal[0, 1] = 0,
-    ) -> bool: ...
+    ) -> bool:
+        """
+        Select strings (presumably filenames) from 'self.files' that
+        match 'pattern', a Unix-style wildcard (glob) pattern.  Patterns
+        are not quite the same as implemented by the 'fnmatch' module: '*'
+        and '?'  match non-special characters, where "special" is platform-
+        dependent: slash on Unix; colon, slash, and backslash on
+        DOS/Windows; and colon on Mac OS.
+
+        If 'anchor' is true (the default), then the pattern match is more
+        stringent: "*.py" will match "foo.py" but not "foo/bar.py".  If
+        'anchor' is false, both of these will match.
+
+        If 'prefix' is supplied, then only filenames starting with 'prefix'
+        (itself a pattern) and ending with 'pattern', with anything in between
+        them, will match.  'anchor' is ignored in this case.
+
+        If 'is_regex' is true, 'anchor' and 'prefix' are ignored, and
+        'pattern' is assumed to be either a string containing a regex or a
+        regex object -- no translation is done, the regex is just compiled
+        and used as-is.
+
+        Selected strings will be added to self.files.
+
+        Return True if files are found, False otherwise.
+        """
+        ...
 
     @overload
     def exclude_pattern(
@@ -148,8 +174,20 @@ class FileList:
         """
         ...
 
-def findall(dir: str = ".") -> list[str]: ...
-def glob_to_re(pattern: str) -> str: ...
+def findall(dir: str = ".") -> list[str]:
+    """
+    Find all files under 'dir' and return the list of full filenames.
+    Unless dir is '.', return full filenames with dir prepended.
+    """
+    ...
+def glob_to_re(pattern: str) -> str:
+    """
+    Translate a shell-like glob pattern to a regular expression; return
+    a string containing the regex.  Differs from 'fnmatch.translate()' in
+    that '*' does not match "special characters" (which are
+    platform-specific).
+    """
+    ...
 
 @overload
 def translate_pattern(

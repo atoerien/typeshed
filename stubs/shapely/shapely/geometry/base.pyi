@@ -62,10 +62,23 @@ class BaseGeometry(Geometry):
         "Directly calling 'BaseGeometry()' is deprecated. To create an empty geometry, "
         "use one of the subclasses instead, for example 'GeometryCollection()'."
     )
-    def __new__(self) -> GeometryCollection: ...
-    def __bool__(self) -> bool: ...
-    def __nonzero__(self) -> bool: ...
-    def __format__(self, format_spec: str) -> str: ...
+    def __new__(self) -> GeometryCollection:
+        """
+        Directly calling the base class 'BaseGeometry()' is deprecated.
+
+        This will raise an error in the future. To create an empty geometry,
+        use one of the subclasses instead, for example 'GeometryCollection()'
+        """
+        ...
+    def __bool__(self) -> bool:
+        """Return True if the geometry is not empty, else False."""
+        ...
+    def __nonzero__(self) -> bool:
+        """Return True if the geometry is not empty, else False."""
+        ...
+    def __format__(self, format_spec: str) -> str:
+        """Format a geometry using a format specification."""
+        ...
 
     @overload
     def __and__(self, other: Geometry) -> BaseGeometry:
@@ -76,7 +89,9 @@ class BaseGeometry(Geometry):
         """Return the intersection of the geometries."""
         ...
     @overload
-    def __and__(self, other: None) -> None: ...
+    def __and__(self, other: None) -> None:
+        """Return the intersection of the geometries."""
+        ...
 
     @overload
     def __or__(self, other: Geometry) -> BaseGeometry:
@@ -87,7 +102,9 @@ class BaseGeometry(Geometry):
         """Return the union of the geometries."""
         ...
     @overload
-    def __or__(self, other: None) -> None: ...
+    def __or__(self, other: None) -> None:
+        """Return the union of the geometries."""
+        ...
 
     @overload
     def __sub__(self, other: Geometry) -> BaseGeometry:
@@ -98,7 +115,9 @@ class BaseGeometry(Geometry):
         """Return the difference of the geometries."""
         ...
     @overload
-    def __sub__(self, other: None) -> None: ...
+    def __sub__(self, other: None) -> None:
+        """Return the difference of the geometries."""
+        ...
 
     @overload
     def __xor__(self, other: Geometry) -> BaseGeometry:
@@ -109,11 +128,19 @@ class BaseGeometry(Geometry):
         """Return the symmetric difference of the geometries."""
         ...
     @overload
-    def __xor__(self, other: None) -> None: ...
+    def __xor__(self, other: None) -> None:
+        """Return the symmetric difference of the geometries."""
+        ...
 
-    def __eq__(self, other: object, /) -> bool: ...
-    def __ne__(self, other: object, /) -> bool: ...
-    def __hash__(self) -> int: ...
+    def __eq__(self, other: object, /) -> bool:
+        """Return self==value."""
+        ...
+    def __ne__(self, other: object, /) -> bool:
+        """Return self!=value."""
+        ...
+    def __hash__(self) -> int:
+        """Return hash(self)."""
+        ...
     @property
     def coords(self) -> CoordinateSequence:
         """Access to geometry's coordinates (CoordinateSequence)."""
@@ -168,21 +195,27 @@ class BaseGeometry(Geometry):
         """Name of the geometry's type, such as 'Point'."""
         ...
     @property
-    def area(self) -> float: ...
+    def area(self) -> float:
+        """Unitless area of the geometry (float)."""
+        ...
 
     @overload
     def distance(self, other: Geometry | None) -> float:
         """Unitless distance to other geometry (float)."""
         ...
     @overload
-    def distance(self, other: OptGeoArrayLikeSeq) -> NDArray[np.float64]: ...
+    def distance(self, other: OptGeoArrayLikeSeq) -> NDArray[np.float64]:
+        """Unitless distance to other geometry (float)."""
+        ...
 
     @overload
     def hausdorff_distance(self, other: Geometry | None) -> float:
         """Unitless hausdorff distance to other geometry (float)."""
         ...
     @overload
-    def hausdorff_distance(self, other: OptGeoArrayLikeSeq) -> NDArray[np.float64]: ...
+    def hausdorff_distance(self, other: OptGeoArrayLikeSeq) -> NDArray[np.float64]:
+        """Unitless hausdorff distance to other geometry (float)."""
+        ...
 
     @property
     def length(self) -> float:
@@ -291,9 +324,127 @@ class BaseGeometry(Geometry):
         *,
         quadsegs: int | None = None,  # deprecated
         resolution: int | None = None,  # deprecated
-    ) -> Polygon: ...
-    def simplify(self, tolerance: float, preserve_topology: bool = True) -> BaseGeometry: ...
-    def normalize(self) -> BaseGeometry: ...
+    ) -> Polygon:
+        """
+        Get a geometry that represents all points within a distance of this geometry.
+
+        A positive distance produces a dilation, a negative distance an
+        erosion. A very small or zero distance may sometimes be used to
+        "tidy" a polygon.
+
+        Parameters
+        ----------
+        distance : float
+            The distance to buffer around the object.
+        quad_segs : int, optional
+            Sets the number of line segments used to approximate an
+            angle fillet.
+        cap_style : shapely.BufferCapStyle or {'round', 'square', 'flat'}, default 'round'
+            Specifies the shape of buffered line endings. BufferCapStyle.round
+            ('round') results in circular line endings (see ``quad_segs``). Both
+            BufferCapStyle.square ('square') and BufferCapStyle.flat ('flat')
+            result in rectangular line endings, only BufferCapStyle.flat
+            ('flat') will end at the original vertex, while
+            BufferCapStyle.square ('square') involves adding the buffer width.
+        join_style : shapely.BufferJoinStyle or {'round', 'mitre', 'bevel'}, default 'round'
+            Specifies the shape of buffered line midpoints.
+            BufferJoinStyle.ROUND ('round') results in rounded shapes.
+            BufferJoinStyle.bevel ('bevel') results in a beveled edge that
+            touches the original vertex. BufferJoinStyle.mitre ('mitre') results
+            in a single vertex that is beveled depending on the ``mitre_limit``
+            parameter.
+        mitre_limit : float, optional
+            The mitre limit ratio is used for very sharp corners. The
+            mitre ratio is the ratio of the distance from the corner to
+            the end of the mitred offset corner. When two line segments
+            meet at a sharp angle, a miter join will extend the original
+            geometry. To prevent unreasonable geometry, the mitre limit
+            allows controlling the maximum length of the join corner.
+            Corners with a ratio which exceed the limit will be beveled.
+        single_sided : bool, optional
+            The side used is determined by the sign of the buffer
+            distance:
+
+                a positive distance indicates the left-hand side
+                a negative distance indicates the right-hand side
+
+            The single-sided buffer of point geometries is the same as
+            the regular buffer.  The End Cap Style for single-sided
+            buffers is always ignored, and forced to the equivalent of
+            CAP_FLAT.
+        quadsegs, resolution : int, optional
+            Deprecated aliases for `quad_segs`.
+        **kwargs : dict, optional
+            For backwards compatibility of renamed parameters. If an unsupported
+            kwarg is passed, a `ValueError` will be raised.
+
+        Returns
+        -------
+        Geometry
+
+        Notes
+        -----
+        The return value is a strictly two-dimensional geometry. All
+        Z coordinates of the original geometry will be ignored.
+
+        .. deprecated:: 2.1.0
+            A deprecation warning is shown if ``quad_segs``,  ``cap_style``,
+            ``join_style``, ``mitre_limit`` or ``single_sided`` are
+            specified as positional arguments. In a future release, these will
+            need to be specified as keyword arguments.
+
+        Examples
+        --------
+        >>> from shapely import BufferCapStyle
+        >>> from shapely.wkt import loads
+        >>> g = loads('POINT (0.0 0.0)')
+
+        16-gon approx of a unit radius circle:
+
+        >>> g.buffer(1.0).area
+        3.1365484905459398
+
+        128-gon approximation:
+
+        >>> g.buffer(1.0, 128).area
+        3.1415138011443013
+
+        triangle approximation:
+
+        >>> g.buffer(1.0, 3).area
+        3.0
+        >>> list(g.buffer(1.0, cap_style=BufferCapStyle.square).exterior.coords)
+        [(1.0, 1.0), (1.0, -1.0), (-1.0, -1.0), (-1.0, 1.0), (1.0, 1.0)]
+        >>> g.buffer(1.0, cap_style=BufferCapStyle.square).area
+        4.0
+        """
+        ...
+    def simplify(self, tolerance: float, preserve_topology: bool = True) -> BaseGeometry:
+        """
+        Return a simplified geometry produced by the Douglas-Peucker algorithm.
+
+        Coordinates of the simplified geometry will be no more than the
+        tolerance distance from the original. Unless the topology preserving
+        option is used, the algorithm may produce self-intersecting or
+        otherwise invalid geometries.
+        """
+        ...
+    def normalize(self) -> BaseGeometry:
+        """
+        Convert geometry to normal form (or canonical form).
+
+        This method orders the coordinates, rings of a polygon and parts of
+        multi geometries consistently. Typically useful for testing purposes
+        (for example in combination with `equals_exact`).
+
+        Examples
+        --------
+        >>> from shapely import MultiLineString
+        >>> line = MultiLineString([[(0, 0), (1, 1)], [(3, 3), (2, 2)]])
+        >>> line.normalize()
+        <MULTILINESTRING ((2 2, 3 3), (0 0, 1 1))>
+        """
+        ...
 
     @overload
     def difference(self, other: Geometry, grid_size: float | None = None) -> BaseGeometry:
@@ -312,7 +463,13 @@ class BaseGeometry(Geometry):
         """
         ...
     @overload
-    def difference(self, other: None, grid_size: float | None = None) -> None: ...
+    def difference(self, other: None, grid_size: float | None = None) -> None:
+        """
+        Return the difference of the geometries.
+
+        Refer to `shapely.difference` for full documentation.
+        """
+        ...
 
     @overload
     def intersection(self, other: Geometry, grid_size: float | None = None) -> BaseGeometry:
@@ -331,7 +488,13 @@ class BaseGeometry(Geometry):
         """
         ...
     @overload
-    def intersection(self, other: None, grid_size: float | None = None) -> None: ...
+    def intersection(self, other: None, grid_size: float | None = None) -> None:
+        """
+        Return the intersection of the geometries.
+
+        Refer to `shapely.intersection` for full documentation.
+        """
+        ...
 
     @overload
     def symmetric_difference(self, other: Geometry, grid_size: float | None = None) -> BaseGeometry:
@@ -350,7 +513,13 @@ class BaseGeometry(Geometry):
         """
         ...
     @overload
-    def symmetric_difference(self, other: None, grid_size: float | None = None) -> None: ...
+    def symmetric_difference(self, other: None, grid_size: float | None = None) -> None:
+        """
+        Return the symmetric difference of the geometries.
+
+        Refer to `shapely.symmetric_difference` for full documentation.
+        """
+        ...
 
     @overload
     def union(self, other: Geometry, grid_size: float | None = None) -> BaseGeometry:
@@ -369,7 +538,13 @@ class BaseGeometry(Geometry):
         """
         ...
     @overload
-    def union(self, other: None, grid_size: float | None = None) -> None: ...
+    def union(self, other: None, grid_size: float | None = None) -> None:
+        """
+        Return the union of the geometries.
+
+        Refer to `shapely.union` for full documentation.
+        """
+        ...
 
     @property
     def has_z(self) -> bool:
@@ -404,7 +579,13 @@ class BaseGeometry(Geometry):
         """
         ...
     @property
-    def is_valid(self) -> bool: ...
+    def is_valid(self) -> bool:
+        """
+        True if the geometry is valid.
+
+        The definition depends on sub-class.
+        """
+        ...
 
     @overload
     def relate(self, other: Geometry) -> str:
@@ -415,28 +596,36 @@ class BaseGeometry(Geometry):
         """Return the DE-9IM intersection matrix for the two geometries (string)."""
         ...
     @overload
-    def relate(self, other: None) -> None: ...
+    def relate(self, other: None) -> None:
+        """Return the DE-9IM intersection matrix for the two geometries (string)."""
+        ...
 
     @overload
     def covers(self, other: Geometry | None) -> bool:
         """Return True if the geometry covers the other, else False."""
         ...
     @overload
-    def covers(self, other: OptGeoArrayLikeSeq) -> NDArray[np.bool_]: ...
+    def covers(self, other: OptGeoArrayLikeSeq) -> NDArray[np.bool_]:
+        """Return True if the geometry covers the other, else False."""
+        ...
 
     @overload
     def covered_by(self, other: Geometry | None) -> bool:
         """Return True if the geometry is covered by the other, else False."""
         ...
     @overload
-    def covered_by(self, other: OptGeoArrayLikeSeq) -> NDArray[np.bool_]: ...
+    def covered_by(self, other: OptGeoArrayLikeSeq) -> NDArray[np.bool_]:
+        """Return True if the geometry is covered by the other, else False."""
+        ...
 
     @overload
     def contains(self, other: Geometry | None) -> bool:
         """Return True if the geometry contains the other, else False."""
         ...
     @overload
-    def contains(self, other: OptGeoArrayLikeSeq) -> NDArray[np.bool_]: ...
+    def contains(self, other: OptGeoArrayLikeSeq) -> NDArray[np.bool_]:
+        """Return True if the geometry contains the other, else False."""
+        ...
 
     @overload
     def contains_properly(self, other: Geometry | None) -> bool:
@@ -449,21 +638,33 @@ class BaseGeometry(Geometry):
         """
         ...
     @overload
-    def contains_properly(self, other: OptGeoArrayLikeSeq) -> NDArray[np.bool_]: ...
+    def contains_properly(self, other: OptGeoArrayLikeSeq) -> NDArray[np.bool_]:
+        """
+        Return True if the geometry completely contains the other.
+
+        There should be no common boundary points.
+
+        Refer to `shapely.contains_properly` for full documentation.
+        """
+        ...
 
     @overload
     def crosses(self, other: Geometry | None) -> bool:
         """Return True if the geometries cross, else False."""
         ...
     @overload
-    def crosses(self, other: OptGeoArrayLikeSeq) -> NDArray[np.bool_]: ...
+    def crosses(self, other: OptGeoArrayLikeSeq) -> NDArray[np.bool_]:
+        """Return True if the geometries cross, else False."""
+        ...
 
     @overload
     def disjoint(self, other: Geometry | None) -> bool:
         """Return True if geometries are disjoint, else False."""
         ...
     @overload
-    def disjoint(self, other: OptGeoArrayLikeSeq) -> NDArray[np.bool_]: ...
+    def disjoint(self, other: OptGeoArrayLikeSeq) -> NDArray[np.bool_]:
+        """Return True if geometries are disjoint, else False."""
+        ...
 
     @overload
     def equals(self, other: Geometry | None) -> bool:
@@ -490,35 +691,65 @@ class BaseGeometry(Geometry):
         """
         ...
     @overload
-    def equals(self, other: OptGeoArrayLikeSeq) -> NDArray[np.bool_]: ...
+    def equals(self, other: OptGeoArrayLikeSeq) -> NDArray[np.bool_]:
+        """
+        Return True if geometries are equal, else False.
+
+        This method considers point-set equality (or topological
+        equality), and is equivalent to (self.within(other) &
+        self.contains(other)).
+
+        Examples
+        --------
+        >>> from shapely import LineString
+        >>> LineString(
+        ...     [(0, 0), (2, 2)]
+        ... ).equals(
+        ...     LineString([(0, 0), (1, 1), (2, 2)])
+        ... )
+        True
+
+        Returns
+        -------
+        bool
+        """
+        ...
 
     @overload
     def intersects(self, other: Geometry | None) -> bool:
         """Return True if geometries intersect, else False."""
         ...
     @overload
-    def intersects(self, other: OptGeoArrayLikeSeq) -> NDArray[np.bool_]: ...
+    def intersects(self, other: OptGeoArrayLikeSeq) -> NDArray[np.bool_]:
+        """Return True if geometries intersect, else False."""
+        ...
 
     @overload
     def overlaps(self, other: Geometry | None) -> bool:
         """Return True if geometries overlap, else False."""
         ...
     @overload
-    def overlaps(self, other: OptGeoArrayLikeSeq) -> NDArray[np.bool_]: ...
+    def overlaps(self, other: OptGeoArrayLikeSeq) -> NDArray[np.bool_]:
+        """Return True if geometries overlap, else False."""
+        ...
 
     @overload
     def touches(self, other: Geometry | None) -> bool:
         """Return True if geometries touch, else False."""
         ...
     @overload
-    def touches(self, other: OptGeoArrayLikeSeq) -> NDArray[np.bool_]: ...
+    def touches(self, other: OptGeoArrayLikeSeq) -> NDArray[np.bool_]:
+        """Return True if geometries touch, else False."""
+        ...
 
     @overload
     def within(self, other: Geometry | None) -> bool:
         """Return True if geometry is within the other, else False."""
         ...
     @overload
-    def within(self, other: OptGeoArrayLikeSeq) -> NDArray[np.bool_]: ...
+    def within(self, other: OptGeoArrayLikeSeq) -> NDArray[np.bool_]:
+        """Return True if geometry is within the other, else False."""
+        ...
 
     @overload
     def dwithin(self, other: Geometry | None, distance: float) -> bool:
@@ -537,7 +768,13 @@ class BaseGeometry(Geometry):
         """
         ...
     @overload
-    def dwithin(self, other: OptGeoArrayLike, distance: ArrayLikeSeq[float]) -> NDArray[np.bool_]: ...
+    def dwithin(self, other: OptGeoArrayLike, distance: ArrayLikeSeq[float]) -> NDArray[np.bool_]:
+        """
+        Return True if geometry is within a given distance from the other.
+
+        Refer to `shapely.dwithin` for full documentation.
+        """
+        ...
 
     @overload
     def equals_exact(self, other: Geometry | None, tolerance: float = 0.0, *, normalize: bool = False) -> bool:
@@ -614,14 +851,49 @@ class BaseGeometry(Geometry):
     @overload
     def equals_exact(
         self, other: OptGeoArrayLike, tolerance: ArrayLikeSeq[float], *, normalize: bool = False
-    ) -> NDArray[np.bool_]: ...
+    ) -> NDArray[np.bool_]:
+        """
+        Return True if the geometries are equivalent within the tolerance.
+
+        Refer to :func:`~shapely.equals_exact` for full documentation.
+
+        Parameters
+        ----------
+        other : BaseGeometry
+            The other geometry object in this comparison.
+        tolerance : float, optional (default: 0.)
+            Absolute tolerance in the same units as coordinates.
+        normalize : bool, optional (default: False)
+            If True, normalize the two geometries so that the coordinates are
+            in the same order.
+
+            .. versionadded:: 2.1.0
+
+        Examples
+        --------
+        >>> from shapely import LineString
+        >>> LineString(
+        ...     [(0, 0), (2, 2)]
+        ... ).equals_exact(
+        ...     LineString([(0, 0), (1, 1), (2, 2)]),
+        ...     1e-6
+        ... )
+        False
+
+        Returns
+        -------
+        bool
+        """
+        ...
 
     @overload
     def relate_pattern(self, other: Geometry | None, pattern: str) -> bool:
         """Return True if the DE-9IM relationship code satisfies the pattern."""
         ...
     @overload
-    def relate_pattern(self, other: OptGeoArrayLikeSeq, pattern: str) -> NDArray[np.bool_]: ...
+    def relate_pattern(self, other: OptGeoArrayLikeSeq, pattern: str) -> NDArray[np.bool_]:
+        """Return True if the DE-9IM relationship code satisfies the pattern."""
+        ...
 
     @overload
     def line_locate_point(self, other: Point | None, normalized: bool = False) -> float:
@@ -635,7 +907,16 @@ class BaseGeometry(Geometry):
         """
         ...
     @overload
-    def line_locate_point(self, other: OptGeoArrayLikeSeq, normalized: bool = False) -> NDArray[np.float64]: ...
+    def line_locate_point(self, other: OptGeoArrayLikeSeq, normalized: bool = False) -> NDArray[np.float64]:
+        """
+        Return the distance of this geometry to a point nearest the specified point.
+
+        If the normalized arg is True, return the distance normalized to the
+        length of the linear geometry.
+
+        Alias of `project`.
+        """
+        ...
 
     @overload
     def project(self, other: Point | None, normalized: bool = False) -> float:
@@ -649,7 +930,16 @@ class BaseGeometry(Geometry):
         """
         ...
     @overload
-    def project(self, other: OptGeoArrayLikeSeq, normalized: bool = False) -> NDArray[np.float64]: ...
+    def project(self, other: OptGeoArrayLikeSeq, normalized: bool = False) -> NDArray[np.float64]:
+        """
+        Return the distance of geometry to a point nearest the specified point.
+
+        If the normalized arg is True, return the distance normalized to the
+        length of the linear geometry.
+
+        Alias of `line_locate_point`.
+        """
+        ...
 
     @overload
     def line_interpolate_point(self, distance: float, normalized: bool = False) -> Point:
@@ -666,7 +956,19 @@ class BaseGeometry(Geometry):
         """
         ...
     @overload
-    def line_interpolate_point(self, distance: ArrayLikeSeq[float], normalized: bool = False) -> GeoArray: ...
+    def line_interpolate_point(self, distance: ArrayLikeSeq[float], normalized: bool = False) -> GeoArray:
+        """
+        Return a point at the specified distance along a linear geometry.
+
+        Negative length values are taken as measured in the reverse
+        direction from the end of the geometry. Out-of-range index
+        values are handled by clamping them to the valid range of values.
+        If the normalized arg is True, the distance will be interpreted as a
+        fraction of the geometry's length.
+
+        Alias of `interpolate`.
+        """
+        ...
 
     @overload
     def interpolate(self, distance: float, normalized: bool = False) -> Point:
@@ -683,7 +985,19 @@ class BaseGeometry(Geometry):
         """
         ...
     @overload
-    def interpolate(self, distance: ArrayLikeSeq[float], normalized: bool = False) -> GeoArray: ...
+    def interpolate(self, distance: ArrayLikeSeq[float], normalized: bool = False) -> GeoArray:
+        """
+        Return a point at the specified distance along a linear geometry.
+
+        Negative length values are taken as measured in the reverse
+        direction from the end of the geometry. Out-of-range index
+        values are handled by clamping them to the valid range of values.
+        If the normalized arg is True, the distance will be interpreted as a
+        fraction of the geometry's length.
+
+        Alias of `line_interpolate_point`.
+        """
+        ...
 
     @overload
     def segmentize(self, max_segment_length: float) -> Self:
@@ -713,9 +1027,55 @@ class BaseGeometry(Geometry):
         """
         ...
     @overload
-    def segmentize(self, max_segment_length: ArrayLikeSeq[float]) -> GeoArray: ...
+    def segmentize(self, max_segment_length: ArrayLikeSeq[float]) -> GeoArray:
+        """
+        Add vertices to line segments based on maximum segment length.
 
-    def reverse(self) -> Self: ...
+        Additional vertices will be added to every line segment in an input geometry
+        so that segments are no longer than the provided maximum segment length. New
+        vertices will evenly subdivide each segment.
+
+        Only linear components of input geometries are densified; other geometries
+        are returned unmodified.
+
+        Parameters
+        ----------
+        max_segment_length : float or array_like
+            Additional vertices will be added so that all line segments are no
+            longer this value.  Must be greater than 0.
+
+        Examples
+        --------
+        >>> from shapely import LineString, Polygon
+        >>> LineString([(0, 0), (0, 10)]).segmentize(max_segment_length=5)
+        <LINESTRING (0 0, 0 5, 0 10)>
+        >>> Polygon([(0, 0), (10, 0), (10, 10), (0, 10), (0, 0)]).segmentize(max_segment_length=5)
+        <POLYGON ((0 0, 5 0, 10 0, 10 5, 10 10, 5 10, 0 10, 0 5, 0 0))>
+        """
+        ...
+
+    def reverse(self) -> Self:
+        """
+        Return a copy of this geometry with the order of coordinates reversed.
+
+        If the geometry is a polygon with interior rings, the interior rings are also
+        reversed.
+
+        Points are unchanged.
+
+        See Also
+        --------
+        is_ccw : Checks if a geometry is clockwise.
+
+        Examples
+        --------
+        >>> from shapely import LineString, Polygon
+        >>> LineString([(0, 0), (1, 2)]).reverse()
+        <LINESTRING (1 2, 0 0)>
+        >>> Polygon([(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)]).reverse()
+        <POLYGON ((0 0, 0 1, 1 1, 1 0, 0 0))>
+        """
+        ...
 
 _GeoT_co = TypeVar("_GeoT_co", bound=Geometry, default=BaseGeometry, covariant=True)
 
@@ -752,9 +1112,16 @@ class BaseMultipartGeometry(BaseGeometry, Generic[_GeoT_co]):
 _P_co = TypeVar("_P_co", covariant=True, bound=BaseMultipartGeometry[Geometry])
 
 class GeometrySequence(Generic[_P_co]):
-    def __init__(self, parent: _P_co) -> None: ...
-    def __iter__(self: GeometrySequence[BaseMultipartGeometry[GeoT]]) -> Iterator[GeoT]: ...
-    def __len__(self) -> int: ...
+    """Iterative access to members of a homogeneous multipart geometry."""
+    def __init__(self, parent: _P_co) -> None:
+        """Initialize the sequence with a parent geometry."""
+        ...
+    def __iter__(self: GeometrySequence[BaseMultipartGeometry[GeoT]]) -> Iterator[GeoT]:
+        """Iterate over the geometries in the sequence."""
+        ...
+    def __len__(self) -> int:
+        """Return the number of geometries in the sequence."""
+        ...
 
     @overload
     def __getitem__(self: GeometrySequence[BaseMultipartGeometry[GeoT]], key: int | np.integer[Any]) -> GeoT:

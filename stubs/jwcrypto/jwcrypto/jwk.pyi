@@ -224,7 +224,40 @@ class JWK(dict[str, Any]):
         """
         ...
     @overload
-    def __init__(self, **kwargs) -> None: ...
+    def __init__(self, **kwargs) -> None:
+        r"""
+        Creates a new JWK object.
+
+        The function arguments must be valid parameters as defined in the
+        'IANA JSON Web Key Set Parameters registry' and specified in
+        the :data:`JWKParamsRegistry` variable. The 'kty' parameter must
+        always be provided and its value must be a valid one as defined
+        by the 'IANA JSON Web Key Types registry' and specified in the
+        :data:`JWKTypesRegistry` variable. The valid key parameters per
+        key type are defined in the :data:`JWKValuesRegistry` variable.
+
+        To generate a new random key call the class method generate() with
+        the appropriate 'kty' parameter, and other parameters as needed (key
+        size, public exponents, curve types, etc..)
+
+        Valid options per type, when generating new keys:
+         * oct: size(int)
+         * RSA: public_exponent(int), size(int)
+         * EC: crv(str) (one of P-256, P-384, P-521, secp256k1)
+         * OKP: crv(str) (one of Ed25519, Ed448, X25519, X448)
+
+        Deprecated:
+        Alternatively if the 'generate' parameter is provided with a
+        valid key type as value then a new key will be generated according
+        to the defaults or provided key strength options (type specific).
+
+        :param \**kwargs: parameters (optional).
+
+        :raises InvalidJWKType: if the key type is invalid
+        :raises InvalidJWKValue: if incorrect or inconsistent parameters
+            are provided.
+        """
+        ...
 
     # TODO: __init__ may not be typed adequately because keyword arguments depend on the value of generate
     @classmethod
@@ -247,7 +280,16 @@ class JWK(dict[str, Any]):
     def generate_key(self, *, kty: _JWKKeyTypeSupported, **kwargs) -> None: ...
     def import_key(self, **kwargs) -> None: ...
     @classmethod
-    def from_json(cls, key) -> Self: ...
+    def from_json(cls, key) -> Self:
+        """
+        Creates a RFC 7517 JWK from the standard JSON format.
+
+        :param key: The RFC 7517 representation of a JWK.
+
+        :return: A JWK object that holds the json key.
+        :rtype: JWK
+        """
+        ...
 
     @overload
     def export(self, private_key: bool = True, as_dict: Literal[False] = False) -> str:
@@ -282,7 +324,21 @@ class JWK(dict[str, Any]):
         """
         ...
     @overload
-    def export(self, *, as_dict: Literal[True]) -> dict[str, Any]: ...
+    def export(self, *, as_dict: Literal[True]) -> dict[str, Any]:
+        """
+        Exports the key in the standard JSON format.
+        Exports the key regardless of type, if private_key is False
+        and the key is_symmetric an exception is raised.
+
+        :param private_key(bool): Whether to export the private key.
+                                  Defaults to True.
+
+        :return: A portable representation of the key.
+            If as_dict is True then a dictionary is returned.
+            By default a json string
+        :rtype: `str` or `dict`
+        """
+        ...
 
     @overload
     def export_public(self, as_dict: Literal[False] = False) -> str:
@@ -315,7 +371,20 @@ class JWK(dict[str, Any]):
         """
         ...
     @overload
-    def export_public(self, as_dict: bool = False) -> str | dict[str, Any]: ...
+    def export_public(self, as_dict: bool = False) -> str | dict[str, Any]:
+        """
+        Exports the public key in the standard JSON format.
+        It fails if one is not available like when this function
+        is called on a symmetric key.
+
+        :param as_dict(bool): If set to True export as python dict not JSON
+
+        :return: A portable representation of the public key only.
+            If as_dict is True then a dictionary is returned.
+            By default a json string
+        :rtype: `str` or `dict`
+        """
+        ...
 
     @overload
     def export_private(self, as_dict: Literal[False] = False) -> str:
@@ -346,7 +415,19 @@ class JWK(dict[str, Any]):
         """
         ...
     @overload
-    def export_private(self, as_dict: bool = False) -> str | dict[str, Any]: ...
+    def export_private(self, as_dict: bool = False) -> str | dict[str, Any]:
+        """
+        Export the private key in the standard JSON format.
+        It fails for a JWK that has only a public key or is symmetric.
+
+        :param as_dict(bool): If set to True export as python dict not JSON
+
+        :return: A portable representation of a private key.
+            If as_dict is True then a dictionary is returned.
+            By default a json string
+        :rtype: `str` or `dict`
+        """
+        ...
 
     @overload
     def export_symmetric(self, as_dict: Literal[False] = False) -> str: ...
@@ -452,7 +533,17 @@ class JWK(dict[str, Any]):
             | X25519PublicKey
         ),
     ) -> None: ...
-    def import_from_pem(self, data: bytes, password: bytes | None = None, kid: str | None = None) -> None: ...
+    def import_from_pem(self, data: bytes, password: bytes | None = None, kid: str | None = None) -> None:
+        """
+        Imports a key from data loaded from a PEM file.
+        The key may be encrypted with a password.
+        Private keys (PKCS#8 format), public keys, and X509 certificate's
+        public keys can be imported with this interface.
+
+        :param data(bytes): The data contained in a PEM file.
+        :param password(bytes): An optional password to unwrap the key.
+        """
+        ...
 
     @overload
     def export_to_pem(self, private_key: Literal[False] = False, password: Unused = False) -> bytes:
@@ -475,7 +566,25 @@ class JWK(dict[str, Any]):
         """
         ...
     @overload
-    def export_to_pem(self, private_key: Literal[True], password: bytes | None) -> bytes: ...
+    def export_to_pem(self, private_key: Literal[True], password: bytes | None) -> bytes:
+        """
+        Exports keys to a data buffer suitable to be stored as a PEM file.
+        Either the public or the private key can be exported to a PEM file.
+        For private keys the PKCS#8 format is used. If a password is provided
+        the best encryption method available as determined by the cryptography
+        module is used to wrap the key.
+
+        :param private_key: Whether the private key should be exported.
+         Defaults to `False` which means the public key is exported by default.
+        :param password(bytes): A password for wrapping the private key.
+         Defaults to False which will cause the operation to fail. To avoid
+         encryption the user must explicitly pass None, otherwise the user
+         needs to provide a password in a bytes buffer.
+
+        :return: A serialized bytes buffer containing a PEM formatted key.
+        :rtype: `bytes`
+        """
+        ...
 
     @classmethod
     def from_pyca(
@@ -593,9 +702,30 @@ class JWKSet(dict[Literal["keys"], set[JWK]]):
         """
         ...
     @overload
-    def export(self, *, as_dict: Literal[True]) -> dict[str, Any]: ...
+    def export(self, *, as_dict: Literal[True]) -> dict[str, Any]:
+        """
+        Exports a RFC 7517 key set.
+           Exports as json by default, or as dict if requested.
 
-    def import_keyset(self, keyset: str | bytes) -> None: ...
+        :param private_key(bool): Whether to export private keys.
+                                  Defaults to True.
+        :param as_dict(bool): Whether to return a dict instead of
+                              a JSON object
+
+        :return: A portable representation of the key set.
+            If as_dict is True then a dictionary is returned.
+            By default a json string
+        :rtype: `str` or `dict`
+        """
+        ...
+
+    def import_keyset(self, keyset: str | bytes) -> None:
+        """
+        Imports a RFC 7517 key set using the standard JSON format.
+
+        :param keyset: The RFC 7517 representation of a JOSE key set.
+        """
+        ...
     @classmethod
     def from_json(cls, keyset: str | bytes) -> Self:
         """

@@ -55,10 +55,33 @@ class FancyGetopt:
     @overload
     def getopt(
         self, args: _SliceableT[_StrSequenceT_co] | None, object: Any
-    ) -> _StrSequenceT_co: ...  # object is an arbitrary non-slotted object
+    ) -> _StrSequenceT_co:
+        """
+        Parse command-line options in args. Store as attributes on object.
 
-    def get_option_order(self) -> list[tuple[str, str]]: ...
-    def generate_help(self, header: str | None = None) -> list[str]: ...
+        If 'args' is None or not supplied, uses 'sys.argv[1:]'.  If
+        'object' is None or not supplied, creates a new OptionDummy
+        object, stores option values there, and returns a tuple (args,
+        object).  If 'object' is supplied, it is modified in place and
+        'getopt()' just returns 'args'; in both cases, the returned
+        'args' is a modified copy of the passed-in 'args' list, which
+        is left untouched.
+        """
+        ...
+
+    def get_option_order(self) -> list[tuple[str, str]]:
+        """
+        Returns the list of (option, value) tuples processed by the
+        previous run of 'getopt()'.  Raises RuntimeError if
+        'getopt()' hasn't been called yet.
+        """
+        ...
+    def generate_help(self, header: str | None = None) -> list[str]:
+        """
+        Generate help text (a list of strings, one per suggested line of
+        output) from the option table for this FancyGetopt object.
+        """
+        ...
 
 # Same note as FancyGetopt.getopt
 @overload

@@ -437,11 +437,34 @@ class RawConfigParser(_Parser):
     def __iter__(self) -> Iterator[str]: ...
     def __contains__(self, key: object) -> bool: ...
     def defaults(self) -> _Section: ...
-    def sections(self) -> _SectionNameList: ...
-    def add_section(self, section: _SectionName) -> None: ...
-    def has_section(self, section: _SectionName) -> bool: ...
-    def options(self, section: _SectionName) -> list[str]: ...
-    def has_option(self, section: _SectionName, option: str) -> bool: ...
+    def sections(self) -> _SectionNameList:
+        """Return a list of section names, excluding [DEFAULT]"""
+        ...
+    def add_section(self, section: _SectionName) -> None:
+        """
+        Create a new section in the configuration.
+
+        Raise DuplicateSectionError if a section by the specified name
+        already exists. Raise ValueError if name is DEFAULT.
+        """
+        ...
+    def has_section(self, section: _SectionName) -> bool:
+        """
+        Indicate whether the named section is present in the configuration.
+
+        The DEFAULT section is not acknowledged.
+        """
+        ...
+    def options(self, section: _SectionName) -> list[str]:
+        """Return a list of option names for the given section name."""
+        ...
+    def has_option(self, section: _SectionName, option: str) -> bool:
+        """
+        Check for the existence of a given option in a given section.
+        If the specified `section` is None or an empty string, DEFAULT is
+        assumed. If the specified `section` does not exist, returns False.
+        """
+        ...
 
     @overload
     def read(self, filenames: GenericPath[AnyStr], encoding: str | None = None) -> list[AnyStr]:
@@ -489,14 +512,54 @@ class RawConfigParser(_Parser):
         """
         ...
     @overload
-    def read(self, filenames: Iterable[StrOrBytesPath], encoding: str | None = None) -> list[str | bytes]: ...
+    def read(self, filenames: Iterable[StrOrBytesPath], encoding: str | None = None) -> list[str | bytes]:
+        """
+        Read and parse a filename or an iterable of filenames.
 
-    def read_file(self, f: Iterable[str], source: str | None = None) -> None: ...
-    def read_string(self, string: str, source: str = "<string>") -> None: ...
-    def read_dict(self, dictionary: Mapping[str, Mapping[str, Any]], source: str = "<dict>") -> None: ...
+        Files that cannot be opened are silently ignored; this is
+        designed so that you can specify an iterable of potential
+        configuration file locations (e.g. current directory, user's
+        home directory, systemwide directory), and all existing
+        configuration files in the iterable will be read.  A single
+        filename may also be given.
+
+        Return list of successfully read files.
+        """
+        ...
+
+    def read_file(self, f: Iterable[str], source: str | None = None) -> None:
+        """
+        Like read() but the argument must be a file-like object.
+
+        The `f` argument must be iterable, returning one line at a time.
+        Optional second argument is the `source` specifying the name of the
+        file being read. If not given, it is taken from f.name. If `f` has no
+        `name` attribute, `<???>` is used.
+        """
+        ...
+    def read_string(self, string: str, source: str = "<string>") -> None:
+        """Read configuration from a given string."""
+        ...
+    def read_dict(self, dictionary: Mapping[str, Mapping[str, Any]], source: str = "<dict>") -> None:
+        """
+        Read configuration from a dictionary.
+
+        Keys are section names, values are dictionaries with keys and values
+        that should be present in the section. If the used dictionary type
+        preserves order, sections and their keys will be added in order.
+
+        All types held in the dictionary are converted to strings during
+        reading, including section names, option names and keys.
+
+        Optional second argument is the `source` specifying the name of the
+        dictionary being read.
+        """
+        ...
     if sys.version_info < (3, 12):
         @deprecated("Deprecated since Python 3.2; removed in Python 3.12. Use `parser.read_file()` instead.")
-        def readfp(self, fp: Iterable[str], filename: str | None = None) -> None: ...
+        def readfp(self, fp: Iterable[str], filename: str | None = None) -> None:
+            """Deprecated, use read_file instead."""
+            ...
 
     # These get* methods are partially applied (with the same names) in
     # SectionProxy; the stubs should be kept updated together
@@ -554,7 +617,23 @@ class RawConfigParser(_Parser):
     @overload
     def get(
         self, section: _SectionName, option: str, *, raw: bool = False, vars: _Section | None = None, fallback: _T
-    ) -> str | _T | MaybeNone: ...
+    ) -> str | _T | MaybeNone:
+        """
+        Get an option value for a given section.
+
+        If `vars` is provided, it must be a dictionary. The option is looked up
+        in `vars` (if provided), `section`, and in `DEFAULTSECT` in that order.
+        If the key is not found and `fallback` is provided, it is used as
+        a fallback value. `None` can be provided as a `fallback` value.
+
+        If interpolation is enabled and the optional argument `raw` is False,
+        all interpolations are expanded in the return values.
+
+        Arguments `raw`, `vars`, and `fallback` are keyword only.
+
+        The section DEFAULT is special.
+        """
+        ...
 
     @overload
     def items(self, *, raw: bool = False, vars: _Section | None = None) -> ItemsView[str, SectionProxy]:
@@ -571,12 +650,40 @@ class RawConfigParser(_Parser):
         """
         ...
     @overload
-    def items(self, section: _SectionName, raw: bool = False, vars: _Section | None = None) -> list[tuple[str, str]]: ...
+    def items(self, section: _SectionName, raw: bool = False, vars: _Section | None = None) -> list[tuple[str, str]]:
+        """
+        Return a list of (name, value) tuples for each option in a section.
 
-    def set(self, section: _SectionName, option: str, value: str | None = None) -> None: ...
-    def write(self, fp: SupportsWrite[str], space_around_delimiters: bool = True) -> None: ...
-    def remove_option(self, section: _SectionName, option: str) -> bool: ...
-    def remove_section(self, section: _SectionName) -> bool: ...
+        All % interpolations are expanded in the return values, based on the
+        defaults passed into the constructor, unless the optional argument
+        `raw` is true.  Additional substitutions may be provided using the
+        `vars` argument, which must be a dictionary whose contents overrides
+        any pre-existing defaults.
+
+        The section DEFAULT is special.
+        """
+        ...
+
+    def set(self, section: _SectionName, option: str, value: str | None = None) -> None:
+        """Set an option."""
+        ...
+    def write(self, fp: SupportsWrite[str], space_around_delimiters: bool = True) -> None:
+        """
+        Write an .ini-format representation of the configuration state.
+
+        If `space_around_delimiters` is True (the default), delimiters
+        between keys and values are surrounded by spaces.
+
+        Please note that comments in the original configuration file are not
+        preserved when writing the configuration back.
+        """
+        ...
+    def remove_option(self, section: _SectionName, option: str) -> bool:
+        """Remove an option."""
+        ...
+    def remove_section(self, section: _SectionName) -> bool:
+        """Remove a file section."""
+        ...
     def optionxform(self, optionstr: str) -> str: ...
     @property
     def converters(self) -> ConverterMapping: ...
@@ -674,7 +781,14 @@ class SectionProxy(MutableMapping[str, str]):
         vars: _Section | None = None,
         _impl: Any | None = None,
         **kwargs: Any,  # passed to the underlying parser's get() method
-    ) -> str | _T: ...
+    ) -> str | _T:
+        """
+        Get an option value.
+
+        Unless `fallback` is provided, `None` will be returned if the option
+        is not found.
+        """
+        ...
 
     # These are partially-applied version of the methods with the same names in
     # RawConfigParser; the stubs should be kept updated together

@@ -57,35 +57,45 @@ def Arg(type: _T, name: str | None = ...) -> _T:
     """A normal positional argument"""
     ...
 @overload
-def Arg(*, name: str | None = ...) -> Any: ...
+def Arg(*, name: str | None = ...) -> Any:
+    """A normal positional argument"""
+    ...
 
 @overload
 def DefaultArg(type: _T, name: str | None = ...) -> _T:
     """A positional argument with a default value"""
     ...
 @overload
-def DefaultArg(*, name: str | None = ...) -> Any: ...
+def DefaultArg(*, name: str | None = ...) -> Any:
+    """A positional argument with a default value"""
+    ...
 
 @overload
 def NamedArg(type: _T, name: str | None = ...) -> _T:
     """A keyword-only argument"""
     ...
 @overload
-def NamedArg(*, name: str | None = ...) -> Any: ...
+def NamedArg(*, name: str | None = ...) -> Any:
+    """A keyword-only argument"""
+    ...
 
 @overload
 def DefaultNamedArg(type: _T, name: str | None = ...) -> _T:
     """A keyword-only argument with a default value"""
     ...
 @overload
-def DefaultNamedArg(*, name: str | None = ...) -> Any: ...
+def DefaultNamedArg(*, name: str | None = ...) -> Any:
+    """A keyword-only argument with a default value"""
+    ...
 
 @overload
 def VarArg(type: _T) -> _T:
     """A *args-style variadic positional argument"""
     ...
 @overload
-def VarArg() -> Any: ...
+def VarArg() -> Any:
+    """A *args-style variadic positional argument"""
+    ...
 
 @overload
 def KwArg(type: _T) -> _T:

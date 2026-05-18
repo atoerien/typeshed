@@ -74,7 +74,9 @@ class Component(CaselessDict[Incomplete]):
         """Returns True, CaselessDict would return False if it had no items."""
         ...
     __nonzero__ = __bool__
-    def is_empty(self) -> bool: ...
+    def is_empty(self) -> bool:
+        """Returns True if Component has no items or subcomponents, else False."""
+        ...
 
     @overload
     def add(self, name: str, value: Any, *, encode: Literal[False]) -> None:
@@ -127,10 +129,36 @@ class Component(CaselessDict[Incomplete]):
     @overload
     def add(
         self, name: str, value: Any, parameters: SupportsItems[str, str | None] | None = None, encode: Literal[True] = True
-    ) -> None: ...
+    ) -> None:
+        """
+        Add a property.
 
-    def decoded(self, name: str, default: _D = ...) -> Incomplete | _D: ...
-    def get_inline(self, name: str, decode: bool = True) -> list[Incomplete]: ...
+        :param name: Name of the property.
+        :type name: string
+
+        :param value: Value of the property. Either of a basic Python type of
+                      any of the icalendar's own property types.
+        :type value: Python native type or icalendar property type.
+
+        :param parameters: Property parameter dictionary for the value. Only
+                           available, if encode is set to True.
+        :type parameters: Dictionary
+
+        :param encode: True, if the value should be encoded to one of
+                       icalendar's own property types (Fallback is "vText")
+                       or False, if not.
+        :type encode: Boolean
+
+        :returns: None
+        """
+        ...
+
+    def decoded(self, name: str, default: _D = ...) -> Incomplete | _D:
+        """Returns decoded value of property."""
+        ...
+    def get_inline(self, name: str, decode: bool = True) -> list[Incomplete]:
+        """Returns a list of values (split on comma)."""
+        ...
 
     @overload
     def set_inline(self, name: str, values: Iterable[str], encode: Literal[False] = ...) -> None:
@@ -140,11 +168,34 @@ class Component(CaselessDict[Incomplete]):
         """
         ...
     @overload
-    def set_inline(self, name: str, values: Iterable[Incomplete], encode: Literal[True] = True) -> None: ...
+    def set_inline(self, name: str, values: Iterable[Incomplete], encode: Literal[True] = True) -> None:
+        """
+        Converts a list of values into comma separated string and sets value
+        to that.
+        """
+        ...
 
-    def add_component(self, component: Component) -> None: ...
-    def walk(self, name: str | None = None, select: Callable[[Component], bool] = ...) -> list[Component]: ...
-    def property_items(self, recursive: bool = True, sorted: bool = True) -> list[tuple[str, object]]: ...
+    def add_component(self, component: Component) -> None:
+        """Add a subcomponent to this component."""
+        ...
+    def walk(self, name: str | None = None, select: Callable[[Component], bool] = ...) -> list[Component]:
+        """
+        Recursively traverses component and subcomponents. Returns sequence
+        of same. If name is passed, only components with name will be returned.
+
+        :param name: The name of the component or None such as ``VEVENT``.
+        :param select: A function that takes the component as first argument
+          and returns True/False.
+        :returns: A list of components that match.
+        :rtype: list[Component]
+        """
+        ...
+    def property_items(self, recursive: bool = True, sorted: bool = True) -> list[tuple[str, object]]:
+        """
+        Returns properties in this component and subcomponents as:
+        [(name, value), ...]
+        """
+        ...
 
     @overload
     @classmethod
@@ -153,11 +204,22 @@ class Component(CaselessDict[Incomplete]):
         ...
     @overload
     @classmethod
-    def from_ical(cls, st: str, multiple: Literal[True]) -> list[Component]: ...  # or any of its subclasses
+    def from_ical(cls, st: str, multiple: Literal[True]) -> list[Component]:
+        """Populates the component recursively from a string."""
+        ...
 
-    def content_line(self, name: str, value: _vType | ICAL_TYPE, sorted: bool = True) -> Contentline: ...
-    def content_lines(self, sorted: bool = True) -> Contentlines: ...
-    def to_ical(self, sorted: bool = True) -> bytes: ...
+    def content_line(self, name: str, value: _vType | ICAL_TYPE, sorted: bool = True) -> Contentline:
+        """Returns property as content line."""
+        ...
+    def content_lines(self, sorted: bool = True) -> Contentlines:
+        """Converts the Component and subcomponents into content lines."""
+        ...
+    def to_ical(self, sorted: bool = True) -> bytes:
+        """
+        :param sorted: Whether parameters and properties should be
+                       lexicographically sorted.
+        """
+        ...
     def __eq__(self, other: Component) -> bool: ...  # type: ignore[override]
 
     @property
@@ -213,7 +275,31 @@ class Component(CaselessDict[Incomplete]):
         """
         ...
     @DTSTAMP.deleter
-    def DTSTAMP(self) -> None: ...
+    def DTSTAMP(self) -> None:
+        """
+        The DTSTAMP property. datetime in UTC
+
+        All values will be converted to a datetime in UTC.
+        RFC 5545:
+
+            Conformance:  This property MUST be included in the "VEVENT",
+            "VTODO", "VJOURNAL", or "VFREEBUSY" calendar components.
+
+            Description: In the case of an iCalendar object that specifies a
+            "METHOD" property, this property specifies the date and time that
+            the instance of the iCalendar object was created.  In the case of
+            an iCalendar object that doesn't specify a "METHOD" property, this
+            property specifies the date and time that the information
+            associated with the calendar component was last revised in the
+            calendar store.
+
+            The value MUST be specified in the UTC time format.
+
+            In the case of an iCalendar object that doesn't specify a "METHOD"
+            property, this property is equivalent to the "LAST-MODIFIED"
+            property.
+        """
+        ...
 
     @property
     def LAST_MODIFIED(self) -> datetime.datetime | None:
@@ -254,9 +340,28 @@ class Component(CaselessDict[Incomplete]):
         """
         ...
     @LAST_MODIFIED.deleter
-    def LAST_MODIFIED(self) -> None: ...
+    def LAST_MODIFIED(self) -> None:
+        """
+        The LAST-MODIFIED property. datetime in UTC
 
-    def is_thunderbird(self) -> bool: ...
+        All values will be converted to a datetime in UTC.
+        RFC 5545:
+
+            Purpose:  This property specifies the date and time that the
+            information associated with the calendar component was last
+            revised in the calendar store.
+
+            Note: This is analogous to the modification date and time for a
+            file in the file system.
+
+            Conformance:  This property can be specified in the "VEVENT",
+            "VTODO", "VJOURNAL", or "VTIMEZONE" calendar components.
+        """
+        ...
+
+    def is_thunderbird(self) -> bool:
+        """Whether this component has attributes that indicate that Mozilla Thunderbird created it."""
+        ...
 
 # type_def is a TypeForm
 def create_single_property(
@@ -302,7 +407,9 @@ class Event(Component):
         """
         ...
     @classmethod
-    def example(cls, name: str = "rfc_9074_example_3") -> Event: ...
+    def example(cls, name: str = "rfc_9074_example_3") -> Event:
+        """Return the calendar example with the given name."""
+        ...
 
     @property
     def DTSTART(self) -> datetime.date | datetime.datetime | None:
@@ -331,7 +438,18 @@ class Event(Component):
         """
         ...
     @DTSTART.deleter
-    def DTSTART(self) -> None: ...
+    def DTSTART(self) -> None:
+        """
+        The DTSTART property.
+
+        The "DTSTART" property for a "VEVENT" specifies the inclusive start of the event.
+
+        Accepted values: datetime, date.
+        If the attribute has invalid values, we raise InvalidCalendar.
+        If the value is absent, we return None.
+        You can also delete the value with del or by setting it to None.
+        """
+        ...
 
     @property
     def DTEND(self) -> datetime.date | datetime.datetime | None:
@@ -360,7 +478,18 @@ class Event(Component):
         """
         ...
     @DTEND.deleter
-    def DTEND(self) -> None: ...
+    def DTEND(self) -> None:
+        """
+        The DTEND property.
+
+        The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event.
+
+        Accepted values: datetime, date.
+        If the attribute has invalid values, we raise InvalidCalendar.
+        If the value is absent, we return None.
+        You can also delete the value with del or by setting it to None.
+        """
+        ...
 
     @property
     def DURATION(self) -> datetime.timedelta | None:
@@ -391,10 +520,29 @@ class Event(Component):
         """
         ...
     @DURATION.deleter
-    def DURATION(self) -> None: ...
+    def DURATION(self) -> None:
+        """
+        The DURATION property.
+
+        The "DTSTART" property for a "VEVENT" specifies the inclusive start of the event.
+        The "DURATION" property in conjunction with the DTSTART property
+        for a "VEVENT" calendar component specifies the non-inclusive end
+        of the event.
+
+        If you would like to calculate the duration of a VEVENT, do not use this.
+        Instead use the duration property (lower case).
+        """
+        ...
 
     @property
-    def duration(self) -> datetime.timedelta: ...
+    def duration(self) -> datetime.timedelta:
+        """
+        The duration of the VEVENT.
+
+        This duration is calculated from the start and end of the event.
+        You cannot set the duration as it is unclear what happens to start and end.
+        """
+        ...
 
     @property
     def start(self) -> datetime.date | datetime.datetime:
@@ -421,7 +569,29 @@ class Event(Component):
         """
         ...
     @start.setter
-    def start(self, value: datetime.date | datetime.datetime | None) -> None: ...
+    def start(self, value: datetime.date | datetime.datetime | None) -> None:
+        """
+        The start of the component.
+
+        Invalid values raise an InvalidCalendar.
+        If there is no start, we also raise an IncompleteComponent error.
+
+        You can get the start, end and duration of an event as follows:
+
+        >>> from datetime import datetime
+        >>> from icalendar import Event
+        >>> event = Event()
+        >>> event.start = datetime(2021, 1, 1, 12)
+        >>> event.end = datetime(2021, 1, 1, 12, 30) # 30 minutes
+        >>> event.duration  # 1800 seconds == 30 minutes
+        datetime.timedelta(seconds=1800)
+        >>> print(event.to_ical())
+        BEGIN:VEVENT
+        DTSTART:20210101T120000
+        DTEND:20210101T123000
+        END:VEVENT
+        """
+        ...
 
     @property
     def end(self) -> datetime.date | datetime.datetime:
@@ -433,7 +603,14 @@ class Event(Component):
         """
         ...
     @end.setter
-    def end(self, value: datetime.date | datetime.datetime | None) -> None: ...
+    def end(self, value: datetime.date | datetime.datetime | None) -> None:
+        """
+        The end of the component.
+
+        Invalid values raise an InvalidCalendar error.
+        If there is no end, we also raise an IncompleteComponent error.
+        """
+        ...
 
     @property
     def X_MOZ_SNOOZE_TIME(self) -> datetime.datetime | None:
@@ -454,7 +631,14 @@ class Event(Component):
         """
         ...
     @X_MOZ_SNOOZE_TIME.deleter
-    def X_MOZ_SNOOZE_TIME(self) -> None: ...
+    def X_MOZ_SNOOZE_TIME(self) -> None:
+        """
+        The X-MOZ-SNOOZE-TIME property. datetime in UTC
+
+        All values will be converted to a datetime in UTC.
+        Thunderbird: Alarms before this time are snoozed.
+        """
+        ...
 
     @property
     def X_MOZ_LASTACK(self) -> datetime.datetime | None:
@@ -475,7 +659,14 @@ class Event(Component):
         """
         ...
     @X_MOZ_LASTACK.deleter
-    def X_MOZ_LASTACK(self) -> None: ...
+    def X_MOZ_LASTACK(self) -> None:
+        """
+        The X-MOZ-LASTACK property. datetime in UTC
+
+        All values will be converted to a datetime in UTC.
+        Thunderbird: Alarms before this time are acknowledged.
+        """
+        ...
 
     @property
     def color(self) -> str:
@@ -550,7 +741,41 @@ class Event(Component):
         """
         ...
     @color.deleter
-    def color(self) -> None: ...
+    def color(self) -> None:
+        """
+        This property specifies a color used for displaying the component.
+
+        This implements :rfc:`7986` ``COLOR`` property.
+
+        Property Parameters:
+            IANA and non-standard property parameters can
+            be specified on this property.
+
+        Conformance:
+            This property can be specified once in an iCalendar
+            object or in ``VEVENT``, ``VTODO``, or ``VJOURNAL`` calendar components.
+
+        Description:
+            This property specifies a color that clients MAY use
+            when presenting the relevant data to a user.  Typically, this
+            would appear as the "background" color of events or tasks.  The
+            value is a case-insensitive color name taken from the CSS3 set of
+            names, defined in Section 4.3 of `W3C.REC-css3-color-20110607 <https://www.w3.org/TR/css-color-3/>`_.
+
+        Example:
+            ``"turquoise"``, ``"#ffffff"``
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Todo
+                >>> todo = Todo()
+                >>> todo.color = "green"
+                >>> print(todo.to_ical())
+                BEGIN:VTODO
+                COLOR:green
+                END:VTODO
+        """
+        ...
 
     @property
     def sequence(self) -> int:
@@ -679,7 +904,68 @@ class Event(Component):
         """
         ...
     @sequence.deleter
-    def sequence(self) -> None: ...
+    def sequence(self) -> None:
+        """
+        This property defines the revision sequence number of the calendar component within a sequence of revisions.
+
+        Value Type:
+            INTEGER
+
+        Property Parameters:
+            IANA and non-standard property parameters can be specified on this property.
+
+        Conformance:
+            The property can be specified in "VEVENT", "VTODO", or
+            "VJOURNAL" calendar component.
+
+        Description:
+            When a calendar component is created, its sequence
+            number is 0.  It is monotonically incremented by the "Organizer's"
+            CUA each time the "Organizer" makes a significant revision to the
+            calendar component.
+
+            The "Organizer" includes this property in an iCalendar object that
+            it sends to an "Attendee" to specify the current version of the
+            calendar component.
+
+            The "Attendee" includes this property in an iCalendar object that
+            it sends to the "Organizer" to specify the version of the calendar
+            component to which the "Attendee" is referring.
+
+            A change to the sequence number is not the mechanism that an
+            "Organizer" uses to request a response from the "Attendees".  The
+            "RSVP" parameter on the "ATTENDEE" property is used by the
+            "Organizer" to indicate that a response from the "Attendees" is
+            requested.
+
+            Recurrence instances of a recurring component MAY have different
+            sequence numbers.
+
+        Examples:
+            The following is an example of this property for a calendar
+            component that was just created by the "Organizer":
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Event
+                >>> event = Event()
+                >>> event.sequence
+                0
+
+            The following is an example of this property for a calendar
+            component that has been revised 10 different times by the
+            "Organizer":
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Calendar
+                >>> calendar = Calendar.example("issue_156_RDATE_with_PERIOD_TZID_khal")
+                >>> event = calendar.events[0]
+                >>> event.sequence
+                10
+    
+        """
+        ...
 
     @property
     def categories(self) -> list[str]:
@@ -768,7 +1054,48 @@ class Event(Component):
         """
         ...
     @categories.deleter
-    def categories(self) -> None: ...
+    def categories(self) -> None:
+        """
+        This property defines the categories for a component.
+
+        Property Parameters:
+            IANA, non-standard, and language property parameters can be specified on this
+            property.
+
+        Conformance:
+            The property can be specified within "VEVENT", "VTODO", or "VJOURNAL" calendar
+            components.
+            Since :rfc:`7986` it can also be defined on a "VCALENDAR" component.
+
+        Description:
+            This property is used to specify categories or subtypes
+            of the calendar component.  The categories are useful in searching
+            for a calendar component of a particular type and category.
+            Within the "VEVENT", "VTODO", or "VJOURNAL" calendar components,
+            more than one category can be specified as a COMMA-separated list
+            of categories.
+
+        Example:
+            Below, we add the categories to an event:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Event
+                >>> event = Event()
+                >>> event.categories = ["Work", "Meeting"]
+                >>> print(event.to_ical())
+                BEGIN:VEVENT
+                CATEGORIES:Work,Meeting
+                END:VEVENT
+                >>> event.categories.append("Lecture")
+                >>> event.categories == ["Work", "Meeting", "Lecture"]
+                True
+
+        .. note::
+
+           At present, we do not take the LANGUAGE parameter into account.
+        """
+        ...
 
     @property
     def rdates(
@@ -922,7 +1249,112 @@ class Event(Component):
         """
         ...
     @property
-    def rrules(self) -> list[vRecur]: ...
+    def rrules(self) -> list[vRecur]:
+        """
+        RRULE defines a rule or repeating pattern for recurring components.
+
+        RRULE is defined in :rfc:`5545`.
+        :rfc:`7529` adds the ``SKIP`` parameter :class:`icalendar.prop.vSkip`.
+
+        Property Parameters:
+            IANA and non-standard property parameters can
+            be specified on this property.
+
+        Conformance:
+            This property can be specified in recurring "VEVENT",
+            "VTODO", and "VJOURNAL" calendar components as well as in the
+            "STANDARD" and "DAYLIGHT" sub-components of the "VTIMEZONE"
+            calendar component, but it SHOULD NOT be specified more than once.
+            The recurrence set generated with multiple "RRULE" properties is
+            undefined.
+
+        Description:
+            The recurrence rule, if specified, is used in computing
+            the recurrence set.  The recurrence set is the complete set of
+            recurrence instances for a calendar component.  The recurrence set
+            is generated by considering the initial "DTSTART" property along
+            with the "RRULE", "RDATE", and "EXDATE" properties contained
+            within the recurring component.  The "DTSTART" property defines
+            the first instance in the recurrence set.  The "DTSTART" property
+            value SHOULD be synchronized with the recurrence rule, if
+            specified.  The recurrence set generated with a "DTSTART" property
+            value not synchronized with the recurrence rule is undefined.  The
+            final recurrence set is generated by gathering all of the start
+            DATE-TIME values generated by any of the specified "RRULE" and
+            "RDATE" properties, and then excluding any start DATE-TIME values
+            specified by "EXDATE" properties.  This implies that start DATE-
+            TIME values specified by "EXDATE" properties take precedence over
+            those specified by inclusion properties (i.e., "RDATE" and
+            "RRULE").  Where duplicate instances are generated by the "RRULE"
+            and "RDATE" properties, only one recurrence is considered.
+            Duplicate instances are ignored.
+
+            The "DTSTART" property specified within the iCalendar object
+            defines the first instance of the recurrence.  In most cases, a
+            "DTSTART" property of DATE-TIME value type used with a recurrence
+            rule, should be specified as a date with local time and time zone
+            reference to make sure all the recurrence instances start at the
+            same local time regardless of time zone changes.
+
+            If the duration of the recurring component is specified with the
+            "DTEND" or "DUE" property, then the same exact duration will apply
+            to all the members of the generated recurrence set.  Else, if the
+            duration of the recurring component is specified with the
+            "DURATION" property, then the same nominal duration will apply to
+            all the members of the generated recurrence set and the exact
+            duration of each recurrence instance will depend on its specific
+            start time.  For example, recurrence instances of a nominal
+            duration of one day will have an exact duration of more or less
+            than 24 hours on a day where a time zone shift occurs.  The
+            duration of a specific recurrence may be modified in an exception
+            component or simply by using an "RDATE" property of PERIOD value
+            type.
+
+        Examples:
+            Daily for 10 occurrences:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Event
+                >>> from datetime import datetime
+                >>> from zoneinfo import ZoneInfo
+                >>> event = Event()
+                >>> event.start = datetime(1997, 9, 2, 9, 0, tzinfo=ZoneInfo("America/New_York"))
+                >>> event.add("RRULE", "FREQ=DAILY;COUNT=10")
+                >>> print(event.to_ical())
+                BEGIN:VEVENT
+                DTSTART;TZID=America/New_York:19970902T090000
+                RRULE:FREQ=DAILY;COUNT=10
+                END:VEVENT
+                >>> event.rrules
+                [vRecur({'FREQ': ['DAILY'], 'COUNT': [10]})]
+
+            Daily until December 24, 1997:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Event, vRecur
+                >>> from datetime import datetime
+                >>> from zoneinfo import ZoneInfo
+                >>> event = Event()
+                >>> event.start = datetime(1997, 9, 2, 9, 0, tzinfo=ZoneInfo("America/New_York"))
+                >>> event.add("RRULE", vRecur({"FREQ": ["DAILY"]}, until=datetime(1997, 12, 24, tzinfo=ZoneInfo("UTC"))))
+                >>> print(event.to_ical())
+                BEGIN:VEVENT
+                DTSTART;TZID=America/New_York:19970902T090000
+                RRULE:FREQ=DAILY;UNTIL=19971224T000000Z
+                END:VEVENT
+                >>> event.rrules
+                [vRecur({'FREQ': ['DAILY'], 'UNTIL': [datetime.datetime(1997, 12, 24, 0, 0, tzinfo=ZoneInfo(key='UTC'))]})]
+
+        .. note::
+
+            You cannot modify the RRULE value by modifying the result.
+            Use :func:`icalendar.cal.Component.add` to add values.
+
+            If you want to compute recurrences, have a look at :ref:`Related projects`.
+        """
+        ...
 
     @property
     def uid(self) -> str:
@@ -1208,7 +1640,18 @@ class Todo(Component):
         """
         ...
     @DTSTART.deleter
-    def DTSTART(self) -> None: ...
+    def DTSTART(self) -> None:
+        """
+        The DTSTART property.
+
+        The "DTSTART" property for a "VTODO" specifies the inclusive start of the Todo.
+
+        Accepted values: datetime, date.
+        If the attribute has invalid values, we raise InvalidCalendar.
+        If the value is absent, we return None.
+        You can also delete the value with del or by setting it to None.
+        """
+        ...
 
     @property
     def DUE(self) -> datetime.datetime | datetime.date | None:
@@ -1237,7 +1680,18 @@ class Todo(Component):
         """
         ...
     @DUE.deleter
-    def DUE(self) -> None: ...
+    def DUE(self) -> None:
+        """
+        The DUE property.
+
+        The "DUE" property for a "VTODO" calendar component specifies the non-inclusive end of the Todo.
+
+        Accepted values: datetime, date.
+        If the attribute has invalid values, we raise InvalidCalendar.
+        If the value is absent, we return None.
+        You can also delete the value with del or by setting it to None.
+        """
+        ...
 
     @property
     def DURATION(self) -> datetime.timedelta | None:
@@ -1268,7 +1722,19 @@ class Todo(Component):
         """
         ...
     @DURATION.deleter
-    def DURATION(self) -> None: ...
+    def DURATION(self) -> None:
+        """
+        The DURATION property.
+
+        The "DTSTART" property for a "VTODO" specifies the inclusive start of the event.
+        The "DURATION" property in conjunction with the DTSTART property
+        for a "VTODO" calendar component specifies the non-inclusive end
+        of the event.
+
+        If you would like to calculate the duration of a VTODO, do not use this.
+        Instead use the duration property (lower case).
+        """
+        ...
 
     @property
     def start(self) -> datetime.datetime | datetime.date:
@@ -1295,7 +1761,29 @@ class Todo(Component):
         """
         ...
     @start.setter
-    def start(self, value: datetime.datetime | datetime.date | None) -> None: ...
+    def start(self, value: datetime.datetime | datetime.date | None) -> None:
+        """
+        The start of the VTODO.
+
+        Invalid values raise an InvalidCalendar.
+        If there is no start, we also raise an IncompleteComponent error.
+
+        You can get the start, end and duration of a Todo as follows:
+
+        >>> from datetime import datetime
+        >>> from icalendar import Todo
+        >>> todo = Todo()
+        >>> todo.start = datetime(2021, 1, 1, 12)
+        >>> todo.end = datetime(2021, 1, 1, 12, 30) # 30 minutes
+        >>> todo.duration  # 1800 seconds == 30 minutes
+        datetime.timedelta(seconds=1800)
+        >>> print(todo.to_ical())
+        BEGIN:VTODO
+        DTSTART:20210101T120000
+        DUE:20210101T123000
+        END:VTODO
+        """
+        ...
 
     @property
     def end(self) -> datetime.datetime | datetime.date:
@@ -1307,10 +1795,24 @@ class Todo(Component):
         """
         ...
     @end.setter
-    def end(self, value: datetime.datetime | datetime.date | None) -> None: ...
+    def end(self, value: datetime.datetime | datetime.date | None) -> None:
+        """
+        The end of the component.
+
+        Invalid values raise an InvalidCalendar error.
+        If there is no end, we also raise an IncompleteComponent error.
+        """
+        ...
 
     @property
-    def duration(self) -> datetime.timedelta: ...
+    def duration(self) -> datetime.timedelta:
+        """
+        The duration of the VTODO.
+
+        This duration is calculated from the start and end of the Todo.
+        You cannot set the duration as it is unclear what happens to start and end.
+        """
+        ...
 
     @property
     def X_MOZ_SNOOZE_TIME(self) -> datetime.datetime | None:
@@ -1331,7 +1833,14 @@ class Todo(Component):
         """
         ...
     @X_MOZ_SNOOZE_TIME.deleter
-    def X_MOZ_SNOOZE_TIME(self) -> None: ...
+    def X_MOZ_SNOOZE_TIME(self) -> None:
+        """
+        The X-MOZ-SNOOZE-TIME property. datetime in UTC
+
+        All values will be converted to a datetime in UTC.
+        Thunderbird: Alarms before this time are snoozed.
+        """
+        ...
 
     @property
     def X_MOZ_LASTACK(self) -> datetime.datetime | None:
@@ -1352,10 +1861,31 @@ class Todo(Component):
         """
         ...
     @X_MOZ_LASTACK.deleter
-    def X_MOZ_LASTACK(self) -> None: ...
+    def X_MOZ_LASTACK(self) -> None:
+        """
+        The X-MOZ-LASTACK property. datetime in UTC
+
+        All values will be converted to a datetime in UTC.
+        Thunderbird: Alarms before this time are acknowledged.
+        """
+        ...
 
     @property
-    def alarms(self) -> Alarms: ...
+    def alarms(self) -> Alarms:
+        """
+        Compute the alarm times for this component.
+
+        >>> from datetime import datetime
+        >>> from icalendar import Todo
+        >>> todo = Todo()  # empty without alarms
+        >>> todo.start = datetime(2024, 10, 26, 10, 21)
+        >>> len(todo.alarms.times)
+        0
+
+        Note that this only uses DTSTART and DUE, but ignores
+        RDATE, EXDATE, and RRULE properties.
+        """
+        ...
 
     @property
     def color(self) -> str:
@@ -1430,7 +1960,41 @@ class Todo(Component):
         """
         ...
     @color.deleter
-    def color(self) -> None: ...
+    def color(self) -> None:
+        """
+        This property specifies a color used for displaying the component.
+
+        This implements :rfc:`7986` ``COLOR`` property.
+
+        Property Parameters:
+            IANA and non-standard property parameters can
+            be specified on this property.
+
+        Conformance:
+            This property can be specified once in an iCalendar
+            object or in ``VEVENT``, ``VTODO``, or ``VJOURNAL`` calendar components.
+
+        Description:
+            This property specifies a color that clients MAY use
+            when presenting the relevant data to a user.  Typically, this
+            would appear as the "background" color of events or tasks.  The
+            value is a case-insensitive color name taken from the CSS3 set of
+            names, defined in Section 4.3 of `W3C.REC-css3-color-20110607 <https://www.w3.org/TR/css-color-3/>`_.
+
+        Example:
+            ``"turquoise"``, ``"#ffffff"``
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Todo
+                >>> todo = Todo()
+                >>> todo.color = "green"
+                >>> print(todo.to_ical())
+                BEGIN:VTODO
+                COLOR:green
+                END:VTODO
+        """
+        ...
 
     @property
     def sequence(self) -> int:
@@ -1559,7 +2123,68 @@ class Todo(Component):
         """
         ...
     @sequence.deleter
-    def sequence(self) -> None: ...
+    def sequence(self) -> None:
+        """
+        This property defines the revision sequence number of the calendar component within a sequence of revisions.
+
+        Value Type:
+            INTEGER
+
+        Property Parameters:
+            IANA and non-standard property parameters can be specified on this property.
+
+        Conformance:
+            The property can be specified in "VEVENT", "VTODO", or
+            "VJOURNAL" calendar component.
+
+        Description:
+            When a calendar component is created, its sequence
+            number is 0.  It is monotonically incremented by the "Organizer's"
+            CUA each time the "Organizer" makes a significant revision to the
+            calendar component.
+
+            The "Organizer" includes this property in an iCalendar object that
+            it sends to an "Attendee" to specify the current version of the
+            calendar component.
+
+            The "Attendee" includes this property in an iCalendar object that
+            it sends to the "Organizer" to specify the version of the calendar
+            component to which the "Attendee" is referring.
+
+            A change to the sequence number is not the mechanism that an
+            "Organizer" uses to request a response from the "Attendees".  The
+            "RSVP" parameter on the "ATTENDEE" property is used by the
+            "Organizer" to indicate that a response from the "Attendees" is
+            requested.
+
+            Recurrence instances of a recurring component MAY have different
+            sequence numbers.
+
+        Examples:
+            The following is an example of this property for a calendar
+            component that was just created by the "Organizer":
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Event
+                >>> event = Event()
+                >>> event.sequence
+                0
+
+            The following is an example of this property for a calendar
+            component that has been revised 10 different times by the
+            "Organizer":
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Calendar
+                >>> calendar = Calendar.example("issue_156_RDATE_with_PERIOD_TZID_khal")
+                >>> event = calendar.events[0]
+                >>> event.sequence
+                10
+    
+        """
+        ...
 
     @property
     def categories(self) -> list[str]:
@@ -1648,7 +2273,48 @@ class Todo(Component):
         """
         ...
     @categories.deleter
-    def categories(self) -> None: ...
+    def categories(self) -> None:
+        """
+        This property defines the categories for a component.
+
+        Property Parameters:
+            IANA, non-standard, and language property parameters can be specified on this
+            property.
+
+        Conformance:
+            The property can be specified within "VEVENT", "VTODO", or "VJOURNAL" calendar
+            components.
+            Since :rfc:`7986` it can also be defined on a "VCALENDAR" component.
+
+        Description:
+            This property is used to specify categories or subtypes
+            of the calendar component.  The categories are useful in searching
+            for a calendar component of a particular type and category.
+            Within the "VEVENT", "VTODO", or "VJOURNAL" calendar components,
+            more than one category can be specified as a COMMA-separated list
+            of categories.
+
+        Example:
+            Below, we add the categories to an event:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Event
+                >>> event = Event()
+                >>> event.categories = ["Work", "Meeting"]
+                >>> print(event.to_ical())
+                BEGIN:VEVENT
+                CATEGORIES:Work,Meeting
+                END:VEVENT
+                >>> event.categories.append("Lecture")
+                >>> event.categories == ["Work", "Meeting", "Lecture"]
+                True
+
+        .. note::
+
+           At present, we do not take the LANGUAGE parameter into account.
+        """
+        ...
 
     @property
     def rdates(
@@ -1802,7 +2468,112 @@ class Todo(Component):
         """
         ...
     @property
-    def rrules(self) -> list[vRecur]: ...
+    def rrules(self) -> list[vRecur]:
+        """
+        RRULE defines a rule or repeating pattern for recurring components.
+
+        RRULE is defined in :rfc:`5545`.
+        :rfc:`7529` adds the ``SKIP`` parameter :class:`icalendar.prop.vSkip`.
+
+        Property Parameters:
+            IANA and non-standard property parameters can
+            be specified on this property.
+
+        Conformance:
+            This property can be specified in recurring "VEVENT",
+            "VTODO", and "VJOURNAL" calendar components as well as in the
+            "STANDARD" and "DAYLIGHT" sub-components of the "VTIMEZONE"
+            calendar component, but it SHOULD NOT be specified more than once.
+            The recurrence set generated with multiple "RRULE" properties is
+            undefined.
+
+        Description:
+            The recurrence rule, if specified, is used in computing
+            the recurrence set.  The recurrence set is the complete set of
+            recurrence instances for a calendar component.  The recurrence set
+            is generated by considering the initial "DTSTART" property along
+            with the "RRULE", "RDATE", and "EXDATE" properties contained
+            within the recurring component.  The "DTSTART" property defines
+            the first instance in the recurrence set.  The "DTSTART" property
+            value SHOULD be synchronized with the recurrence rule, if
+            specified.  The recurrence set generated with a "DTSTART" property
+            value not synchronized with the recurrence rule is undefined.  The
+            final recurrence set is generated by gathering all of the start
+            DATE-TIME values generated by any of the specified "RRULE" and
+            "RDATE" properties, and then excluding any start DATE-TIME values
+            specified by "EXDATE" properties.  This implies that start DATE-
+            TIME values specified by "EXDATE" properties take precedence over
+            those specified by inclusion properties (i.e., "RDATE" and
+            "RRULE").  Where duplicate instances are generated by the "RRULE"
+            and "RDATE" properties, only one recurrence is considered.
+            Duplicate instances are ignored.
+
+            The "DTSTART" property specified within the iCalendar object
+            defines the first instance of the recurrence.  In most cases, a
+            "DTSTART" property of DATE-TIME value type used with a recurrence
+            rule, should be specified as a date with local time and time zone
+            reference to make sure all the recurrence instances start at the
+            same local time regardless of time zone changes.
+
+            If the duration of the recurring component is specified with the
+            "DTEND" or "DUE" property, then the same exact duration will apply
+            to all the members of the generated recurrence set.  Else, if the
+            duration of the recurring component is specified with the
+            "DURATION" property, then the same nominal duration will apply to
+            all the members of the generated recurrence set and the exact
+            duration of each recurrence instance will depend on its specific
+            start time.  For example, recurrence instances of a nominal
+            duration of one day will have an exact duration of more or less
+            than 24 hours on a day where a time zone shift occurs.  The
+            duration of a specific recurrence may be modified in an exception
+            component or simply by using an "RDATE" property of PERIOD value
+            type.
+
+        Examples:
+            Daily for 10 occurrences:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Event
+                >>> from datetime import datetime
+                >>> from zoneinfo import ZoneInfo
+                >>> event = Event()
+                >>> event.start = datetime(1997, 9, 2, 9, 0, tzinfo=ZoneInfo("America/New_York"))
+                >>> event.add("RRULE", "FREQ=DAILY;COUNT=10")
+                >>> print(event.to_ical())
+                BEGIN:VEVENT
+                DTSTART;TZID=America/New_York:19970902T090000
+                RRULE:FREQ=DAILY;COUNT=10
+                END:VEVENT
+                >>> event.rrules
+                [vRecur({'FREQ': ['DAILY'], 'COUNT': [10]})]
+
+            Daily until December 24, 1997:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Event, vRecur
+                >>> from datetime import datetime
+                >>> from zoneinfo import ZoneInfo
+                >>> event = Event()
+                >>> event.start = datetime(1997, 9, 2, 9, 0, tzinfo=ZoneInfo("America/New_York"))
+                >>> event.add("RRULE", vRecur({"FREQ": ["DAILY"]}, until=datetime(1997, 12, 24, tzinfo=ZoneInfo("UTC"))))
+                >>> print(event.to_ical())
+                BEGIN:VEVENT
+                DTSTART;TZID=America/New_York:19970902T090000
+                RRULE:FREQ=DAILY;UNTIL=19971224T000000Z
+                END:VEVENT
+                >>> event.rrules
+                [vRecur({'FREQ': ['DAILY'], 'UNTIL': [datetime.datetime(1997, 12, 24, 0, 0, tzinfo=ZoneInfo(key='UTC'))]})]
+
+        .. note::
+
+            You cannot modify the RRULE value by modifying the result.
+            Use :func:`icalendar.cal.Component.add` to add values.
+
+            If you want to compute recurrences, have a look at :ref:`Related projects`.
+        """
+        ...
 
     @property
     def uid(self) -> str:
@@ -2095,7 +2866,18 @@ class Journal(Component):
         """
         ...
     @DTSTART.deleter
-    def DTSTART(self) -> None: ...
+    def DTSTART(self) -> None:
+        """
+        The DTSTART property.
+
+        The "DTSTART" property for a "VJOURNAL" that specifies the exact date at which the journal entry was made.
+
+        Accepted values: datetime, date.
+        If the attribute has invalid values, we raise InvalidCalendar.
+        If the value is absent, we return None.
+        You can also delete the value with del or by setting it to None.
+        """
+        ...
 
     @property
     def start(self) -> datetime.date | datetime.datetime:
@@ -2108,11 +2890,21 @@ class Journal(Component):
         """
         ...
     @start.setter
-    def start(self, value: datetime.date | datetime.datetime | None) -> None: ...
+    def start(self, value: datetime.date | datetime.datetime | None) -> None:
+        """
+        The start of the Journal.
+
+        The "DTSTART"
+        property is used to specify the calendar date with which the
+        journal entry is associated.
+        """
+        ...
 
     end = start
     @property
-    def duration(self) -> datetime.timedelta: ...
+    def duration(self) -> datetime.timedelta:
+        """The journal has no duration: timedelta(0)."""
+        ...
 
     @property
     def color(self) -> str:
@@ -2187,7 +2979,41 @@ class Journal(Component):
         """
         ...
     @color.deleter
-    def color(self) -> None: ...
+    def color(self) -> None:
+        """
+        This property specifies a color used for displaying the component.
+
+        This implements :rfc:`7986` ``COLOR`` property.
+
+        Property Parameters:
+            IANA and non-standard property parameters can
+            be specified on this property.
+
+        Conformance:
+            This property can be specified once in an iCalendar
+            object or in ``VEVENT``, ``VTODO``, or ``VJOURNAL`` calendar components.
+
+        Description:
+            This property specifies a color that clients MAY use
+            when presenting the relevant data to a user.  Typically, this
+            would appear as the "background" color of events or tasks.  The
+            value is a case-insensitive color name taken from the CSS3 set of
+            names, defined in Section 4.3 of `W3C.REC-css3-color-20110607 <https://www.w3.org/TR/css-color-3/>`_.
+
+        Example:
+            ``"turquoise"``, ``"#ffffff"``
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Todo
+                >>> todo = Todo()
+                >>> todo.color = "green"
+                >>> print(todo.to_ical())
+                BEGIN:VTODO
+                COLOR:green
+                END:VTODO
+        """
+        ...
 
     @property
     def sequence(self) -> int:
@@ -2316,7 +3142,68 @@ class Journal(Component):
         """
         ...
     @sequence.deleter
-    def sequence(self) -> None: ...
+    def sequence(self) -> None:
+        """
+        This property defines the revision sequence number of the calendar component within a sequence of revisions.
+
+        Value Type:
+            INTEGER
+
+        Property Parameters:
+            IANA and non-standard property parameters can be specified on this property.
+
+        Conformance:
+            The property can be specified in "VEVENT", "VTODO", or
+            "VJOURNAL" calendar component.
+
+        Description:
+            When a calendar component is created, its sequence
+            number is 0.  It is monotonically incremented by the "Organizer's"
+            CUA each time the "Organizer" makes a significant revision to the
+            calendar component.
+
+            The "Organizer" includes this property in an iCalendar object that
+            it sends to an "Attendee" to specify the current version of the
+            calendar component.
+
+            The "Attendee" includes this property in an iCalendar object that
+            it sends to the "Organizer" to specify the version of the calendar
+            component to which the "Attendee" is referring.
+
+            A change to the sequence number is not the mechanism that an
+            "Organizer" uses to request a response from the "Attendees".  The
+            "RSVP" parameter on the "ATTENDEE" property is used by the
+            "Organizer" to indicate that a response from the "Attendees" is
+            requested.
+
+            Recurrence instances of a recurring component MAY have different
+            sequence numbers.
+
+        Examples:
+            The following is an example of this property for a calendar
+            component that was just created by the "Organizer":
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Event
+                >>> event = Event()
+                >>> event.sequence
+                0
+
+            The following is an example of this property for a calendar
+            component that has been revised 10 different times by the
+            "Organizer":
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Calendar
+                >>> calendar = Calendar.example("issue_156_RDATE_with_PERIOD_TZID_khal")
+                >>> event = calendar.events[0]
+                >>> event.sequence
+                10
+    
+        """
+        ...
 
     @property
     def categories(self) -> list[str]:
@@ -2405,7 +3292,48 @@ class Journal(Component):
         """
         ...
     @categories.deleter
-    def categories(self) -> None: ...
+    def categories(self) -> None:
+        """
+        This property defines the categories for a component.
+
+        Property Parameters:
+            IANA, non-standard, and language property parameters can be specified on this
+            property.
+
+        Conformance:
+            The property can be specified within "VEVENT", "VTODO", or "VJOURNAL" calendar
+            components.
+            Since :rfc:`7986` it can also be defined on a "VCALENDAR" component.
+
+        Description:
+            This property is used to specify categories or subtypes
+            of the calendar component.  The categories are useful in searching
+            for a calendar component of a particular type and category.
+            Within the "VEVENT", "VTODO", or "VJOURNAL" calendar components,
+            more than one category can be specified as a COMMA-separated list
+            of categories.
+
+        Example:
+            Below, we add the categories to an event:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Event
+                >>> event = Event()
+                >>> event.categories = ["Work", "Meeting"]
+                >>> print(event.to_ical())
+                BEGIN:VEVENT
+                CATEGORIES:Work,Meeting
+                END:VEVENT
+                >>> event.categories.append("Lecture")
+                >>> event.categories == ["Work", "Meeting", "Lecture"]
+                True
+
+        .. note::
+
+           At present, we do not take the LANGUAGE parameter into account.
+        """
+        ...
 
     @property
     def rdates(
@@ -2559,7 +3487,112 @@ class Journal(Component):
         """
         ...
     @property
-    def rrules(self) -> list[vRecur]: ...
+    def rrules(self) -> list[vRecur]:
+        """
+        RRULE defines a rule or repeating pattern for recurring components.
+
+        RRULE is defined in :rfc:`5545`.
+        :rfc:`7529` adds the ``SKIP`` parameter :class:`icalendar.prop.vSkip`.
+
+        Property Parameters:
+            IANA and non-standard property parameters can
+            be specified on this property.
+
+        Conformance:
+            This property can be specified in recurring "VEVENT",
+            "VTODO", and "VJOURNAL" calendar components as well as in the
+            "STANDARD" and "DAYLIGHT" sub-components of the "VTIMEZONE"
+            calendar component, but it SHOULD NOT be specified more than once.
+            The recurrence set generated with multiple "RRULE" properties is
+            undefined.
+
+        Description:
+            The recurrence rule, if specified, is used in computing
+            the recurrence set.  The recurrence set is the complete set of
+            recurrence instances for a calendar component.  The recurrence set
+            is generated by considering the initial "DTSTART" property along
+            with the "RRULE", "RDATE", and "EXDATE" properties contained
+            within the recurring component.  The "DTSTART" property defines
+            the first instance in the recurrence set.  The "DTSTART" property
+            value SHOULD be synchronized with the recurrence rule, if
+            specified.  The recurrence set generated with a "DTSTART" property
+            value not synchronized with the recurrence rule is undefined.  The
+            final recurrence set is generated by gathering all of the start
+            DATE-TIME values generated by any of the specified "RRULE" and
+            "RDATE" properties, and then excluding any start DATE-TIME values
+            specified by "EXDATE" properties.  This implies that start DATE-
+            TIME values specified by "EXDATE" properties take precedence over
+            those specified by inclusion properties (i.e., "RDATE" and
+            "RRULE").  Where duplicate instances are generated by the "RRULE"
+            and "RDATE" properties, only one recurrence is considered.
+            Duplicate instances are ignored.
+
+            The "DTSTART" property specified within the iCalendar object
+            defines the first instance of the recurrence.  In most cases, a
+            "DTSTART" property of DATE-TIME value type used with a recurrence
+            rule, should be specified as a date with local time and time zone
+            reference to make sure all the recurrence instances start at the
+            same local time regardless of time zone changes.
+
+            If the duration of the recurring component is specified with the
+            "DTEND" or "DUE" property, then the same exact duration will apply
+            to all the members of the generated recurrence set.  Else, if the
+            duration of the recurring component is specified with the
+            "DURATION" property, then the same nominal duration will apply to
+            all the members of the generated recurrence set and the exact
+            duration of each recurrence instance will depend on its specific
+            start time.  For example, recurrence instances of a nominal
+            duration of one day will have an exact duration of more or less
+            than 24 hours on a day where a time zone shift occurs.  The
+            duration of a specific recurrence may be modified in an exception
+            component or simply by using an "RDATE" property of PERIOD value
+            type.
+
+        Examples:
+            Daily for 10 occurrences:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Event
+                >>> from datetime import datetime
+                >>> from zoneinfo import ZoneInfo
+                >>> event = Event()
+                >>> event.start = datetime(1997, 9, 2, 9, 0, tzinfo=ZoneInfo("America/New_York"))
+                >>> event.add("RRULE", "FREQ=DAILY;COUNT=10")
+                >>> print(event.to_ical())
+                BEGIN:VEVENT
+                DTSTART;TZID=America/New_York:19970902T090000
+                RRULE:FREQ=DAILY;COUNT=10
+                END:VEVENT
+                >>> event.rrules
+                [vRecur({'FREQ': ['DAILY'], 'COUNT': [10]})]
+
+            Daily until December 24, 1997:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Event, vRecur
+                >>> from datetime import datetime
+                >>> from zoneinfo import ZoneInfo
+                >>> event = Event()
+                >>> event.start = datetime(1997, 9, 2, 9, 0, tzinfo=ZoneInfo("America/New_York"))
+                >>> event.add("RRULE", vRecur({"FREQ": ["DAILY"]}, until=datetime(1997, 12, 24, tzinfo=ZoneInfo("UTC"))))
+                >>> print(event.to_ical())
+                BEGIN:VEVENT
+                DTSTART;TZID=America/New_York:19970902T090000
+                RRULE:FREQ=DAILY;UNTIL=19971224T000000Z
+                END:VEVENT
+                >>> event.rrules
+                [vRecur({'FREQ': ['DAILY'], 'UNTIL': [datetime.datetime(1997, 12, 24, 0, 0, tzinfo=ZoneInfo(key='UTC'))]})]
+
+        .. note::
+
+            You cannot modify the RRULE value by modifying the result.
+            Use :func:`icalendar.cal.Component.add` to add values.
+
+            If you want to compute recurrences, have a look at :ref:`Related projects`.
+        """
+        ...
 
     @property
     def uid(self) -> str:
@@ -3203,7 +4236,21 @@ class TimezoneStandard(Component):
         """
         ...
     @DTSTART.deleter
-    def DTSTART(self) -> None: ...
+    def DTSTART(self) -> None:
+        """
+        The DTSTART property.
+
+        The mandatory "DTSTART" property gives the effective onset date
+            and local time for the time zone sub-component definition.
+            "DTSTART" in this usage MUST be specified as a date with a local
+            time value.
+
+        Accepted values: datetime.
+        If the attribute has invalid values, we raise InvalidCalendar.
+        If the value is absent, we return None.
+        You can also delete the value with del or by setting it to None.
+        """
+        ...
 
     @property
     def TZOFFSETTO(self) -> datetime.timedelta | None:
@@ -3238,7 +4285,21 @@ class TimezoneStandard(Component):
         """
         ...
     @TZOFFSETTO.deleter
-    def TZOFFSETTO(self) -> None: ...
+    def TZOFFSETTO(self) -> None:
+        """
+        The TZOFFSETTO property.
+
+        The mandatory "TZOFFSETTO" property gives the UTC offset for the
+            time zone sub-component (Standard Time or Daylight Saving Time)
+            when this observance is in use.
+    
+
+        Accepted values: timedelta.
+        If the attribute has invalid values, we raise InvalidCalendar.
+        If the value is absent, we return None.
+        You can also delete the value with del or by setting it to None.
+        """
+        ...
 
     @property
     def TZOFFSETFROM(self) -> datetime.timedelta | None:
@@ -3285,7 +4346,27 @@ class TimezoneStandard(Component):
         """
         ...
     @TZOFFSETFROM.deleter
-    def TZOFFSETFROM(self) -> None: ...
+    def TZOFFSETFROM(self) -> None:
+        """
+        The TZOFFSETFROM property.
+
+        The mandatory "TZOFFSETFROM" property gives the UTC offset that is
+            in use when the onset of this time zone observance begins.
+            "TZOFFSETFROM" is combined with "DTSTART" to define the effective
+            onset for the time zone sub-component definition.  For example,
+            the following represents the time at which the observance of
+            Standard Time took effect in Fall 1967 for New York City:
+
+                DTSTART:19671029T020000
+                TZOFFSETFROM:-0400
+    
+
+        Accepted values: timedelta.
+        If the attribute has invalid values, we raise InvalidCalendar.
+        If the value is absent, we return None.
+        You can also delete the value with del or by setting it to None.
+        """
+        ...
 
     @property
     def rdates(
@@ -3588,7 +4669,21 @@ class TimezoneDaylight(Component):
         """
         ...
     @DTSTART.deleter
-    def DTSTART(self) -> None: ...
+    def DTSTART(self) -> None:
+        """
+        The DTSTART property.
+
+        The mandatory "DTSTART" property gives the effective onset date
+            and local time for the time zone sub-component definition.
+            "DTSTART" in this usage MUST be specified as a date with a local
+            time value.
+
+        Accepted values: datetime.
+        If the attribute has invalid values, we raise InvalidCalendar.
+        If the value is absent, we return None.
+        You can also delete the value with del or by setting it to None.
+        """
+        ...
 
     @property
     def TZOFFSETTO(self) -> datetime.timedelta | None:
@@ -3623,7 +4718,21 @@ class TimezoneDaylight(Component):
         """
         ...
     @TZOFFSETTO.deleter
-    def TZOFFSETTO(self) -> None: ...
+    def TZOFFSETTO(self) -> None:
+        """
+        The TZOFFSETTO property.
+
+        The mandatory "TZOFFSETTO" property gives the UTC offset for the
+            time zone sub-component (Standard Time or Daylight Saving Time)
+            when this observance is in use.
+    
+
+        Accepted values: timedelta.
+        If the attribute has invalid values, we raise InvalidCalendar.
+        If the value is absent, we return None.
+        You can also delete the value with del or by setting it to None.
+        """
+        ...
 
     @property
     def TZOFFSETFROM(self) -> datetime.timedelta | None:
@@ -3670,7 +4779,27 @@ class TimezoneDaylight(Component):
         """
         ...
     @TZOFFSETFROM.deleter
-    def TZOFFSETFROM(self) -> None: ...
+    def TZOFFSETFROM(self) -> None:
+        """
+        The TZOFFSETFROM property.
+
+        The mandatory "TZOFFSETFROM" property gives the UTC offset that is
+            in use when the onset of this time zone observance begins.
+            "TZOFFSETFROM" is combined with "DTSTART" to define the effective
+            onset for the time zone sub-component definition.  For example,
+            the following represents the time at which the observance of
+            Standard Time took effect in Fall 1967 for New York City:
+
+                DTSTART:19671029T020000
+                TZOFFSETFROM:-0400
+    
+
+        Accepted values: timedelta.
+        If the attribute has invalid values, we raise InvalidCalendar.
+        If the value is absent, we return None.
+        You can also delete the value with del or by setting it to None.
+        """
+        ...
 
     @property
     def rdates(
@@ -3969,7 +5098,19 @@ class Alarm(Component):
         """
         ...
     @REPEAT.deleter
-    def REPEAT(self) -> None: ...
+    def REPEAT(self) -> None:
+        """
+        The REPEAT property of an alarm component.
+
+        The alarm can be defined such that it triggers repeatedly.  A
+        definition of an alarm with a repeating trigger MUST include both
+        the "DURATION" and "REPEAT" properties.  The "DURATION" property
+        specifies the delay period, after which the alarm will repeat.
+        The "REPEAT" property specifies the number of additional
+        repetitions that the alarm will be triggered.  This repetition
+        count is in addition to the initial triggering of the alarm.
+        """
+        ...
 
     @property
     def DURATION(self) -> datetime.timedelta | None:
@@ -3994,7 +5135,16 @@ class Alarm(Component):
         """
         ...
     @DURATION.deleter
-    def DURATION(self) -> None: ...
+    def DURATION(self) -> None:
+        """
+        The DURATION property of an alarm component.
+
+        The alarm can be defined such that it triggers repeatedly.  A
+        definition of an alarm with a repeating trigger MUST include both
+        the "DURATION" and "REPEAT" properties.  The "DURATION" property
+        specifies the delay period, after which the alarm will repeat.
+        """
+        ...
 
     @property
     def ACKNOWLEDGED(self) -> datetime.datetime | None:
@@ -4065,7 +5215,39 @@ class Alarm(Component):
         """
         ...
     @ACKNOWLEDGED.deleter
-    def ACKNOWLEDGED(self) -> None: ...
+    def ACKNOWLEDGED(self) -> None:
+        """
+        The ACKNOWLEDGED property. datetime in UTC
+
+        All values will be converted to a datetime in UTC.
+        This is defined in RFC 9074:
+
+        Purpose: This property specifies the UTC date and time at which the
+        corresponding alarm was last sent or acknowledged.
+
+        This property is used to specify when an alarm was last sent or acknowledged.
+        This allows clients to determine when a pending alarm has been acknowledged
+        by a calendar user so that any alerts can be dismissed across multiple devices.
+        It also allows clients to track repeating alarms or alarms on recurring events or
+        to-dos to ensure that the right number of missed alarms can be tracked.
+
+        Clients SHOULD set this property to the current date-time value in UTC
+        when a calendar user acknowledges a pending alarm. Certain kinds of alarms,
+        such as email-based alerts, might not provide feedback as to when the calendar user
+        sees them. For those kinds of alarms, the client SHOULD set this property
+        when the alarm is triggered and the action is successfully carried out.
+
+        When an alarm is triggered on a client, clients can check to see if an "ACKNOWLEDGED"
+        property is present. If it is, and the value of that property is greater than or
+        equal to the computed trigger time for the alarm, then the client SHOULD NOT trigger
+        the alarm. Similarly, if an alarm has been triggered and
+        an "alert" has been presented to a calendar user, clients can monitor
+        the iCalendar data to determine whether an "ACKNOWLEDGED" property is added or
+        changed in the alarm component. If the value of any "ACKNOWLEDGED" property
+        in the alarm changes and is greater than or equal to the trigger time of the alarm,
+        then clients SHOULD dismiss or cancel any "alert" presented to the calendar user.
+        """
+        ...
 
     @property
     def TRIGGER(self) -> datetime.timedelta | datetime.datetime | None:
@@ -4114,7 +5296,28 @@ class Alarm(Component):
         """
         ...
     @TRIGGER.deleter
-    def TRIGGER(self) -> None: ...
+    def TRIGGER(self) -> None:
+        """
+        The TRIGGER property.
+
+        Purpose:  This property specifies when an alarm will trigger.
+
+        Value Type:  The default value type is DURATION.  The value type can
+        be set to a DATE-TIME value type, in which case the value MUST
+        specify a UTC-formatted DATE-TIME value.
+
+        Either a positive or negative duration may be specified for the
+        "TRIGGER" property.  An alarm with a positive duration is
+        triggered after the associated start or end of the event or to-do.
+        An alarm with a negative duration is triggered before the
+        associated start or end of the event or to-do.
+
+        Accepted values: datetime, timedelta.
+        If the attribute has invalid values, we raise InvalidCalendar.
+        If the value is absent, we return None.
+        You can also delete the value with del or by setting it to None.
+        """
+        ...
 
     @property
     def TRIGGER_RELATED(self) -> Literal["START", "END"]:
@@ -4174,7 +5377,29 @@ class Alarm(Component):
         absolute: tuple[datetime.datetime, ...]
 
     @property
-    def triggers(self) -> Alarm.Triggers: ...
+    def triggers(self) -> Alarm.Triggers:
+        """
+        The computed triggers of an Alarm.
+
+        This takes the TRIGGER, DURATION and REPEAT properties into account.
+
+        Here, we create an alarm that triggers 3 times before the start of the
+        parent component:
+
+        >>> from icalendar import Alarm
+        >>> from datetime import timedelta
+        >>> alarm = Alarm()
+        >>> alarm.TRIGGER = timedelta(hours=-4)  # trigger 4 hours before START
+        >>> alarm.DURATION = timedelta(hours=1)  # after 1 hour trigger again
+        >>> alarm.REPEAT = 2  # trigger 2 more times
+        >>> alarm.triggers.start == (timedelta(hours=-4),  timedelta(hours=-3),  timedelta(hours=-2))
+        True
+        >>> alarm.triggers.end
+        ()
+        >>> alarm.triggers.absolute
+        ()
+        """
+        ...
 
     @property
     def uid(self) -> str:
@@ -4497,8 +5722,49 @@ class Calendar(Component):
         """
         ...
     @property
-    def timezones(self) -> list[Timezone]: ...
-    def add_missing_timezones(self, first_date: datetime.date = ..., last_date: datetime.date = ...) -> None: ...
+    def timezones(self) -> list[Timezone]:
+        """
+        Return the timezones components in this calendar.
+
+        >>> from icalendar import Calendar
+        >>> calendar = Calendar.example("pacific_fiji")
+        >>> [timezone.tz_name for timezone in calendar.timezones]
+        ['custom_Pacific/Fiji']
+
+        .. note::
+
+            This is a read-only property.
+        """
+        ...
+    def add_missing_timezones(self, first_date: datetime.date = ..., last_date: datetime.date = ...) -> None:
+        """
+        Add all missing VTIMEZONE components.
+
+        This adds all the timezone components that are required.
+
+        .. note::
+
+            Timezones that are not known will not be added.
+
+        :param first_date: earlier than anything that happens in the calendar
+        :param last_date: later than anything happening in the calendar
+
+        >>> from icalendar import Calendar, Event
+        >>> from datetime import datetime
+        >>> from zoneinfo import ZoneInfo
+        >>> calendar = Calendar()
+        >>> event = Event()
+        >>> calendar.add_component(event)
+        >>> event.start = datetime(1990, 10, 11, 12, tzinfo=ZoneInfo("Europe/Berlin"))
+        >>> calendar.timezones
+        []
+        >>> calendar.add_missing_timezones()
+        >>> calendar.timezones[0].tz_name
+        'Europe/Berlin'
+        >>> calendar.get_missing_tzids()  # check that all are added
+        set()
+        """
+        ...
 
     @property
     def calendar_name(self) -> str | None:
@@ -4579,7 +5845,44 @@ class Calendar(Component):
         """
         ...
     @calendar_name.deleter
-    def calendar_name(self) -> None: ...
+    def calendar_name(self) -> None:
+        """
+        This property specifies the name of the calendar.
+
+        This implements :rfc:`7986` ``NAME`` and ``X-WR-CALNAME``.
+
+        Property Parameters:
+            IANA, non-standard, alternate text
+            representation, and language property parameters can be specified
+            on this property.
+
+        Conformance:
+            This property can be specified multiple times in an
+            iCalendar object.  However, each property MUST represent the name
+            of the calendar in a different language.
+
+        Description:
+            This property is used to specify a name of the
+            iCalendar object that can be used by calendar user agents when
+            presenting the calendar data to a user.  Whilst a calendar only
+            has a single name, multiple language variants can be specified by
+            including this property multiple times with different "LANGUAGE"
+            parameter values on each.
+
+        Example:
+            Below, we set the name of the calendar.
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Calendar
+                >>> calendar = Calendar()
+                >>> calendar.calendar_name = "My Calendar"
+                >>> print(calendar.to_ical())
+                BEGIN:VCALENDAR
+                NAME:My Calendar
+                END:VCALENDAR
+        """
+        ...
 
     @property
     def description(self) -> str | None:
@@ -4650,7 +5953,39 @@ class Calendar(Component):
         """
         ...
     @description.deleter
-    def description(self) -> None: ...
+    def description(self) -> None:
+        """
+        This property specifies the description of the calendar.
+
+        This implements :rfc:`7986` ``DESCRIPTION`` and ``X-WR-CALDESC``.
+
+        Conformance:
+            This property can be specified multiple times in an
+            iCalendar object.  However, each property MUST represent the
+            description of the calendar in a different language.
+
+        Description:
+            This property is used to specify a lengthy textual
+            description of the iCalendar object that can be used by calendar
+            user agents when describing the nature of the calendar data to a
+            user.  Whilst a calendar only has a single description, multiple
+            language variants can be specified by including this property
+            multiple times with different "LANGUAGE" parameter values on each.
+
+        Example:
+            Below, we add a description to a calendar.
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Calendar
+                >>> calendar = Calendar()
+                >>> calendar.description = "This is a calendar"
+                >>> print(calendar.to_ical())
+                BEGIN:VCALENDAR
+                DESCRIPTION:This is a calendar
+                END:VCALENDAR
+        """
+        ...
 
     @property
     def color(self) -> str:
@@ -4727,7 +6062,42 @@ class Calendar(Component):
         """
         ...
     @color.deleter
-    def color(self) -> None: ...
+    def color(self) -> None:
+        """
+        This property specifies a color used for displaying the calendar.
+
+        This implements :rfc:`7986` ``COLOR`` and ``X-APPLE-CALENDAR-COLOR``.
+        Please note that since :rfc:`7986`, subcomponents can have their own color.
+
+        Property Parameters:
+            IANA and non-standard property parameters can
+            be specified on this property.
+
+        Conformance:
+            This property can be specified once in an iCalendar
+            object or in ``VEVENT``, ``VTODO``, or ``VJOURNAL`` calendar components.
+
+        Description:
+            This property specifies a color that clients MAY use
+            when presenting the relevant data to a user.  Typically, this
+            would appear as the "background" color of events or tasks.  The
+            value is a case-insensitive color name taken from the CSS3 set of
+            names, defined in Section 4.3 of `W3C.REC-css3-color-20110607 <https://www.w3.org/TR/css-color-3/>`_.
+
+        Example:
+            ``"turquoise"``, ``"#ffffff"``
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Calendar
+                >>> calendar = Calendar()
+                >>> calendar.color = "black"
+                >>> print(calendar.to_ical())
+                BEGIN:VCALENDAR
+                COLOR:black
+                END:VCALENDAR
+        """
+        ...
 
     @property
     def categories(self) -> list[str]:
@@ -4816,7 +6186,48 @@ class Calendar(Component):
         """
         ...
     @categories.deleter
-    def categories(self) -> None: ...
+    def categories(self) -> None:
+        """
+        This property defines the categories for a component.
+
+        Property Parameters:
+            IANA, non-standard, and language property parameters can be specified on this
+            property.
+
+        Conformance:
+            The property can be specified within "VEVENT", "VTODO", or "VJOURNAL" calendar
+            components.
+            Since :rfc:`7986` it can also be defined on a "VCALENDAR" component.
+
+        Description:
+            This property is used to specify categories or subtypes
+            of the calendar component.  The categories are useful in searching
+            for a calendar component of a particular type and category.
+            Within the "VEVENT", "VTODO", or "VJOURNAL" calendar components,
+            more than one category can be specified as a COMMA-separated list
+            of categories.
+
+        Example:
+            Below, we add the categories to an event:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Event
+                >>> event = Event()
+                >>> event.categories = ["Work", "Meeting"]
+                >>> print(event.to_ical())
+                BEGIN:VEVENT
+                CATEGORIES:Work,Meeting
+                END:VEVENT
+                >>> event.categories.append("Lecture")
+                >>> event.categories == ["Work", "Meeting", "Lecture"]
+                True
+
+        .. note::
+
+           At present, we do not take the LANGUAGE parameter into account.
+        """
+        ...
 
     @property
     def uid(self) -> str:

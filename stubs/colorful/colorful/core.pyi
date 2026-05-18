@@ -172,7 +172,9 @@ class Colorful:
         """Get the current used color palette"""
         ...
     @colorpalette.setter
-    def colorpalette(self, colorpalette: _str | _PaletteType) -> None: ...
+    def colorpalette(self, colorpalette: _str | _PaletteType) -> None:
+        """Get the current used color palette"""
+        ...
 
     def setup(
         self,

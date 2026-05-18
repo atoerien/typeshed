@@ -70,14 +70,25 @@ def formataddr(pair: tuple[str | None, str], charset: str | Charset = "utf-8") -
     ...
 
 # `strict` parameter added in Python 3.9.20, 3.10.15, 3.11.10, 3.12.5
-def getaddresses(fieldvalues: Iterable[str], *, strict: bool = True) -> list[tuple[str, str]]: ...
+def getaddresses(fieldvalues: Iterable[str], *, strict: bool = True) -> list[tuple[str, str]]:
+    """
+    Return a list of (REALNAME, EMAIL) or ('','') for each fieldvalue.
+
+    When parsing fails for a fieldvalue, a 2-tuple of ('', '') is returned in
+    its place.
+
+    If strict is true, use a strict parser which rejects malformed inputs.
+    """
+    ...
 
 @overload
 def parsedate(data: None) -> None:
     """Convert a time string to a time tuple."""
     ...
 @overload
-def parsedate(data: str) -> tuple[int, int, int, int, int, int, int, int, int] | None: ...
+def parsedate(data: str) -> tuple[int, int, int, int, int, int, int, int, int] | None:
+    """Convert a time string to a time tuple."""
+    ...
 
 @overload
 def parsedate_tz(data: None) -> None:
@@ -88,7 +99,13 @@ def parsedate_tz(data: None) -> None:
     """
     ...
 @overload
-def parsedate_tz(data: str) -> _PDTZ | None: ...
+def parsedate_tz(data: str) -> _PDTZ | None:
+    """
+    Convert a date string to a time tuple.
+
+    Accounts for military timezones.
+    """
+    ...
 
 def parsedate_to_datetime(data: str) -> datetime.datetime: ...
 def mktime_tz(data: _PDTZ) -> int:

@@ -56,7 +56,53 @@ def is_geometry_type(data: object) -> bool:
 
 class GeoPandasBase:
     @property
-    def area(self) -> pd.Series[float]: ...
+    def area(self) -> pd.Series[float]:
+        """
+        Return a ``Series`` containing the area of each geometry in the
+        ``GeoSeries`` expressed in the units of the CRS.
+
+        Examples
+        --------
+        >>> from shapely.geometry import Polygon, LineString, Point
+        >>> s = geopandas.GeoSeries(
+        ...     [
+        ...         Polygon([(0, 0), (1, 1), (0, 1)]),
+        ...         Polygon([(10, 0), (10, 5), (0, 0)]),
+        ...         Polygon([(0, 0), (2, 2), (2, 0)]),
+        ...         LineString([(0, 0), (1, 1), (0, 1)]),
+        ...         Point(0, 1)
+        ...     ]
+        ... )
+        >>> s
+        0       POLYGON ((0 0, 1 1, 0 1, 0 0))
+        1    POLYGON ((10 0, 10 5, 0 0, 10 0))
+        2       POLYGON ((0 0, 2 2, 2 0, 0 0))
+        3           LINESTRING (0 0, 1 1, 0 1)
+        4                          POINT (0 1)
+        dtype: geometry
+
+        >>> s.area
+        0     0.5
+        1    25.0
+        2     2.0
+        3     0.0
+        4     0.0
+        dtype: float64
+
+        See Also
+        --------
+        GeoSeries.length : measure length
+
+        Notes
+        -----
+        Area may be invalid for a geographic CRS using degrees as units;
+        use :meth:`GeoSeries.to_crs` to project geometries to a planar
+        CRS before using this function.
+
+        Every operation in GeoPandas is planar, i.e. the potential third
+        dimension is not taken into account.
+        """
+        ...
 
     @property
     def crs(self) -> CRS | None:
@@ -90,7 +136,36 @@ class GeoPandasBase:
         """
         ...
     @crs.setter
-    def crs(self, value: _ConvertibleToCRS | None) -> None: ...
+    def crs(self, value: _ConvertibleToCRS | None) -> None:
+        """
+        The Coordinate Reference System (CRS) as a ``pyproj.CRS`` object.
+
+        Returns
+        -------
+        ``pyproj.CRS`` | None
+            CRS assigned to a GeoSeries
+
+        Examples
+        --------
+        >>> s.crs  # doctest: +SKIP
+        <Geographic 2D CRS: EPSG:4326>
+        Name: WGS 84
+        Axis Info [ellipsoidal]:
+        - Lat[north]: Geodetic latitude (degree)
+        - Lon[east]: Geodetic longitude (degree)
+        Area of Use:
+        - name: World
+        - bounds: (-180.0, -90.0, 180.0, 90.0)
+        Datum: World Geodetic System 1984
+        - Ellipsoid: WGS 84
+        - Prime Meridian: Greenwich
+
+        See Also
+        --------
+        GeoSeries.set_crs : assign CRS
+        GeoSeries.to_crs : re-project to another CRS
+        """
+        ...
 
     @property
     def geom_type(self) -> pd.Series[str]:
@@ -6070,7 +6145,33 @@ class GeoPandasBase:
         ...
     def hilbert_distance(
         self, total_bounds: tuple[float, float, float, float] | Iterable[float] | None = None, level: int = 16
-    ) -> pd.Series[int]: ...
+    ) -> pd.Series[int]:
+        """
+        Calculate the distance along a Hilbert curve.
+
+        The distances are calculated for the midpoints of the geometries in the
+        GeoDataFrame, and using the total bounds of the GeoDataFrame.
+
+        The Hilbert distance can be used to spatially sort GeoPandas
+        objects, by mapping two dimensional geometries along the Hilbert curve.
+
+        Parameters
+        ----------
+        total_bounds : 4-element array, optional
+            The spatial extent in which the curve is constructed (used to
+            rescale the geometry midpoints). By default, the total bounds
+            of the full GeoDataFrame or GeoSeries will be computed. If known,
+            you can pass the total bounds to avoid this extra computation.
+        level : int (1 - 16), default 16
+            Determines the precision of the curve (points on the curve will
+            have coordinates in the range [0, 2^level - 1]).
+
+        Returns
+        -------
+        Series
+            Series containing distance along the curve for geometry
+        """
+        ...
 
     @overload
     def sample_points(
@@ -6148,9 +6249,115 @@ class GeoPandasBase:
         seed: int | ArrayLike | SeedSequence | BitGenerator | RandomGenerator,
         rng: int | ArrayLike | SeedSequence | BitGenerator | RandomGenerator | None = None,
         **kwargs,
-    ) -> GeoSeries: ...
+    ) -> GeoSeries:
+        """
+        Sample points from each geometry.
 
-    def build_area(self, node: bool = True) -> GeoSeries: ...
+        Generate a MultiPoint per each geometry containing points sampled from the
+        geometry. You can either sample randomly from a uniform distribution or use an
+        advanced sampling algorithm from the ``pointpats`` package.
+
+        For polygons, this samples within the area of the polygon. For lines,
+        this samples along the length of the linestring. For multi-part
+        geometries, the weights of each part are selected according to their relevant
+        attribute (area for Polygons, length for LineStrings), and then points are
+        sampled from each part.
+
+        Any other geometry type (e.g. Point, GeometryCollection) is ignored, and an
+        empty MultiPoint geometry is returned.
+
+        Parameters
+        ----------
+        size : int | array-like
+            The size of the sample requested. Indicates the number of samples to draw
+            from each geometry.  If an array of the same length as a GeoSeries is
+            passed, it denotes the size of a sample per geometry.
+        method : str, default "uniform"
+            The sampling method. ``uniform`` samples uniformly at random from a
+            geometry using ``numpy.random.uniform``. Other allowed strings
+            (e.g. ``"cluster_poisson"``) denote sampling function name from the
+            ``pointpats.random`` module (see
+            http://pysal.org/pointpats/api.html#random-distributions). Pointpats methods
+            are implemented for (Multi)Polygons only and will return an empty MultiPoint
+            for other geometry types.
+        rng : {None, int, array_like[ints], SeedSequence, BitGenerator, Generator}, optional
+            A random generator or seed to initialize the numpy BitGenerator. If None, then fresh,
+            unpredictable entropy will be pulled from the OS.
+        **kwargs : dict
+            Options for the pointpats sampling algorithms.
+
+        Returns
+        -------
+        GeoSeries
+            Points sampled within (or along) each geometry.
+
+        Examples
+        --------
+        >>> from shapely.geometry import Polygon
+        >>> s = geopandas.GeoSeries(
+        ...     [
+        ...         Polygon([(1, -1), (1, 0), (0, 0)]),
+        ...         Polygon([(3, -1), (4, 0), (3, 1)]),
+        ...     ]
+        ... )
+
+        >>> s.sample_points(size=10)  # doctest: +SKIP
+        0    MULTIPOINT ((0.1045 -0.10294), (0.35249 -0.264...
+        1    MULTIPOINT ((3.03261 -0.43069), (3.10068 0.114...
+        Name: sampled_points, dtype: geometry
+        """
+        ...
+
+    def build_area(self, node: bool = True) -> GeoSeries:
+        """
+        Create an areal geometry formed by the constituent linework.
+
+        Builds areas from the GeoSeries that contain linework which represents the edges
+        of a planar graph. Any geometry type may be provided as input; only the
+        constituent lines and rings will be used to create the output polygons. All
+        geometries within the GeoSeries are considered together and the resulting
+        polygons therefore do not map 1:1 to input geometries.
+
+        This function converts inner rings into holes. To turn inner rings into polygons
+        as well, use polygonize.
+
+        Unless you know that the input GeoSeries represents a planar graph with a clean
+        topology (e.g. there is a node on both lines where they intersect), it is
+        recommended to use ``node=True`` which performs noding prior to building areal
+        geometry. Using ``node=False`` will provide performance benefits but may result
+        in incorrect polygons if the input is not of the proper topology.
+
+        If the input linework crosses, this function may produce invalid polygons. Use
+        :meth:`GeoSeries.make_valid` to ensure valid geometries.
+
+        Parameters
+        ----------
+        node : bool, default True
+            Perform noding prior to building the areas, by default True.
+
+        Returns
+        -------
+        GeoSeries
+            GeoSeries with polygons
+
+        Examples
+        --------
+        >>> from shapely.geometry import LineString, Polygon
+        >>> s = geopandas.GeoSeries([
+        ...     LineString([(18, 4), (4, 2), (2, 9)]),
+        ...     LineString([(18, 4), (16, 16)]),
+        ...     LineString([(16, 16), (8, 19), (8, 12), (2, 9)]),
+        ...     LineString([(8, 6), (12, 13), (15, 8)]),
+        ...     LineString([(8, 6), (15, 8)]),
+        ...     LineString([(0, 0), (0, 3), (3, 3), (3, 0), (0, 0)]),
+        ...     Polygon([(1, 1), (2, 2), (1, 2), (1, 1)]),
+        ... ])
+        >>> s.build_area()
+        0    POLYGON ((0 3, 3 3, 3 0, 0 0, 0 3), (1 1, 2 2,...
+        1    POLYGON ((4 2, 2 9, 8 12, 8 19, 16 16, 18 4, 4...
+        Name: polygons, dtype: geometry
+        """
+        ...
 
     @overload
     def polygonize(self, node: bool = True, full: Literal[False] = False) -> GeoSeries:

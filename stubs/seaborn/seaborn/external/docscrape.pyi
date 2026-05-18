@@ -38,7 +38,22 @@ def strip_blank_lines(l: _S) -> _S:
     ...
 
 class Reader:
-    def __init__(self, data: str | list[str]) -> None: ...
+    """
+    A line-based string reader.
+
+    
+    """
+    def __init__(self, data: str | list[str]) -> None:
+        """
+                Parameters
+                ----------
+                data : str
+                   String with lines separated by '
+        '.
+
+        
+        """
+        ...
 
     @overload
     def __getitem__(self, n: slice) -> list[str]: ...

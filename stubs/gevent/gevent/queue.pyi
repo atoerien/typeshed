@@ -99,7 +99,13 @@ class SimpleQueue(Generic[_T]):
     is_shutdown: bool
 
     @classmethod
-    def __class_getitem__(cls, item: Any, /) -> types.GenericAlias: ...
+    def __class_getitem__(cls, item: Any, /) -> types.GenericAlias:
+        """
+        Represent a PEP 585 generic type
+
+        E.g. for t = list[int], t.__origin__ is list and t.__args__ is (int,).
+        """
+        ...
 
     @overload
     def __init__(self, maxsize: int | None = None) -> None: ...
@@ -108,19 +114,126 @@ class SimpleQueue(Generic[_T]):
     @overload
     def __init__(self, maxsize: int | None = None, *, items: Iterable[_T]) -> None: ...
 
-    def copy(self) -> Self: ...
-    def empty(self) -> bool: ...
-    def full(self) -> bool: ...
-    def get(self, block: bool = True, timeout: float | None = None) -> _T: ...
-    def get_nowait(self) -> _T: ...
-    def peek(self, block: bool = True, timeout: float | None = None) -> _T: ...
-    def peek_nowait(self) -> _T: ...
-    def put(self, item: _T, block: bool = True, timeout: float | None = None) -> None: ...
-    def put_nowait(self, item: _T) -> None: ...
-    def qsize(self) -> int: ...
-    def __bool__(self) -> bool: ...
-    def __iter__(self) -> Self: ...
-    def __len__(self) -> int: ...
+    def copy(self) -> Self:
+        """SimpleQueue.copy(self)"""
+        ...
+    def empty(self) -> bool:
+        """
+        SimpleQueue.empty(self) -> bool
+
+        Return ``True`` if the queue is empty, ``False`` otherwise.
+        """
+        ...
+    def full(self) -> bool:
+        """
+        SimpleQueue.full(self) -> bool
+
+        Return ``True`` if the queue is full, ``False`` otherwise.
+
+        ``Queue(None)`` is never full.
+        """
+        ...
+    def get(self, block: bool = True, timeout: float | None = None) -> _T:
+        """
+        SimpleQueue.get(self, block=True, timeout=None)
+
+        Remove and return an item from the queue.
+
+        If optional args *block* is true and *timeout* is ``None`` (the default),
+        block if necessary until an item is available. If *timeout* is a positive number,
+        it blocks at most *timeout* seconds and raises the :class:`Empty` exception
+        if no item was available within that time. Otherwise (*block* is false), return
+        an item if one is immediately available, else raise the :class:`Empty` exception
+        (*timeout* is ignored in that case).
+        """
+        ...
+    def get_nowait(self) -> _T:
+        """
+        SimpleQueue.get_nowait(self)
+
+        Remove and return an item from the queue without blocking.
+
+        Only get an item if one is immediately available. Otherwise
+        raise the :class:`Empty` exception.
+        """
+        ...
+    def peek(self, block: bool = True, timeout: float | None = None) -> _T:
+        """
+        SimpleQueue.peek(self, block=True, timeout=None)
+
+        Return an item from the queue without removing it.
+
+        If optional args *block* is true and *timeout* is ``None`` (the default),
+        block if necessary until an item is available. If *timeout* is a positive number,
+        it blocks at most *timeout* seconds and raises the :class:`Empty` exception
+        if no item was available within that time. Otherwise (*block* is false), return
+        an item if one is immediately available, else raise the :class:`Empty` exception
+        (*timeout* is ignored in that case).
+        """
+        ...
+    def peek_nowait(self) -> _T:
+        """
+        SimpleQueue.peek_nowait(self)
+
+        Return an item from the queue without blocking.
+
+        Only return an item if one is immediately available. Otherwise
+        raise the :class:`Empty` exception.
+        """
+        ...
+    def put(self, item: _T, block: bool = True, timeout: float | None = None) -> None:
+        """
+        SimpleQueue.put(self, item, block=True, timeout=None)
+
+        Put an item into the queue.
+
+        If optional arg *block* is true and *timeout* is ``None`` (the default),
+        block if necessary until a free slot is available. If *timeout* is
+        a positive number, it blocks at most *timeout* seconds and raises
+        the :class:`Full` exception if no free slot was available within that time.
+        Otherwise (*block* is false), put an item on the queue if a free slot
+        is immediately available, else raise the :class:`Full` exception (*timeout*
+        is ignored in that case).
+
+        ... versionchanged:: 24.10.1
+           Now raises a ``ValueError`` for a negative *timeout* in the cases
+           that CPython does.
+        """
+        ...
+    def put_nowait(self, item: _T) -> None:
+        """
+        SimpleQueue.put_nowait(self, item)
+
+        Put an item into the queue without blocking.
+
+        Only enqueue the item if a free slot is immediately available.
+        Otherwise raise the :class:`Full` exception.
+        """
+        ...
+    def qsize(self) -> int:
+        """
+        SimpleQueue.qsize(self) -> Py_ssize_t
+
+        Return the size of the queue.
+        """
+        ...
+    def __bool__(self) -> bool:
+        """True if self else False"""
+        ...
+    def __iter__(self) -> Self:
+        """Implement iter(self)."""
+        ...
+    def __len__(self) -> int:
+        """
+        SimpleQueue.__len__(self)
+
+        Return the size of the queue. This is the same as :meth:`qsize`.
+
+        .. versionadded: 1.1b3
+
+            Previously, getting len() of a queue would raise a TypeError.
+        """
+        ...
     def __next__(self) -> _T: ...
     next = __next__
 
@@ -156,11 +269,66 @@ class Queue(SimpleQueue[_T]):
         """
         ...
     @overload
-    def __init__(self, maxsize: int | None = None, *, items: Iterable[_T], unfinished_tasks: int | None = None) -> None: ...
+    def __init__(self, maxsize: int | None = None, *, items: Iterable[_T], unfinished_tasks: int | None = None) -> None:
+        """
+        .. versionchanged:: 1.1a1
+           If *unfinished_tasks* is not given, then all the given *items*
+           (if any) will be considered unfinished.
+        """
+        ...
 
-    def join(self, timeout: float | None = None) -> bool: ...
-    def task_done(self) -> None: ...
-    def shutdown(self, immediate: bool = False) -> None: ...
+    def join(self, timeout: float | None = None) -> bool:
+        """
+        Queue.join(self, timeout=None)
+
+        Block until all items in the queue have been gotten and processed.
+
+        The count of unfinished tasks goes up whenever an item is added to the queue.
+        The count goes down whenever a consumer thread calls :meth:`task_done` to indicate
+        that the item was retrieved and all work on it is complete. When the count of
+        unfinished tasks drops to zero, :meth:`join` unblocks.
+
+        :param float timeout: If not ``None``, then wait no more than this time in seconds
+            for all tasks to finish.
+        :return: ``True`` if all tasks have finished; if ``timeout`` was given and expired before
+            all tasks finished, ``False``.
+
+        .. versionchanged:: 1.1a1
+           Add the *timeout* parameter.
+        """
+        ...
+    def task_done(self) -> None:
+        """
+        Queue.task_done(self)
+
+        Indicate that a formerly enqueued task is complete. Used by queue consumer threads.
+        For each :meth:`get <Queue.get>` used to fetch a task, a subsequent call to
+        :meth:`task_done` tells the queue that the processing on the task is complete.
+
+        If a :meth:`join` is currently blocking, it will resume when all items have been processed
+        (meaning that a :meth:`task_done` call was received for every item that had been
+        :meth:`put <Queue.put>` into the queue).
+
+        Raises a :exc:`ValueError` if called more times than there were items placed in the queue.
+        """
+        ...
+    def shutdown(self, immediate: bool = False) -> None:
+        """
+        Queue.shutdown(self, immediate=False)
+
+        "Shut-down the queue, making queue gets and puts raise
+        `ShutDown`.
+
+        By default, gets will only raise once the queue is empty. Set
+        *immediate* to True to make gets raise immediately instead.
+
+        All blocked callers of `put` and `get` will be unblocked.
+
+        In joinable queues, if *immediate*, a task is marked as done
+        for each item remaining in the queue, which may unblock
+        callers of `join`.
+        """
+        ...
 
 JoinableQueue = Queue
 

@@ -316,14 +316,111 @@ class BZ2File(BaseStream, IO[bytes]):
     @overload
     def __init__(
         self, filename: StrOrBytesPath, mode: _ReadBinaryMode | _WriteBinaryMode = "r", *, compresslevel: int = 9
-    ) -> None: ...
+    ) -> None:
+        """
+        Open a bzip2-compressed file.
 
-    def read(self, size: int | None = -1) -> bytes: ...
-    def read1(self, size: int = -1) -> bytes: ...
-    def readline(self, size: SupportsIndex = -1) -> bytes: ...  # type: ignore[override]
-    def readinto(self, b: WriteableBuffer) -> int: ...
-    def readlines(self, size: SupportsIndex = -1) -> list[bytes]: ...
-    def peek(self, n: int = 0) -> bytes: ...
-    def seek(self, offset: int, whence: int = 0) -> int: ...
-    def write(self, data: ReadableBuffer) -> int: ...
-    def writelines(self, seq: Iterable[ReadableBuffer]) -> None: ...
+        If filename is a str, bytes, or PathLike object, it gives the
+        name of the file to be opened. Otherwise, it should be a file
+        object, which will be used to read or write the compressed data.
+
+        mode can be 'r' for reading (default), 'w' for (over)writing,
+        'x' for creating exclusively, or 'a' for appending. These can
+        equivalently be given as 'rb', 'wb', 'xb', and 'ab'.
+
+        If mode is 'w', 'x' or 'a', compresslevel can be a number between 1
+        and 9 specifying the level of compression: 1 produces the least
+        compression, and 9 (default) produces the most compression.
+
+        If mode is 'r', the input file may be the concatenation of
+        multiple compressed streams.
+        """
+        ...
+
+    def read(self, size: int | None = -1) -> bytes:
+        """
+        Read up to size uncompressed bytes from the file.
+
+        If size is negative or omitted, read until EOF is reached.
+        Returns b'' if the file is already at EOF.
+        """
+        ...
+    def read1(self, size: int = -1) -> bytes:
+        """
+        Read up to size uncompressed bytes, while trying to avoid
+        making multiple reads from the underlying stream. Reads up to a
+        buffer's worth of data if size is negative.
+
+        Returns b'' if the file is at EOF.
+        """
+        ...
+    def readline(self, size: SupportsIndex = -1) -> bytes:
+        """
+        Read a line of uncompressed bytes from the file.
+
+        The terminating newline (if present) is retained. If size is
+        non-negative, no more than size bytes will be read (in which
+        case the line may be incomplete). Returns b'' if already at EOF.
+        """
+        ...
+    def readinto(self, b: WriteableBuffer) -> int:
+        """
+        Read bytes into b.
+
+        Returns the number of bytes read (0 for EOF).
+        """
+        ...
+    def readlines(self, size: SupportsIndex = -1) -> list[bytes]:
+        """
+        Read a list of lines of uncompressed bytes from the file.
+
+        size can be specified to control the number of lines read: no
+        further lines will be read once the total size of the lines read
+        so far equals or exceeds size.
+        """
+        ...
+    def peek(self, n: int = 0) -> bytes:
+        """
+        Return buffered data without advancing the file position.
+
+        Always returns at least one byte of data, unless at EOF.
+        The exact number of bytes returned is unspecified.
+        """
+        ...
+    def seek(self, offset: int, whence: int = 0) -> int:
+        """
+        Change the file position.
+
+        The new position is specified by offset, relative to the
+        position indicated by whence. Values for whence are:
+
+            0: start of stream (default); offset must not be negative
+            1: current stream position
+            2: end of stream; offset must not be positive
+
+        Returns the new file position.
+
+        Note that seeking is emulated, so depending on the parameters,
+        this operation may be extremely slow.
+        """
+        ...
+    def write(self, data: ReadableBuffer) -> int:
+        """
+        Write a byte string to the file.
+
+        Returns the number of uncompressed bytes written, which is
+        always the length of data in bytes. Note that due to buffering,
+        the file on disk may not reflect the data written until close()
+        is called.
+        """
+        ...
+    def writelines(self, seq: Iterable[ReadableBuffer]) -> None:
+        """
+        Write a sequence of byte strings to the file.
+
+        Returns the number of uncompressed bytes written.
+        seq can be any iterable yielding byte strings.
+
+        Line separators are not added between the written byte strings.
+        """
+        ...

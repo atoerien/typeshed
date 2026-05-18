@@ -89,7 +89,9 @@ class Distribution(_Distribution):
         """Resolve pre-setup requirements"""
         ...
     def get_egg_cache_dir(self) -> str: ...
-    def fetch_build_egg(self, req): ...
+    def fetch_build_egg(self, req):
+        """Fetch an egg needed for building"""
+        ...
 
     # NOTE: Commands that setuptools doesn't re-expose are considered deprecated (they must be imported from distutils directly)
     # So we're not listing them here. This list comes directly from the setuptools/command folder. Minus the test command.
@@ -293,7 +295,14 @@ class Distribution(_Distribution):
         ...
     # Not replicating the overloads for "Command | None", user may use "isinstance"
     @overload
-    def get_command_obj(self, command: str, create: Literal[0, False]) -> Command | None: ...
+    def get_command_obj(self, command: str, create: Literal[0, False]) -> Command | None:
+        """
+        Return the command object for 'command'.  Normally this object
+        is cached on a previous call to 'get_command_obj()'; if no command
+        object for 'command' is in the cache, then we either create and
+        return it (if 'create' is true) or return None.
+        """
+        ...
 
     @overload
     def get_command_class(self, command: Literal["alias"]) -> type[alias]:
@@ -380,7 +389,9 @@ class Distribution(_Distribution):
         """Pluggable version of get_command_class()"""
         ...
     @overload
-    def get_command_class(self, command: str) -> type[Command]: ...
+    def get_command_class(self, command: str) -> type[Command]:
+        """Pluggable version of get_command_class()"""
+        ...
 
     @overload  # type: ignore[override]
     def reinitialize_command(self, command: Literal["alias"], reinit_subcommands: bool = False) -> alias:
@@ -693,31 +704,16 @@ class Distribution(_Distribution):
     @overload
     def reinitialize_command(
         self, command: Literal["install_egg_info"], reinit_subcommands: bool = False
-    ) -> install_egg_info: ...
-    @overload
-    def reinitialize_command(self, command: Literal["install_lib"], reinit_subcommands: bool = False) -> install_lib: ...  # type: ignore[overload-overlap]
-    @overload
-    def reinitialize_command(self, command: Literal["install_scripts"], reinit_subcommands: bool = False) -> install_scripts: ...  # type: ignore[overload-overlap]
-    @overload
-    def reinitialize_command(self, command: Literal["rotate"], reinit_subcommands: bool = False) -> rotate: ...
-    @overload
-    def reinitialize_command(self, command: Literal["saveopts"], reinit_subcommands: bool = False) -> saveopts: ...
-    @overload
-    def reinitialize_command(self, command: Literal["sdist"], reinit_subcommands: bool = False) -> sdist: ...  # type: ignore[overload-overlap]
-    @overload
-    def reinitialize_command(self, command: Literal["setopt"], reinit_subcommands: bool = False) -> setopt: ...
-    @overload
-    def reinitialize_command(self, command: str, reinit_subcommands: bool = False) -> Command: ...
-    @overload
-    def reinitialize_command(self, command: _CommandT, reinit_subcommands: bool = False) -> _CommandT: ...
-
-    def include(self, **attrs) -> None: ...
-    def exclude_package(self, package: str) -> None: ...
-    def has_contents_for(self, package: str) -> bool: ...
-    def exclude(self, **attrs) -> None: ...
-    def get_cmdline_options(self) -> dict[str, dict[str, str | None]]: ...
-    def iter_distribution_names(self) -> Iterator[str]: ...
-    def handle_display_options(self, option_order): ...
+    ) -> install_egg_info:
+        """
+        Reinitializes a command to the state it was in when first
+        returned by 'get_command_obj()': ie., initialized but not yet
+        finalized.  This provides the opportunity to sneak option
+        values in programmatically, overriding or supplementing
+        user-supplied values from the config files and command line.
+        You'll have to re-finalize the command object (by calling
+        'finalize_options()' or 'ensure_finalized()') before using it for
+        real.
 
         'command' should be a command name (string) or command object.  If
         'reinit_subcommands' is true, also reinitializes the command's
@@ -905,6 +901,7 @@ class Distribution(_Distribution):
         Returns the reinitialized command object.
         """
         ...
+
     def include(self, **attrs) -> None:
         """
         Add items to distribution that are named in keyword arguments

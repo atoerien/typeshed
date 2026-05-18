@@ -64,7 +64,21 @@ def do_not_convert(func: Callable[_Param, _RetType]) -> Callable[_Param, _RetTyp
     """
     ...
 @overload
-def do_not_convert(func: None = None) -> Callable[[Callable[_Param, _RetType]], Callable[_Param, _RetType]]: ...
+def do_not_convert(func: None = None) -> Callable[[Callable[_Param, _RetType]], Callable[_Param, _RetType]]:
+    """
+    Decorator that suppresses the conversion of a function.
+
+    Args:
+      func: function to decorate.
+
+    Returns:
+      If `func` is not None, returns a `Callable` which is equivalent to
+      `func`, but is not converted by AutoGraph.
+      If `func` is None, returns a decorator that, when invoked with a
+      single `func` argument, returns a `Callable` equivalent to the
+      above case.
+    """
+    ...
 
 def set_loop_options(
     parallel_iterations: Integer = ...,

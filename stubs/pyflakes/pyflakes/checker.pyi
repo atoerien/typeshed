@@ -52,7 +52,18 @@ class _FieldsOrder(dict[type[ast.AST], tuple[str, ...]]):
 
 _OmitType: TypeAlias = str | tuple[str, ...] | None
 
-def iter_child_nodes(node: ast.AST, omit: _OmitType = None, _fields_order: _FieldsOrder = ...) -> Iterator[ast.AST]: ...
+def iter_child_nodes(node: ast.AST, omit: _OmitType = None, _fields_order: _FieldsOrder = ...) -> Iterator[ast.AST]:
+    """
+    Yield all direct child nodes of *node*, that is, all fields that
+    are nodes and all items of fields that are lists of nodes.
+
+    :param node:          AST node to be iterated upon
+    :param omit:          String or tuple of strings denoting the
+                          attributes of the node to be omitted from
+                          further parsing
+    :param _fields_order: Order of AST node fields
+    """
+    ...
 
 @overload
 def convert_to_value(item: ast.Constant) -> Any: ...  # type: ignore[overload-overlap]  # See ast.Constant.value for possible return types
@@ -298,7 +309,16 @@ class Checker:
         withDoctest: bool = False,
         file_tokens: Unused = (),
     ) -> None: ...
-    def deferFunction(self, callable: Callable[..., Any]) -> None: ...
+    def deferFunction(self, callable: Callable[..., Any]) -> None:
+        """
+        Schedule a function handler to be called just before completion.
+
+        This is used for handling function bodies, which must be deferred
+        because code later in the file might modify the global scope. When
+        `callable` is called, the scope at the time this is called will be
+        restored, however it will contain any new bindings added to it.
+        """
+        ...
 
     @property
     def futuresAllowed(self) -> bool: ...

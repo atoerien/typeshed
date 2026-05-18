@@ -45,15 +45,63 @@ class Display:
     display_extension_methods: dict[str, Callable[..., Any]]
     extension_event: rq.DictWrapper
     def __init__(self, display: str | None = None) -> None: ...
-    def get_display_name(self) -> str: ...
-    def fileno(self) -> int: ...
-    def close(self) -> None: ...
-    def set_error_handler(self, handler: ErrorHandler[object] | None) -> None: ...
-    def flush(self) -> None: ...
-    def sync(self) -> None: ...
-    def next_event(self) -> rq.Event: ...
-    def pending_events(self) -> int: ...
-    def has_extension(self, extension: str) -> bool: ...
+    def get_display_name(self) -> str:
+        """
+        Returns the name used to connect to the server, either
+        provided when creating the Display object, or fetched from the
+        environmental variable $DISPLAY.
+        """
+        ...
+    def fileno(self) -> int:
+        """
+        Returns the file descriptor number of the underlying socket.
+        This method is provided to allow Display objects to be passed
+        select.select().
+        """
+        ...
+    def close(self) -> None:
+        """Close the display, freeing the resources that it holds."""
+        ...
+    def set_error_handler(self, handler: ErrorHandler[object] | None) -> None:
+        """
+        Set the default error handler which will be called for all
+        unhandled errors. handler should take two arguments as a normal
+        request error handler, but the second argument (the request) will
+        be None.  See section Error Handling.
+        """
+        ...
+    def flush(self) -> None:
+        """
+        Flush the request queue, building and sending the queued
+        requests. This can be necessary in applications that never wait
+        for events, and in threaded applications.
+        """
+        ...
+    def sync(self) -> None:
+        """
+        Flush the queue and wait until the server has processed all
+        the queued requests. Use this e.g. when it is important that
+        errors caused by a certain request is trapped.
+        """
+        ...
+    def next_event(self) -> rq.Event:
+        """
+        Return the next event. If there are no events queued, it will
+        block until the next event is fetched from the server.
+        """
+        ...
+    def pending_events(self) -> int:
+        """
+        Return the number of events queued, i.e. the number of times
+        that Display.next_event() can be called without blocking.
+        """
+        ...
+    def has_extension(self, extension: str) -> bool:
+        """
+        Check if both the server and the client library support the X
+        extension named extension.
+        """
+        ...
 
     @overload
     def create_resource_object(self, type: Literal["resource"], id: int) -> resource.Resource:
@@ -263,7 +311,28 @@ class Display:
         """
         ...
     @overload
-    def create_resource_object(self, type: str, id: int) -> resource.Resource: ...
+    def create_resource_object(self, type: str, id: int) -> resource.Resource:
+        """
+        Create a resource object of type for the integer id. type
+        should be one of the following strings:
+
+        resource
+        drawable
+        window
+        pixmap
+        fontable
+        font
+        gc
+        colormap
+        cursor
+
+        This function can be used when a resource ID has been fetched
+        e.g. from an resource or a command line argument. Resource
+        objects should never be created by instantiating the appropriate
+        class directly, since any X extensions dynamically added by the
+        library will not be available.
+        """
+        ...
 
     def __getattr__(self, attr: str) -> MethodType: ...
     def screen(self, sno: int | None = None) -> rq.Struct: ...

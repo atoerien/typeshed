@@ -917,8 +917,155 @@ class GeoSeries(GeoPandasBase, pd.Series[BaseGeometry]):  # type: ignore[type-va
         """
         ...
     @doc(_explore_geoseries)  # pyright: ignore[reportUnknownArgumentType]
-    def explore(self, *args, **kwargs): ...  # signature of `_explore_geoseries` copied in `@doc`
-    def explode(self, ignore_index: bool = False, index_parts: bool = False) -> GeoSeries: ...
+    def explore(self, *args, **kwargs):
+        """
+        Explore with an interactive map based on folium/leaflet.js.Interactive map based on GeoPandas and folium/leaflet.js.
+
+        Generate an interactive leaflet map based on :class:`~geopandas.GeoSeries`
+
+        Parameters
+        ----------
+        color : str, array-like (default None)
+            Named color or a list-like of colors (named or hex).
+        m : folium.Map (default None)
+            Existing map instance on which to draw the plot.
+        tiles : str, xyzservices.TileProvider (default 'OpenStreetMap Mapnik')
+            Map tileset to use. Can choose from the list supported by folium, query a
+            :class:`xyzservices.TileProvider` by a name from ``xyzservices.providers``,
+            pass :class:`xyzservices.TileProvider` object or pass custom XYZ URL.
+            The current list of built-in providers (when ``xyzservices`` is not available):
+
+            ``["OpenStreetMap", "CartoDB positron", “CartoDB dark_matter"]``
+
+            You can pass a custom tileset to Folium by passing a Leaflet-style URL
+            to the tiles parameter: ``http://{s}.yourtiles.com/{z}/{x}/{y}.png``.
+            Be sure to check their terms and conditions and to provide attribution with
+            the ``attr`` keyword.
+        attr : str (default None)
+            Map tile attribution; only required if passing custom tile URL.
+        highlight : bool (default True)
+            Enable highlight functionality when hovering over a geometry.
+        width : pixel int or percentage string (default: '100%')
+            Width of the folium :class:`~folium.folium.Map`. If the argument
+            m is given explicitly, width is ignored.
+        height : pixel int or percentage string (default: '100%')
+            Height of the folium :class:`~folium.folium.Map`. If the argument
+            m is given explicitly, height is ignored.
+        control_scale : bool, (default True)
+            Whether to add a control scale on the map.
+        marker_type : str, folium.Circle, folium.CircleMarker, folium.Marker (default None)
+            Allowed string options are ('marker', 'circle', 'circle_marker'). Defaults to
+            folium.Marker.
+        marker_kwds: dict (default {})
+            Additional keywords to be passed to the selected ``marker_type``, e.g.:
+
+            radius : float
+                Radius of the circle, in meters (for ``'circle'``) or pixels
+                (for ``circle_marker``).
+            icon : folium.map.Icon
+                the :class:`folium.map.Icon` object to use to render the marker.
+            draggable : bool (default False)
+                Set to True to be able to drag the marker around the map.
+
+        style_kwds : dict (default {})
+            Additional style to be passed to folium ``style_function``:
+
+            stroke : bool (default True)
+                Whether to draw stroke along the path. Set it to ``False`` to
+                disable borders on polygons or circles.
+            color : str
+                Stroke color
+            weight : int
+                Stroke width in pixels
+            opacity : float (default 1.0)
+                Stroke opacity
+            fill : boolean (default True)
+                Whether to fill the path with color. Set it to ``False`` to
+                disable filling on polygons or circles.
+            fillColor : str
+                Fill color. Defaults to the value of the color option
+            fillOpacity : float (default 0.5)
+                Fill opacity.
+            style_function : callable
+                Function mapping a GeoJson Feature to a style ``dict``.
+
+                * Style properties :func:`folium.vector_layers.path_options`
+                * GeoJson features :class:`GeoSeries.__geo_interface__`
+
+                e.g.::
+
+                    lambda x: {"color":"red" if x["properties"]["gdp_md_est"]<10**6
+                                                 else "blue"}
+
+
+            Plus all supported by :func:`folium.vector_layers.path_options`. See the
+            documentation of :class:`folium.features.GeoJson` for details.
+
+        highlight_kwds : dict (default {})
+            Style to be passed to folium highlight_function. Uses the same keywords
+            as ``style_kwds``. When empty, defaults to ``{"fillOpacity": 0.75}``.
+        map_kwds : dict (default {})
+            Additional keywords to be passed to folium :class:`~folium.folium.Map`,
+            e.g. ``dragging``, or ``scrollWheelZoom``.
+
+        **kwargs : dict
+            Additional options to be passed on to the folium.
+
+        Returns
+        -------
+        m : folium.folium.Map
+            folium :class:`~folium.folium.Map` instance
+        """
+        ...
+    def explode(self, ignore_index: bool = False, index_parts: bool = False) -> GeoSeries:
+        """
+        Explode multi-part geometries into multiple single geometries.
+
+        Single rows can become multiple rows.
+        This is analogous to PostGIS's ST_Dump(). The 'path' index is the
+        second level of the returned MultiIndex
+
+        Parameters
+        ----------
+        ignore_index : bool, default False
+            If True, the resulting index will be labelled 0, 1, …, n - 1,
+            ignoring `index_parts`.
+        index_parts : boolean, default False
+            If True, the resulting index will be a multi-index (original
+            index with an additional level indicating the multiple
+            geometries: a new zero-based index for each single part geometry
+            per multi-part geometry).
+
+        Returns
+        -------
+        A GeoSeries with a MultiIndex. The levels of the MultiIndex are the
+        original index and a zero-based integer index that counts the
+        number of single geometries within a multi-part geometry.
+
+        Examples
+        --------
+        >>> from shapely.geometry import MultiPoint
+        >>> s = geopandas.GeoSeries(
+        ...     [MultiPoint([(0, 0), (1, 1)]), MultiPoint([(2, 2), (3, 3), (4, 4)])]
+        ... )
+        >>> s
+        0           MULTIPOINT ((0 0), (1 1))
+        1    MULTIPOINT ((2 2), (3 3), (4 4))
+        dtype: geometry
+
+        >>> s.explode(index_parts=True)
+        0  0    POINT (0 0)
+           1    POINT (1 1)
+        1  0    POINT (2 2)
+           1    POINT (3 3)
+           2    POINT (4 4)
+        dtype: geometry
+
+        See Also
+        --------
+        GeoDataFrame.explode
+        """
+        ...
 
     @overload
     def set_crs(
@@ -1088,9 +1235,122 @@ class GeoSeries(GeoPandasBase, pd.Series[BaseGeometry]):  # type: ignore[type-va
         """
         ...
     @overload
-    def to_crs(self, crs: _ConvertibleToCRS | None, epsg: int) -> GeoSeries: ...
+    def to_crs(self, crs: _ConvertibleToCRS | None, epsg: int) -> GeoSeries:
+        """
+        Return a ``GeoSeries`` with all geometries transformed to a new
+        coordinate reference system.
 
-    def estimate_utm_crs(self, datum_name: str = "WGS 84") -> CRS: ...
+        Transform all geometries in a GeoSeries to a different coordinate
+        reference system.  The ``crs`` attribute on the current GeoSeries must
+        be set.  Either ``crs`` or ``epsg`` may be specified for output.
+
+        This method will transform all points in all objects.  It has no notion
+        of projecting entire geometries.  All segments joining points are
+        assumed to be lines in the current projection, not geodesics.  Objects
+        crossing the dateline (or other projection boundary) will have
+        undesirable behavior.
+
+        Parameters
+        ----------
+        crs : pyproj.CRS, optional if `epsg` is specified
+            The value can be anything accepted
+            by :meth:`pyproj.CRS.from_user_input() <pyproj.crs.CRS.from_user_input>`,
+            such as an authority string (eg "EPSG:4326") or a WKT string.
+        epsg : int, optional if `crs` is specified
+            EPSG code specifying output projection.
+
+        Returns
+        -------
+        GeoSeries
+
+        Examples
+        --------
+        >>> from shapely.geometry import Point
+        >>> s = geopandas.GeoSeries([Point(1, 1), Point(2, 2), Point(3, 3)], crs=4326)
+        >>> s
+        0    POINT (1 1)
+        1    POINT (2 2)
+        2    POINT (3 3)
+        dtype: geometry
+        >>> s.crs  # doctest: +SKIP
+        <Geographic 2D CRS: EPSG:4326>
+        Name: WGS 84
+        Axis Info [ellipsoidal]:
+        - Lat[north]: Geodetic latitude (degree)
+        - Lon[east]: Geodetic longitude (degree)
+        Area of Use:
+        - name: World
+        - bounds: (-180.0, -90.0, 180.0, 90.0)
+        Datum: World Geodetic System 1984
+        - Ellipsoid: WGS 84
+        - Prime Meridian: Greenwich
+
+        >>> s = s.to_crs(3857)
+        >>> s
+        0    POINT (111319.491 111325.143)
+        1    POINT (222638.982 222684.209)
+        2    POINT (333958.472 334111.171)
+        dtype: geometry
+        >>> s.crs  # doctest: +SKIP
+        <Projected CRS: EPSG:3857>
+        Name: WGS 84 / Pseudo-Mercator
+        Axis Info [cartesian]:
+        - X[east]: Easting (metre)
+        - Y[north]: Northing (metre)
+        Area of Use:
+        - name: World - 85°S to 85°N
+        - bounds: (-180.0, -85.06, 180.0, 85.06)
+        Coordinate Operation:
+        - name: Popular Visualisation Pseudo-Mercator
+        - method: Popular Visualisation Pseudo Mercator
+        Datum: World Geodetic System 1984
+        - Ellipsoid: WGS 84
+        - Prime Meridian: Greenwich
+
+        See Also
+        --------
+        GeoSeries.set_crs : assign CRS
+        """
+        ...
+
+    def estimate_utm_crs(self, datum_name: str = "WGS 84") -> CRS:
+        """
+        Return the estimated UTM CRS based on the bounds of the dataset.
+
+        .. versionadded:: 0.9
+
+        Parameters
+        ----------
+        datum_name : str, optional
+            The name of the datum to use in the query. Default is WGS 84.
+
+        Returns
+        -------
+        pyproj.CRS
+
+        Examples
+        --------
+        >>> import geodatasets
+        >>> df = geopandas.read_file(
+        ...     geodatasets.get_path("geoda.chicago_health")
+        ... )
+        >>> df.geometry.estimate_utm_crs()  # doctest: +SKIP
+        <Derived Projected CRS: EPSG:32616>
+        Name: WGS 84 / UTM zone 16N
+        Axis Info [cartesian]:
+        - E[east]: Easting (metre)
+        - N[north]: Northing (metre)
+        Area of Use:
+        - name: Between 90°W and 84°W, northern hemisphere between equator and 84°N, ...
+        - bounds: (-90.0, 0.0, -84.0, 84.0)
+        Coordinate Operation:
+        - name: UTM zone 16N
+        - method: Transverse Mercator
+        Datum: World Geodetic System 1984 ensemble
+        - Ellipsoid: WGS 84
+        - Prime Meridian: Greenwich
+        """
+        ...
     def to_json(  # type: ignore[override]
         self,
         show_bbox: bool = True,
@@ -1108,7 +1368,49 @@ class GeoSeries(GeoPandasBase, pd.Series[BaseGeometry]):  # type: ignore[type-va
         default: Callable[..., Any] | None = None,  # as typed in the json stdlib module
         sort_keys: bool = False,
         **kwds,
-    ) -> str: ...
+    ) -> str:
+        """
+        Return a GeoJSON string representation of the GeoSeries.
+
+        Parameters
+        ----------
+        show_bbox : bool, optional, default: True
+            Include bbox (bounds) in the geojson
+        drop_id : bool, default: False
+            Whether to retain the index of the GeoSeries as the id property
+            in the generated GeoJSON. Default is False, but may want True
+            if the index is just arbitrary row numbers.
+        to_wgs84: bool, optional, default: False
+            If the CRS is set on the active geometry column it is exported as
+            WGS84 (EPSG:4326) to meet the `2016 GeoJSON specification
+            <https://tools.ietf.org/html/rfc7946>`_.
+            Set to True to force re-projection and set to False to ignore CRS. False by
+            default.
+
+        *kwargs* that will be passed to json.dumps().
+
+        Returns
+        -------
+        JSON string
+
+        Examples
+        --------
+        >>> from shapely.geometry import Point
+        >>> s = geopandas.GeoSeries([Point(1, 1), Point(2, 2), Point(3, 3)])
+        >>> s
+        0    POINT (1 1)
+        1    POINT (2 2)
+        2    POINT (3 3)
+        dtype: geometry
+
+        >>> s.to_json()
+        '{"type": "FeatureCollection", "features": [{"id": "0", "type": "Feature", "properties": {}, "geometry": {"type": "Point", "coordinates": [1.0, 1.0]}, "bbox": [1.0, 1.0, 1.0, 1.0]}, {"id": "1", "type": "Feature", "properties": {}, "geometry": {"type": "Point", "coordinates": [2.0, 2.0]}, "bbox": [2.0, 2.0, 2.0, 2.0]}, {"id": "2", "type": "Feature", "properties": {}, "geometry": {"type": "Point", "coordinates": [3.0, 3.0]}, "bbox": [3.0, 3.0, 3.0, 3.0]}], "bbox": [1.0, 1.0, 3.0, 3.0]}'
+
+        See Also
+        --------
+        GeoSeries.to_file : write GeoSeries to file
+        """
+        ...
 
     @overload
     def to_wkb(self, hex: Literal[False] = False, **kwargs) -> pd.Series[bytes]:
@@ -1159,9 +1461,65 @@ class GeoSeries(GeoPandasBase, pd.Series[BaseGeometry]):  # type: ignore[type-va
         """
         ...
     @overload
-    def to_wkb(self, hex: bool = False, **kwargs) -> pd.Series[str] | pd.Series[bytes]: ...
+    def to_wkb(self, hex: bool = False, **kwargs) -> pd.Series[str] | pd.Series[bytes]:
+        """
+        Convert GeoSeries geometries to WKB.
 
-    def to_wkt(self, **kwargs) -> pd.Series[str]: ...
+        Parameters
+        ----------
+        hex : bool
+            If true, export the WKB as a hexadecimal string.
+            The default is to return a binary bytes object.
+        kwargs
+            Additional keyword args will be passed to
+            :func:`shapely.to_wkb`.
+
+        Returns
+        -------
+        Series
+            WKB representations of the geometries
+
+        See Also
+        --------
+        GeoSeries.to_wkt
+        """
+        ...
+
+    def to_wkt(self, **kwargs) -> pd.Series[str]:
+        """
+        Convert GeoSeries geometries to WKT.
+
+        Parameters
+        ----------
+        kwargs
+            Keyword args will be passed to :func:`shapely.to_wkt`.
+
+        Returns
+        -------
+        Series
+            WKT representations of the geometries
+
+        Examples
+        --------
+        >>> from shapely.geometry import Point
+        >>> s = geopandas.GeoSeries([Point(1, 1), Point(2, 2), Point(3, 3)])
+        >>> s
+        0    POINT (1 1)
+        1    POINT (2 2)
+        2    POINT (3 3)
+        dtype: geometry
+
+        >>> s.to_wkt()
+        0    POINT (1 1)
+        1    POINT (2 2)
+        2    POINT (3 3)
+        dtype: object
+
+        See Also
+        --------
+        GeoSeries.to_wkb
+        """
+        ...
     def to_arrow(
         self,
         geometry_encoding: Literal["WKB", "geoarrow", "wkb", "GeoArrow"] = "WKB",

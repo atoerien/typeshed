@@ -185,7 +185,12 @@ class Connection:
         """
         ...
     @stream.setter
-    def stream(self, value) -> None: ...
+    def stream(self, value) -> None:
+        """
+        Used by the LDIFProducer strategy to accumulate the ldif-change operations with a single LDIF header
+        :return: reference to the response stream if defined in the strategy.
+        """
+        ...
 
     @property
     def usage(self):

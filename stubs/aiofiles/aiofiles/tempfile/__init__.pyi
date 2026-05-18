@@ -151,7 +151,9 @@ if sys.version_info >= (3, 12):
         delete_on_close: bool = True,
         loop: AbstractEventLoop | None = None,
         executor: Executor | None = None,
-    ) -> AiofilesContextManager[AsyncBufferedIOBase]: ...
+    ) -> AiofilesContextManager[AsyncBufferedIOBase]:
+        """Async open a named temporary file"""
+        ...
 else:
     # Text mode: always returns AsyncTextIOWrapper
     @overload
@@ -333,7 +335,9 @@ def SpooledTemporaryFile(
     dir: StrOrBytesPath | None = None,
     loop: AbstractEventLoop | None = None,
     executor: Executor | None = None,
-) -> AiofilesContextManager[AsyncBufferedIOBase]: ...
+) -> AiofilesContextManager[AsyncBufferedIOBase]:
+    """Async open a spooled temporary file"""
+    ...
 
 @overload
 def TemporaryDirectory(

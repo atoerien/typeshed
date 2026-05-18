@@ -243,7 +243,49 @@ class TarFile:
         pax_headers: Mapping[str, str] | None = ...,
         debug: Literal[0, 1, 2, 3] | None = None,  # default 0
         errorlevel: Literal[0, 1, 2] | None = None,  # default 1
-    ) -> Self: ...
+    ) -> Self:
+        """
+        Open a tar archive for reading, writing or appending. Return
+        an appropriate TarFile class.
+
+        mode:
+        'r' or 'r:*' open for reading with transparent compression
+        'r:'         open for reading exclusively uncompressed
+        'r:gz'       open for reading with gzip compression
+        'r:bz2'      open for reading with bzip2 compression
+        'r:xz'       open for reading with lzma compression
+        'r:zst'      open for reading with zstd compression
+        'a' or 'a:'  open for appending, creating the file if necessary
+        'w' or 'w:'  open for writing without compression
+        'w:gz'       open for writing with gzip compression
+        'w:bz2'      open for writing with bzip2 compression
+        'w:xz'       open for writing with lzma compression
+        'w:zst'      open for writing with zstd compression
+
+        'x' or 'x:'  create a tarfile exclusively without compression, raise
+                     an exception if the file is already created
+        'x:gz'       create a gzip compressed tarfile, raise an exception
+                     if the file is already created
+        'x:bz2'      create a bzip2 compressed tarfile, raise an exception
+                     if the file is already created
+        'x:xz'       create an lzma compressed tarfile, raise an exception
+                     if the file is already created
+        'x:zst'      create a zstd compressed tarfile, raise an exception
+                     if the file is already created
+
+        'r|*'        open a stream of tar blocks with transparent compression
+        'r|'         open an uncompressed stream of tar blocks for reading
+        'r|gz'       open a gzip compressed stream of tar blocks
+        'r|bz2'      open a bzip2 compressed stream of tar blocks
+        'r|xz'       open an lzma compressed stream of tar blocks
+        'r|zst'      open a zstd compressed stream of tar blocks
+        'w|'         open an uncompressed stream for writing
+        'w|gz'       open a gzip compressed stream for writing
+        'w|bz2'      open a bzip2 compressed stream for writing
+        'w|xz'       open an lzma compressed stream for writing
+        'w|zst'      open a zstd compressed stream for writing
+        """
+        ...
 
     if sys.version_info >= (3, 14):
         @overload
@@ -1134,7 +1176,49 @@ class TarFile:
         debug: Literal[0, 1, 2, 3] | None = None,  # default 0
         errorlevel: Literal[0, 1, 2] | None = None,  # default 1
         compresslevel: int = 9,
-    ) -> Self: ...
+    ) -> Self:
+        """
+        Open a tar archive for reading, writing or appending. Return
+        an appropriate TarFile class.
+
+        mode:
+        'r' or 'r:*' open for reading with transparent compression
+        'r:'         open for reading exclusively uncompressed
+        'r:gz'       open for reading with gzip compression
+        'r:bz2'      open for reading with bzip2 compression
+        'r:xz'       open for reading with lzma compression
+        'r:zst'      open for reading with zstd compression
+        'a' or 'a:'  open for appending, creating the file if necessary
+        'w' or 'w:'  open for writing without compression
+        'w:gz'       open for writing with gzip compression
+        'w:bz2'      open for writing with bzip2 compression
+        'w:xz'       open for writing with lzma compression
+        'w:zst'      open for writing with zstd compression
+
+        'x' or 'x:'  create a tarfile exclusively without compression, raise
+                     an exception if the file is already created
+        'x:gz'       create a gzip compressed tarfile, raise an exception
+                     if the file is already created
+        'x:bz2'      create a bzip2 compressed tarfile, raise an exception
+                     if the file is already created
+        'x:xz'       create an lzma compressed tarfile, raise an exception
+                     if the file is already created
+        'x:zst'      create a zstd compressed tarfile, raise an exception
+                     if the file is already created
+
+        'r|*'        open a stream of tar blocks with transparent compression
+        'r|'         open an uncompressed stream of tar blocks for reading
+        'r|gz'       open a gzip compressed stream of tar blocks
+        'r|bz2'      open a bzip2 compressed stream of tar blocks
+        'r|xz'       open an lzma compressed stream of tar blocks
+        'r|zst'      open a zstd compressed stream of tar blocks
+        'w|'         open an uncompressed stream for writing
+        'w|gz'       open a gzip compressed stream for writing
+        'w|bz2'      open a bzip2 compressed stream for writing
+        'w|xz'       open an lzma compressed stream for writing
+        'w|zst'      open a zstd compressed stream for writing
+        """
+        ...
 
     @classmethod
     def taropen(
@@ -1152,7 +1236,12 @@ class TarFile:
         pax_headers: Mapping[str, str] | None = ...,
         debug: Literal[0, 1, 2, 3] | None = None,  # default 0
         errorlevel: Literal[0, 1, 2] | None = None,  # default 1
-    ) -> Self: ...
+    ) -> Self:
+        """
+        Open uncompressed tar archive name for reading or writing.
+        
+        """
+        ...
 
     @overload
     @classmethod
@@ -1194,7 +1283,12 @@ class TarFile:
         pax_headers: Mapping[str, str] | None = ...,
         debug: Literal[0, 1, 2, 3] | None = None,  # default 0
         errorlevel: Literal[0, 1, 2] | None = None,  # default 1
-    ) -> Self: ...
+    ) -> Self:
+        """
+        Open gzip compressed tar archive name for reading or writing.
+        Appending is not allowed.
+        """
+        ...
 
     @overload
     @classmethod
@@ -1236,7 +1330,12 @@ class TarFile:
         pax_headers: Mapping[str, str] | None = ...,
         debug: Literal[0, 1, 2, 3] | None = None,  # default 0
         errorlevel: Literal[0, 1, 2] | None = None,  # default 1
-    ) -> Self: ...
+    ) -> Self:
+        """
+        Open bzip2 compressed tar archive name for reading or writing.
+        Appending is not allowed.
+        """
+        ...
 
     @classmethod
     def xzopen(
@@ -1637,7 +1736,12 @@ class TarInfo:
     uname: str
     gname: str
     pax_headers: Mapping[str, str]
-    def __init__(self, name: str = "") -> None: ...
+    def __init__(self, name: str = "") -> None:
+        """
+        Construct a TarInfo object. name is the optional name
+        of the member.
+        """
+        ...
 
     @property
     @deprecated("Deprecated since Python 3.13; will be removed in Python 3.16.")
@@ -1654,14 +1758,21 @@ class TarInfo:
         """
         ...
     @classmethod
-    def fromtarfile(cls, tarfile: TarFile) -> Self: ...
+    def fromtarfile(cls, tarfile: TarFile) -> Self:
+        """
+        Return the next TarInfo object from TarFile object
+        tarfile.
+        """
+        ...
 
     @property
     def linkpath(self) -> str:
         """In pax headers, "linkname" is called "linkpath"."""
         ...
     @linkpath.setter
-    def linkpath(self, linkname: str) -> None: ...
+    def linkpath(self, linkname: str) -> None:
+        """In pax headers, "linkname" is called "linkpath"."""
+        ...
 
     def replace(
         self,

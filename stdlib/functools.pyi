@@ -48,7 +48,18 @@ _RWrapper = TypeVar("_RWrapper")
 
 if sys.version_info >= (3, 14):
     @overload
-    def reduce(function: Callable[[_T, _S], _T], iterable: Iterable[_S], /, initial: _T) -> _T: ...
+    def reduce(function: Callable[[_T, _S], _T], iterable: Iterable[_S], /, initial: _T) -> _T:
+        """
+        Apply a function of two arguments cumulatively to the items of an iterable, from left to right.
+
+        This effectively reduces the iterable to a single value.  If initial is present,
+        it is placed before the items of the iterable in the calculation, and serves as
+        a default when the iterable is empty.
+
+        For example, reduce(lambda x, y: x+y, [1, 2, 3, 4, 5])
+        calculates ((((1 + 2) + 3) + 4) + 5).
+        """
+        ...
 else:
     @overload
     def reduce(function: Callable[[_T, _S], _T], iterable: Iterable[_S], initial: _T, /) -> _T:
@@ -313,8 +324,25 @@ else:
         """
         Decorator factory to apply update_wrapper() to a wrapper function
 
-def total_ordering(cls: type[_T]) -> type[_T]: ...
-def cmp_to_key(mycmp: Callable[[_T, _T], int]) -> Callable[[_T], SupportsAllComparisons]: ...
+        Returns a decorator that invokes update_wrapper() with the decorated
+        function as the wrapper argument and the arguments to wraps() as the
+        remaining arguments. Default arguments are as for update_wrapper().
+        This is a convenience function to simplify applying partial() to
+        update_wrapper().
+        """
+        ...
+
+def total_ordering(cls: type[_T]) -> type[_T]:
+    """Class decorator that fills in missing ordering methods"""
+    ...
+def cmp_to_key(mycmp: Callable[[_T, _T], int]) -> Callable[[_T], SupportsAllComparisons]:
+    """
+    Convert a cmp= function into a key= function.
+
+    mycmp
+      Function that compares two objects.
+    """
+    ...
 
 @disjoint_base
 class partial(Generic[_T]):
@@ -444,7 +472,13 @@ class singledispatchmethod(Generic[_T]):
         """
         ...
     @overload
-    def register(self, cls: _RegType, method: Callable[..., _T]) -> Callable[..., _T]: ...
+    def register(self, cls: _RegType, method: Callable[..., _T]) -> Callable[..., _T]:
+        """
+        generic_method.register(cls, func) -> func
+
+        Registers a new implementation for the given *cls* on a *generic_method*.
+        """
+        ...
 
     def __get__(self, obj: _S, cls: type[_S] | None = None) -> Callable[..., _T]: ...
 

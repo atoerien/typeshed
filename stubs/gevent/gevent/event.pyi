@@ -76,11 +76,41 @@ class Event(AbstractLinkable):
     """
     __slots__ = ("_flag",)
     def __init__(self) -> None: ...
-    def is_set(self) -> bool: ...
-    def isSet(self) -> bool: ...
-    def ready(self) -> bool: ...
-    def set(self) -> None: ...
-    def clear(self) -> None: ...
+    def is_set(self) -> bool:
+        """
+        Event.is_set(self)
+
+        Return true if and only if the internal flag is true.
+        """
+        ...
+    def isSet(self) -> bool:
+        """Event.isSet(self)"""
+        ...
+    def ready(self) -> bool:
+        """Event.ready(self) -> bool"""
+        ...
+    def set(self) -> None:
+        """
+        Event.set(self)
+
+        Set the internal flag to true.
+
+        All greenlets waiting for it to become true are awakened in
+        some order at some time in the future. Greenlets that call
+        :meth:`wait` once the flag is true will not block at all
+        (until :meth:`clear` is called).
+        """
+        ...
+    def clear(self) -> None:
+        """
+        Event.clear(self)
+
+        Reset the internal flag to false.
+
+        Subsequently, threads calling :meth:`wait` will block until
+        :meth:`set` is called to set the internal flag to true again.
+        """
+        ...
 
     @overload
     def wait(self, timeout: None = None) -> Literal[True]:
@@ -231,10 +261,36 @@ class AsyncResult(AbstractLinkable, Generic[_T]):
         """The three-tuple of exception information if :meth:`set_exception` was called."""
         ...
     @property
-    def exception(self) -> BaseException | None: ...
-    def ready(self) -> bool: ...
-    def successful(self) -> bool: ...
-    def set(self, value: _T | None = None) -> None: ...
+    def exception(self) -> BaseException | None:
+        """
+        Holds the exception instance passed to :meth:`set_exception` if :meth:`set_exception` was called.
+        Otherwise ``None``.
+        """
+        ...
+    def ready(self) -> bool:
+        """
+        AsyncResult.ready(self) -> bool
+
+        Return true if and only if it holds a value or an exception
+        """
+        ...
+    def successful(self) -> bool:
+        """
+        AsyncResult.successful(self) -> bool
+
+        Return true if and only if it is ready and holds a value
+        """
+        ...
+    def set(self, value: _T | None = None) -> None:
+        """
+        AsyncResult.set(self, value=None)
+
+        Store the value and wake up any waiters.
+
+        All greenlets blocking on :meth:`get` or :meth:`wait` are awakened.
+        Subsequent calls to :meth:`wait` and :meth:`get` will not block at all.
+        """
+        ...
 
     @overload
     def set_exception(self, exception: BaseException, exc_info: None = None) -> None:
@@ -252,7 +308,20 @@ class AsyncResult(AbstractLinkable, Generic[_T]):
         """
         ...
     @overload
-    def set_exception(self, exception: BaseException | None, exc_info: _OptExcInfo) -> None: ...
+    def set_exception(self, exception: BaseException | None, exc_info: _OptExcInfo) -> None:
+        """
+        AsyncResult.set_exception(self, exception, exc_info=None)
+
+        Store the exception and wake up any waiters.
+
+        All greenlets blocking on :meth:`get` or :meth:`wait` are awakened.
+        Subsequent calls to :meth:`wait` and :meth:`get` will not block at all.
+
+        :keyword tuple exc_info: If given, a standard three-tuple of type, value, :class:`traceback`
+            as returned by :func:`sys.exc_info`. This will be used when the exception
+            is re-raised to propagate the correct traceback.
+        """
+        ...
 
     # technically get/get_nowait/result should just return _T, but the API is designed in
     # such a way that it is perfectly legal for a ValueSource to have neither its value nor

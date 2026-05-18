@@ -118,7 +118,14 @@ class CacheControl(Generic[_ScopeT]):
     @classmethod
     def parse(
         cls, header: str, updates_to: Callable[[dict[str, Any]], Any] | None = None, *, type: _ScopeT2
-    ) -> CacheControl[_ScopeT2]: ...
+    ) -> CacheControl[_ScopeT2]:
+        """
+        Parse the header, returning a CacheControl object.
+
+        The object is bound to the request or response object
+        ``updates_to``, if that is given.
+        """
+        ...
 
     max_stale: value_property[int, None, Literal["*"], Literal["request"]]
     min_fresh: value_property[int, None, None, Literal["request"]]

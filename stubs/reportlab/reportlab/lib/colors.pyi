@@ -208,11 +208,60 @@ class PCMYKColorSep(PCMYKColor, CMYKColorSep):
         alpha: float = 100,
     ) -> None: ...
 
-def cmyk2rgb(cmyk: tuple[float, float, float, float], density: float = 1) -> tuple[float, float, float]: ...
-def rgb2cmyk(r: float, g: float, b: float) -> tuple[float, float, float, float]: ...
-def color2bw(colorRGB: Color) -> Color: ...
-def HexColor(val: str | int, htmlOnly: bool = False, hasAlpha: bool = False) -> Color: ...
-def linearlyInterpolatedColor(c0: _ColorT, c1: _ColorT, x0: float, x1: float, x: float) -> _ColorT: ...
+def cmyk2rgb(cmyk: tuple[float, float, float, float], density: float = 1) -> tuple[float, float, float]:
+    """Convert from a CMYK color tuple to an RGB color tuple"""
+    ...
+def rgb2cmyk(r: float, g: float, b: float) -> tuple[float, float, float, float]:
+    """one way to get cmyk from rgb"""
+    ...
+def color2bw(colorRGB: Color) -> Color:
+    """Transform an RGB color to a black and white equivalent."""
+    ...
+def HexColor(val: str | int, htmlOnly: bool = False, hasAlpha: bool = False) -> Color:
+    """
+    This function converts a hex string, or an actual integer number,
+    into the corresponding color.  E.g., in "#AABBCC" or 0xAABBCC,
+    AA is the red, BB is the green, and CC is the blue (00-FF).
+
+    An alpha value can also be given in the form #AABBCCDD or 0xAABBCCDD where
+    DD is the alpha value if hasAlpha is True.
+
+    For completeness I assume that #aabbcc or 0xaabbcc are hex numbers
+    otherwise a pure integer is converted as decimal rgb.  If htmlOnly is true,
+    only the #aabbcc form is allowed.
+
+    >>> HexColor('#ffffff')
+    Color(1,1,1,1)
+    >>> HexColor('#FFFFFF')
+    Color(1,1,1,1)
+    >>> HexColor('0xffffff')
+    Color(1,1,1,1)
+    >>> HexColor('16777215')
+    Color(1,1,1,1)
+
+    An '0x' or '#' prefix is required for hex (as opposed to decimal):
+
+    >>> HexColor('ffffff')
+    Traceback (most recent call last):
+    ValueError: invalid literal for int() with base 10: 'ffffff'
+
+    >>> HexColor('#FFFFFF', htmlOnly=True)
+    Color(1,1,1,1)
+    >>> HexColor('0xffffff', htmlOnly=True)
+    Traceback (most recent call last):
+    ValueError: not a hex string
+    >>> HexColor('16777215', htmlOnly=True)
+    Traceback (most recent call last):
+    ValueError: not a hex string
+    """
+    ...
+def linearlyInterpolatedColor(c0: _ColorT, c1: _ColorT, x0: float, x1: float, x: float) -> _ColorT:
+    """
+    Linearly interpolates colors. Can handle RGB, CMYK and PCMYK
+    colors - give ValueError if colours aren't the same.
+    Doesn't currently handle 'Spot Color Interpolation'.
+    """
+    ...
 
 @overload
 def obj_R_G_B(
@@ -421,7 +470,14 @@ def describe(aColor: Color, mode: Literal[1]) -> str:
     """
     ...
 @overload
-def describe(aColor: Color, mode: Literal[2]) -> tuple[str, float]: ...
+def describe(aColor: Color, mode: Literal[2]) -> tuple[str, float]:
+    """
+    finds nearest colour match to aColor.
+    mode=0 print a string desription
+    mode=1 return a string description
+    mode=2 return (distance, colorName)
+    """
+    ...
 
 def hue2rgb(m1: float, m2: float, h: float) -> float: ...
 def hsl2rgb(h: float, s: float, l: float) -> tuple[float, float, float]: ...
@@ -453,7 +509,9 @@ def toColorOrNone(arg: None, default: Color | None) -> None:
     """as above but allows None as a legal value"""
     ...
 @overload
-def toColorOrNone(arg: _ConvertibleToColor, default: Color | None = None) -> Color: ...
+def toColorOrNone(arg: _ConvertibleToColor, default: Color | None = None) -> Color:
+    """as above but allows None as a legal value"""
+    ...
 
 def setColors(**kw: _ConvertibleToColor) -> None: ...
 def Whiter(c: _ColorT, f: float) -> _ColorT:

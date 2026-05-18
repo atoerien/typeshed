@@ -130,7 +130,9 @@ class PatchSet(list[PatchedFile]):
     @classmethod
     def from_filename(
         cls, filename: StrPath, encoding: str = "UTF-8", errors: str | None = None, newline: str | None = None
-    ) -> Self: ...
+    ) -> Self:
+        """Return a PatchSet instance given a diff filename."""
+        ...
 
     @classmethod
     @overload
@@ -139,7 +141,9 @@ class PatchSet(list[PatchedFile]):
         ...
     @classmethod
     @overload
-    def from_string(cls, data: bytes, encoding: str | None = None, errors: str | None = "strict") -> Self: ...
+    def from_string(cls, data: bytes, encoding: str | None = None, errors: str | None = "strict") -> Self:
+        """Return a PatchSet instance given a diff string."""
+        ...
 
     @property
     def added_files(self) -> list[PatchedFile]:

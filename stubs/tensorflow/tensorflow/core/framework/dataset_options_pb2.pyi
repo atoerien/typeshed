@@ -171,7 +171,9 @@ class AutotuneOptions(google.protobuf.message.Message):
             "ram_budget",
             b"ram_budget",
         ],
-    ) -> None: ...
+    ) -> None:
+        """Clears a message field."""
+        ...
 
     @typing.overload
     def WhichOneof(
@@ -450,7 +452,9 @@ class OptimizationOptions(google.protobuf.message.Message):
             "shuffle_and_repeat_fusion",
             b"shuffle_and_repeat_fusion",
         ],
-    ) -> None: ...
+    ) -> None:
+        """Clears a message field."""
+        ...
 
     @typing.overload
     def WhichOneof(
@@ -592,7 +596,9 @@ class ThreadingOptions(google.protobuf.message.Message):
             "private_threadpool_size",
             b"private_threadpool_size",
         ],
-    ) -> None: ...
+    ) -> None:
+        """Clears a message field."""
+        ...
 
     @typing.overload
     def WhichOneof(
@@ -758,7 +764,9 @@ class Options(google.protobuf.message.Message):
             "warm_start",
             b"warm_start",
         ],
-    ) -> None: ...
+    ) -> None:
+        """Clears a message field."""
+        ...
 
     @typing.overload
     def WhichOneof(

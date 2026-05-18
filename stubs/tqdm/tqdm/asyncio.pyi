@@ -94,7 +94,9 @@ class tqdm_asyncio(std_tqdm[_T]):
         nrows: int | None = ...,
         colour: str | None = ...,
         delay: float | None = ...,
-    ) -> list[_T]: ...
+    ) -> list[_T]:
+        """Wrapper for `asyncio.gather`."""
+        ...
 
     @overload
     def __init__(

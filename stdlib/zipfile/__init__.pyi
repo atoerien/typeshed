@@ -107,10 +107,25 @@ class ZipExtFile(io.BufferedIOBase):
         close_fileobj: Literal[False] = False,
     ) -> None: ...
 
-    def read(self, n: int | None = -1) -> bytes: ...
-    def readline(self, limit: int = -1) -> bytes: ...  # type: ignore[override]
-    def peek(self, n: int = 1) -> bytes: ...
-    def read1(self, n: int | None) -> bytes: ...  # type: ignore[override]
+    def read(self, n: int | None = -1) -> bytes:
+        """
+        Read and return up to n bytes.
+        If the argument is omitted, None, or negative, data is read and returned until EOF is reached.
+        """
+        ...
+    def readline(self, limit: int = -1) -> bytes:
+        """
+        Read and return a line from the stream.
+
+        If limit is specified, at most limit bytes will be read.
+        """
+        ...
+    def peek(self, n: int = 1) -> bytes:
+        """Returns buffered bytes without advancing the position."""
+        ...
+    def read1(self, n: int | None) -> bytes:
+        """Read up to n bytes with at most one read() system call."""
+        ...
     def seek(self, offset: int, whence: int = 0) -> int: ...
 
 @type_check_only
@@ -537,7 +552,16 @@ if sys.version_info >= (3, 12):
 
 else:
     class CompleteDirs(ZipFile):
-        def resolve_dir(self, name: str) -> str: ...
+        """
+        A ZipFile subclass that ensures that implied directories
+        are always included in the namelist.
+        """
+        def resolve_dir(self, name: str) -> str:
+            """
+            If the name represents a directory, return that name
+            as a directory (with the trailing slash).
+            """
+            ...
 
         @overload
         @classmethod
@@ -679,7 +703,13 @@ else:
             """
             ...
         @overload
-        def open(self, mode: Literal["rb", "wb"], *, pwd: bytes | None = None) -> IO[bytes]: ...
+        def open(self, mode: Literal["rb", "wb"], *, pwd: bytes | None = None) -> IO[bytes]:
+            """
+            Open this entry as text or binary following the semantics
+            of ``pathlib.Path.open()`` by passing arguments through
+            to io.TextIOWrapper().
+            """
+            ...
 
         def iterdir(self) -> Iterator[Self]: ...
         def is_dir(self) -> bool: ...

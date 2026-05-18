@@ -92,8 +92,20 @@ class Waiter(Generic[_T]):
         """
         ...
     @property
-    def exc_info(self) -> _ThrowArgs | None: ...
-    def switch(self, value: _T) -> None: ...
+    def exc_info(self) -> _ThrowArgs | None:
+        """Holds the exception info passed to :meth:`throw` if :meth:`throw` was called. Otherwise ``None``."""
+        ...
+    def switch(self, value: _T) -> None:
+        """
+        Waiter.switch(self, value)
+
+        Switch to the greenlet if one's available. Otherwise store the
+        *value*.
+
+        .. versionchanged:: 1.3b1
+           The *value* is no longer optional.
+        """
+        ...
 
     @overload
     def throw(self, typ: type[BaseException], val: BaseException | object = None, tb: TracebackType | None = None, /) -> None:
@@ -104,10 +116,24 @@ class Waiter(Generic[_T]):
         """
         ...
     @overload
-    def throw(self, typ: BaseException = ..., val: None = None, tb: TracebackType | None = None, /) -> None: ...
+    def throw(self, typ: BaseException = ..., val: None = None, tb: TracebackType | None = None, /) -> None:
+        """
+        Waiter.throw(self, *throw_args)
 
-    def get(self) -> _T: ...
-    def __call__(self, source: _ValueSource[_T]) -> None: ...
+        Switch to the greenlet with the exception. If there's no greenlet, store the exception.
+        """
+        ...
+
+    def get(self) -> _T:
+        """
+        Waiter.get(self)
+
+        If a value/an exception is stored, return/raise it. Otherwise until switch() or throw() is called.
+        """
+        ...
+    def __call__(self, source: _ValueSource[_T]) -> None:
+        """Call self as a function."""
+        ...
 
 @final
 class MultipleWaiter(Waiter[_T]):

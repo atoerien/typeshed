@@ -150,7 +150,18 @@ class relativedelta:
     @weeks.setter
     def weeks(self, value: int) -> None: ...
 
-    def normalized(self) -> Self: ...
+    def normalized(self) -> Self:
+        """
+        Return a version of this object represented entirely using integer
+        values for the relative attributes.
+
+        >>> relativedelta(days=1.5, hours=2).normalized()
+        relativedelta(days=+1, hours=+14)
+
+        :return:
+            Returns a :class:`dateutil.relativedelta.relativedelta` object.
+        """
+        ...
 
     @overload
     def __add__(self, other: timedelta | relativedelta) -> Self: ...

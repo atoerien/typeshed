@@ -24,16 +24,12 @@ HTML_PLACEHOLDER_RE: Final[Pattern[str]]
 TAG_PLACEHOLDER: Final[str]
 RTL_BIDI_RANGES: Final[tuple[tuple[str, str], tuple[str, str]]]
 
-def get_installed_extensions() -> metadata.EntryPoints: ...
-def deprecated(message: str, stacklevel: int = 2): ...
-
-@overload
-def parseBoolValue(value: str) -> bool: ...
-@overload
-def parseBoolValue(value: str | None, fail_on_errors: bool = True, preserve_none: bool = False) -> bool | None: ...
-
-def code_escape(text: str) -> str: ...
-def nearing_recursion_limit() -> bool: ...
+def get_installed_extensions() -> metadata.EntryPoints:
+    """Return all entry_points in the `markdown.extensions` group. """
+    ...
+def deprecated(message: str, stacklevel: int = 2):
+    """
+    Raise a [`DeprecationWarning`][] when wrapped function/method is called.
 
     Usage:
 
@@ -44,6 +40,7 @@ def nearing_recursion_limit() -> bool: ...
     ```
     """
     ...
+
 @overload
 def parseBoolValue(value: str) -> bool:
     """
@@ -62,6 +59,7 @@ def parseBoolValue(value: str | None, fail_on_errors: bool = True, preserve_none
     `fail_on_errors=False`, returns `None`.
     """
     ...
+
 def code_escape(text: str) -> str:
     """HTML escape a string of code."""
     ...

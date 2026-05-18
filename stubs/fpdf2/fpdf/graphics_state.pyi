@@ -129,7 +129,12 @@ class GraphicsStateMixin:
         """
         ...
     @char_vpos.setter
-    def char_vpos(self, v) -> None: ...
+    def char_vpos(self, v) -> None:
+        """
+        Return vertical character position relative to line.
+        ([docs](../TextStyling.html#subscript-superscript-and-fractional-numbers))
+        """
+        ...
 
     @property
     def sub_scale(self):
@@ -139,7 +144,12 @@ class GraphicsStateMixin:
         """
         ...
     @sub_scale.setter
-    def sub_scale(self, v) -> None: ...
+    def sub_scale(self, v) -> None:
+        """
+        Return scale factor for subscript text.
+        ([docs](../TextStyling.html#subscript-superscript-and-fractional-numbers))
+        """
+        ...
 
     @property
     def sup_scale(self):
@@ -149,7 +159,12 @@ class GraphicsStateMixin:
         """
         ...
     @sup_scale.setter
-    def sup_scale(self, v) -> None: ...
+    def sup_scale(self, v) -> None:
+        """
+        Return scale factor for superscript text.
+        ([docs](../TextStyling.html#subscript-superscript-and-fractional-numbers))
+        """
+        ...
 
     @property
     def nom_scale(self):
@@ -159,7 +174,12 @@ class GraphicsStateMixin:
         """
         ...
     @nom_scale.setter
-    def nom_scale(self, v) -> None: ...
+    def nom_scale(self, v) -> None:
+        """
+        Return scale factor for nominator text.
+        ([docs](../TextStyling.html#subscript-superscript-and-fractional-numbers))
+        """
+        ...
 
     @property
     def denom_scale(self):
@@ -169,7 +189,12 @@ class GraphicsStateMixin:
         """
         ...
     @denom_scale.setter
-    def denom_scale(self, v) -> None: ...
+    def denom_scale(self, v) -> None:
+        """
+        Return scale factor for denominator text.
+        ([docs](../TextStyling.html#subscript-superscript-and-fractional-numbers))
+        """
+        ...
 
     @property
     def sub_lift(self):
@@ -179,7 +204,12 @@ class GraphicsStateMixin:
         """
         ...
     @sub_lift.setter
-    def sub_lift(self, v) -> None: ...
+    def sub_lift(self, v) -> None:
+        """
+        Return lift factor for subscript text.
+        ([docs](../TextStyling.html#subscript-superscript-and-fractional-numbers))
+        """
+        ...
 
     @property
     def sup_lift(self):
@@ -189,7 +219,12 @@ class GraphicsStateMixin:
         """
         ...
     @sup_lift.setter
-    def sup_lift(self, v) -> None: ...
+    def sup_lift(self, v) -> None:
+        """
+        Return lift factor for superscript text.
+        ([docs](../TextStyling.html#subscript-superscript-and-fractional-numbers))
+        """
+        ...
 
     @property
     def nom_lift(self):
@@ -199,7 +234,12 @@ class GraphicsStateMixin:
         """
         ...
     @nom_lift.setter
-    def nom_lift(self, v) -> None: ...
+    def nom_lift(self, v) -> None:
+        """
+        Return lift factor for nominator text.
+        ([docs](../TextStyling.html#subscript-superscript-and-fractional-numbers))
+        """
+        ...
 
     @property
     def denom_lift(self):
@@ -209,13 +249,23 @@ class GraphicsStateMixin:
         """
         ...
     @denom_lift.setter
-    def denom_lift(self, v) -> None: ...
+    def denom_lift(self, v) -> None:
+        """
+        Return lift factor for denominator text.
+        ([docs](../TextStyling.html#subscript-superscript-and-fractional-numbers))
+        """
+        ...
 
     @property
     def text_shaping(self) -> _TextShaping | None: ...
     @text_shaping.setter
     def text_shaping(self, v: _TextShaping | None) -> None: ...
 
-    def font_face(self) -> FontFace: ...
+    def font_face(self) -> FontFace:
+        """
+        Return a `fpdf.fonts.FontFace` instance
+        representing a subset of properties of this GraphicsState.
+        """
+        ...
 
 __pdoc__: Final[dict[str, bool]]

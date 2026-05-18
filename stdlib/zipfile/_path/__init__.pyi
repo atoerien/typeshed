@@ -28,7 +28,21 @@ if sys.version_info >= (3, 12):
         def __setstate__(self, state: Sequence[tuple[list[object], dict[object, object]]]) -> None: ...
 
     class CompleteDirs(InitializedState, ZipFile):
-        def resolve_dir(self, name: str) -> str: ...
+        """
+        A ZipFile subclass that ensures that implied directories
+        are always included in the namelist.
+
+        >>> list(CompleteDirs._implied_dirs(['foo/bar.txt', 'foo/bar/baz.txt']))
+        ['foo/', 'foo/bar/']
+        >>> list(CompleteDirs._implied_dirs(['foo/bar.txt', 'foo/bar/baz.txt', 'foo/bar/']))
+        ['foo/']
+        """
+        def resolve_dir(self, name: str) -> str:
+            """
+            If the name represents a directory, return that name
+            as a directory (with the trailing slash).
+            """
+            ...
 
         @overload
         @classmethod
@@ -40,7 +54,12 @@ if sys.version_info >= (3, 12):
             ...
         @overload
         @classmethod
-        def make(cls, source: StrPath | IO[bytes]) -> Self: ...
+        def make(cls, source: StrPath | IO[bytes]) -> Self:
+            """
+            Given a source (filename or zipfile), return an
+            appropriate CompleteDirs subclass.
+            """
+            ...
 
         if sys.version_info >= (3, 13):
             @classmethod
@@ -198,7 +217,13 @@ if sys.version_info >= (3, 12):
             """
             ...
         @overload
-        def open(self, mode: Literal["rb", "wb"], *, pwd: bytes | None = None) -> IO[bytes]: ...
+        def open(self, mode: Literal["rb", "wb"], *, pwd: bytes | None = None) -> IO[bytes]:
+            """
+            Open this entry as text or binary following the semantics
+            of ``pathlib.Path.open()`` by passing arguments through
+            to io.TextIOWrapper().
+            """
+            ...
 
         def iterdir(self) -> Iterator[Self]: ...
         def is_dir(self) -> bool: ...

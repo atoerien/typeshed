@@ -317,7 +317,9 @@ if sys.version_info < (3, 11):
             """Return True if self is a file"""
             ...
         @abstractmethod
-        def iterdir(self) -> Iterator[Traversable]: ...
+        def iterdir(self) -> Iterator[Traversable]:
+            """Yield Traversable objects in self"""
+            ...
 
         if sys.version_info >= (3, 11):
             @abstractmethod
@@ -344,7 +346,15 @@ if sys.version_info < (3, 11):
             ...
         @overload
         @abstractmethod
-        def open(self, mode: Literal["rb"]) -> IO[bytes]: ...
+        def open(self, mode: Literal["rb"]) -> IO[bytes]:
+            """
+            mode may be 'r' or 'rb' to open as text or binary. Return a handle
+            suitable for reading (same as pathlib.Path.open).
+
+            When opening as text, accepts encoding parameters such as those
+            accepted by io.TextIOWrapper.
+            """
+            ...
 
         @property
         @abstractmethod

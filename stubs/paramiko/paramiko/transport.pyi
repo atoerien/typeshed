@@ -1040,28 +1040,36 @@ class SecurityOptions:
         """Symmetric encryption ciphers"""
         ...
     @ciphers.setter
-    def ciphers(self, x: Sequence[str]) -> None: ...
+    def ciphers(self, x: Sequence[str]) -> None:
+        """Symmetric encryption ciphers"""
+        ...
 
     @property
     def digests(self) -> Sequence[str]:
         """Digest (one-way hash) algorithms"""
         ...
     @digests.setter
-    def digests(self, x: Sequence[str]) -> None: ...
+    def digests(self, x: Sequence[str]) -> None:
+        """Digest (one-way hash) algorithms"""
+        ...
 
     @property
     def key_types(self) -> Sequence[str]:
         """Public-key algorithms"""
         ...
     @key_types.setter
-    def key_types(self, x: Sequence[str]) -> None: ...
+    def key_types(self, x: Sequence[str]) -> None:
+        """Public-key algorithms"""
+        ...
 
     @property
     def kex(self) -> Sequence[str]:
         """Key exchange algorithms"""
         ...
     @kex.setter
-    def kex(self, x: Sequence[str]) -> None: ...
+    def kex(self, x: Sequence[str]) -> None:
+        """Key exchange algorithms"""
+        ...
 
     @property
     def compression(self) -> Sequence[str]:

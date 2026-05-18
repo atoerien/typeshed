@@ -46,7 +46,9 @@ if sys.version_info >= (3, 11):
         ...
     @overload
     @deprecated("Deprecated since Python 3.14. Use `inspect.iscoroutinefunction()` instead.")
-    def iscoroutinefunction(func: object) -> TypeGuard[Callable[..., Coroutine[Any, Any, Any]]]: ...
+    def iscoroutinefunction(func: object) -> TypeGuard[Callable[..., Coroutine[Any, Any, Any]]]:
+        """Return True if func is a decorated coroutine function."""
+        ...
 else:
     # Sometimes needed in Python < 3.11 due to the fact that it supports @coroutine
     # which was removed in 3.11 which the inspect version doesn't support.

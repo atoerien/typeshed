@@ -17,14 +17,18 @@ def RawValue(typecode_or_type: type[_CT], *args: Any) -> _CT:
     """Returns a ctypes object allocated from shared memory"""
     ...
 @overload
-def RawValue(typecode_or_type: str, *args: Any) -> Any: ...
+def RawValue(typecode_or_type: str, *args: Any) -> Any:
+    """Returns a ctypes object allocated from shared memory"""
+    ...
 
 @overload
 def RawArray(typecode_or_type: type[_CT], size_or_initializer: int | Sequence[Any]) -> ctypes.Array[_CT]:
     """Returns a ctypes array allocated from shared memory"""
     ...
 @overload
-def RawArray(typecode_or_type: str, size_or_initializer: int | Sequence[Any]) -> Any: ...
+def RawArray(typecode_or_type: str, size_or_initializer: int | Sequence[Any]) -> Any:
+    """Returns a ctypes array allocated from shared memory"""
+    ...
 
 @overload
 def Value(typecode_or_type: type[_CT], *args: Any, lock: Literal[False], ctx: BaseContext | None = None) -> _CT:
@@ -45,7 +49,9 @@ def Value(
 @overload
 def Value(
     typecode_or_type: str | type[_CData], *args: Any, lock: bool | _LockLike = True, ctx: BaseContext | None = None
-) -> Any: ...
+) -> Any:
+    """Return a synchronization wrapper for a Value"""
+    ...
 
 @overload
 def Array(
@@ -90,7 +96,9 @@ def Array(
     *,
     lock: bool | _LockLike = True,
     ctx: BaseContext | None = None,
-) -> Any: ...
+) -> Any:
+    """Return a synchronization wrapper for a RawArray"""
+    ...
 
 def copy(obj: _CT) -> _CT: ...
 

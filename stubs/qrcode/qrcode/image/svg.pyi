@@ -22,7 +22,9 @@ class SvgFragmentImage(base.BaseImageWithDrawer, metaclass=abc.ABCMeta):
         """A box_size of 10 (default) equals 1mm."""
         ...
     @overload
-    def units(self, pixels: int | Decimal, text: Literal[True] = True) -> str: ...
+    def units(self, pixels: int | Decimal, text: Literal[True] = True) -> str:
+        """A box_size of 10 (default) equals 1mm."""
+        ...
 
     # to_string is delegated to ET.Element.tostring, which dictates the overload
     # options here.

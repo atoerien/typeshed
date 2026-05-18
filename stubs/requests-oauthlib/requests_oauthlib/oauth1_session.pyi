@@ -109,7 +109,44 @@ class OAuth1Session(requests.Session):
         encoding: str = "utf-8",
         nonce=None,
         timestamp=None,
-    ) -> None: ...
+    ) -> None:
+        """
+        Construct the OAuth 1 session.
+
+        :param client_key: A client specific identifier.
+        :param client_secret: A client specific secret used to create HMAC and
+                              plaintext signatures.
+        :param resource_owner_key: A resource owner key, also referred to as
+                                   request token or access token depending on
+                                   when in the workflow it is used.
+        :param resource_owner_secret: A resource owner secret obtained with
+                                      either a request or access token. Often
+                                      referred to as token secret.
+        :param callback_uri: The URL the user is redirect back to after
+                             authorization.
+        :param signature_method: Signature methods determine how the OAuth
+                                 signature is created. The three options are
+                                 oauthlib.oauth1.SIGNATURE_HMAC (default),
+                                 oauthlib.oauth1.SIGNATURE_RSA and
+                                 oauthlib.oauth1.SIGNATURE_PLAIN.
+        :param signature_type: Signature type decides where the OAuth
+                               parameters are added. Either in the
+                               Authorization header (default) or to the URL
+                               query parameters or the request body. Defined as
+                               oauthlib.oauth1.SIGNATURE_TYPE_AUTH_HEADER,
+                               oauthlib.oauth1.SIGNATURE_TYPE_QUERY and
+                               oauthlib.oauth1.SIGNATURE_TYPE_BODY
+                               respectively.
+        :param rsa_key: The private RSA key as a string. Can only be used with
+                        signature_method=oauthlib.oauth1.SIGNATURE_RSA.
+        :param verifier: A verifier string to prove authorization was granted.
+        :param client_class: A subclass of `oauthlib.oauth1.Client` to use with
+                             `requests_oauthlib.OAuth1` instead of the default
+        :param force_include_body: Always include the request body in the
+                                   signature creation.
+        :param **kwargs: Additional keyword arguments passed to `OAuth1`
+        """
+        ...
 
     @property
     def token(self) -> _TokenDict: ...

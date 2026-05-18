@@ -83,7 +83,13 @@ class Workbook:
         """
         ...
     @active.setter
-    def active(self, value: Worksheet | Chartsheet | int) -> None: ...
+    def active(self, value: Worksheet | Chartsheet | int) -> None:
+        """
+        Get the currently active sheet or None
+
+        :type: :class:`openpyxl.worksheet.worksheet.Worksheet`
+        """
+        ...
 
     # read_only workbook cannot call this method
     # Could be generic based on write_only

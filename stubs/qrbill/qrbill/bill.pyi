@@ -234,7 +234,35 @@ class QRBill:
         top_line: bool = True,
         payment_line: bool = True,
         font_factor: int = 1,
-    ) -> None: ...
+    ) -> None:
+        """
+        Arguments
+        ---------
+        account: str
+            IBAN of the creditor (must start with 'CH' or 'LI')
+        creditor: Address
+            Address (combined or structured) of the creditor
+        final_creditor: Address
+            (for future use)
+        amount: str
+        currency: str
+            two values allowed: 'CHF' and 'EUR'
+        debtor: Address
+            Address (combined or structured) of the debtor
+        additional_information: str
+            Additional information aimed for the bill recipient
+        alt_procs: list of str (max 2)
+            two additional fields for alternative payment schemes
+        language: str
+            language of the output (ISO, 2 letters): 'en', 'de', 'fr' or 'it'
+        top_line: bool
+            print a horizontal line at the top of the bill
+        payment_line: bool
+            print a vertical line between the receipt and the bill itself
+        font_factor: integer
+            a zoom factor for all texts in the bill
+        """
+        ...
 
     @property
     def title_font_info(self) -> dict[str, Any]: ...

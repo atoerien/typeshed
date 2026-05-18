@@ -34,7 +34,17 @@ class Dictionary:
     def __contains__(self, key: str) -> bool: ...
     def __getitem__(self, key: str): ...
     def __iter__(self) -> chain[str]: ...
-    def are_tokens_valid(self, tokens: list[str]) -> bool: ...
+    def are_tokens_valid(self, tokens: list[str]) -> bool:
+        """
+        Check if tokens are valid tokens for the locale.
+
+        :param tokens:
+            a list of string tokens.
+        :type tokens: list
+
+        :return: True if tokens are valid, False otherwise.
+        """
+        ...
 
     @overload
     def split(self, string: None, keep_formatting: bool = False) -> None:

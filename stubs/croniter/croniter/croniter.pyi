@@ -213,8 +213,12 @@ class croniter(Generic[_R_co]):
 
     def set_current(self, start_time: float | datetime.datetime | None, force: bool = True) -> float: ...
     @staticmethod
-    def datetime_to_timestamp(d: datetime.datetime) -> float: ...
-    def timestamp_to_datetime(self, timestamp: float, tzinfo: datetime.tzinfo | None = ...) -> datetime.datetime: ...
+    def datetime_to_timestamp(d: datetime.datetime) -> float:
+        """Converts a `datetime` object `d` into a UNIX timestamp."""
+        ...
+    def timestamp_to_datetime(self, timestamp: float, tzinfo: datetime.tzinfo | None = ...) -> datetime.datetime:
+        """Converts a UNIX `timestamp` into a `datetime` object."""
+        ...
 
     @overload
     def all_next(
@@ -230,7 +234,14 @@ class croniter(Generic[_R_co]):
     @overload
     def all_next(
         self, ret_type: None = None, start_time: float | datetime.datetime | None = None, update_current: bool | None = None
-    ) -> Generator[_R_co]: ...
+    ) -> Generator[_R_co]:
+        """
+        Returns a generator yielding consecutive dates.
+
+        May be used instead of an implicit call to __iter__ whenever a
+        non-default `ret_type` needs to be specified.
+        """
+        ...
 
     @overload
     def all_prev(
@@ -241,7 +252,9 @@ class croniter(Generic[_R_co]):
     @overload
     def all_prev(
         self, ret_type: None = None, start_time: float | datetime.datetime | None = None, update_current: bool | None = None
-    ) -> Generator[_R_co]: ...
+    ) -> Generator[_R_co]:
+        """Returns a generator yielding previous dates."""
+        ...
 
     def iter(self, *args: Unused, **kwargs: Unused) -> _AllIter[_R_co]: ...
     def __iter__(self) -> Self: ...
@@ -439,7 +452,9 @@ class HashExpander:
     @overload
     def do(
         self, idx: int, hash_type: str = "h", *, hash_id: bytes, range_end: int | None = None, range_begin: int | None = None
-    ) -> int: ...
+    ) -> int:
+        """Return a hashed/random integer given range/hash information"""
+        ...
 
     def match(self, efl: Unused, idx: Unused, expr: str, hash_id: bytes | None = None, **kw: Unused) -> Match[str] | None: ...
     def expand(

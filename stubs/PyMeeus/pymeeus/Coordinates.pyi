@@ -55,7 +55,42 @@ def mean_obliquity(
 @overload
 def mean_obliquity(
     year: int, month: int, day: int, /, *, leap_seconds: float = 0, local: bool = False, utc: bool = False
-) -> Angle: ...
+) -> Angle:
+    """
+    This function computes the mean obliquity (epsilon0) at the provided
+    date.
+
+    This function internally uses an :class:`Epoch` object, and the **utc**
+    argument then controls the way the UTC->TT conversion is handled for that
+    object. If **leap_seconds** argument is set to a value different than zero,
+    then that value will be used for the UTC->TAI conversion, and the internal
+    leap seconds table will be bypassed.
+
+    :param args: Either :class:`Epoch`, date, datetime or year, month,
+        day values, by themselves or inside a tuple or list
+    :type args: int, float, :py:class:`Epoch`, datetime, date, tuple,
+        list
+    :param utc: Whether the provided epoch is a civil time (UTC) or TT
+    :type utc: bool
+    :param leap_seconds: This is the value to be used in the UTC->TAI
+        conversion, instead of taking it from internal leap seconds table.
+    :type leap_seconds: int, float
+
+    :returns: The mean obliquity of the ecliptic, as an :class:`Angle`
+    :rtype: :class:`Angle`
+    :raises: ValueError if input values are in the wrong range.
+    :raises: TypeError if input values are of wrong type.
+
+    >>> e0 = mean_obliquity(1987, 4, 10)
+    >>> a = e0.dms_tuple()
+    >>> a[0]
+    23
+    >>> a[1]
+    26
+    >>> round(a[2], 3)
+    27.407
+    """
+    ...
 
 @overload
 def true_obliquity(
@@ -105,7 +140,43 @@ def true_obliquity(
 @overload
 def true_obliquity(
     year: int, month: int, day: int, /, *, leap_seconds: float = 0, local: bool = False, utc: bool = False
-) -> Angle: ...
+) -> Angle:
+    """
+    This function computes the true obliquity (epsilon) at the provided
+    date. The true obliquity is the mean obliquity (epsilon0) plus the
+    correction provided by the nutation in obliquity (Delta epsilon).
+
+    This function internally uses an :class:`Epoch` object, and the **utc**
+    argument then controls the way the UTC->TT conversion is handled for that
+    object. If **leap_seconds** argument is set to a value different than zero,
+    then that value will be used for the UTC->TAI conversion, and the internal
+    leap seconds table will be bypassed.
+
+    :param args: Either :class:`Epoch`, date, datetime or year, month,
+        day values, by themselves or inside a tuple or list
+    :type args: int, float, :py:class:`Epoch`, datetime, date, tuple,
+        list
+    :param utc: Whether the provided epoch is a civil time (UTC) or TT
+    :type utc: bool
+    :param leap_seconds: This is the value to be used in the UTC->TAI
+        conversion, instead of taking it from internal leap seconds table.
+    :type leap_seconds: int, float
+
+    :returns: The true obliquity of the ecliptic, as an Angle
+    :rtype: :class:`Angle`
+    :raises: ValueError if input values are in the wrong range.
+    :raises: TypeError if input values are of wrong type.
+
+    >>> epsilon = true_obliquity(1987, 4, 10)
+    >>> a = epsilon.dms_tuple()
+    >>> a[0]
+    23
+    >>> a[1]
+    26
+    >>> round(a[2], 3)
+    36.849
+    """
+    ...
 
 @overload
 def nutation_longitude(
@@ -156,7 +227,44 @@ def nutation_longitude(
 @overload
 def nutation_longitude(
     year: int, month: int, day: int, /, *, leap_seconds: float = 0, local: bool = False, utc: bool = False
-) -> Angle: ...
+) -> Angle:
+    """
+    This function computes the nutation in longitude (Delta psi) at the
+    provided date.
+
+    This function internally uses an :class:`Epoch` object, and the **utc**
+    argument then controls the way the UTC->TT conversion is handled for that
+    object. If **leap_seconds** argument is set to a value different than zero,
+    then that value will be used for the UTC->TAI conversion, and the internal
+    leap seconds table will be bypassed.
+
+    :param args: Either :class:`Epoch`, date, datetime or year, month,
+        day values, by themselves or inside a tuple or list
+    :type args: int, float, :py:class:`Epoch`, datetime, date, tuple,
+        list
+    :param utc: Whether the provided epoch is a civil time (UTC) or TT
+    :type utc: bool
+    :param leap_seconds: This is the value to be used in the UTC->TAI
+        conversion, instead of taking it from internal leap seconds table.
+    :type leap_seconds: int, float
+
+    :returns: The nutation in longitude (Delta psi), as an Angle
+    :rtype: :class:`Angle`
+    :raises: ValueError if input values are in the wrong range.
+    :raises: TypeError if input values are of wrong type.
+
+    >>> dpsi = nutation_longitude(1987, 4, 10)
+    >>> a = dpsi.dms_tuple()
+    >>> a[0]
+    0
+    >>> a[1]
+    0
+    >>> round(a[2], 3)
+    3.788
+    >>> a[3]
+    -1.0
+    """
+    ...
 
 @overload
 def nutation_obliquity(
@@ -208,7 +316,45 @@ def nutation_obliquity(
 @overload
 def nutation_obliquity(
     year: int, month: int, day: int, /, *, leap_seconds: float = 0, local: bool = False, utc: bool = False
-) -> Angle: ...
+) -> Angle:
+    """
+    This function computes the nutation in obliquity (Delta epsilon) at
+    the provided date.
+
+    This function internally uses an :class:`Epoch` object, and the **utc**
+    argument then controls the way the UTC->TT conversion is handled for that
+    object. If **leap_seconds** argument is set to a value different than zero,
+    then that value will be used for the UTC->TAI conversion, and the internal
+    leap seconds table will be bypassed.
+
+    :param args: Either :class:`Epoch`, date, datetime or year, month,
+        day values, by themselves or inside a tuple or list
+    :type args: int, float, :py:class:`Epoch`, datetime, date, tuple,
+        list
+    :param utc: Whether the provided epoch is a civil time (UTC) or TT
+    :type utc: bool
+    :param leap_seconds: This is the value to be used in the UTC->TAI
+        conversion, instead of taking it from internal leap seconds table.
+    :type leap_seconds: int, float
+
+    :returns: The nutation in obliquity (Delta epsilon), as an
+        :class:`Angle`
+    :rtype: :class:`Angle`
+    :raises: ValueError if input values are in the wrong range.
+    :raises: TypeError if input values are of wrong type.
+
+    >>> depsilon = nutation_obliquity(1987, 4, 10)
+    >>> a = depsilon.dms_tuple()
+    >>> a[0]
+    0
+    >>> a[1]
+    0
+    >>> round(a[2], 3)
+    9.443
+    >>> a[3]
+    1.0
+    """
+    ...
 
 def precession_equatorial(
     start_epoch: Epoch,

@@ -133,7 +133,18 @@ class tqdm_telegram(tqdm_auto[_T]):
         token: str = ...,
         chat_id: str = ...,
         **kwargs,
-    ) -> None: ...
+    ) -> None:
+        """
+        Parameters
+        ----------
+        token  : str, required. Telegram token
+            [default: ${TQDM_TELEGRAM_TOKEN}].
+        chat_id  : str, required. Telegram chat ID
+            [default: ${TQDM_TELEGRAM_CHAT_ID}].
+
+        See `tqdm.auto.tqdm.__init__` for other parameters.
+        """
+        ...
 
     def display(  # type: ignore[override]
         self, *, msg: str | None = ..., pos: int | None = ..., close: bool = ..., bar_style=..., check_delay: bool = ...

@@ -105,7 +105,13 @@ class Reader(Cursor):
     @components_in_and.setter
     def components_in_and(self, value) -> None: ...
 
-    def clear(self) -> None: ...
+    def clear(self) -> None:
+        """
+        Clear the Reader search parameters
+
+        
+        """
+        ...
     execution_time: Incomplete
     entries: Incomplete
     def reset(self) -> None:

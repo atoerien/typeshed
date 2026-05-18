@@ -122,7 +122,27 @@ class Worksheet(_WorkbookChild):
         """
         ...
     @overload
-    def cell(self, row: int, column: int, value: _CellSetValue = None) -> Cell: ...
+    def cell(self, row: int, column: int, value: _CellSetValue = None) -> Cell:
+        """
+        Returns a cell object based on the given coordinates.
+
+        Usage: cell(row=15, column=1, value=5)
+
+        Calling `cell` creates cells in memory when they
+        are first accessed.
+
+        :param row: row index of the cell (e.g. 4)
+        :type row: int
+
+        :param column: column index of the cell (e.g. 3)
+        :type column: int
+
+        :param value: value of the cell (e.g. 5)
+        :type value: numeric or time or string or bool or none
+
+        :rtype: openpyxl.cell.cell.Cell
+        """
+        ...
 
     # An int is necessarily a row selection
     @overload
@@ -158,7 +178,19 @@ class Worksheet(_WorkbookChild):
     @overload
     def __getitem__(
         self, key: str
-    ) -> Any: ...  # AnyOf[_CellOrMergedCell, tuple[_CellOrMergedCell, ...], tuple[tuple[_CellOrMergedCell, ...], ...]]
+    ) -> Any:
+        """
+        Convenience access by Excel style coordinates
+
+        The key can be a single cell coordinate 'A1', a range of cells 'A1:D25',
+        individual rows or columns 'A', 4 or ranges of rows or columns 'A:D',
+        4:10.
+
+        Single cells will always be created if they do not exist.
+
+        Returns either a single cell or a tuple of rows or columns.
+        """
+        ...
 
     def __setitem__(self, key: str, value: _CellSetValue) -> None: ...
     def __iter__(self) -> Iterator[tuple[_CellOrMergedCell, ...]]: ...
@@ -203,7 +235,9 @@ class Worksheet(_WorkbookChild):
         """
         ...
     @property
-    def dimensions(self) -> str: ...
+    def dimensions(self) -> str:
+        """Returns the result of :func:`calculate_dimension`"""
+        ...
 
     @overload
     def iter_rows(
@@ -345,7 +379,33 @@ class Worksheet(_WorkbookChild):
         max_col: int | None = None,
         *,
         values_only: bool,
-    ) -> Generator[tuple[_CellOrMergedCell, ...]] | Generator[tuple[_CellGetValue, ...]]: ...
+    ) -> Generator[tuple[_CellOrMergedCell, ...]] | Generator[tuple[_CellGetValue, ...]]:
+        """
+        Produces cells from the worksheet, by row. Specify the iteration range
+        using indices of rows and columns.
+
+        If no indices are specified the range starts at A1.
+
+        If no cells are in the worksheet an empty tuple will be returned.
+
+        :param min_col: smallest column index (1-based index)
+        :type min_col: int
+
+        :param min_row: smallest row index (1-based index)
+        :type min_row: int
+
+        :param max_col: largest column index (1-based index)
+        :type max_col: int
+
+        :param max_row: largest row index (1-based index)
+        :type max_row: int
+
+        :param values_only: whether only cell values should be returned
+        :type values_only: bool
+
+        :rtype: generator
+        """
+        ...
 
     @property
     def rows(self) -> Generator[tuple[_CellOrMergedCell, ...]]:
@@ -356,7 +416,13 @@ class Worksheet(_WorkbookChild):
         """
         ...
     @property
-    def values(self) -> Generator[tuple[_CellGetValue, ...]]: ...
+    def values(self) -> Generator[tuple[_CellGetValue, ...]]:
+        """
+        Produces all cell values in the worksheet, by row
+
+        :type: generator
+        """
+        ...
 
     @overload
     def iter_cols(
@@ -498,7 +564,33 @@ class Worksheet(_WorkbookChild):
         max_row: int | None = None,
         *,
         values_only: bool,
-    ) -> Generator[tuple[_CellOrMergedCell, ...]] | Generator[tuple[_CellGetValue, ...]]: ...
+    ) -> Generator[tuple[_CellOrMergedCell, ...]] | Generator[tuple[_CellGetValue, ...]]:
+        """
+        Produces cells from the worksheet, by column. Specify the iteration range
+        using indices of rows and columns.
+
+        If no indices are specified the range starts at A1.
+
+        If no cells are in the worksheet an empty tuple will be returned.
+
+        :param min_col: smallest column index (1-based index)
+        :type min_col: int
+
+        :param min_row: smallest row index (1-based index)
+        :type min_row: int
+
+        :param max_col: largest column index (1-based index)
+        :type max_col: int
+
+        :param max_row: largest row index (1-based index)
+        :type max_row: int
+
+        :param values_only: whether only cell values should be returned
+        :type values_only: bool
+
+        :rtype: generator
+        """
+        ...
 
     @property
     def columns(self) -> Generator[tuple[_CellOrMergedCell, ...]]:
@@ -569,7 +661,9 @@ class Worksheet(_WorkbookChild):
         start_column: ConvertibleToInt,
         end_row: ConvertibleToInt,
         end_column: ConvertibleToInt,
-    ) -> None: ...
+    ) -> None:
+        """Set merge on a cell range.  Range is a cell range (e.g. A1:E1) """
+        ...
 
     # Will always raise: TypeError: 'set' object is not subscriptable
     @property
@@ -601,26 +695,64 @@ class Worksheet(_WorkbookChild):
             | GeneratorType[_CellOrMergedCell | _CellGetValue, object, object]
             | dict[int | str, _AnyCellValue]
         ),
-    ) -> None: ...
-    def insert_rows(self, idx: int, amount: int = 1) -> None: ...
-    def insert_cols(self, idx: int, amount: int = 1) -> None: ...
-    def delete_rows(self, idx: int, amount: int = 1) -> None: ...
-    def delete_cols(self, idx: int, amount: int = 1) -> None: ...
-    def move_range(self, cell_range: CellRange | str, rows: int = 0, cols: int = 0, translate: bool = False) -> None: ...
+    ) -> None:
+        """
+        Appends a group of values at the bottom of the current sheet.
+
+        * If it's a list: all values are added in order, starting from the first column
+        * If it's a dict: values are assigned to the columns indicated by the keys (numbers or letters)
+
+        :param iterable: list, range or generator, or dict containing values to append
+        :type iterable: list|tuple|range|generator or dict
+
+        Usage:
+
+        * append(['This is A1', 'This is B1', 'This is C1'])
+        * **or** append({'A' : 'This is A1', 'C' : 'This is C1'})
+        * **or** append({1 : 'This is A1', 3 : 'This is C1'})
+
+        :raise: TypeError when iterable is neither a list/tuple nor a dict
+        """
+        ...
+    def insert_rows(self, idx: int, amount: int = 1) -> None:
+        """Insert row or rows before row==idx"""
+        ...
+    def insert_cols(self, idx: int, amount: int = 1) -> None:
+        """Insert column or columns before col==idx"""
+        ...
+    def delete_rows(self, idx: int, amount: int = 1) -> None:
+        """Delete row or rows from row==idx"""
+        ...
+    def delete_cols(self, idx: int, amount: int = 1) -> None:
+        """Delete column or columns from col==idx"""
+        ...
+    def move_range(self, cell_range: CellRange | str, rows: int = 0, cols: int = 0, translate: bool = False) -> None:
+        """
+        Move a cell range by the number of rows and/or columns:
+        down if rows > 0 and up if rows < 0
+        right if cols > 0 and left if cols < 0
+        Existing cells will be overwritten.
+        Formulae and references will not be updated.
+        """
+        ...
 
     @property
     def print_title_rows(self) -> str | None:
         """Rows to be printed at the top of every page (ex: '1:3')"""
         ...
     @print_title_rows.setter
-    def print_title_rows(self, rows: str | None) -> None: ...
+    def print_title_rows(self, rows: str | None) -> None:
+        """Rows to be printed at the top of every page (ex: '1:3')"""
+        ...
 
     @property
     def print_title_cols(self) -> str | None:
         """Columns to be printed at the left side of every page (ex: 'A:C')"""
         ...
     @print_title_cols.setter
-    def print_title_cols(self, cols: str | None) -> None: ...
+    def print_title_cols(self, cols: str | None) -> None:
+        """Columns to be printed at the left side of every page (ex: 'A:C')"""
+        ...
 
     @property
     def print_titles(self) -> str: ...

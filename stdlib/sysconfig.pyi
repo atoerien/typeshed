@@ -29,7 +29,14 @@ def get_config_var(name: Literal["SO"]) -> Any:
     """
     ...
 @overload
-def get_config_var(name: str) -> Any: ...
+def get_config_var(name: str) -> Any:
+    """
+    Return the value of a single variable using the dictionary returned by
+    'get_config_vars()'.
+
+    Equivalent to get_config_vars().get(name)
+    """
+    ...
 
 @overload
 def get_config_vars() -> dict[str, Any]:
@@ -45,9 +52,22 @@ def get_config_vars() -> dict[str, Any]:
     """
     ...
 @overload
-def get_config_vars(arg: str, /, *args: str) -> list[Any]: ...
+def get_config_vars(arg: str, /, *args: str) -> list[Any]:
+    """
+    With no arguments, return a dictionary of all configuration
+    variables relevant for the current platform.
 
-def get_scheme_names() -> tuple[str, ...]: ...
+    On Unix, this means every variable defined in Python's installed Makefile;
+    On Windows it's a much smaller set.
+
+    With arguments, return a list of values that result from looking up
+    each argument in the configuration variable dictionary.
+    """
+    ...
+
+def get_scheme_names() -> tuple[str, ...]:
+    """Return a tuple containing the schemes names."""
+    ...
 def get_default_scheme() -> LiteralString: ...
 def get_preferred_scheme(key: Literal["prefix", "home", "user"]) -> LiteralString: ...
 

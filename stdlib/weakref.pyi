@@ -241,7 +241,17 @@ class WeakKeyDictionary(MutableMapping[_KT, _VT]):
     def keys(self) -> Iterator[_KT]: ...  # type: ignore[override]
     def values(self) -> Iterator[_VT]: ...  # type: ignore[override]
     def items(self) -> Iterator[tuple[_KT, _VT]]: ...  # type: ignore[override]
-    def keyrefs(self) -> list[ref[_KT]]: ...
+    def keyrefs(self) -> list[ref[_KT]]:
+        """
+        Return a list of weak references to the keys.
+
+        The references are not guaranteed to be 'live' at the time
+        they are used, so the result of calling the references needs
+        to be checked before being used.  This can be used to avoid
+        creating references that will cause the garbage collector to
+        keep the keys around longer than needed.
+        """
+        ...
 
     # Keep WeakKeyDictionary.setdefault in line with MutableMapping.setdefault, modulo positional-only differences
     @overload

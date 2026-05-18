@@ -101,7 +101,16 @@ class ThreadPool(GroupMappingMixin):
         """
         ...
     @maxsize.setter
-    def maxsize(self, value: int) -> None: ...
+    def maxsize(self, value: int) -> None:
+        """
+        The maximum allowed number of worker threads.
+
+        This is also (approximately) a limit on the number of tasks that
+        can be queued without blocking the waiting greenlet. If this many
+        tasks are already running, then the next greenlet that submits a task
+        will block waiting for a task to finish.
+        """
+        ...
 
     @property
     def size(self) -> int:
@@ -117,7 +126,18 @@ class ThreadPool(GroupMappingMixin):
         """
         ...
     @size.setter
-    def size(self, value: int) -> None: ...
+    def size(self, value: int) -> None:
+        """
+        The number of running pooled worker threads.
+
+        Setting this attribute will add or remove running
+        worker threads, up to `maxsize`.
+
+        Initially there are no pooled running worker threads, and
+        threads are created on demand to satisfy concurrent
+        requests up to `maxsize` threads.
+        """
+        ...
 
     def __len__(self) -> int: ...
     def join(self) -> None:

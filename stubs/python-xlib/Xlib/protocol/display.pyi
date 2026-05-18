@@ -70,8 +70,23 @@ class Display:
     def flush(self) -> None: ...
     def close(self) -> None: ...
     def set_error_handler(self, handler: ErrorHandler[object] | None) -> None: ...
-    def allocate_resource_id(self) -> int: ...
-    def free_resource_id(self, rid: int) -> None: ...
+    def allocate_resource_id(self) -> int:
+        """
+        id = d.allocate_resource_id()
+
+        Allocate a new X resource id number ID.
+
+        Raises ResourceIDError if there are no free resource ids.
+        """
+        ...
+    def free_resource_id(self, rid: int) -> None:
+        """
+        d.free_resource_id(rid)
+
+        Free resource id RID.  Attempts to free a resource id which
+        isn't allocated by us are ignored.
+        """
+        ...
 
     @overload
     def get_resource_class(self, class_name: Literal["resource"], default: object = None) -> type[resource.Resource]:
@@ -164,7 +179,14 @@ class Display:
         """
         ...
     @overload
-    def get_resource_class(self, class_name: str, default: None = None) -> type[_ResourceBaseClass] | None: ...
+    def get_resource_class(self, class_name: str, default: None = None) -> type[_ResourceBaseClass] | None:
+        """
+        class = d.get_resource_class(class_name, default = None)
+
+        Return the class to be used for X resource objects of type
+        CLASS_NAME, or DEFAULT if no such class is set.
+        """
+        ...
 
     def set_extension_major(self, extname: str, major: int) -> None: ...
     def get_extension_major(self, extname: str) -> int: ...

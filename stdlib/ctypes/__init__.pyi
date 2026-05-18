@@ -65,9 +65,24 @@ if sys.version_info >= (3, 14):
         """
         ...
     @overload
-    def POINTER(cls: type[_CT]) -> type[_Pointer[_CT]]: ...
+    def POINTER(cls: type[_CT]) -> type[_Pointer[_CT]]:
+        """
+        Create and return a new ctypes pointer type.
 
-    def pointer(obj: _CT) -> _Pointer[_CT]: ...
+        Pointer types are cached and reused internally,
+        so calling this function repeatedly is cheap.
+        """
+        ...
+
+    def pointer(obj: _CT) -> _Pointer[_CT]:
+        """
+        Create a new pointer instance, pointing to 'obj'.
+
+        The returned object is of the type POINTER(type(obj)). Note that if you
+        just want to pass a pointer to an object to a foreign function call, you
+        should use byref(obj) which is much faster.
+        """
+        ...
 
 else:
     from _ctypes import POINTER as POINTER, pointer as pointer

@@ -12,7 +12,14 @@ def get_unpatched(item: _UnpatchT) -> _UnpatchT: ...  # type: ignore[overload-ov
 @overload
 def get_unpatched(item: object) -> None: ...
 
-def get_unpatched_class(cls: type[_T]) -> type[_T]: ...
+def get_unpatched_class(cls: type[_T]) -> type[_T]:
+    """
+    Protect against re-patching the distutils if reloaded
+
+    Also ensures that no other distutils extension monkeypatched the distutils
+    first.
+    """
+    ...
 def patch_all() -> None: ...
 def patch_func(replacement, target_mod, func_name) -> None:
     """

@@ -185,9 +185,29 @@ class AuthorizationServer(Hookable):
         """
         ...
     def get_authorization_grant(self, request: OAuth2Request) -> BaseGrant: ...
-    def get_consent_grant(self, request=None, end_user=None): ...
-    def get_token_grant(self, request: OAuth2Request) -> BaseGrant: ...
-    def create_endpoint_response(self, name, request=None): ...
+    def get_consent_grant(self, request=None, end_user=None):
+        """
+        Validate current HTTP request for authorization page. This page
+        is designed for resource owner to grant or deny the authorization.
+        """
+        ...
+    def get_token_grant(self, request: OAuth2Request) -> BaseGrant:
+        """
+        Find the token grant for current request.
+
+        :param request: OAuth2Request instance.
+        :return: grant instance
+        """
+        ...
+    def create_endpoint_response(self, name, request=None):
+        """
+        Validate endpoint request and create endpoint response.
+
+        :param name: Endpoint name
+        :param request: HTTP request instance.
+        :return: Response
+        """
+        ...
 
     @overload
     @deprecated("The 'grant' parameter will become mandatory.")
@@ -195,5 +215,11 @@ class AuthorizationServer(Hookable):
     @overload
     def create_authorization_response(self, request=None, grant_user=None, grant=None) -> object: ...
 
-    def create_token_response(self, request=None) -> _ServerResponse: ...
+    def create_token_response(self, request=None) -> _ServerResponse:
+        """
+        Validate token request and create token response.
+
+        :param request: HTTP request instance
+        """
+        ...
     def handle_error_response(self, request: OAuth2Request, error: OAuth2Error) -> object: ...

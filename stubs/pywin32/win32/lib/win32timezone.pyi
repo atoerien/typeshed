@@ -360,16 +360,32 @@ class TimeZoneInfo(datetime.tzinfo):
         """
         ...
     @overload
-    def tzname(self, dt: None) -> None: ...
+    def tzname(self, dt: None) -> None:
+        """
+        >>> MST = TimeZoneInfo('Mountain Standard Time')
+        >>> MST.tzname(datetime.datetime(2003, 8, 2))
+        'Mountain Daylight Time'
+        >>> MST.tzname(datetime.datetime(2003, 11, 25))
+        'Mountain Standard Time'
+        >>> MST.tzname(None)
+        """
+        ...
 
-    def getWinInfo(self, targetYear: int) -> TimeZoneDefinition: ...
+    def getWinInfo(self, targetYear: int) -> TimeZoneDefinition:
+        """
+        Return the most relevant "info" for this time zone
+        in the target year.
+        """
+        ...
 
     @overload  # type: ignore[override] # False-positive, our overload covers all base types
     def utcoffset(self, dt: None) -> None:
         """Calculates the utcoffset according to the datetime.tzinfo spec"""
         ...
     @overload
-    def utcoffset(self, dt: datetime.datetime) -> datetime.timedelta: ...
+    def utcoffset(self, dt: datetime.datetime) -> datetime.timedelta:
+        """Calculates the utcoffset according to the datetime.tzinfo spec"""
+        ...
 
     @overload  # type: ignore[override] # False-positive, our overload covers all base types
     def dst(self, dt: None) -> None:
@@ -379,10 +395,19 @@ class TimeZoneInfo(datetime.tzinfo):
         """
         ...
     @overload
-    def dst(self, dt: datetime.datetime) -> datetime.timedelta: ...
+    def dst(self, dt: datetime.datetime) -> datetime.timedelta:
+        """
+        Calculate the daylight savings offset according to the
+        datetime.tzinfo spec.
+        """
+        ...
 
-    def GetDSTStartTime(self, year: int) -> datetime.datetime: ...
-    def GetDSTEndTime(self, year: int) -> datetime.datetime: ...
+    def GetDSTStartTime(self, year: int) -> datetime.datetime:
+        """Given a year, determines the time when daylight savings time starts"""
+        ...
+    def GetDSTEndTime(self, year: int) -> datetime.datetime:
+        """Given a year, determines the time when daylight savings ends."""
+        ...
     def __eq__(self, other: object) -> bool: ...
     def __ne__(self, other: object) -> bool: ...
     @classmethod
@@ -597,7 +622,13 @@ class RangeMap(dict[_RangeMapKT, _VT]):
         """
         ...
     @overload
-    def get(self, key: _RangeMapKT, default: None = None) -> _VT | None: ...
+    def get(self, key: _RangeMapKT, default: None = None) -> _VT | None:
+        """
+        Return the value for key if key is in the dictionary, else default.
+        If default is not given, it defaults to None, so that this method
+        never raises a KeyError.
+        """
+        ...
 
     def bounds(self) -> tuple[_RangeMapKT, _RangeMapKT]: ...
 

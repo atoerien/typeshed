@@ -179,7 +179,13 @@ class socksocket(_BaseSocket):
         *,
         proxytype: _ProxyType = ...,
     ) -> None: ...
-    def bind(self, address: socket._Address, /) -> None: ...
+    def bind(self, address: socket._Address, /) -> None:
+        """
+        Implements proxy connection for UDP sockets.
+
+        Happens during the bind() phase.
+        """
+        ...
 
     @overload
     def sendto(self, bytes: ReadableBuffer, address: socket._Address) -> int: ...

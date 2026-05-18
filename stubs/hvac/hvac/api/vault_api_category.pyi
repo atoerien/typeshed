@@ -12,8 +12,24 @@ logger: Logger
 class VaultApiCategory(VaultApiBase, metaclass=ABCMeta):
     """Base class for API categories."""
     implemented_class_names: list[str]
-    def __init__(self, adapter: Adapter[Any]) -> None: ...
-    def __getattr__(self, item): ...
+    def __init__(self, adapter: Adapter[Any]) -> None:
+        """
+        API Category class constructor.
+
+        :param adapter: Instance of :py:class:`hvac.adapters.Adapter`; used for performing HTTP requests.
+        :type adapter: hvac.adapters.Adapter
+        """
+        ...
+    def __getattr__(self, item):
+        """
+        Get an instance of an class instance in this category where available.
+
+        :param item: Name of the class being requested.
+        :type item: str | unicode
+        :return: The requested class instance where available.
+        :rtype: hvac.api.VaultApiBase
+        """
+        ...
 
     @property
     def adapter(self) -> Adapter[Any]:
@@ -25,7 +41,14 @@ class VaultApiCategory(VaultApiBase, metaclass=ABCMeta):
         """
         ...
     @adapter.setter
-    def adapter(self, adapter: Adapter[Any]) -> None: ...
+    def adapter(self, adapter: Adapter[Any]) -> None:
+        """
+        Retrieve the adapter instance under the "_adapter" property in use by this class.
+
+        :return: The adapter instance in use by this class.
+        :rtype: hvac.adapters.Adapter
+        """
+        ...
 
     @property
     @abstractmethod

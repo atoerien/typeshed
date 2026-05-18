@@ -110,21 +110,27 @@ class BaseContext:
         initializer: Callable[..., object] | None = None,
         initargs: Iterable[Any] = (),
         maxtasksperchild: int | None = None,
-    ) -> _Pool: ...
+    ) -> _Pool:
+        """Returns a process pool object"""
+        ...
 
     @overload
     def RawValue(self, typecode_or_type: type[_CT], *args: Any) -> _CT:
         """Returns a shared object"""
         ...
     @overload
-    def RawValue(self, typecode_or_type: str, *args: Any) -> Any: ...
+    def RawValue(self, typecode_or_type: str, *args: Any) -> Any:
+        """Returns a shared object"""
+        ...
 
     @overload
     def RawArray(self, typecode_or_type: type[_CT], size_or_initializer: int | Sequence[Any]) -> ctypes.Array[_CT]:
         """Returns a shared array"""
         ...
     @overload
-    def RawArray(self, typecode_or_type: str, size_or_initializer: int | Sequence[Any]) -> Any: ...
+    def RawArray(self, typecode_or_type: str, size_or_initializer: int | Sequence[Any]) -> Any:
+        """Returns a shared array"""
+        ...
 
     @overload
     def Value(
@@ -145,7 +151,9 @@ class BaseContext:
         """Returns a synchronized shared object"""
         ...
     @overload
-    def Value(self, typecode_or_type: str | type[_CData], *args: Any, lock: bool | _LockLike = True) -> Any: ...
+    def Value(self, typecode_or_type: str | type[_CData], *args: Any, lock: bool | _LockLike = True) -> Any:
+        """Returns a synchronized shared object"""
+        ...
 
     @overload
     def Array(
@@ -178,13 +186,38 @@ class BaseContext:
     @overload
     def Array(
         self, typecode_or_type: str | type[_CData], size_or_initializer: int | Sequence[Any], *, lock: bool | _LockLike = True
-    ) -> Any: ...
+    ) -> Any:
+        """Returns a synchronized shared array"""
+        ...
 
-    def freeze_support(self) -> None: ...
-    def get_logger(self) -> Logger: ...
-    def log_to_stderr(self, level: _LoggingLevel | None = None) -> Logger: ...
-    def allow_connection_pickling(self) -> None: ...
-    def set_executable(self, executable: str) -> None: ...
+    def freeze_support(self) -> None:
+        """
+        Check whether this is a fake forked process in a frozen executable.
+        If so then run code specified by commandline and exit.
+        """
+        ...
+    def get_logger(self) -> Logger:
+        """
+        Return package logger -- if it does not already exist then
+        it is created.
+        """
+        ...
+    def log_to_stderr(self, level: _LoggingLevel | None = None) -> Logger:
+        """Turn on logging and add a handler which prints to stderr"""
+        ...
+    def allow_connection_pickling(self) -> None:
+        """
+        Install support for sending connections and sockets
+        between processes
+        """
+        ...
+    def set_executable(self, executable: str) -> None:
+        """
+        Sets the path to a python.exe or pythonw.exe binary used to run
+        child processes instead of sys.executable when using the 'spawn'
+        start method.  Useful for people embedding Python.
+        """
+        ...
     if sys.version_info >= (3, 15):
         def set_forkserver_preload(
             self, module_names: list[str], *, on_error: Literal["ignore", "warn", "fail"] = "ignore"
@@ -225,7 +258,12 @@ class BaseContext:
         """
         ...
     @reducer.setter
-    def reducer(self, reduction: str) -> None: ...
+    def reducer(self, reduction: str) -> None:
+        """
+        Controls how objects will be reduced to a form that can be
+        shared with other processes.
+        """
+        ...
 
     def _check_available(self) -> None: ...
 

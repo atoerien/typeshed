@@ -162,13 +162,66 @@ def memoize(fun: Callable[_P, _R]) -> Callable[_P, _R]:
     ...
 
 # returned function has `cache_activate(proc)` and `cache_deactivate(proc)` attributes:
-def memoize_when_activated(fun: Callable[_P, _R]) -> Callable[_P, _R]: ...
-def isfile_strict(path: StrOrBytesPath) -> bool: ...
-def path_exists_strict(path: StrOrBytesPath) -> bool: ...
-def supports_ipv6() -> bool: ...
-def parse_environ_block(data: str) -> dict[str, str]: ...
-def sockfam_to_enum(num: int) -> AddressFamily: ...
-def socktype_to_enum(num: int) -> SocketKind: ...
+def memoize_when_activated(fun: Callable[_P, _R]) -> Callable[_P, _R]:
+    """
+    A memoize decorator which is disabled by default. It can be
+    activated and deactivated on request.
+    For efficiency reasons it can be used only against class methods
+    accepting no arguments.
+
+    >>> class Foo:
+    ...     @memoize
+    ...     def foo()
+    ...         print(1)
+    ...
+    >>> f = Foo()
+    >>> # deactivated (default)
+    >>> foo()
+    1
+    >>> foo()
+    1
+    >>>
+    >>> # activated
+    >>> foo.cache_activate(self)
+    >>> foo()
+    1
+    >>> foo()
+    >>> foo()
+    >>>
+    """
+    ...
+def isfile_strict(path: StrOrBytesPath) -> bool:
+    """
+    Same as os.path.isfile() but does not swallow EACCES / EPERM
+    exceptions, see:
+    http://mail.python.org/pipermail/python-dev/2012-June/120787.html.
+    """
+    ...
+def path_exists_strict(path: StrOrBytesPath) -> bool:
+    """
+    Same as os.path.exists() but does not swallow EACCES / EPERM
+    exceptions. See:
+    http://mail.python.org/pipermail/python-dev/2012-June/120787.html.
+    """
+    ...
+def supports_ipv6() -> bool:
+    """Return True if IPv6 is supported on this platform."""
+    ...
+def parse_environ_block(data: str) -> dict[str, str]:
+    """Parse a C environ block of environment variables into a dictionary."""
+    ...
+def sockfam_to_enum(num: int) -> AddressFamily:
+    """
+    Convert a numeric socket family value to an IntEnum member.
+    If it's not a known member, return the numeric value itself.
+    """
+    ...
+def socktype_to_enum(num: int) -> SocketKind:
+    """
+    Convert a numeric socket type value to an IntEnum member.
+    If it's not a known member, return the numeric value itself.
+    """
+    ...
 
 @overload
 def conn_to_ntuple(
@@ -193,9 +246,16 @@ def conn_to_ntuple(
     status: int | str,
     status_map: dict[int, str] | dict[str, str],
     pid: None = None,
-) -> ntp.pconn: ...
+) -> ntp.pconn:
+    """Convert a raw connection tuple to a proper ntuple."""
+    ...
 
-def deprecated_method(replacement: str) -> Callable[[Callable[_P, _R]], Callable[_P, _R]]: ...
+def deprecated_method(replacement: str) -> Callable[[Callable[_P, _R]], Callable[_P, _R]]:
+    """
+    A decorator which can be used to mark a method as deprecated
+    'replcement' is the method name which will be called instead.
+    """
+    ...
 
 class _WrapNumbers:
     """
@@ -234,7 +294,12 @@ def wrap_numbers(input_dict: dict[str, tuple[int, ...]], name: str) -> dict[str,
     """
     ...
 def open_binary(fname: FileDescriptorOrPath) -> BinaryIO: ...
-def open_text(fname: FileDescriptorOrPath) -> io.TextIOWrapper: ...
+def open_text(fname: FileDescriptorOrPath) -> io.TextIOWrapper:
+    """
+    Open a file in text mode by using the proper FS encoding and
+    en/decoding error handlers.
+    """
+    ...
 
 @overload
 def cat(fname: FileDescriptorOrPath, _open: Callable[[FileDescriptorOrPath], io.TextIOWrapper] = ...) -> str:
@@ -248,17 +313,37 @@ def cat(fname: FileDescriptorOrPath, _open: Callable[[FileDescriptorOrPath], io.
 @overload
 def cat(
     fname: FileDescriptorOrPath, fallback: _T = ..., _open: Callable[[FileDescriptorOrPath], io.TextIOWrapper] = ...
-) -> str | _T: ...
+) -> str | _T:
+    """
+    Read entire file content and return it as a string. File is
+    opened in text mode. If specified, `fallback` is the value
+    returned in case of error, either if the file does not exist or
+    it can't be read().
+    """
+    ...
 
 @overload
 def bcat(fname: FileDescriptorOrPath) -> str:
     """Same as above but opens file in binary mode."""
     ...
 @overload
-def bcat(fname: FileDescriptorOrPath, fallback: _T = ...) -> str | _T: ...
+def bcat(fname: FileDescriptorOrPath, fallback: _T = ...) -> str | _T:
+    """Same as above but opens file in binary mode."""
+    ...
 
-def bytes2human(n: int, format: str = "%(value).1f%(symbol)s") -> str: ...
-def get_procfs_path() -> str: ...
+def bytes2human(n: int, format: str = "%(value).1f%(symbol)s") -> str:
+    """
+    Used by various scripts. See: https://code.activestate.com/recipes/578019-bytes-to-human-human-to-bytes-converter/?in=user-4178764.
+
+    >>> bytes2human(10000)
+    '9.8K'
+    >>> bytes2human(100001221)
+    '95.4M'
+    """
+    ...
+def get_procfs_path() -> str:
+    """Return updated psutil.PROCFS_PATH constant."""
+    ...
 def decode(s: bytes) -> str: ...
 def term_supports_colors(file: SupportsWrite[str] = sys.stdout) -> bool: ...
 def hilite(s: str, color: str | None = None, bold: bool = False) -> str:

@@ -20,9 +20,23 @@ _T = TypeVar("_T")
 
 _NormalizationForm: TypeAlias = Literal["NFC", "NFD", "NFKC", "NFKD"]
 
-def bidirectional(chr: str, /) -> str: ...
-def category(chr: str, /) -> str: ...
-def combining(chr: str, /) -> int: ...
+def bidirectional(chr: str, /) -> str:
+    """
+    Returns the bidirectional class assigned to the character chr as string.
+
+    If no such value is defined, an empty string is returned.
+    """
+    ...
+def category(chr: str, /) -> str:
+    """Returns the general category assigned to the character chr as string."""
+    ...
+def combining(chr: str, /) -> int:
+    """
+    Returns the canonical combining class assigned to the character chr as integer.
+
+    Returns 0 if no combining class is defined.
+    """
+    ...
 
 @overload
 def decimal(chr: str, /) -> int:
@@ -35,9 +49,23 @@ def decimal(chr: str, /) -> int:
     """
     ...
 @overload
-def decimal(chr: str, default: _T, /) -> int | _T: ...
+def decimal(chr: str, default: _T, /) -> int | _T:
+    """
+    Converts a Unicode character into its equivalent decimal value.
 
-def decomposition(chr: str, /) -> str: ...
+    Returns the decimal value assigned to the character chr as integer.
+    If no such value is defined, default is returned, or, if not given,
+    ValueError is raised.
+    """
+    ...
+
+def decomposition(chr: str, /) -> str:
+    """
+    Returns the character decomposition mapping assigned to the character chr as string.
+
+    An empty string is returned in case no such mapping is defined.
+    """
+    ...
 
 @overload
 def digit(chr: str, /) -> int:
@@ -82,8 +110,22 @@ if sys.version_info >= (3, 15):
     def isxidcontinue(chr: str, /) -> bool: ...
     def iter_graphemes(unistr: str, start: int = 0, end: int = sys.maxsize, /) -> Iterator[str]: ...
 
-def lookup(name: str | ReadOnlyBuffer, /) -> str: ...
-def mirrored(chr: str, /) -> int: ...
+def lookup(name: str | ReadOnlyBuffer, /) -> str:
+    """
+    Look up character by name.
+
+    If a character with the given name is found, return the
+    corresponding character.  If not found, KeyError is raised.
+    """
+    ...
+def mirrored(chr: str, /) -> int:
+    """
+    Returns the mirrored property assigned to the character chr as integer.
+
+    Returns 1 if the character has been identified as a "mirrored"
+    character in bidirectional text, 0 otherwise.
+    """
+    ...
 
 @overload
 def name(chr: str, /) -> str:
@@ -95,9 +137,22 @@ def name(chr: str, /) -> str:
     """
     ...
 @overload
-def name(chr: str, default: _T, /) -> str | _T: ...
+def name(chr: str, default: _T, /) -> str | _T:
+    """
+    Returns the name assigned to the character chr as a string.
 
-def normalize(form: _NormalizationForm, unistr: str, /) -> str: ...
+    If no name is defined, default is returned, or, if not given,
+    ValueError is raised.
+    """
+    ...
+
+def normalize(form: _NormalizationForm, unistr: str, /) -> str:
+    """
+    Return the normal form 'form' for the Unicode string unistr.
+
+    Valid values for form are 'NFC', 'NFKC', 'NFD', and 'NFKD'.
+    """
+    ...
 
 @overload
 def numeric(chr: str, /) -> float:
@@ -110,16 +165,38 @@ def numeric(chr: str, /) -> float:
     """
     ...
 @overload
-def numeric(chr: str, default: _T, /) -> float | _T: ...
+def numeric(chr: str, default: _T, /) -> float | _T:
+    """
+    Converts a Unicode character into its equivalent numeric value.
+
+    Returns the numeric value assigned to the character chr as float.
+    If no such value is defined, default is returned, or, if not given,
+    ValueError is raised.
+    """
+    ...
 
 @final
 class UCD:
     # The methods below are constructed from the same array in C
     # (unicodedata_functions) and hence identical to the functions above.
     unidata_version: str
-    def bidirectional(self, chr: str, /) -> str: ...
-    def category(self, chr: str, /) -> str: ...
-    def combining(self, chr: str, /) -> int: ...
+    def bidirectional(self, chr: str, /) -> str:
+        """
+        Returns the bidirectional class assigned to the character chr as string.
+
+        If no such value is defined, an empty string is returned.
+        """
+        ...
+    def category(self, chr: str, /) -> str:
+        """Returns the general category assigned to the character chr as string."""
+        ...
+    def combining(self, chr: str, /) -> int:
+        """
+        Returns the canonical combining class assigned to the character chr as integer.
+
+        Returns 0 if no combining class is defined.
+        """
+        ...
 
     @overload
     def decimal(self, chr: str, /) -> int:
@@ -132,9 +209,23 @@ class UCD:
         """
         ...
     @overload
-    def decimal(self, chr: str, default: _T, /) -> int | _T: ...
+    def decimal(self, chr: str, default: _T, /) -> int | _T:
+        """
+        Converts a Unicode character into its equivalent decimal value.
 
-    def decomposition(self, chr: str, /) -> str: ...
+        Returns the decimal value assigned to the character chr as integer.
+        If no such value is defined, default is returned, or, if not given,
+        ValueError is raised.
+        """
+        ...
+
+    def decomposition(self, chr: str, /) -> str:
+        """
+        Returns the character decomposition mapping assigned to the character chr as string.
+
+        An empty string is returned in case no such mapping is defined.
+        """
+        ...
 
     @overload
     def digit(self, chr: str, /) -> int:
@@ -147,12 +238,42 @@ class UCD:
         """
         ...
     @overload
-    def digit(self, chr: str, default: _T, /) -> int | _T: ...
+    def digit(self, chr: str, default: _T, /) -> int | _T:
+        """
+        Converts a Unicode character into its equivalent digit value.
 
-    def east_asian_width(self, chr: str, /) -> _EastAsianWidth: ...
-    def is_normalized(self, form: _NormalizationForm, unistr: str, /) -> bool: ...
-    def lookup(self, name: str | ReadOnlyBuffer, /) -> str: ...
-    def mirrored(self, chr: str, /) -> int: ...
+        Returns the digit value assigned to the character chr as integer.
+        If no such value is defined, default is returned, or, if not given,
+        ValueError is raised.
+        """
+        ...
+
+    def east_asian_width(self, chr: str, /) -> _EastAsianWidth:
+        """Returns the east asian width assigned to the character chr as string."""
+        ...
+    def is_normalized(self, form: _NormalizationForm, unistr: str, /) -> bool:
+        """
+        Return whether the Unicode string unistr is in the normal form 'form'.
+
+        Valid values for form are 'NFC', 'NFKC', 'NFD', and 'NFKD'.
+        """
+        ...
+    def lookup(self, name: str | ReadOnlyBuffer, /) -> str:
+        """
+        Look up character by name.
+
+        If a character with the given name is found, return the
+        corresponding character.  If not found, KeyError is raised.
+        """
+        ...
+    def mirrored(self, chr: str, /) -> int:
+        """
+        Returns the mirrored property assigned to the character chr as integer.
+
+        Returns 1 if the character has been identified as a "mirrored"
+        character in bidirectional text, 0 otherwise.
+        """
+        ...
 
     @overload
     def name(self, chr: str, /) -> str:
@@ -164,9 +285,22 @@ class UCD:
         """
         ...
     @overload
-    def name(self, chr: str, default: _T, /) -> str | _T: ...
+    def name(self, chr: str, default: _T, /) -> str | _T:
+        """
+        Returns the name assigned to the character chr as a string.
 
-    def normalize(self, form: _NormalizationForm, unistr: str, /) -> str: ...
+        If no name is defined, default is returned, or, if not given,
+        ValueError is raised.
+        """
+        ...
+
+    def normalize(self, form: _NormalizationForm, unistr: str, /) -> str:
+        """
+        Return the normal form 'form' for the Unicode string unistr.
+
+        Valid values for form are 'NFC', 'NFKC', 'NFD', and 'NFKD'.
+        """
+        ...
 
     @overload
     def numeric(self, chr: str, /) -> float:

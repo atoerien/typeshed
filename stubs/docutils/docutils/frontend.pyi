@@ -261,7 +261,18 @@ def make_paths_absolute(
     ...
 @deprecated("The `frontend.make_one_path_absolute` will be removed in Docutils 2.0 or later.")
 def make_one_path_absolute(base_path: StrPath, path: StrPath) -> str: ...
-def filter_settings_spec(settings_spec, *exclude, **replace) -> tuple[Any, ...]: ...
+def filter_settings_spec(settings_spec, *exclude, **replace) -> tuple[Any, ...]:
+    """
+    Return a copy of `settings_spec` excluding/replacing some settings.
+
+    `settings_spec` is a tuple of configuration settings
+    (cf. `docutils.SettingsSpec.settings_spec`).
+
+    Optional positional arguments are names of to-be-excluded settings.
+    Keyword arguments are option specification replacements.
+    (See the html4strict writer for an example.)
+    """
+    ...
 
 @deprecated("The `frontend.Values` class will be removed in Docutils 2.0 or later.")
 class Values(optparse.Values):

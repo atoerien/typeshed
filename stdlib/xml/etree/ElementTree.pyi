@@ -83,7 +83,9 @@ class ParseError(SyntaxError):
     position: tuple[int, int]
 
 # In reality it works based on `.tag` attribute duck typing.
-def iselement(element: object) -> TypeGuard[Element]: ...
+def iselement(element: object) -> TypeGuard[Element]:
+    """Return True if *element* appears to be an Element."""
+    ...
 
 @overload
 def canonicalize(
@@ -189,16 +191,22 @@ class Element(Generic[_Tag]):
     def set(self, key: str, value: str, /) -> None: ...
     def __copy__(self) -> Element[_Tag]: ...  # returns the type of self in Python impl, but not in C impl
     def __deepcopy__(self, memo: Any, /) -> Element: ...  # Only exists in C impl
-    def __delitem__(self, key: SupportsIndex | slice, /) -> None: ...
+    def __delitem__(self, key: SupportsIndex | slice, /) -> None:
+        """Delete self[key]."""
+        ...
 
     @overload
     def __getitem__(self, key: SupportsIndex, /) -> Element:
         """Return self[key]."""
         ...
     @overload
-    def __getitem__(self, key: slice[SupportsIndex | None], /) -> list[Element]: ...
+    def __getitem__(self, key: slice[SupportsIndex | None], /) -> list[Element]:
+        """Return self[key]."""
+        ...
 
-    def __len__(self) -> int: ...
+    def __len__(self) -> int:
+        """Return len(self)."""
+        ...
     # Doesn't actually exist at runtime, but instance of the class are indeed iterable due to __getitem__.
     def __iter__(self) -> Iterator[Element]: ...
 
@@ -279,11 +287,51 @@ class ElementTree(Generic[_Root]):
     contents will be used to initialize the tree with.
     """
     def __init__(self, element: Element[Any] | None = None, file: _FileRead | None = None) -> None: ...
-    def getroot(self) -> _Root: ...
-    def _setroot(self, element: Element[Any]) -> None: ...
-    def parse(self, source: _FileRead, parser: XMLParser | None = None) -> Element: ...
-    def iter(self, tag: str | None = None) -> Generator[Element]: ...
-    def find(self, path: str, namespaces: dict[str, str] | None = None) -> Element | None: ...
+    def getroot(self) -> _Root:
+        """Return root element of this tree."""
+        ...
+    def _setroot(self, element: Element[Any]) -> None:
+        """
+        Replace root element of this tree.
+
+        This will discard the current contents of the tree and replace it
+        with the given element.  Use with care!
+        """
+        ...
+    def parse(self, source: _FileRead, parser: XMLParser | None = None) -> Element:
+        """
+        Load external XML document into element tree.
+
+        *source* is a file name or file object, *parser* is an optional parser
+        instance that defaults to XMLParser.
+
+        ParseError is raised if the parser fails to parse the document.
+
+        Returns the root element of the given source document.
+        """
+        ...
+    def iter(self, tag: str | None = None) -> Generator[Element]:
+        """
+        Create and return tree iterator for the root element.
+
+        The iterator loops over all elements in this tree, in document order.
+
+        *tag* is a string with the tag name to iterate over
+        (default is to return all elements).
+        """
+        ...
+    def find(self, path: str, namespaces: dict[str, str] | None = None) -> Element | None:
+        """
+        Find first matching element by tag name or path.
+
+        Same as getroot().find(path), which is Element.find()
+
+        *path* is a string having either an element tag or an XPath,
+        *namespaces* is an optional mapping from namespace prefix to full name.
+
+        Return the first matching element, or None if no element was found.
+        """
+        ...
 
     @overload
     def findtext(self, path: str, default: None = None, namespaces: dict[str, str] | None = None) -> str | None:
@@ -299,9 +347,31 @@ class ElementTree(Generic[_Root]):
         """
         ...
     @overload
-    def findtext(self, path: str, default: _T, namespaces: dict[str, str] | None = None) -> _T | str: ...
+    def findtext(self, path: str, default: _T, namespaces: dict[str, str] | None = None) -> _T | str:
+        """
+        Find first matching element by tag name or path.
 
-    def findall(self, path: str, namespaces: dict[str, str] | None = None) -> list[Element]: ...
+        Same as getroot().findtext(path),  which is Element.findtext()
+
+        *path* is a string having either an element tag or an XPath,
+        *namespaces* is an optional mapping from namespace prefix to full name.
+
+        Return the first matching element, or None if no element was found.
+        """
+        ...
+
+    def findall(self, path: str, namespaces: dict[str, str] | None = None) -> list[Element]:
+        """
+        Find all matching subelements by tag name or path.
+
+        Same as getroot().findall(path), which is Element.findall().
+
+        *path* is a string having either an element tag or an XPath,
+        *namespaces* is an optional mapping from namespace prefix to full name.
+
+        Return list containing all matching elements in document order.
+        """
+        ...
 
     @overload
     def iterfind(self, path: Literal[""], namespaces: dict[str, str] | None = None) -> None:
@@ -317,7 +387,18 @@ class ElementTree(Generic[_Root]):
         """
         ...
     @overload
-    def iterfind(self, path: str, namespaces: dict[str, str] | None = None) -> Generator[Element]: ...
+    def iterfind(self, path: str, namespaces: dict[str, str] | None = None) -> Generator[Element]:
+        """
+        Find all matching subelements by tag name or path.
+
+        Same as getroot().iterfind(path), which is element.iterfind()
+
+        *path* is a string having either an element tag or an XPath,
+        *namespaces* is an optional mapping from namespace prefix to full name.
+
+        Return an iterable yielding all matching elements in document order.
+        """
+        ...
 
     def write(
         self,
@@ -357,7 +438,19 @@ class ElementTree(Generic[_Root]):
 
 HTML_EMPTY: Final[set[str]]
 
-def register_namespace(prefix: str, uri: str) -> None: ...
+def register_namespace(prefix: str, uri: str) -> None:
+    """
+    Register a namespace prefix.
+
+    The registry is global, and any existing mapping for either the
+    given prefix or the namespace URI will be removed.
+
+    *prefix* is the namespace prefix, *uri* is a namespace uri. Tags and
+    attributes in this namespace will be serialized with prefix if possible.
+
+    ValueError is raised if prefix is reserved or is invalid.
+    """
+    ...
 
 @overload
 def tostring(
@@ -416,7 +509,21 @@ def tostring(
     xml_declaration: bool | None = None,
     default_namespace: str | None = None,
     short_empty_elements: bool = True,
-) -> Any: ...
+) -> Any:
+    """
+    Generate string representation of XML element.
+
+    All subelements are included.  If encoding is "unicode", a string
+    is returned. Otherwise a bytestring is returned.
+
+    *element* is an Element instance, *encoding* is an optional output
+    encoding defaulting to US-ASCII, *method* is an optional output which can
+    be one of "xml" (default), "html", "text" or "c14n", *default_namespace*
+    sets the default XML namespace (for "xmlns").
+
+    Returns an (optionally) encoded string containing the XML data.
+    """
+    ...
 
 @overload
 def tostringlist(
@@ -449,9 +556,44 @@ def tostringlist(
     short_empty_elements: bool = True,
 ) -> list[Any]: ...
 
-def dump(elem: Element[Any] | ElementTree[Any]) -> None: ...
-def indent(tree: Element[Any] | ElementTree[Any], space: str = "  ", level: int = 0) -> None: ...
-def parse(source: _FileRead, parser: XMLParser[Any] | None = None) -> ElementTree[Element]: ...
+def dump(elem: Element[Any] | ElementTree[Any]) -> None:
+    """
+    Write element tree or element structure to sys.stdout.
+
+    This function should be used for debugging only.
+
+    *elem* is either an ElementTree, or a single Element.  The exact output
+    format is implementation dependent.  In this version, it's written as an
+    ordinary XML file.
+    """
+    ...
+def indent(tree: Element[Any] | ElementTree[Any], space: str = "  ", level: int = 0) -> None:
+    """
+    Indent an XML document by inserting newlines and indentation space
+    after elements.
+
+    *tree* is the ElementTree or Element to modify.  The (root) element
+    itself will not be changed, but the tail text of all elements in its
+    subtree will be adapted.
+
+    *space* is the whitespace to insert for each indentation level, two
+    space characters by default.
+
+    *level* is the initial indentation level. Setting this to a higher
+    value than 0 can be used for indenting subtrees that are more deeply
+    nested inside of a document.
+    """
+    ...
+def parse(source: _FileRead, parser: XMLParser[Any] | None = None) -> ElementTree[Element]:
+    """
+    Parse XML document into element tree.
+
+    *source* is a filename or file object containing XML data,
+    *parser* is an optional parser instance defaulting to XMLParser.
+
+    Return an ElementTree instance.
+    """
+    ...
 
 # The type of the second element of the tuple yielded by iterparse depends
 # on the event type in the first element of the tuple:

@@ -191,10 +191,16 @@ def locateCenterOnScreen(
     region: tuple[int, int, int, int] | None = None,
     step: int = 1,
     confidence: None = None,
-) -> Point | None: ...
+) -> Point | None:
+    """TODO"""
+    ...
 
-def locateOnScreenNear(image: str | Image.Image | _MatLike, x: int, y: int) -> Box: ...
-def locateCenterOnScreenNear(image: str | Image.Image | _MatLike, x: int, y: int) -> Point | None: ...
+def locateOnScreenNear(image: str | Image.Image | _MatLike, x: int, y: int) -> Box:
+    """TODO"""
+    ...
+def locateCenterOnScreenNear(image: str | Image.Image | _MatLike, x: int, y: int) -> Point | None:
+    """TODO"""
+    ...
 
 # _locateAll_opencv
 @overload
@@ -220,7 +226,9 @@ def locateOnWindow(
     limit: Unused = 1,
     step: int = 1,
     confidence: None = None,
-) -> Box | None: ...
+) -> Box | None:
+    """TODO"""
+    ...
 
 def showRegionOnScreen(
     region: tuple[int, int, int, int], outlineColor: str = "red", filename: str = "_showRegionOnScreen.png"

@@ -183,9 +183,23 @@ class wsgify(Generic[_P, _RequestT_contra]):
         """Call this as a WSGI application or with a request"""
         ...
     @overload
-    def __call__(self, req: _RequestT_contra, *args: _P.args, **kw: _P.kwargs) -> _AnyResponse: ...
+    def __call__(self, req: _RequestT_contra, *args: _P.args, **kw: _P.kwargs) -> _AnyResponse:
+        """Call this as a WSGI application or with a request"""
+        ...
 
-    def get(self, url: str, **kw: Any) -> _AnyResponse: ...
+    def get(self, url: str, **kw: Any) -> _AnyResponse:
+        """
+        Run a GET request on this application, returning a Response.
+
+        This creates a request object using the given URL, and any
+        other keyword arguments are set on the request object (e.g.,
+        ``last_modified=datetime.now()``).
+
+        ::
+
+            resp = myapp.get('/article?id=10')
+        """
+        ...
     def post(
         self, url: str, POST: str | bytes | Mapping[Any, Any] | Mapping[Any, list[Any] | tuple[Any, ...]] | None = None, **kw: Any
     ) -> _AnyResponse:

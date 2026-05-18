@@ -124,7 +124,9 @@ else:
         """Returns the final component of a pathname"""
         ...
     @overload
-    def basename(p: AnyOrLiteralStr) -> AnyOrLiteralStr: ...
+    def basename(p: AnyOrLiteralStr) -> AnyOrLiteralStr:
+        """Returns the final component of a pathname"""
+        ...
 
     @overload
     def dirname(p: PathLike[AnyStr]) -> AnyStr:
@@ -143,7 +145,12 @@ def expanduser(path: PathLike[AnyStr]) -> AnyStr:
     """
     ...
 @overload
-def expanduser(path: AnyStr) -> AnyStr: ...
+def expanduser(path: AnyStr) -> AnyStr:
+    """
+    Expand ~ and ~user constructions.  If user or $HOME is unknown,
+    do nothing.
+    """
+    ...
 
 @overload
 def expandvars(path: PathLike[AnyStr]) -> AnyStr:
@@ -180,7 +187,9 @@ def normpath(path: PathLike[AnyStr]) -> AnyStr:
     """Normalize path, eliminating double slashes, etc."""
     ...
 @overload
-def normpath(path: AnyOrLiteralStr) -> AnyOrLiteralStr: ...
+def normpath(path: AnyOrLiteralStr) -> AnyOrLiteralStr:
+    """Normalize path, eliminating double slashes, etc."""
+    ...
 
 @overload
 def commonpath(paths: Iterable[LiteralString]) -> LiteralString:
@@ -279,7 +288,12 @@ else:
         """
         ...
     @overload
-    def split(p: AnyOrLiteralStr) -> tuple[AnyOrLiteralStr, AnyOrLiteralStr]: ...
+    def split(p: AnyOrLiteralStr) -> tuple[AnyOrLiteralStr, AnyOrLiteralStr]:
+        """
+        Split a pathname.  Returns tuple "(head, tail)" where "tail" is
+        everything after the final slash.  Either part may be empty.
+        """
+        ...
 
     @overload
     def splitdrive(p: PathLike[AnyStr]) -> tuple[AnyStr, AnyStr]:
@@ -340,7 +354,12 @@ def lexists(path: FileDescriptorOrPath) -> bool:
     ...
 
 if sys.version_info >= (3, 12):
-    def isjunction(path: StrOrBytesPath) -> bool: ...
+    def isjunction(path: StrOrBytesPath) -> bool:
+        """
+        Test whether a path is a junction
+        Junctions are not supported on the current platform
+        """
+        ...
 
     if sys.version_info >= (3, 15):
         @overload

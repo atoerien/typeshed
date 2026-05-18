@@ -246,7 +246,9 @@ class URL:
         """The URL's path, in text form."""
         ...
     @path.setter
-    def path(self, path_text) -> None: ...
+    def path(self, path_text) -> None:
+        """The URL's path, in text form."""
+        ...
 
     @property
     def uses_netloc(self):

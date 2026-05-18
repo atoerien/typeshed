@@ -83,7 +83,27 @@ def asdict(obj: DataclassInstance) -> dict[str, Any]:
     """
     ...
 @overload
-def asdict(obj: DataclassInstance, *, dict_factory: Callable[[list[tuple[str, Any]]], _T]) -> _T: ...
+def asdict(obj: DataclassInstance, *, dict_factory: Callable[[list[tuple[str, Any]]], _T]) -> _T:
+    """
+    Return the fields of a dataclass instance as a new dictionary mapping
+    field names to field values.
+
+    Example usage::
+
+      @dataclass
+      class C:
+          x: int
+          y: int
+
+      c = C(1, 2)
+      assert asdict(c) == {'x': 1, 'y': 2}
+
+    If given, 'dict_factory' will be used instead of built-in dict.
+    The function applies recursively to field values that are
+    dataclass instances. This will also look into built-in containers:
+    tuples, lists, and dicts. Other objects are copied with 'copy.deepcopy()'.
+    """
+    ...
 
 @overload
 def astuple(obj: DataclassInstance) -> tuple[Any, ...]:
@@ -175,7 +195,22 @@ if sys.version_info >= (3, 11):
         kw_only: bool = False,
         slots: bool = False,
         weakref_slot: bool = False,
-    ) -> Callable[[type[_T]], type[_T]]: ...
+    ) -> Callable[[type[_T]], type[_T]]:
+        """
+        Add dunder methods based on the fields defined in the class.
+
+        Examines PEP 526 __annotations__ to determine fields.
+
+        If init is true, an __init__() method is added to the class. If repr
+        is true, a __repr__() method is added. If order is true, rich
+        comparison dunder methods are added. If unsafe_hash is true, a
+        __hash__() method is added. If frozen is true, fields may not be
+        assigned to after instance creation. If match_args is true, the
+        __match_args__ tuple is added. If kw_only is true, then by default
+        all fields are keyword-only. If slots is true, a new class with a
+        __slots__ attribute is returned.
+        """
+        ...
 else:
     @overload
     def dataclass(
@@ -400,7 +435,24 @@ if sys.version_info >= (3, 14):
         metadata: Mapping[Any, Any] | None = None,
         kw_only: bool | Literal[_MISSING_TYPE.MISSING] = ...,
         doc: str | None = None,
-    ) -> Any: ...
+    ) -> Any:
+        """
+        Return an object to identify dataclass fields.
+
+        default is the default value of the field.  default_factory is a
+        0-argument function called to initialize a field's value.  If init
+        is true, the field will be a parameter to the class's __init__()
+        function.  If repr is true, the field will be included in the
+        object's repr().  If hash is true, the field will be included in the
+        object's hash().  If compare is true, the field will be used in
+        comparison functions.  metadata, if specified, must be a mapping
+        which is stored but not otherwise examined by dataclass.  If kw_only
+        is true, the field will become a keyword-only parameter to
+        __init__().  doc is an optional docstring for this field.
+
+        It is an error to specify both default and default_factory.
+        """
+        ...
 else:
     @overload  # `default` and `default_factory` are optional and mutually exclusive.
     def field(

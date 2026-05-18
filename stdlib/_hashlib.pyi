@@ -143,10 +143,37 @@ def compare_digest(a: ReadableBuffer, b: ReadableBuffer, /) -> bool:
     """
     ...
 @overload
-def compare_digest(a: AnyStr, b: AnyStr, /) -> bool: ...
+def compare_digest(a: AnyStr, b: AnyStr, /) -> bool:
+    """
+    Return 'a == b'.
 
-def get_fips_mode() -> int: ...
-def hmac_new(key: ReadableBuffer, msg: ReadableBuffer = b"", digestmod: _DigestMod = None) -> HMAC: ...
+    This function uses an approach designed to prevent
+    timing analysis, making it appropriate for cryptography.
+
+    a and b must both be of the same type: either str (ASCII only),
+    or any bytes-like object.
+
+    Note: If a and b are of different lengths, or if an error occurs,
+    a timing attack could theoretically reveal information about the
+    types and lengths of a and b--but not their values.
+    """
+    ...
+
+def get_fips_mode() -> int:
+    """
+    Determine the OpenSSL FIPS mode of operation.
+
+    For OpenSSL 3.0.0 and newer it returns the state of the default provider
+    in the default OSSL context. It's not quite the same as FIPS_mode() but good
+    enough for unittests.
+
+    Effectively any non-zero return value indicates FIPS mode;
+    values other than 1 may have additional significance.
+    """
+    ...
+def hmac_new(key: ReadableBuffer, msg: ReadableBuffer = b"", digestmod: _DigestMod = None) -> HMAC:
+    """Return a new hmac object."""
+    ...
 
 if sys.version_info >= (3, 13):
     def new(

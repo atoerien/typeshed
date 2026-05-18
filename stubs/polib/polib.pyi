@@ -50,7 +50,34 @@ def pofile(pofile: str | Path, *, klass: type[_TP], **kwargs: Any) -> _TP:
     """
     ...
 @overload
-def pofile(pofile: str | Path, **kwargs: Any) -> POFile: ...
+def pofile(pofile: str | Path, **kwargs: Any) -> POFile:
+    """
+    Convenience function that parses the po or pot file ``pofile`` and returns
+    a :class:`~polib.POFile` instance.
+
+    Arguments:
+
+    ``pofile``
+        string, full or relative path to the po/pot file or its content (data).
+
+    ``wrapwidth``
+        integer, the wrap width, only useful when the ``-w`` option was passed
+        to xgettext (optional, default: ``78``).
+
+    ``encoding``
+        string, the encoding to use (e.g. "utf-8") (default: ``None``, the
+        encoding will be auto-detected).
+
+    ``check_for_duplicates``
+        whether to check for duplicate entries when adding entries to the
+        file (optional, default: ``False``).
+
+    ``klass``
+        class which is used to instantiate the return value (optional,
+        default: ``None``, the return value with be a :class:`~polib.POFile`
+        instance).
+    """
+    ...
 
 @overload
 def mofile(mofile: str, *, klass: type[_TM], **kwargs: Any) -> _TM:
@@ -84,11 +111,65 @@ def mofile(mofile: str, *, klass: type[_TM], **kwargs: Any) -> _TM:
     """
     ...
 @overload
-def mofile(mofile: str, **kwargs: Any) -> MOFile: ...
+def mofile(mofile: str, **kwargs: Any) -> MOFile:
+    """
+    Convenience function that parses the mo file ``mofile`` and returns a
+    :class:`~polib.MOFile` instance.
 
-def detect_encoding(file: bytes | str, binary_mode: bool = ...) -> str: ...
-def escape(st: str) -> str: ...
-def unescape(st: str) -> str: ...
+    Arguments:
+
+    ``mofile``
+        string, full or relative path to the mo file or its content (string
+        or bytes).
+
+    ``wrapwidth``
+        integer, the wrap width, only useful when the ``-w`` option was passed
+        to xgettext to generate the po file that was used to format the mo file
+        (optional, default: ``78``).
+
+    ``encoding``
+        string, the encoding to use (e.g. "utf-8") (default: ``None``, the
+        encoding will be auto-detected).
+
+    ``check_for_duplicates``
+        whether to check for duplicate entries when adding entries to the
+        file (optional, default: ``False``).
+
+    ``klass``
+        class which is used to instantiate the return value (optional,
+        default: ``None``, the return value with be a :class:`~polib.POFile`
+        instance).
+    """
+    ...
+
+def detect_encoding(file: bytes | str, binary_mode: bool = ...) -> str:
+    """
+    Try to detect the encoding used by the ``file``. The ``file`` argument can
+    be a PO or MO file path or a string containing the contents of the file.
+    If the encoding cannot be detected, the function will return the value of
+    ``default_encoding``.
+
+    Arguments:
+
+    ``file``
+        string, full or relative path to the po/mo file or its content.
+
+    ``binary_mode``
+        boolean, set this to True if ``file`` is a mo file.
+    """
+    ...
+def escape(st: str) -> str:
+    r"""
+    Escapes the characters ``\\``, ``\t``, ``\n``, ``\r``, ``\v``,
+    ``\b``, ``\f`` and ``"`` in the given string ``st`` and returns it.
+    """
+    ...
+def unescape(st: str) -> str:
+    r"""
+    Unescapes the characters ``\\``, ``\t``, ``\n``, ``\r``, ``\v``,
+    ``\b``, ``\f`` and ``"`` in the given string ``st`` and returns it.
+    """
+    ...
 
 class _BaseFile(list[_TB]):
     """

@@ -154,7 +154,31 @@ if sys.version_info >= (3, 12):
         *,
         errors: str | None = None,
         delete_on_close: bool = True,
-    ) -> _TemporaryFileWrapper[Any]: ...
+    ) -> _TemporaryFileWrapper[Any]:
+        """
+        Create and return a temporary file.
+        Arguments:
+        'prefix', 'suffix', 'dir' -- as for mkstemp.
+        'mode' -- the mode argument to io.open (default "w+b").
+        'buffering' -- the buffer size argument to io.open (default -1).
+        'encoding' -- the encoding argument to io.open (default None)
+        'newline' -- the newline argument to io.open (default None)
+        'delete' -- whether the file is automatically deleted (default True).
+        'delete_on_close' -- if 'delete', whether the file is deleted on close
+           (default True) or otherwise either on context manager exit
+           (if context manager was used) or on object finalization. .
+        'errors' -- the errors argument to io.open (default None)
+        The file is created as mkstemp() would do it.
+
+        Returns an object with a file-like interface; the name of the file
+        is accessible as its 'name' attribute.  The file will be automatically
+        deleted when it is closed unless the 'delete' argument is set to False.
+
+        On POSIX, NamedTemporaryFiles cannot be automatically deleted if
+        the creating process is terminated abruptly with a SIGKILL signal.
+        Windows can delete the file even in this case.
+        """
+        ...
 else:
     @overload
     def NamedTemporaryFile(
@@ -824,7 +848,20 @@ def mkdtemp(suffix: str | None = None, prefix: str | None = None, dir: StrPath |
     """
     ...
 @overload
-def mkdtemp(suffix: bytes | None = None, prefix: bytes | None = None, dir: BytesPath | None = None) -> bytes: ...
+def mkdtemp(suffix: bytes | None = None, prefix: bytes | None = None, dir: BytesPath | None = None) -> bytes:
+    """
+    User-callable function to create and return a unique temporary
+    directory.  The return value is the pathname of the directory.
+
+    Arguments are as for mkstemp, except that the 'text' argument is
+    not accepted.
+
+    The directory is readable, writable, and searchable only by the
+    creating user.
+
+    Caller is responsible for deleting the directory when done with it.
+    """
+    ...
 
 @deprecated("Deprecated since Python 2.3. Use `mkstemp()` or `NamedTemporaryFile(delete=False)` instead.")
 def mktemp(suffix: str = "", prefix: str = "tmp", dir: StrPath | None = None) -> str:

@@ -154,7 +154,12 @@ class OrderedMultiDict(dict[_KT, _VT]):
         """
         ...
     @classmethod
-    def fromkeys(cls, keys: _KT, default: _VT | None = None) -> Self: ...  # type: ignore[override]
+    def fromkeys(cls, keys: _KT, default: _VT | None = None) -> Self:
+        """
+        Create a dictionary from a list of keys, with all the values
+        set to *default*, or ``None`` if *default* is not set.
+        """
+        ...
 
     @overload  # type: ignore[override]
     def get(self, k: _KT, default: None = None) -> _VT | None:
@@ -167,18 +172,99 @@ class OrderedMultiDict(dict[_KT, _VT]):
         """
         ...
     @overload
-    def get(self, k: _KT, default: _VT) -> _VT: ...
+    def get(self, k: _KT, default: _VT) -> _VT:
+        """
+        Return the value for key *k* if present in the dictionary, else
+        *default*. If *default* is not given, ``None`` is returned.
+        This method never raises a :exc:`KeyError`.
 
-    def getlist(self, k: _KT, default: list[_VT] = ...) -> list[_VT]: ...
-    def inverted(self) -> Self: ...
-    def items(self, multi: bool = False) -> list[tuple[_KT, _VT]]: ...  # type: ignore[override]
-    def iteritems(self, multi: bool = False) -> Generator[tuple[_KT, _VT]]: ...
-    def iterkeys(self, multi: bool = False) -> Generator[_KT]: ...
-    def itervalues(self, multi: bool = False) -> Generator[_VT]: ...
-    def keys(self, multi: bool = False) -> list[_KT]: ...  # type: ignore[override]
-    def pop(self, k: _KT, default: _VT = ...) -> _VT: ...  # type: ignore[override]
-    def popall(self, k: _KT, default: _VT = ...) -> list[_VT]: ...
-    def poplast(self, k: _KT = ..., default: _VT = ...) -> _VT: ...
+        To get all values under a key, use :meth:`OrderedMultiDict.getlist`.
+        """
+        ...
+
+    def getlist(self, k: _KT, default: list[_VT] = ...) -> list[_VT]:
+        """
+        Get all values for key *k* as a list, if *k* is in the
+        dictionary, else *default*. The list returned is a copy and
+        can be safely mutated. If *default* is not given, an empty
+        :class:`list` is returned.
+        """
+        ...
+    def inverted(self) -> Self:
+        """
+        Returns a new :class:`OrderedMultiDict` with values and keys
+        swapped, like creating dictionary transposition or reverse
+        index.  Insertion order is retained and all keys and values
+        are represented in the output.
+
+        >>> omd = OMD([(0, 2), (1, 2)])
+        >>> omd.inverted().getlist(2)
+        [0, 1]
+
+        Inverting twice yields a copy of the original:
+
+        >>> omd.inverted().inverted()
+        OrderedMultiDict([(0, 2), (1, 2)])
+        """
+        ...
+    def items(self, multi: bool = False) -> list[tuple[_KT, _VT]]:
+        """
+        Returns a list containing the output of :meth:`iteritems`.  See
+        that method's docs for more details.
+        """
+        ...
+    def iteritems(self, multi: bool = False) -> Generator[tuple[_KT, _VT]]:
+        """
+        Iterate over the OMD's items in insertion order. By default,
+        yields only the most-recently inserted value for each key. Set
+        *multi* to ``True`` to get all inserted items.
+        """
+        ...
+    def iterkeys(self, multi: bool = False) -> Generator[_KT]:
+        """
+        Iterate over the OMD's keys in insertion order. By default, yields
+        each key once, according to the most recent insertion. Set
+        *multi* to ``True`` to get all keys, including duplicates, in
+        insertion order.
+        """
+        ...
+    def itervalues(self, multi: bool = False) -> Generator[_VT]:
+        """
+        Iterate over the OMD's values in insertion order. By default,
+        yields the most-recently inserted value per unique key.  Set
+        *multi* to ``True`` to get all values according to insertion
+        order.
+        """
+        ...
+    def keys(self, multi: bool = False) -> list[_KT]:
+        """
+        Returns a list containing the output of :meth:`iterkeys`.  See
+        that method's docs for more details.
+        """
+        ...
+    def pop(self, k: _KT, default: _VT = ...) -> _VT:
+        """
+        Remove all values under key *k*, returning the most-recently
+        inserted value. Raises :exc:`KeyError` if the key is not
+        present and no *default* is provided.
+        """
+        ...
+    def popall(self, k: _KT, default: _VT = ...) -> list[_VT]:
+        """
+        Remove all values under key *k*, returning them in the form of
+        a list. Raises :exc:`KeyError` if the key is not present and no
+        *default* is provided.
+        """
+        ...
+    def poplast(self, k: _KT = ..., default: _VT = ...) -> _VT:
+        """
+        Remove and return the most-recently inserted value under the key
+        *k*, or the most-recently inserted key if *k* is not
+        provided. If no values remain under *k*, it will be removed
+        from the OMD.  Raises :exc:`KeyError` if *k* is not present in
+        the dictionary, or the dictionary is empty.
+        """
+        ...
 
     @overload  # type: ignore[override]
     def setdefault(self, k: _KT, default: None = None) -> _VT | None:
@@ -190,17 +276,112 @@ class OrderedMultiDict(dict[_KT, _VT]):
         """
         ...
     @overload
-    def setdefault(self, k: _KT, default: _VT) -> _VT: ...
+    def setdefault(self, k: _KT, default: _VT) -> _VT:
+        """
+        If key *k* is in the dictionary, return its value. If not, insert
+        *k* with a value of *default* and return *default*. *default*
+        defaults to ``None``. See :meth:`dict.setdefault` for more
+        information.
+        """
+        ...
 
-    def sorted(self, key: _KT | None = None, reverse: bool = False) -> Self: ...
-    def sortedvalues(self, key: _KT | None = None, reverse: bool = False) -> Self: ...
-    def todict(self, multi: bool = False) -> dict[_KT, _VT]: ...
-    def update(self, E: SupportsKeysAndGetItem[_KT, _VT] | Iterable[tuple[_KT, _VT]], **F) -> None: ...  # type: ignore[override]
-    def update_extend(self, E: SupportsKeysAndGetItem[_KT, _VT] | Iterable[tuple[_KT, _VT]], **F) -> None: ...
-    def values(self, multi: bool = False) -> list[_VT]: ...  # type: ignore[override]
-    def viewitems(self) -> ItemsView[_KT, _VT]: ...
-    def viewkeys(self) -> KeysView[_KT]: ...
-    def viewvalues(self) -> ValuesView[_VT]: ...
+    def sorted(self, key: _KT | None = None, reverse: bool = False) -> Self:
+        """
+        Similar to the built-in :func:`sorted`, except this method returns
+        a new :class:`OrderedMultiDict` sorted by the provided key
+        function, optionally reversed.
+
+        Args:
+            key (callable): A callable to determine the sort key of
+              each element. The callable should expect an **item**
+              (key-value pair tuple).
+            reverse (bool): Set to ``True`` to reverse the ordering.
+
+        >>> omd = OrderedMultiDict(zip(range(3), range(3)))
+        >>> omd.sorted(reverse=True)
+        OrderedMultiDict([(2, 2), (1, 1), (0, 0)])
+
+        Note that the key function receives an **item** (key-value
+        tuple), so the recommended signature looks like:
+
+        >>> omd = OrderedMultiDict(zip('hello', 'world'))
+        >>> omd.sorted(key=lambda i: i[1])  # i[0] is the key, i[1] is the val
+        OrderedMultiDict([('o', 'd'), ('l', 'l'), ('e', 'o'), ('l', 'r'), ('h', 'w')])
+        """
+        ...
+    def sortedvalues(self, key: _KT | None = None, reverse: bool = False) -> Self:
+        """
+        Returns a copy of the :class:`OrderedMultiDict` with the same keys
+        in the same order as the original OMD, but the values within
+        each keyspace have been sorted according to *key* and
+        *reverse*.
+
+        Args:
+            key (callable): A single-argument callable to determine
+              the sort key of each element. The callable should expect
+              an **item** (key-value pair tuple).
+            reverse (bool): Set to ``True`` to reverse the ordering.
+
+        >>> omd = OrderedMultiDict()
+        >>> omd.addlist('even', [6, 2])
+        >>> omd.addlist('odd', [1, 5])
+        >>> omd.add('even', 4)
+        >>> omd.add('odd', 3)
+        >>> somd = omd.sortedvalues()
+        >>> somd.getlist('even')
+        [2, 4, 6]
+        >>> somd.keys(multi=True) == omd.keys(multi=True)
+        True
+        >>> omd == somd
+        False
+        >>> somd
+        OrderedMultiDict([('even', 2), ('even', 4), ('odd', 1), ('odd', 3), ('even', 6), ('odd', 5)])
+
+        As demonstrated above, contents and key order are
+        retained. Only value order changes.
+        """
+        ...
+    def todict(self, multi: bool = False) -> dict[_KT, _VT]:
+        """
+        Gets a basic :class:`dict` of the items in this dictionary. Keys
+        are the same as the OMD, values are the most recently inserted
+        values for each key.
+
+        Setting the *multi* arg to ``True`` is yields the same
+        result as calling :class:`dict` on the OMD, except that all the
+        value lists are copies that can be safely mutated.
+        """
+        ...
+    def update(self, E: SupportsKeysAndGetItem[_KT, _VT] | Iterable[tuple[_KT, _VT]], **F) -> None:
+        """
+        Add items from a dictionary or iterable (and/or keyword arguments),
+        overwriting values under an existing key. See
+        :meth:`dict.update` for more details.
+        """
+        ...
+    def update_extend(self, E: SupportsKeysAndGetItem[_KT, _VT] | Iterable[tuple[_KT, _VT]], **F) -> None:
+        """
+        Add items from a dictionary, iterable, and/or keyword
+        arguments without overwriting existing items present in the
+        dictionary. Like :meth:`update`, but adds to existing keys
+        instead of overwriting them.
+        """
+        ...
+    def values(self, multi: bool = False) -> list[_VT]:
+        """
+        Returns a list containing the output of :meth:`itervalues`.  See
+        that method's docs for more details.
+        """
+        ...
+    def viewitems(self) -> ItemsView[_KT, _VT]:
+        """OMD.viewitems() -> a set-like object providing a view on OMD's items"""
+        ...
+    def viewkeys(self) -> KeysView[_KT]:
+        """OMD.viewkeys() -> a set-like object providing a view on OMD's keys"""
+        ...
+    def viewvalues(self) -> ValuesView[_VT]:
+        """OMD.viewvalues() -> an object providing a view on OMD's values"""
+        ...
 
 OMD: TypeAlias = OrderedMultiDict[_KT, _VT]
 MultiDict: TypeAlias = OrderedMultiDict[_KT, _VT]

@@ -210,7 +210,9 @@ class attrgetter(Generic[_T_co]):
     @overload
     def __new__(cls, attr: str, /, *attrs: str) -> attrgetter[tuple[Any, ...]]: ...
 
-    def __call__(self, obj: Any, /) -> _T_co: ...
+    def __call__(self, obj: Any, /) -> _T_co:
+        """Call self as a function."""
+        ...
 
 @final
 class itemgetter(Generic[_T_co]):

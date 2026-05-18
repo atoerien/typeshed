@@ -211,7 +211,9 @@ class Match(Generic[AnyStr]):
     # The regular expression object whose match() or search() method produced
     # this match instance.
     @property
-    def re(self) -> Pattern[AnyStr]: ...
+    def re(self) -> Pattern[AnyStr]:
+        """The regular expression object."""
+        ...
 
     @overload
     def expand(self: Match[str], template: str) -> str:
@@ -222,7 +224,9 @@ class Match(Generic[AnyStr]):
         """Return the string obtained by doing backslash substitution on the string template, as done by the sub() method."""
         ...
     @overload
-    def expand(self, template: AnyStr) -> AnyStr: ...
+    def expand(self, template: AnyStr) -> AnyStr:
+        """Return the string obtained by doing backslash substitution on the string template, as done by the sub() method."""
+        ...
 
     # group() returns "AnyStr" or "AnyStr | None", depending on the pattern.
     @overload
@@ -242,7 +246,13 @@ class Match(Generic[AnyStr]):
         """
         ...
     @overload
-    def group(self, group1: str | int, group2: str | int, /, *groups: str | int) -> tuple[AnyStr | MaybeNone, ...]: ...
+    def group(self, group1: str | int, group2: str | int, /, *groups: str | int) -> tuple[AnyStr | MaybeNone, ...]:
+        """
+        group([group1, ...]) -> str or tuple.
+        Return subgroup(s) of the match by indices or names.
+        For 0 returns the entire match.
+        """
+        ...
 
     # Each item of groups()'s return tuple is either "AnyStr" or
     # "AnyStr | None", depending on the pattern.
@@ -256,7 +266,14 @@ class Match(Generic[AnyStr]):
         """
         ...
     @overload
-    def groups(self, default: _T) -> tuple[AnyStr | _T, ...]: ...
+    def groups(self, default: _T) -> tuple[AnyStr | _T, ...]:
+        """
+        Return a tuple containing all the subgroups of the match, from 1.
+
+        default
+          Is used for groups that did not participate in the match.
+        """
+        ...
 
     # Each value in groupdict()'s return dict is either "AnyStr" or
     # "AnyStr | None", depending on the pattern.
@@ -270,11 +287,24 @@ class Match(Generic[AnyStr]):
         """
         ...
     @overload
-    def groupdict(self, default: _T) -> dict[str, AnyStr | _T]: ...
+    def groupdict(self, default: _T) -> dict[str, AnyStr | _T]:
+        """
+        Return a dictionary containing all the named subgroups of the match, keyed by the subgroup name.
 
-    def start(self, group: int | str = 0, /) -> int: ...
-    def end(self, group: int | str = 0, /) -> int: ...
-    def span(self, group: int | str = 0, /) -> tuple[int, int]: ...
+        default
+          Is used for groups that did not participate in the match.
+        """
+        ...
+
+    def start(self, group: int | str = 0, /) -> int:
+        """Return index of the start of the substring matched by group."""
+        ...
+    def end(self, group: int | str = 0, /) -> int:
+        """Return index of the end of the substring matched by group."""
+        ...
+    def span(self, group: int | str = 0, /) -> tuple[int, int]:
+        """For match object m, return the 2-tuple (m.start(group), m.end(group))."""
+        ...
     @property
     def regs(self) -> tuple[tuple[int, int], ...]: ...  # undocumented
 
@@ -284,7 +314,9 @@ class Match(Generic[AnyStr]):
         """Return self[key]."""
         ...
     @overload
-    def __getitem__(self, key: int | str, /) -> AnyStr | MaybeNone: ...
+    def __getitem__(self, key: int | str, /) -> AnyStr | MaybeNone:
+        """Return self[key]."""
+        ...
 
     def __copy__(self) -> Match[AnyStr]: ...
     def __deepcopy__(self, memo: Any, /) -> Match[AnyStr]: ...
@@ -308,7 +340,9 @@ class Pattern(Generic[AnyStr]):
         """The number of capturing groups in the pattern."""
         ...
     @property
-    def pattern(self) -> AnyStr: ...
+    def pattern(self) -> AnyStr:
+        """The pattern string from which the RE object was compiled."""
+        ...
 
     @overload
     def search(self: Pattern[str], string: str, pos: int = 0, endpos: int = sys.maxsize) -> Match[str] | None:
@@ -327,7 +361,13 @@ class Pattern(Generic[AnyStr]):
         """
         ...
     @overload
-    def search(self, string: AnyStr, pos: int = 0, endpos: int = sys.maxsize) -> Match[AnyStr] | None: ...
+    def search(self, string: AnyStr, pos: int = 0, endpos: int = sys.maxsize) -> Match[AnyStr] | None:
+        """
+        Scan through string looking for a match, and return a corresponding match object instance.
+
+        Return None if no position in the string matches.
+        """
+        ...
 
     @overload
     def match(self: Pattern[str], string: str, pos: int = 0, endpos: int = sys.maxsize) -> Match[str] | None:
@@ -338,7 +378,9 @@ class Pattern(Generic[AnyStr]):
         """Matches zero or more characters at the beginning of the string."""
         ...
     @overload
-    def match(self, string: AnyStr, pos: int = 0, endpos: int = sys.maxsize) -> Match[AnyStr] | None: ...
+    def match(self, string: AnyStr, pos: int = 0, endpos: int = sys.maxsize) -> Match[AnyStr] | None:
+        """Matches zero or more characters at the beginning of the string."""
+        ...
 
     if sys.version_info >= (3, 15):
         prefixmatch = match
@@ -354,7 +396,9 @@ class Pattern(Generic[AnyStr]):
         """Matches against all of the string."""
         ...
     @overload
-    def fullmatch(self, string: AnyStr, pos: int = 0, endpos: int = sys.maxsize) -> Match[AnyStr] | None: ...
+    def fullmatch(self, string: AnyStr, pos: int = 0, endpos: int = sys.maxsize) -> Match[AnyStr] | None:
+        """Matches against all of the string."""
+        ...
 
     @overload
     def split(self: Pattern[str], string: str, maxsplit: int = 0) -> list[str | MaybeNone]:
@@ -365,7 +409,9 @@ class Pattern(Generic[AnyStr]):
         """Split string by the occurrences of pattern."""
         ...
     @overload
-    def split(self, string: AnyStr, maxsplit: int = 0) -> list[AnyStr | MaybeNone]: ...
+    def split(self, string: AnyStr, maxsplit: int = 0) -> list[AnyStr | MaybeNone]:
+        """Split string by the occurrences of pattern."""
+        ...
 
     # return type depends on the number of groups in the pattern
     @overload
@@ -377,7 +423,9 @@ class Pattern(Generic[AnyStr]):
         """Return a list of all non-overlapping matches of pattern in string."""
         ...
     @overload
-    def findall(self, string: AnyStr, pos: int = 0, endpos: int = sys.maxsize) -> list[AnyStr]: ...
+    def findall(self, string: AnyStr, pos: int = 0, endpos: int = sys.maxsize) -> list[AnyStr]:
+        """Return a list of all non-overlapping matches of pattern in string."""
+        ...
 
     @overload
     def finditer(self: Pattern[str], string: str, pos: int = 0, endpos: int = sys.maxsize) -> Iterator[Match[str]]:
@@ -398,7 +446,13 @@ class Pattern(Generic[AnyStr]):
         """
         ...
     @overload
-    def finditer(self, string: AnyStr, pos: int = 0, endpos: int = sys.maxsize) -> Iterator[Match[AnyStr]]: ...
+    def finditer(self, string: AnyStr, pos: int = 0, endpos: int = sys.maxsize) -> Iterator[Match[AnyStr]]:
+        """
+        Return an iterator over all non-overlapping matches for the RE pattern in string.
+
+        For each match, the iterator returns a match object.
+        """
+        ...
 
     @overload
     def sub(self: Pattern[str], repl: str | Callable[[Match[str]], str], string: str, count: int = 0) -> str:
@@ -414,7 +468,9 @@ class Pattern(Generic[AnyStr]):
         """Return the string obtained by replacing the leftmost non-overlapping occurrences of pattern in string by the replacement repl."""
         ...
     @overload
-    def sub(self, repl: AnyStr | Callable[[Match[AnyStr]], AnyStr], string: AnyStr, count: int = 0) -> AnyStr: ...
+    def sub(self, repl: AnyStr | Callable[[Match[AnyStr]], AnyStr], string: AnyStr, count: int = 0) -> AnyStr:
+        """Return the string obtained by replacing the leftmost non-overlapping occurrences of pattern in string by the replacement repl."""
+        ...
 
     @overload
     def subn(self: Pattern[str], repl: str | Callable[[Match[str]], str], string: str, count: int = 0) -> tuple[str, int]:
@@ -430,7 +486,9 @@ class Pattern(Generic[AnyStr]):
         """Return the tuple (new_string, number_of_subs_made) found by replacing the leftmost non-overlapping occurrences of pattern with the replacement repl."""
         ...
     @overload
-    def subn(self, repl: AnyStr | Callable[[Match[AnyStr]], AnyStr], string: AnyStr, count: int = 0) -> tuple[AnyStr, int]: ...
+    def subn(self, repl: AnyStr | Callable[[Match[AnyStr]], AnyStr], string: AnyStr, count: int = 0) -> tuple[AnyStr, int]:
+        """Return the tuple (new_string, number_of_subs_made) found by replacing the leftmost non-overlapping occurrences of pattern with the replacement repl."""
+        ...
 
     def __copy__(self) -> Pattern[AnyStr]: ...
     def __deepcopy__(self, memo: Any, /) -> Pattern[AnyStr]: ...
@@ -503,7 +561,9 @@ def compile(pattern: AnyStr, flags: _FlagsType = 0) -> Pattern[AnyStr]:
     """Compile a regular expression pattern, returning a Pattern object."""
     ...
 @overload
-def compile(pattern: Pattern[AnyStr], flags: _FlagsType = 0) -> Pattern[AnyStr]: ...
+def compile(pattern: Pattern[AnyStr], flags: _FlagsType = 0) -> Pattern[AnyStr]:
+    """Compile a regular expression pattern, returning a Pattern object."""
+    ...
 
 @overload
 def search(pattern: str | Pattern[str], string: str, flags: _FlagsType = 0) -> Match[str] | None:
@@ -513,7 +573,12 @@ def search(pattern: str | Pattern[str], string: str, flags: _FlagsType = 0) -> M
     """
     ...
 @overload
-def search(pattern: bytes | Pattern[bytes], string: ReadableBuffer, flags: _FlagsType = 0) -> Match[bytes] | None: ...
+def search(pattern: bytes | Pattern[bytes], string: ReadableBuffer, flags: _FlagsType = 0) -> Match[bytes] | None:
+    """
+    Scan through string looking for a match to the pattern, returning
+    a Match object, or None if no match was found.
+    """
+    ...
 
 @overload
 def match(pattern: str | Pattern[str], string: str, flags: _FlagsType = 0) -> Match[str] | None:
@@ -544,7 +609,12 @@ def fullmatch(pattern: str | Pattern[str], string: str, flags: _FlagsType = 0) -
     """
     ...
 @overload
-def fullmatch(pattern: bytes | Pattern[bytes], string: ReadableBuffer, flags: _FlagsType = 0) -> Match[bytes] | None: ...
+def fullmatch(pattern: bytes | Pattern[bytes], string: ReadableBuffer, flags: _FlagsType = 0) -> Match[bytes] | None:
+    """
+    Try to apply the pattern to all of the string, returning
+    a Match object, or None if no match was found.
+    """
+    ...
 
 @overload
 def split(pattern: str | Pattern[str], string: str, maxsplit: int = 0, flags: _FlagsType = 0) -> list[str | MaybeNone]:
@@ -561,7 +631,17 @@ def split(pattern: str | Pattern[str], string: str, maxsplit: int = 0, flags: _F
 @overload
 def split(
     pattern: bytes | Pattern[bytes], string: ReadableBuffer, maxsplit: int = 0, flags: _FlagsType = 0
-) -> list[bytes | MaybeNone]: ...
+) -> list[bytes | MaybeNone]:
+    """
+    Split the source string by the occurrences of the pattern,
+    returning a list containing the resulting substrings.  If
+    capturing parentheses are used in pattern, then the text of all
+    groups in the pattern are also returned as part of the resulting
+    list.  If maxsplit is nonzero, at most maxsplit splits occur,
+    and the remainder of the string is returned as the final element
+    of the list.
+    """
+    ...
 
 @overload
 def findall(pattern: str | Pattern[str], string: str, flags: _FlagsType = 0) -> list[Any]:
@@ -576,7 +656,17 @@ def findall(pattern: str | Pattern[str], string: str, flags: _FlagsType = 0) -> 
     """
     ...
 @overload
-def findall(pattern: bytes | Pattern[bytes], string: ReadableBuffer, flags: _FlagsType = 0) -> list[Any]: ...
+def findall(pattern: bytes | Pattern[bytes], string: ReadableBuffer, flags: _FlagsType = 0) -> list[Any]:
+    """
+    Return a list of all non-overlapping matches in the string.
+
+    If one or more capturing groups are present in the pattern, return
+    a list of groups; this will be a list of tuples if the pattern
+    has more than one group.
+
+    Empty matches are included in the result.
+    """
+    ...
 
 @overload
 def finditer(pattern: str | Pattern[str], string: str, flags: _FlagsType = 0) -> Iterator[Match[str]]:
@@ -588,7 +678,14 @@ def finditer(pattern: str | Pattern[str], string: str, flags: _FlagsType = 0) ->
     """
     ...
 @overload
-def finditer(pattern: bytes | Pattern[bytes], string: ReadableBuffer, flags: _FlagsType = 0) -> Iterator[Match[bytes]]: ...
+def finditer(pattern: bytes | Pattern[bytes], string: ReadableBuffer, flags: _FlagsType = 0) -> Iterator[Match[bytes]]:
+    """
+    Return an iterator over all non-overlapping matches in the
+    string.  For each match, the iterator returns a Match object.
+
+    Empty matches are included in the result.
+    """
+    ...
 
 @overload
 def sub(
@@ -610,7 +707,16 @@ def sub(
     string: ReadableBuffer,
     count: int = 0,
     flags: _FlagsType = 0,
-) -> bytes: ...
+) -> bytes:
+    """
+    Return the string obtained by replacing the leftmost
+    non-overlapping occurrences of the pattern in string by the
+    replacement repl.  repl can be either a string or a callable;
+    if a string, backslash escapes in it are processed.  If it is
+    a callable, it's passed the Match object and must return
+    a replacement string to be used.
+    """
+    ...
 
 @overload
 def subn(
@@ -634,10 +740,25 @@ def subn(
     string: ReadableBuffer,
     count: int = 0,
     flags: _FlagsType = 0,
-) -> tuple[bytes, int]: ...
+) -> tuple[bytes, int]:
+    """
+    Return a 2-tuple containing (new_string, number).
+    new_string is the string obtained by replacing the leftmost
+    non-overlapping occurrences of the pattern in the source
+    string by the replacement repl.  number is the number of
+    substitutions that were made. repl can be either a string or a
+    callable; if a string, backslash escapes in it are processed.
+    If it is a callable, it's passed the Match object and must
+    return a replacement string to be used.
+    """
+    ...
 
-def escape(pattern: AnyStr) -> AnyStr: ...
-def purge() -> None: ...
+def escape(pattern: AnyStr) -> AnyStr:
+    """Escape special characters in a string."""
+    ...
+def purge() -> None:
+    """Clear the regular expression caches"""
+    ...
 
 if sys.version_info < (3, 13):
     @deprecated("Deprecated since Python 3.11; removed in Python 3.13. Use `re.compile()` instead.")

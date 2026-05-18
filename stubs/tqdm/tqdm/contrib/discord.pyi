@@ -132,7 +132,18 @@ class tqdm_discord(tqdm_auto[_T]):
         delay: float | None = ...,
         gui: bool = ...,
         **kwargs,
-    ) -> None: ...
+    ) -> None:
+        """
+        Parameters
+        ----------
+        token  : str, required. Discord bot token
+            [default: ${TQDM_DISCORD_TOKEN}].
+        channel_id  : int, required. Discord channel ID
+            [default: ${TQDM_DISCORD_CHANNEL_ID}].
+
+        See `tqdm.auto.tqdm.__init__` for other parameters.
+        """
+        ...
 
     def display(  # type: ignore[override]
         self, *, msg: str | None = ..., pos: int | None = ..., close: bool = ..., bar_style=..., check_delay: bool = ...

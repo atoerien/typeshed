@@ -102,7 +102,9 @@ class Font:
         """Get font attribute"""
         ...
     @overload
-    def cget(self, option: str) -> Any: ...
+    def cget(self, option: str) -> Any:
+        """Get font attribute"""
+        ...
 
     __getitem__ = cget
 
@@ -131,7 +133,9 @@ class Font:
         """Return actual font attributes"""
         ...
     @overload
-    def actual(self, *, displayof: tkinter.Misc | None = None) -> _FontDict: ...
+    def actual(self, *, displayof: tkinter.Misc | None = None) -> _FontDict:
+        """Return actual font attributes"""
+        ...
 
     def config(
         self,
@@ -146,7 +150,9 @@ class Font:
         """Modify font attributes"""
         ...
     configure = config
-    def copy(self) -> Font: ...
+    def copy(self) -> Font:
+        """Return a distinct copy of the current font"""
+        ...
 
     @overload
     def metrics(self, option: Literal["ascent", "descent", "linespace"], /, *, displayof: tkinter.Misc | None = ...) -> int:
@@ -167,9 +173,18 @@ class Font:
         """
         ...
     @overload
-    def metrics(self, *, displayof: tkinter.Misc | None = ...) -> _MetricsDict: ...
+    def metrics(self, *, displayof: tkinter.Misc | None = ...) -> _MetricsDict:
+        """
+        Return font metrics.
 
-    def measure(self, text: str, displayof: tkinter.Misc | None = None) -> int: ...
+        For best performance, create a dummy widget
+        using this font before calling this method.
+        """
+        ...
+
+    def measure(self, text: str, displayof: tkinter.Misc | None = None) -> int:
+        """Return text width"""
+        ...
     def __eq__(self, other: object) -> bool: ...
     def __del__(self) -> None: ...
 
