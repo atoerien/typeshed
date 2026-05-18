@@ -20,20 +20,24 @@ class ColRange(Strict):
     """Represent a range of at least one column"""
     min_col: String[Literal[False]]
     max_col: String[Literal[False]]
+
     @overload
     def __init__(self, range_string: None = None, *, min_col: str, max_col: str) -> None: ...
     @overload
     def __init__(self, range_string, min_col: Unused = None, max_col: Unused = None) -> None: ...
+
     def __eq__(self, other: object) -> bool: ...
 
 class RowRange(Strict):
     """Represent a range of at least one row"""
     min_row: Integer[Literal[False]]
     max_row: Integer[Literal[False]]
+
     @overload
     def __init__(self, range_string: None, min_row: ConvertibleToInt, max_row: ConvertibleToInt) -> None: ...
     @overload
     def __init__(self, range_string, min_row: Unused = None, max_row: Unused = None) -> None: ...
+
     def __eq__(self, other: object) -> bool: ...
 
 class PrintTitles(Strict):

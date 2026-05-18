@@ -94,21 +94,18 @@ class Reader(Cursor):
         controls=None,
         auxiliary_class=None,
     ) -> None: ...
+
     @property
     def query(self): ...
     @query.setter
     def query(self, value) -> None: ...
+
     @property
     def components_in_and(self): ...
     @components_in_and.setter
     def components_in_and(self, value) -> None: ...
-    def clear(self) -> None:
-        """
-        Clear the Reader search parameters
 
-        
-        """
-        ...
+    def clear(self) -> None: ...
     execution_time: Incomplete
     entries: Incomplete
     def reset(self) -> None:

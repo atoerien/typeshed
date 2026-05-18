@@ -31,13 +31,8 @@ def fifo_cache(
     """
     ...
 @overload
-def fifo_cache(maxsize: Callable[..., _R], typed: bool = False) -> _cachetools_cache_wrapper[_R]:
-    """
-    Decorator to wrap a function with a memoizing callable that saves
-    up to `maxsize` results based on a First In First Out (FIFO)
-    algorithm.
-    """
-    ...
+def fifo_cache(maxsize: Callable[..., _R], typed: bool = False) -> _cachetools_cache_wrapper[_R]: ...
+
 @overload
 def lfu_cache(maxsize: int | None = 128, typed: bool = False) -> Callable[[Callable[..., _R]], _cachetools_cache_wrapper[_R]]:
     """
@@ -47,13 +42,8 @@ def lfu_cache(maxsize: int | None = 128, typed: bool = False) -> Callable[[Calla
     """
     ...
 @overload
-def lfu_cache(maxsize: Callable[..., _R], typed: bool = False) -> _cachetools_cache_wrapper[_R]:
-    """
-    Decorator to wrap a function with a memoizing callable that saves
-    up to `maxsize` results based on a Least Frequently Used (LFU)
-    algorithm.
-    """
-    ...
+def lfu_cache(maxsize: Callable[..., _R], typed: bool = False) -> _cachetools_cache_wrapper[_R]: ...
+
 @overload
 def lru_cache(maxsize: int | None = 128, typed: bool = False) -> Callable[[Callable[..., _R]], _cachetools_cache_wrapper[_R]]:
     """
@@ -63,13 +53,8 @@ def lru_cache(maxsize: int | None = 128, typed: bool = False) -> Callable[[Calla
     """
     ...
 @overload
-def lru_cache(maxsize: Callable[..., _R], typed: bool = False) -> _cachetools_cache_wrapper[_R]:
-    """
-    Decorator to wrap a function with a memoizing callable that saves
-    up to `maxsize` results based on a Least Recently Used (LRU)
-    algorithm.
-    """
-    ...
+def lru_cache(maxsize: Callable[..., _R], typed: bool = False) -> _cachetools_cache_wrapper[_R]: ...
+
 @overload
 def rr_cache(
     maxsize: int | None = 128, choice: Callable[[Sequence[_T]], _T] = ..., typed: bool = False
@@ -83,13 +68,8 @@ def rr_cache(
 @overload
 def rr_cache(
     maxsize: Callable[..., _R], choice: Callable[[Sequence[_T]], _T] = ..., typed: bool = False
-) -> _cachetools_cache_wrapper[_R]:
-    """
-    Decorator to wrap a function with a memoizing callable that saves
-    up to `maxsize` results based on a Random Replacement (RR)
-    algorithm.
-    """
-    ...
+) -> _cachetools_cache_wrapper[_R]: ...
+
 @overload
 def ttl_cache(
     maxsize: int | None = 128, ttl: Any = 600, timer: Callable[[], _T] = ..., typed: bool = False

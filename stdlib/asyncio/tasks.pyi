@@ -730,74 +730,17 @@ def gather(*coros_or_futures: _FutureLike[_T], return_exceptions: bool) -> Futur
     ...
 
 # unlike some asyncio apis, This does strict runtime checking of actually being a coroutine, not of any future-like.
-def run_coroutine_threadsafe(coro: Coroutine[Any, Any, _T], loop: AbstractEventLoop) -> concurrent.futures.Future[_T]:
-    """
-    Submit a coroutine object to a given event loop.
+def run_coroutine_threadsafe(coro: Coroutine[Any, Any, _T], loop: AbstractEventLoop) -> concurrent.futures.Future[_T]: ...
+def shield(arg: _FutureLike[_T]) -> Future[_T]: ...
 
-    Return a concurrent.futures.Future to access the result.
-    """
-    ...
-def shield(arg: _FutureLike[_T]) -> Future[_T]:
-    """
-    Wait for a future, shielding it from cancellation.
-
-    The statement
-
-        task = asyncio.create_task(something())
-        res = await shield(task)
-
-    is exactly equivalent to the statement
-
-        res = await something()
-
-    *except* that if the coroutine containing it is cancelled, the
-    task running in something() is not cancelled.  From the POV of
-    something(), the cancellation did not happen.  But its caller is
-    still cancelled, so the yield-from expression still raises
-    CancelledError.  Note: If something() is cancelled by other means
-    this will still cancel shield().
-
-    If you want to completely ignore cancellation (not recommended)
-    you can combine shield() with a try/except clause, as follows:
-
-        task = asyncio.create_task(something())
-        try:
-            res = await shield(task)
-        except CancelledError:
-            res = None
-
-    Save a reference to tasks passed to this function, to avoid
-    a task disappearing mid-execution. The event loop only keeps
-    weak references to tasks. A task that isn't referenced elsewhere
-    may get garbage collected at any time, even before it's done.
-    """
-    ...
 @overload
 async def sleep(delay: float) -> None:
     """Coroutine that completes after a given time (in seconds)."""
     ...
 @overload
-async def sleep(delay: float, result: _T) -> _T:
-    """Coroutine that completes after a given time (in seconds)."""
-    ...
-async def wait_for(fut: _FutureLike[_T], timeout: float | None) -> _T:
-    """
-    Wait for the single Future or coroutine to complete, with timeout.
+async def sleep(delay: float, result: _T) -> _T: ...
 
-    Coroutine will be wrapped in Task.
-
-    Returns result of the Future or coroutine.  When a timeout occurs,
-    it cancels the task and raises TimeoutError.  To avoid the task
-    cancellation, wrap it in shield().
-
-    If the wait is cancelled, the task is also cancelled.
-
-    If the task suppresses the cancellation and returns a value instead,
-    that value is returned.
-
-    This function is a coroutine.
-    """
-    ...
+async def wait_for(fut: _FutureLike[_T], timeout: float | None) -> _T: ...
 
 if sys.version_info >= (3, 11):
     async def wait(

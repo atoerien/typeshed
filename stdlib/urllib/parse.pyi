@@ -259,36 +259,8 @@ def parse_qsl(
     errors: str = "replace",
     max_num_fields: int | None = None,
     separator: str = "&",
-) -> list[tuple[AnyStr, AnyStr]]:
-    """
-    Parse a query given as a string argument.
+) -> list[tuple[AnyStr, AnyStr]]: ...
 
-    Arguments:
-
-    qs: percent-encoded query string to be parsed
-
-    keep_blank_values: flag indicating whether blank values in
-        percent-encoded queries should be treated as blank strings.
-        A true value indicates that blanks should be retained as blank
-        strings.  The default false value indicates that blank values
-        are to be ignored and treated as if they were  not included.
-
-    strict_parsing: flag indicating what to do with parsing errors. If
-        false (the default), errors are silently ignored. If true,
-        errors raise a ValueError exception.
-
-    encoding and errors: specify how to decode percent-encoded sequences
-        into Unicode characters, as accepted by the bytes.decode() method.
-
-    max_num_fields: int. If set, then throws a ValueError
-        if there are more than n fields read by parse_qsl().
-
-    separator: str. The symbol to use for separating the query arguments.
-        Defaults to &.
-
-    Returns a list, as G-d intended.
-    """
-    ...
 @overload
 def quote(string: str, safe: str | Iterable[int] = "/", encoding: str | None = None, errors: str | None = None) -> str:
     """
@@ -332,54 +304,10 @@ def quote(string: str, safe: str | Iterable[int] = "/", encoding: str | None = N
     """
     ...
 @overload
-def quote(string: bytes | bytearray, safe: str | Iterable[int] = "/") -> str:
-    """
-    quote('abc def') -> 'abc%20def'
+def quote(string: bytes | bytearray, safe: str | Iterable[int] = "/") -> str: ...
 
-    Each part of a URL, e.g. the path info, the query, etc., has a
-    different set of reserved characters that must be quoted. The
-    quote function offers a cautious (not minimal) way to quote a
-    string for most of these parts.
+def quote_from_bytes(bs: bytes | bytearray, safe: str | Iterable[int] = "/") -> str: ...
 
-    RFC 3986 Uniform Resource Identifier (URI): Generic Syntax lists
-    the following (un)reserved characters.
-
-    unreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~"
-    reserved      = gen-delims / sub-delims
-    gen-delims    = ":" / "/" / "?" / "#" / "[" / "]" / "@"
-    sub-delims    = "!" / "$" / "&" / "'" / "(" / ")"
-                  / "*" / "+" / "," / ";" / "="
-
-    Each of the reserved characters is reserved in some component of a URL,
-    but not necessarily in all of them.
-
-    The quote function %-escapes all characters that are neither in the
-    unreserved chars ("always safe") nor the additional chars set via the
-    safe arg.
-
-    The default for the safe arg is '/'. The character is reserved, but in
-    typical usage the quote function is being called on a path where the
-    existing slash characters are to be preserved.
-
-    Python 3.7 updates from using RFC 2396 to RFC 3986 to quote URL strings.
-    Now, "~" is included in the set of unreserved characters.
-
-    string and safe may be either str or bytes objects. encoding and errors
-    must not be specified if string is a bytes object.
-
-    The optional encoding and errors parameters specify how to deal with
-    non-ASCII characters, as accepted by the str.encode method.
-    By default, encoding='utf-8' (characters are encoded with UTF-8), and
-    errors='strict' (unsupported characters raise a UnicodeEncodeError).
-    """
-    ...
-def quote_from_bytes(bs: bytes | bytearray, safe: str | Iterable[int] = "/") -> str:
-    """
-    Like quote(), but accepts a bytes object rather than a str, and does
-    not perform string-to-bytes encoding.  It always returns an ASCII string.
-    quote_from_bytes(b'abc def?') -> 'abc%20def%3f'
-    """
-    ...
 @overload
 def quote_plus(string: str, safe: str | Iterable[int] = "", encoding: str | None = None, errors: str | None = None) -> str:
     """
@@ -389,36 +317,12 @@ def quote_plus(string: str, safe: str | Iterable[int] = "", encoding: str | None
     """
     ...
 @overload
-def quote_plus(string: bytes | bytearray, safe: str | Iterable[int] = "") -> str:
-    """
-    Like quote(), but also replace ' ' with '+', as required for quoting
-    HTML form values. Plus signs in the original string are escaped unless
-    they are included in safe. It also does not have safe default to '/'.
-    """
-    ...
-def unquote(string: str | bytes, encoding: str = "utf-8", errors: str = "replace") -> str:
-    """
-    Replace %xx escapes by their single-character equivalent. The optional
-    encoding and errors parameters specify how to decode percent-encoded
-    sequences into Unicode characters, as accepted by the bytes.decode()
-    method.
-    By default, percent-encoded sequences are decoded with UTF-8, and invalid
-    sequences are replaced by a placeholder character.
+def quote_plus(string: bytes | bytearray, safe: str | Iterable[int] = "") -> str: ...
 
-    unquote('abc%20def') -> 'abc def'.
-    """
-    ...
-def unquote_to_bytes(string: str | bytes | bytearray) -> bytes:
-    """unquote_to_bytes('abc%20def') -> b'abc def'."""
-    ...
-def unquote_plus(string: str, encoding: str = "utf-8", errors: str = "replace") -> str:
-    """
-    Like unquote(), but also replace plus signs by spaces, as required for
-    unquoting HTML form values.
+def unquote(string: str | bytes, encoding: str = "utf-8", errors: str = "replace") -> str: ...
+def unquote_to_bytes(string: str | bytes | bytearray) -> bytes: ...
+def unquote_plus(string: str, encoding: str = "utf-8", errors: str = "replace") -> str: ...
 
-    unquote_plus('%7e/abc+def') -> '~/abc def'
-    """
-    ...
 @overload
 def urldefrag(url: str) -> DefragResult:
     """
@@ -430,16 +334,7 @@ def urldefrag(url: str) -> DefragResult:
     """
     ...
 @overload
-def urldefrag(url: bytes | bytearray | None) -> DefragResultBytes:
-    """
-    Removes any existing fragment from URL.
-
-    Returns a tuple of the defragmented URL and the fragment.  If
-    the URL contained no fragments, the second element is the
-    empty string.
-    """
-    ...
-
+def urldefrag(url: bytes | bytearray | None) -> DefragResultBytes: ...
 if sys.version_info >= (3, 15):
     @overload
     def urldefrag(url: str, *, missing_as_none: Literal[True]) -> DefragResult[str | None]: ...
@@ -480,29 +375,9 @@ def urlencode(
     encoding: str | None = None,
     errors: str | None = None,
     quote_via: _QuoteVia = ...,
-) -> str:
-    """
-    Encode a dict or sequence of two-element tuples into a URL query string.
+) -> str: ...
+def urljoin(base: AnyStr, url: AnyStr | None, allow_fragments: bool = True) -> AnyStr: ...
 
-    If any values in the query arg are sequences and doseq is true, each
-    sequence element is converted to a separate parameter.
-
-    If the query arg is a sequence of two-element tuples, the order of the
-    parameters in the output will match the order of parameters in the
-    input.
-
-    The components of a query arg may each be either a string or a bytes type.
-
-    The safe, encoding, and errors parameters are passed down to the function
-    specified by quote_via (encoding and errors only if a component is a str).
-    """
-    ...
-def urljoin(base: AnyStr, url: AnyStr | None, allow_fragments: bool = True) -> AnyStr:
-    """
-    Join a base URL and a possibly relative URL to form an absolute
-    interpretation of the latter.
-    """
-    ...
 @overload
 def urlparse(url: str, scheme: str = "", allow_fragments: bool = True) -> ParseResult:
     """
@@ -529,29 +404,7 @@ def urlparse(url: str, scheme: str = "", allow_fragments: bool = True) -> ParseR
 @overload
 def urlparse(
     url: bytes | bytearray | None, scheme: bytes | bytearray | None | Literal[""] = "", allow_fragments: bool = True
-) -> ParseResultBytes:
-    """
-    Parse a URL into 6 components:
-    <scheme>://<netloc>/<path>;<params>?<query>#<fragment>
-
-    The result is a named 6-tuple with fields corresponding to the
-    above. It is either a ParseResult or ParseResultBytes object,
-    depending on the type of the url parameter.
-
-    The username, password, hostname, and port sub-components of netloc
-    can also be accessed as attributes of the returned object.
-
-    The scheme argument provides the default value of the scheme
-    component when no scheme is found in url.
-
-    If allow_fragments is False, no attempt is made to separate the
-    fragment component from the previous component, which can be either
-    path or query.
-
-    Note that % escapes are not expanded.
-    """
-    ...
-
+) -> ParseResultBytes: ...
 if sys.version_info >= (3, 15):
     @overload
     def urlparse(
@@ -618,56 +471,12 @@ if sys.version_info >= (3, 11):
     @overload
     def urlsplit(
         url: bytes | None, scheme: bytes | None | Literal[""] = "", allow_fragments: bool = True
-    ) -> SplitResultBytes:
-        """
-        Parse a URL into 5 components:
-        <scheme>://<netloc>/<path>?<query>#<fragment>
-
-        The result is a named 5-tuple with fields corresponding to the
-        above. It is either a SplitResult or SplitResultBytes object,
-        depending on the type of the url parameter.
-
-        The username, password, hostname, and port sub-components of netloc
-        can also be accessed as attributes of the returned object.
-
-        The scheme argument provides the default value of the scheme
-        component when no scheme is found in url.
-
-        If allow_fragments is False, no attempt is made to separate the
-        fragment component from the previous component, which can be either
-        path or query.
-
-        Note that % escapes are not expanded.
-        """
-        ...
-
+    ) -> SplitResultBytes: ...
 else:
     @overload
     def urlsplit(
         url: bytes | bytearray | None, scheme: bytes | bytearray | None | Literal[""] = "", allow_fragments: bool = True
-    ) -> SplitResultBytes:
-        """
-        Parse a URL into 5 components:
-        <scheme>://<netloc>/<path>?<query>#<fragment>
-
-        The result is a named 5-tuple with fields corresponding to the
-        above. It is either a SplitResult or SplitResultBytes object,
-        depending on the type of the url parameter.
-
-        The username, password, hostname, and port sub-components of netloc
-        can also be accessed as attributes of the returned object.
-
-        The scheme argument provides the default value of the scheme
-        component when no scheme is found in url.
-
-        If allow_fragments is False, no attempt is made to separate the
-        fragment component from the previous component, which can be either
-        path or query.
-
-        Note that % escapes are not expanded.
-        """
-        ...
-
+    ) -> SplitResultBytes: ...
 if sys.version_info >= (3, 15):
     @overload
     def urlsplit(
@@ -708,7 +517,6 @@ if sys.version_info >= (3, 15):
     def urlunparse(components: Iterable[None], *, keep_empty: bool = ...) -> Literal[b""]: ...  # type: ignore[overload-overlap]
     @overload
     def urlunparse(components: Iterable[AnyStr | None], *, keep_empty: bool = ...) -> AnyStr: ...
-
 else:
     # Requires an iterable of length 6
     @overload
@@ -736,7 +544,6 @@ if sys.version_info >= (3, 15):
     def urlunsplit(components: Iterable[None], *, keep_empty: bool = ...) -> Literal[b""]: ...  # type: ignore[overload-overlap]
     @overload
     def urlunsplit(components: Iterable[AnyStr | None], *, keep_empty: bool = ...) -> AnyStr: ...
-
 else:
     # Requires an iterable of length 5
     @overload

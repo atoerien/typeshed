@@ -216,6 +216,7 @@ class FFI:
         _typenames: tuple[bytes, ...] = ...,
         _includes: tuple[FFI, ...] = ...,
     ) -> None: ...
+
     @overload
     def addressof(self, cdata: CData, /, *field_or_index: str | int) -> CData:
         """
@@ -233,27 +234,10 @@ class FFI:
         """
         ...
     @overload
-    def addressof(self, library: Lib, name: str, /) -> CData:
-        """
-        Limited equivalent to the '&' operator in C:
+    def addressof(self, library: Lib, name: str, /) -> CData: ...
 
-        1. ffi.addressof(<cdata 'struct-or-union'>) returns a cdata that is a
-        pointer to this struct or union.
+    def alignof(self, cdecl: str | CType | CData, /) -> int: ...
 
-        2. ffi.addressof(<cdata>, field-or-index...) returns the address of a
-        field or array item inside the given structure or array, recursively
-        in case of nested structures or arrays.
-
-        3. ffi.addressof(<library>, "name") returns the address of the named
-        function or global variable.
-        """
-        ...
-    def alignof(self, cdecl: str | CType | CData, /) -> int:
-        """
-        Return the natural alignment size in bytes of the argument.
-        It can be a string naming a C type, or a 'cdata' instance.
-        """
-        ...
     @overload
     def callback(
         self,
@@ -277,22 +261,9 @@ class FFI:
         python_callable: Callable[..., _T],
         error: Any = ...,
         onerror: Callable[[Exception, Any, Any], None] | None = ...,
-    ) -> Callable[..., _T]:
-        """
-        Return a callback object or a decorator making such a callback object.
-        'cdecl' must name a C function pointer type.  The callback invokes the
-        specified 'python_callable' (which may be provided either directly or
-        via a decorator).  Important: the callback object must be manually
-        kept alive for as long as the callback may be invoked from the C code.
-        """
-        ...
-    def cast(self, cdecl: str | CType, value: CData | int) -> CData:
-        """
-        Similar to a C cast: returns an instance of the named C
-        type initialized with the given 'source'.  The source is
-        casted between integers or pointers of any type.
-        """
-        ...
+    ) -> Callable[..., _T]: ...
+
+    def cast(self, cdecl: str | CType, value: CData | int) -> CData: ...
     def def_extern(
         self, name: str = ..., error: Any = ..., onerror: Callable[[Exception, Any, types.TracebackType], Any] = ...
     ) -> Callable[[Callable[..., _T]], Callable[..., _T]]:
@@ -363,24 +334,10 @@ class FFI:
         """
         ...
     @overload
-    def from_buffer(self, cdecl: str | CType, python_buffer: WriteableBuffer, require_writable: Literal[True]) -> CData:
-        """
-        Return a <cdata 'char[]'> that points to the data of the given Python
-        object, which must support the buffer interface.  Note that this is
-        not meant to be used on the built-in types str or unicode
-        (you can build 'char[]' arrays explicitly) but only on objects
-        containing large quantities of raw data in some other format, like
-        'array.array' or numpy arrays.
-        """
-        ...
-    def from_handle(self, x: CData, /) -> Any:
-        """
-        Cast a 'void *' back to a Python object.  Must be used *only* on the
-        pointers returned by new_handle(), and *only* as long as the exact
-        cdata object returned by new_handle() is still alive (somewhere else
-        in the program).  Failure to follow these rules will crash.
-        """
-        ...
+    def from_buffer(self, cdecl: str | CType, python_buffer: WriteableBuffer, require_writable: Literal[True]) -> CData: ...
+
+    def from_handle(self, x: CData, /) -> Any: ...
+
     @overload
     def gc(self, cdata: CData, destructor: Callable[[CData], Any], size: int = ...) -> CData:
         """
@@ -395,96 +352,18 @@ class FFI:
         """
         ...
     @overload
-    def gc(self, cdata: CData, destructor: None, size: int = ...) -> None:
-        """
-        Return a new cdata object that points to the same data.
-        Later, when this new cdata object is garbage-collected,
-        'destructor(old_cdata_object)' will be called.
+    def gc(self, cdata: CData, destructor: None, size: int = ...) -> None: ...
 
-        The optional 'size' gives an estimate of the size, used to
-        trigger the garbage collection more eagerly.  So far only used
-        on PyPy.  It tells the GC that the returned object keeps alive
-        roughly 'size' bytes of external memory.
-        """
-        ...
-    def getctype(self, cdecl: str | CType, replace_with: str = ...) -> str:
-        """
-        Return a string giving the C type 'cdecl', which may be itself a
-        string or a <ctype> object.  If 'replace_with' is given, it gives
-        extra text to append (or insert for more complicated C types), like a
-        variable name, or '*' to get actually the C type 'pointer-to-cdecl'.
-        """
-        ...
+    def getctype(self, cdecl: str | CType, replace_with: str = ...) -> str: ...
     if sys.platform == "win32":
         def getwinerror(self, code: int = ...) -> tuple[int, str]: ...
 
-    def init_once(self, func: Callable[[], Any], tag: Hashable) -> Any:
-        """
-        init_once(function, tag): run function() once.  More precisely,
-        'function()' is called the first time we see a given 'tag'.
+    def init_once(self, func: Callable[[], Any], tag: Hashable) -> Any: ...
+    def integer_const(self, name: str) -> int: ...
+    def list_types(self) -> tuple[list[str], list[str], list[str]]: ...
+    def memmove(self, dest: CData | WriteableBuffer, src: CData | ReadableBuffer, n: int) -> None: ...
+    def new(self, cdecl: str | CType, init: Any = ...) -> CData: ...
 
-        The return value of function() is remembered and returned by the current
-        and all future init_once() with the same tag.  If init_once() is called
-        from multiple threads in parallel, all calls block until the execution
-        of function() is done.  If function() raises an exception, it is
-        propagated and nothing is cached.
-        """
-        ...
-    def integer_const(self, name: str) -> int:
-        """
-        Get the value of an integer constant.
-
-        'ffi.integer_const("xxx")' is equivalent to 'lib.xxx' if xxx names an
-        integer constant.  The point of this function is limited to use cases
-        where you have an 'ffi' object but not any associated 'lib' object.
-        """
-        ...
-    def list_types(self) -> tuple[list[str], list[str], list[str]]:
-        """
-        Returns the user type names known to this FFI instance.
-        This returns a tuple containing three lists of names:
-        (typedef_names, names_of_structs, names_of_unions)
-        """
-        ...
-    def memmove(self, dest: CData | WriteableBuffer, src: CData | ReadableBuffer, n: int) -> None:
-        """
-        ffi.memmove(dest, src, n) copies n bytes of memory from src to dest.
-
-        Like the C function memmove(), the memory areas may overlap;
-        apart from that it behaves like the C function memcpy().
-
-        'src' can be any cdata ptr or array, or any Python buffer object.
-        'dest' can be any cdata ptr or array, or a writable Python buffer
-        object.  The size to copy, 'n', is always measured in bytes.
-
-        Unlike other methods, this one supports all Python buffer including
-        byte strings and bytearrays---but it still does not support
-        non-contiguous buffers.
-        """
-        ...
-    def new(self, cdecl: str | CType, init: Any = ...) -> CData:
-        """
-        Allocate an instance according to the specified C type and return a
-        pointer to it.  The specified C type must be either a pointer or an
-        array: ``new('X *')`` allocates an X and returns a pointer to it,
-        whereas ``new('X[n]')`` allocates an array of n X'es and returns an
-        array referencing it (which works mostly like a pointer, like in C).
-        You can also use ``new('X[]', n)`` to allocate an array of a
-        non-constant length n.
-
-        The memory is initialized following the rules of declaring a global
-        variable in C: by default it is zero-initialized, but an explicit
-        initializer can be given which can be used to fill all or part of the
-        memory.
-
-        When the returned <cdata> object goes out of scope, the memory is
-        freed.  In other words the returned <cdata> object has ownership of
-        the value of type 'cdecl' that it points to.  This means that the raw
-        data can be used as long as this object is kept alive, but must not be
-        used for a longer time.  Be careful about that when copying the
-        pointer to the memory somewhere else, e.g. into another structure.
-        """
-        ...
     @overload
     def new_allocator(self, alloc: None = ..., free: None = ..., should_clear_after_alloc: bool = ...) -> _Allocator:
         """
@@ -524,100 +403,15 @@ class FFI:
     @overload
     def new_allocator(
         self, alloc: Callable[[int], CData], free: Callable[[CData], Any], should_clear_after_alloc: bool = ...
-    ) -> _Allocator:
-        """
-        Return a new allocator, i.e. a function that behaves like ffi.new()
-        but uses the provided low-level 'alloc' and 'free' functions.
+    ) -> _Allocator: ...
 
-        'alloc' is called with the size as argument.  If it returns NULL, a
-        MemoryError is raised.  'free' is called with the result of 'alloc'
-        as argument.  Both can be either Python functions or directly C
-        functions.  If 'free' is None, then no free function is called.
-        If both 'alloc' and 'free' are None, the default is used.
-
-        If 'should_clear_after_alloc' is set to False, then the memory
-        returned by 'alloc' is assumed to be already cleared (or you are
-        fine with garbage); otherwise CFFI will clear it.
-        """
-        ...
-    def new_handle(self, x: Any, /) -> CData:
-        """
-        Return a non-NULL cdata of type 'void *' that contains an opaque
-        reference to the argument, which can be any Python object.  To cast it
-        back to the original object, use from_handle().  You must keep alive
-        the cdata object returned by new_handle()!
-        """
-        ...
-    def offsetof(self, cdecl: str | CType, field_or_index: str | int, /, *__fields_or_indexes: str | int) -> int:
-        """
-        Return the offset of the named field inside the given structure or
-        array, which must be given as a C type name.  You can give several
-        field names in case of nested structures.  You can also give numeric
-        values which correspond to array items, in case of an array type.
-        """
-        ...
-    def release(self, cdata: CData, /) -> None:
-        """
-        Release now the resources held by a 'cdata' object from ffi.new(),
-        ffi.gc() or ffi.from_buffer().  The cdata object must not be used
-        afterwards.
-
-        'ffi.release(cdata)' is equivalent to 'cdata.__exit__()'.
-
-        Note that on CPython this method has no effect (so far) on objects
-        returned by ffi.new(), because the memory is allocated inline with the
-        cdata object and cannot be freed independently.  It might be fixed in
-        future releases of cffi.
-        """
-        ...
-    def sizeof(self, cdecl: str | CType | CData, /) -> int:
-        """
-        Return the size in bytes of the argument.
-        It can be a string naming a C type, or a 'cdata' instance.
-        """
-        ...
-    def string(self, cdata: CData, maxlen: int = -1) -> bytes | str:
-        """
-        Return a Python string (or unicode string) from the 'cdata'.  If
-        'cdata' is a pointer or array of characters or bytes, returns the
-        null-terminated string.  The returned string extends until the first
-        null character, or at most 'maxlen' characters.  If 'cdata' is an
-        array then 'maxlen' defaults to its length.
-
-        If 'cdata' is a pointer or array of wchar_t, returns a unicode string
-        following the same rules.
-
-        If 'cdata' is a single character or byte or a wchar_t, returns it as a
-        string or unicode string.
-
-        If 'cdata' is an enum, returns the value of the enumerator as a
-        string, or 'NUMBER' if the value is out of range.
-        """
-        ...
-    def typeof(self, cdecl: str | CData, /) -> CType:
-        """
-        Parse the C type given as a string and return the
-        corresponding <ctype> object.
-        It can also be used on 'cdata' instance to get its C type.
-        """
-        ...
-    def unpack(self, cdata: CData, length: int) -> bytes | str | list[Any]:
-        """
-        Unpack an array of C data of the given length,
-        returning a Python string/unicode/list.
-
-        If 'cdata' is a pointer to 'char', returns a byte string.
-        It does not stop at the first null.  This is equivalent to:
-        ffi.buffer(cdata, length)[:]
-
-        If 'cdata' is a pointer to 'wchar_t', returns a unicode string.
-        'length' is measured in wchar_t's; it is not the size in bytes.
-
-        If 'cdata' is a pointer to anything else, returns a list of
-        'length' items.  This is a faster equivalent to:
-        [cdata[i] for i in range(length)]
-        """
-        ...
+    def new_handle(self, x: Any, /) -> CData: ...
+    def offsetof(self, cdecl: str | CType, field_or_index: str | int, /, *__fields_or_indexes: str | int) -> int: ...
+    def release(self, cdata: CData, /) -> None: ...
+    def sizeof(self, cdecl: str | CType | CData, /) -> int: ...
+    def string(self, cdata: CData, maxlen: int = -1) -> bytes | str: ...
+    def typeof(self, cdecl: str | CData, /) -> CType: ...
+    def unpack(self, cdata: CData, length: int) -> bytes | str | list[Any]: ...
 
 def alignof(cdecl: CType, /) -> int: ...
 def callback(
@@ -638,15 +432,19 @@ def complete_struct_or_union(
     pack: int,
     /,
 ) -> None: ...
+
 @overload
 def from_buffer(cdecl: CType, python_buffer: ReadableBuffer, /, require_writable: Literal[False] = ...) -> _CDataBase: ...
 @overload
 def from_buffer(cdecl: CType, python_buffer: WriteableBuffer, /, require_writable: Literal[True]) -> _CDataBase: ...
+
 def from_handle(x: _CDataBase, /) -> Any: ...
+
 @overload
 def gcp(cdata: _CDataBase, destructor: Callable[[_CDataBase], Any], size: int = ...) -> _CDataBase: ...
 @overload
 def gcp(cdata: _CDataBase, destructor: None, size: int = ...) -> None: ...
+
 def get_errno() -> int: ...
 def getcname(cdecl: CType, replace_with: str, /) -> str: ...
 

@@ -59,128 +59,21 @@ class Compiler:
     SHARED_LIBRARY: Final = "shared_library"
     EXECUTABLE: Final = "executable"
     def __init__(self, verbose: bool = False, force: bool = False) -> None: ...
-    def add_include_dir(self, dir: str) -> None:
-        """
-        Add 'dir' to the list of directories that will be searched for
-        header files.  The compiler is instructed to search directories in
-        the order in which they are supplied by successive calls to
-        'add_include_dir()'.
-        """
-        ...
-    def set_include_dirs(self, dirs: list[str]) -> None:
-        """
-        Set the list of directories that will be searched to 'dirs' (a
-        list of strings).  Overrides any preceding calls to
-        'add_include_dir()'; subsequence calls to 'add_include_dir()' add
-        to the list passed to 'set_include_dirs()'.  This does not affect
-        any list of standard include directories that the compiler may
-        search by default.
-        """
-        ...
-    def add_library(self, libname: str) -> None:
-        """
-        Add 'libname' to the list of libraries that will be included in
-        all links driven by this compiler object.  Note that 'libname'
-        should *not* be the name of a file containing a library, but the
-        name of the library itself: the actual filename will be inferred by
-        the linker, the compiler, or the compiler class (depending on the
-        platform).
+    def add_include_dir(self, dir: str) -> None: ...
+    def set_include_dirs(self, dirs: list[str]) -> None: ...
+    def add_library(self, libname: str) -> None: ...
+    def set_libraries(self, libnames: list[str]) -> None: ...
+    def add_library_dir(self, dir: str) -> None: ...
+    def set_library_dirs(self, dirs: list[str]) -> None: ...
+    def add_runtime_library_dir(self, dir: str) -> None: ...
+    def set_runtime_library_dirs(self, dirs: list[str]) -> None: ...
+    def define_macro(self, name: str, value: str | None = None) -> None: ...
+    def undefine_macro(self, name: str) -> None: ...
+    def add_link_object(self, object: str) -> None: ...
+    def set_link_objects(self, objects: list[str]) -> None: ...
+    def detect_language(self, sources: str | list[str]) -> str | None: ...
+    def find_library_file(self, dirs: Iterable[str], lib: str, debug: bool = False) -> str | None: ...
 
-        The linker will be instructed to link against libraries in the
-        order they were supplied to 'add_library()' and/or
-        'set_libraries()'.  It is perfectly valid to duplicate library
-        names; the linker will be instructed to link against libraries as
-        many times as they are mentioned.
-        """
-        ...
-    def set_libraries(self, libnames: list[str]) -> None:
-        """
-        Set the list of libraries to be included in all links driven by
-        this compiler object to 'libnames' (a list of strings).  This does
-        not affect any standard system libraries that the linker may
-        include by default.
-        """
-        ...
-    def add_library_dir(self, dir: str) -> None:
-        """
-        Add 'dir' to the list of directories that will be searched for
-        libraries specified to 'add_library()' and 'set_libraries()'.  The
-        linker will be instructed to search for libraries in the order they
-        are supplied to 'add_library_dir()' and/or 'set_library_dirs()'.
-        """
-        ...
-    def set_library_dirs(self, dirs: list[str]) -> None:
-        """
-        Set the list of library search directories to 'dirs' (a list of
-        strings).  This does not affect any standard library search path
-        that the linker may search by default.
-        """
-        ...
-    def add_runtime_library_dir(self, dir: str) -> None:
-        """
-        Add 'dir' to the list of directories that will be searched for
-        shared libraries at runtime.
-        """
-        ...
-    def set_runtime_library_dirs(self, dirs: list[str]) -> None:
-        """
-        Set the list of directories to search for shared libraries at
-        runtime to 'dirs' (a list of strings).  This does not affect any
-        standard search path that the runtime linker may search by
-        default.
-        """
-        ...
-    def define_macro(self, name: str, value: str | None = None) -> None:
-        """
-        Define a preprocessor macro for all compilations driven by this
-        compiler object.  The optional parameter 'value' should be a
-        string; if it is not supplied, then the macro will be defined
-        without an explicit value and the exact outcome depends on the
-        compiler used (XXX true? does ANSI say anything about this?)
-        """
-        ...
-    def undefine_macro(self, name: str) -> None:
-        """
-        Undefine a preprocessor macro for all compilations driven by
-        this compiler object.  If the same macro is defined by
-        'define_macro()' and undefined by 'undefine_macro()' the last call
-        takes precedence (including multiple redefinitions or
-        undefinitions).  If the macro is redefined/undefined on a
-        per-compilation basis (ie. in the call to 'compile()'), then that
-        takes precedence.
-        """
-        ...
-    def add_link_object(self, object: str) -> None:
-        """
-        Add 'object' to the list of object files (or analogues, such as
-        explicitly named library files or the output of "resource
-        compilers") to be included in every link driven by this compiler
-        object.
-        """
-        ...
-    def set_link_objects(self, objects: list[str]) -> None:
-        """
-        Set the list of object files (or analogues) to be included in
-        every link to 'objects'.  This does not affect any standard object
-        files that the linker may include by default (such as system
-        libraries).
-        """
-        ...
-    def detect_language(self, sources: str | list[str]) -> str | None:
-        """
-        Detect the language of a given file, or list of files. Uses
-        language_map, and language_order to do the job.
-        """
-        ...
-    def find_library_file(self, dirs: Iterable[str], lib: str, debug: bool = False) -> str | None:
-        """
-        Search the specified list of directories for a static or shared
-        library file 'lib' and return the full path to that file.  If
-        'debug' true, look for a debugging version (if that makes sense on
-        the current platform).  Return None if 'lib' wasn't found in any of
-        the specified directories.
-        """
-        ...
     @overload
     def has_function(
         self, funcname: str, libraries: list[str] | None = None, library_dirs: list[str] | tuple[str, ...] | None = None
@@ -209,59 +102,12 @@ class Compiler:
         include_dirs: list[str] | tuple[str, ...] | None = None,
         libraries: list[str] | None = None,
         library_dirs: list[str] | tuple[str, ...] | None = None,
-    ) -> bool:
-        """
-        Return a boolean indicating whether funcname is provided as
-        a symbol on the current platform.  The optional arguments can
-        be used to augment the compilation environment.
+    ) -> bool: ...
 
-        The libraries argument is a list of flags to be passed to the
-        linker to make additional symbol definitions available for
-        linking.
-
-        The includes and include_dirs arguments are deprecated.
-        Usually, supplying include files with function declarations
-        will cause function detection to fail even in cases where the
-        symbol is available for linking.
-        """
-        ...
-    def library_dir_option(self, dir: str) -> str:
-        """
-        Return the compiler option to add 'dir' to the list of
-        directories searched for libraries.
-        """
-        ...
-    def library_option(self, lib: str) -> str:
-        """
-        Return the compiler option to add 'lib' to the list of libraries
-        linked into the shared library or executable.
-        """
-        ...
-    def runtime_library_dir_option(self, dir: str) -> str:
-        """
-        Return the compiler option to add 'dir' to the list of
-        directories searched for runtime libraries.
-        """
-        ...
-    def set_executables(self, **kwargs: str) -> None:
-        """
-        Define the executables (and options for them) that will be run
-        to perform the various stages of compilation.  The exact set of
-        executables that may be specified here depends on the compiler
-        class (via the 'executables' class attribute), but most will have:
-          compiler      the C/C++ compiler
-          linker_so     linker used to create shared objects and libraries
-          linker_exe    linker used to create binary executables
-          archiver      static library creator
-
-        On platforms with a command-line (Unix, DOS/Windows), each of these
-        is a string that will be split into executable name and (optional)
-        list of arguments.  (Splitting the string is done similarly to how
-        Unix shells operate: words are delimited by spaces, but quotes and
-        backslashes can override this.  See
-        'distutils.util.split_quoted()'.)
-        """
-        ...
+    def library_dir_option(self, dir: str) -> str: ...
+    def library_option(self, lib: str) -> str: ...
+    def runtime_library_dir_option(self, dir: str) -> str: ...
+    def set_executables(self, **kwargs: str) -> None: ...
     def set_executable(self, key: str, value) -> None: ...
     def compile(
         self,
@@ -468,22 +314,13 @@ class Compiler:
         include_dirs: list[str] | tuple[str, ...] | None = None,
         extra_preargs: list[str] | None = None,
         extra_postargs: Iterable[str] | None = None,
-    ) -> None:
-        """
-        Preprocess a single C/C++ source file, named in 'source'.
-        Output will be written to file named 'output_file', or stdout if
-        'output_file' not supplied.  'macros' is a list of macro
-        definitions as for 'compile()', which will augment the macros set
-        with 'define_macro()' and 'undefine_macro()'.  'include_dirs' is a
-        list of directory names that will be added to the default list.
+    ) -> None: ...
 
-        Raises PreprocessError on failure.
-        """
-        ...
     @overload
     def executable_filename(self, basename: str, strip_dir: Literal[False] = False, output_dir: StrPath = "") -> str: ...
     @overload
     def executable_filename(self, basename: StrPath, strip_dir: Literal[True], output_dir: StrPath = "") -> str: ...
+
     def library_filename(
         self, libname: str, lib_type: str = "static", strip_dir: bool = False, output_dir: StrPath = ""
     ) -> str: ...
@@ -492,24 +329,30 @@ class Compiler:
     def object_filenames(
         self, source_filenames: Iterable[StrPath], strip_dir: bool = False, output_dir: StrPath | None = ""
     ) -> list[str]: ...
+
     @overload
     def shared_object_filename(self, basename: str, strip_dir: Literal[False] = False, output_dir: StrPath = "") -> str: ...
     @overload
     def shared_object_filename(self, basename: StrPath, strip_dir: Literal[True], output_dir: StrPath = "") -> str: ...
+
     def execute(
         self, func: Callable[[Unpack[_Ts]], Unused], args: tuple[Unpack[_Ts]], msg: str | None = None, level: int = 1
     ) -> None: ...
+
     @overload
     def spawn(self, cmd: Sequence[StrOrBytesPath], *, search_path: Literal[False], env: _ENV | None = None) -> None: ...
     @overload
     def spawn(
         self, cmd: MutableSequence[bytes | StrPath], *, search_path: Literal[True] = True, env: _ENV | None = None
     ) -> None: ...
+
     def mkpath(self, name: str, mode: int = 0o777) -> None: ...
+
     @overload
     def move_file(self, src: StrPath, dst: _StrPathT) -> _StrPathT | str: ...
     @overload
     def move_file(self, src: BytesPath, dst: _BytesPathT) -> _BytesPathT | bytes: ...
+
     def announce(self, msg: str, level: int = 1) -> None: ...
     def warn(self, msg: str) -> None: ...
     def debug_print(self, msg: str) -> None: ...

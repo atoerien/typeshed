@@ -169,6 +169,7 @@ class IniData(MutableMapping[str, str]):
         """Returns the current ini data as dictionary."""
         ...
     def __len__(self) -> int: ...
+
     @overload
     def get(self, name: str, default: None = None) -> str | None:
         """
@@ -184,12 +185,8 @@ class IniData(MutableMapping[str, str]):
         """
         ...
     @overload
-    def get(self, name: str, default: _T) -> str | _T:
-        """
-        Return a value for a key or return a default if the key does
-        not exist.
-        """
-        ...
+    def get(self, name: str, default: _T) -> str | _T: ...
+
     @overload
     def get_ascii(self, name: str) -> str | None:
         """
@@ -200,14 +197,8 @@ class IniData(MutableMapping[str, str]):
         """
         ...
     @overload
-    def get_ascii(self, name: str, default: _T) -> str | _T:
-        """
-        This returns a value for a key for as long as the value fits
-        into ASCII.  Otherwise (or if the key does not exist) the default
-        is returned.  This is especially useful on Python 2 when working
-        with some APIs that do not support unicode.
-        """
-        ...
+    def get_ascii(self, name: str, default: _T) -> str | _T: ...
+
     @overload
     def get_bool(self, name: str) -> bool:
         """
@@ -216,42 +207,31 @@ class IniData(MutableMapping[str, str]):
         """
         ...
     @overload
-    def get_bool(self, name: str, default: _T) -> bool | _T:
-        """
-        Returns a value as boolean.  What constitutes as a valid boolean
-        value depends on the dialect.
-        """
-        ...
+    def get_bool(self, name: str, default: _T) -> bool | _T: ...
+
     @overload
     def get_int(self, name: str) -> int | None:
         """Returns a value as integer."""
         ...
     @overload
-    def get_int(self, name: str, default: _T = ...) -> int | _T:
-        """Returns a value as integer."""
-        ...
+    def get_int(self, name: str, default: _T = ...) -> int | _T: ...
+
     @overload
     def get_float(self, name: str) -> float | None:
         """Returns a value as float."""
         ...
     @overload
-    def get_float(self, name: str, default: _T) -> float | _T:
-        """Returns a value as float."""
-        ...
+    def get_float(self, name: str, default: _T) -> float | _T: ...
+
     @overload
     def get_uuid(self, name: str) -> UUID | None:
         """Returns a value as uuid."""
         ...
     @overload
-    def get_uuid(self, name: str, default: _T) -> UUID | _T:
-        """Returns a value as uuid."""
-        ...
-    def itersections(self) -> Iterator[str]:
-        """Iterates over the sections of the sections of the ini."""
-        ...
-    def sections(self) -> Iterator[str]:
-        """Iterates over the sections of the sections of the ini."""
-        ...
+    def get_uuid(self, name: str, default: _T) -> UUID | _T: ...
+
+    def itersections(self) -> Iterator[str]: ...
+    def sections(self) -> Iterator[str]: ...
     def iteritems(self) -> Iterator[tuple[str, str]]: ...
     def iterkeys(self) -> Iterator[str]: ...
     def itervalues(self) -> Iterator[str]: ...

@@ -53,10 +53,12 @@ class TomlEncoder(Generic[_MappingT]):
     _dict: type[_MappingT]
     preserve: bool
     dump_funcs: MutableMapping[type[Any], Callable[[Any], str]]
+
     @overload
     def __init__(self, _dict: type[_MappingT], preserve: bool = False) -> None: ...
     @overload
     def __init__(self: TomlEncoder[dict[str, Any]], _dict: type[dict[str, Any]] = ..., preserve: bool = False) -> None: ...
+
     def get_empty_table(self) -> _MappingT: ...
     def dump_list(self, v: Iterable[Any]) -> str: ...
     def dump_inline_table(self, section: dict[str, Any] | Any) -> str:
@@ -78,6 +80,7 @@ class TomlPreserveInlineDictEncoder(TomlEncoder[_MappingT]):
 
 class TomlArraySeparatorEncoder(TomlEncoder[_MappingT]):
     separator: str
+
     @overload
     def __init__(self, _dict: type[_MappingT], preserve: bool = False, separator: str = ",") -> None: ...
     @overload
@@ -87,6 +90,7 @@ class TomlArraySeparatorEncoder(TomlEncoder[_MappingT]):
         preserve: bool = False,
         separator: str = ",",
     ) -> None: ...
+
     def dump_list(self, v: Iterable[Any]) -> str: ...
 
 class TomlNumpyEncoder(TomlEncoder[_MappingT]): ...

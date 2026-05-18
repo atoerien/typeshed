@@ -28,21 +28,10 @@ class Entity:
     subsegments: list[Subsegment]
     end_time: float
     def __init__(self, name: str, entity_id: str | None = None) -> None: ...
-    def close(self, end_time: float | None = None) -> None:
-        """
-        Close the trace entity by setting `end_time`
-        and flip the in progress flag to False.
+    def close(self, end_time: float | None = None) -> None: ...
+    def add_subsegment(self, subsegment: Subsegment) -> None: ...
+    def remove_subsegment(self, subsegment: Subsegment) -> None: ...
 
-        :param float end_time: Epoch in seconds. If not specified
-            current time will be used.
-        """
-        ...
-    def add_subsegment(self, subsegment: Subsegment) -> None:
-        """Add input subsegment as a child subsegment."""
-        ...
-    def remove_subsegment(self, subsegment: Subsegment) -> None:
-        """Remove input subsegment from child subsegments."""
-        ...
     @overload
     def put_http_meta(self, key: Literal["status", "content_length"], value: int) -> None:
         """
@@ -60,31 +49,9 @@ class Entity:
         """
         ...
     @overload
-    def put_http_meta(self, key: Literal["url", "method", "user_agent", "client_ip", "x_forwarded_for"], value: str) -> None:
-        """
-        Add http related metadata.
+    def put_http_meta(self, key: Literal["url", "method", "user_agent", "client_ip", "x_forwarded_for"], value: str) -> None: ...
 
-        :param str key: Currently supported keys are:
-            * url
-            * method
-            * user_agent
-            * client_ip
-            * status
-            * content_length
-        :param value: status and content_length are int and for other
-            supported keys string should be used.
-        """
-        ...
-    def put_annotation(self, key: str, value: float | str | bool) -> None:
-        """
-        Annotate segment or subsegment with a key-value pair.
-        Annotations will be indexed for later search query.
-
-        :param str key: annotation key
-        :param object value: annotation value. Any type other than
-            string/number/bool will be dropped
-        """
-        ...
+    def put_annotation(self, key: str, value: float | str | bool) -> None: ...
     def put_metadata(
         self, key: str, value: Any, namespace: str = "default"  # value is any object that can be serialized into JSON string
     ) -> None:

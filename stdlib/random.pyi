@@ -188,15 +188,8 @@ class Random(_random.Random):
             ...
         @overload
         @deprecated("The `random` parameter is deprecated since Python 3.9; removed in Python 3.11.")
-        def shuffle(self, x: MutableSequence[Any], random: Callable[[], float] | None = None) -> None:
-            """
-            Shuffle list x in place, and return None.
+        def shuffle(self, x: MutableSequence[Any], random: Callable[[], float] | None = None) -> None: ...
 
-            Optional argument random is a 0-argument function returning a
-            random float in [0.0, 1.0); if it is the default None, the
-            standard random.random will be used.
-            """
-            ...
     if sys.version_info >= (3, 11):
         def sample(self, population: Sequence[_T], k: int, *, counts: Iterable[int] | None = None) -> list[_T]:
             """

@@ -273,39 +273,13 @@ class Sheet(BaseObject):
     utter_max_rows: int
     utter_max_cols: int
     def __init__(self, book: Book, position: int, name: str, number: int) -> None: ...
-    def cell(self, rowx: int, colx: int) -> Cell:
-        """:class:`Cell` object in the given row and column."""
-        ...
-    def cell_value(self, rowx: int, colx: int) -> str:
-        """Value of the cell in the given row and column."""
-        ...
-    def cell_type(self, rowx: int, colx: int) -> int:
-        """
-        Type of the cell in the given row and column.
+    def cell(self, rowx: int, colx: int) -> Cell: ...
+    def cell_value(self, rowx: int, colx: int) -> str: ...
+    def cell_type(self, rowx: int, colx: int) -> int: ...
+    def cell_xf_index(self, rowx: int, colx: int) -> int: ...
+    def row_len(self, rowx: int) -> int: ...
+    def row(self, rowx: int) -> list[Cell]: ...
 
-        Refer to the documentation of the :class:`Cell` class.
-        """
-        ...
-    def cell_xf_index(self, rowx: int, colx: int) -> int:
-        """
-        XF index of the cell in the given row and column.
-        This is an index into :attr:`~xlrd.book.Book.xf_list`.
-
-        .. versionadded:: 0.6.1
-        """
-        ...
-    def row_len(self, rowx: int) -> int:
-        """
-        Returns the effective number of cells in the given row. For use with
-        ``open_workbook(ragged_rows=True)`` which is likely to produce rows
-        with fewer than :attr:`~Sheet.ncols` cells.
-
-        .. versionadded:: 0.7.2
-        """
-        ...
-    def row(self, rowx: int) -> list[Cell]:
-        """Returns a sequence of the :class:`Cell` objects in the given row."""
-        ...
     @overload
     def __getitem__(self, item: int) -> list[Cell]:
         """
@@ -314,15 +288,9 @@ class Sheet(BaseObject):
         """
         ...
     @overload
-    def __getitem__(self, item: tuple[int, int]) -> Cell:
-        """
-        Takes either rowindex or (rowindex, colindex) as an index,
-        and returns either row or cell respectively.
-        """
-        ...
-    def get_rows(self) -> Generator[list[Cell]]:
-        """Returns a generator for iterating through each row."""
-        ...
+    def __getitem__(self, item: tuple[int, int]) -> Cell: ...
+
+    def get_rows(self) -> Generator[list[Cell]]: ...
     __iter__ = get_rows
     def row_types(self, rowx: int, start_colx: int = 0, end_colx: int | None = None) -> Sequence[int]:
         """Returns a slice of the types of the cells in the given row."""

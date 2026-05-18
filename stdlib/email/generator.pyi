@@ -20,6 +20,7 @@ class Generator(Generic[_MessageT]):
     """
     maxheaderlen: int | None
     policy: Policy[_MessageT] | None
+
     @overload
     def __init__(
         self: Generator[Any],  # The Policy of the message is used.
@@ -60,30 +61,8 @@ class Generator(Generic[_MessageT]):
         maxheaderlen: int | None = None,
         *,
         policy: Policy[_MessageT],
-    ) -> None:
-        """
-        Create the generator for message flattening.
+    ) -> None: ...
 
-        outfp is the output file-like object for writing the message to.  It
-        must have a write() method.
-
-        Optional mangle_from_ is a flag that, when True (the default if policy
-        is not set), escapes From_ lines in the body of the message by putting
-        a '>' in front of them.
-
-        Optional maxheaderlen specifies the longest length for a non-continued
-        header.  When a header line is longer (in characters, with tabs
-        expanded to 8 spaces) than maxheaderlen, the header will split as
-        defined in the Header class.  Set maxheaderlen to zero to disable
-        header wrapping.  The default is 78, as recommended (but not required)
-        by RFC 5322 section 2.1.1.
-
-        The policy keyword specifies a policy object that controls a number of
-        aspects of the generator's operation.  If no policy is specified,
-        the policy associated with the Message object passed to the
-        flatten method is used.
-        """
-        ...
     def write(self, s: str) -> None: ...
     def flatten(self, msg: _MessageT, unixfrom: bool = False, linesep: str | None = None) -> None:
         """

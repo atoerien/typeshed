@@ -29,25 +29,8 @@ def parse(
     """
     ...
 @overload
-def parse(doc: _InputStream, treebuilder: str, namespaceHTMLElements: bool = True, **kwargs):
-    """
-    Parse an HTML document as a string or file-like object into a tree
+def parse(doc: _InputStream, treebuilder: str, namespaceHTMLElements: bool = True, **kwargs): ...
 
-    :arg doc: the document to parse as a string or file-like object
-
-    :arg treebuilder: the treebuilder to use when parsing
-
-    :arg namespaceHTMLElements: whether or not to namespace HTML elements
-
-    :returns: parsed tree
-
-    Example:
-
-    >>> from html5lib.html5parser import parse
-    >>> parse('<html><body><p>This is a doc</p></body></html>')
-    <Element u'{http://www.w3.org/1999/xhtml}html' at 0x7feac4909db0>
-    """
-    ...
 def parseFragment(
     doc: _InputStream, container: str = "div", treebuilder: str = "etree", namespaceHTMLElements: bool = True, **kwargs
 ):

@@ -47,6 +47,7 @@ class HTMLTokenizer:
     state: Callable[[], bool]
     escape: bool
     currentToken: _Token | None
+
     @overload
     def __init__(self, stream: _UnicodeInputStream, parser=None) -> None: ...
     @overload
@@ -62,6 +63,7 @@ class HTMLTokenizer:
         default_encoding: str = "windows-1252",
         useChardet: bool = True,
     ) -> None: ...
+
     tokenQueue: deque[_Token]
     def __iter__(self) -> Iterator[_Token]:
         """

@@ -48,9 +48,8 @@ def diff_trees(left: _ET, right: _ET, *, diff_options: dict[str, Any] | None = N
 @overload
 def diff_trees(
     left: _ET, right: _ET, diff_options: dict[str, Any] | None = None, formatter: None = None
-) -> Iterable[_ACTIONS]:
-    """Takes two lxml root elements or element trees"""
-    ...
+) -> Iterable[_ACTIONS]: ...
+
 @overload
 def diff_texts(
     left: str | bytes, right: str | bytes, *, diff_options: dict[str, Any] | None = None, formatter: BaseFormatter
@@ -60,9 +59,8 @@ def diff_texts(
 @overload
 def diff_texts(
     left: str | bytes, right: str | bytes, diff_options: dict[str, Any] | None = None, formatter: None = None
-) -> Iterable[_ACTIONS]:
-    """Takes two Unicode strings containing XML"""
-    ...
+) -> Iterable[_ACTIONS]: ...
+
 @overload
 def diff_files(left: str, right: str, *, diff_options: dict[str, Any] | None = None, formatter: BaseFormatter) -> str:
     """Takes two filenames or streams, and diffs the XML in those files"""
@@ -70,12 +68,9 @@ def diff_files(left: str, right: str, *, diff_options: dict[str, Any] | None = N
 @overload
 def diff_files(
     left: str, right: str, diff_options: dict[str, Any] | None = None, formatter: None = None
-) -> Iterable[_ACTIONS]:
-    """Takes two filenames or streams, and diffs the XML in those files"""
-    ...
-def validate_F(arg: float | str) -> float:
-    """Type function for argparse - a float within some predefined bounds"""
-    ...
+) -> Iterable[_ACTIONS]: ...
+
+def validate_F(arg: float | str) -> float: ...
 def make_diff_parser() -> ArgumentParser: ...
 def diff_command(args: Sequence[str] | None = None) -> int | None: ...
 def patch_tree(actions, tree):

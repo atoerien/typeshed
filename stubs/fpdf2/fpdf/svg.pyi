@@ -84,9 +84,8 @@ class ShapeBuilder:
         ...
     @overload
     @staticmethod
-    def new_path(tag, clipping_path: Literal[False] = False) -> PaintedPath:
-        """Create a new path with the appropriate styles."""
-        ...
+    def new_path(tag, clipping_path: Literal[False] = False) -> PaintedPath: ...
+
     @overload
     @classmethod
     def rect(cls, tag, clipping_path: Literal[True]) -> ClippingPath:
@@ -94,9 +93,8 @@ class ShapeBuilder:
         ...
     @overload
     @classmethod
-    def rect(cls, tag, clipping_path: Literal[False] = False) -> PaintedPath:
-        """Convert an SVG <rect> into a PDF path."""
-        ...
+    def rect(cls, tag, clipping_path: Literal[False] = False) -> PaintedPath: ...
+
     @overload
     @classmethod
     def circle(cls, tag, clipping_path: Literal[True]) -> ClippingPath:
@@ -104,9 +102,8 @@ class ShapeBuilder:
         ...
     @overload
     @classmethod
-    def circle(cls, tag, clipping_path: Literal[False] = False) -> PaintedPath:
-        """Convert an SVG <circle> into a PDF path."""
-        ...
+    def circle(cls, tag, clipping_path: Literal[False] = False) -> PaintedPath: ...
+
     @overload
     @classmethod
     def ellipse(cls, tag, clipping_path: Literal[True]) -> ClippingPath:
@@ -114,17 +111,15 @@ class ShapeBuilder:
         ...
     @overload
     @classmethod
-    def ellipse(cls, tag, clipping_path: Literal[False] = False) -> PaintedPath:
-        """Convert an SVG <ellipse> into a PDF path."""
-        ...
+    def ellipse(cls, tag, clipping_path: Literal[False] = False) -> PaintedPath: ...
+
     @classmethod
     def line(cls, tag) -> PaintedPath:
         """Convert an SVG <line> into a PDF path."""
         ...
     @classmethod
-    def polyline(cls, tag) -> PaintedPath:
-        """Convert an SVG <polyline> into a PDF path."""
-        ...
+    def polyline(cls, tag) -> PaintedPath: ...
+
     @overload
     @classmethod
     def polygon(cls, tag, clipping_path: Literal[True]) -> ClippingPath:

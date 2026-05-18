@@ -66,6 +66,7 @@ class QRData:
     """
     mode: _SupportedMode
     data: bytes
+
     @overload
     def __init__(self, data: bytes | str, mode: _SupportedMode | None = None, check_data: Literal[True] = True) -> None:
         """
@@ -81,12 +82,8 @@ class QRData:
         """
         ...
     @overload
-    def __init__(self, data: bytes, mode: _SupportedMode | None, check_data: Literal[False]) -> None:
-        """
-        If ``mode`` isn't provided, the most compact QR data type possible is
-        chosen.
-        """
-        ...
+    def __init__(self, data: bytes, mode: _SupportedMode | None, check_data: Literal[False]) -> None: ...
+
     def __len__(self) -> int: ...
     def write(self, buffer: BitBuffer) -> None: ...
 

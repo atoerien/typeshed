@@ -249,28 +249,9 @@ async def readlink(
     ...
 async def rmdir(
     path: StrOrBytesPath, *, dir_fd: int | None = None, loop: AbstractEventLoop | None = ..., executor: Executor | None = ...
-) -> None:
-    """
-    Remove a directory.
+) -> None: ...
+async def removedirs(name: StrOrBytesPath, *, loop: AbstractEventLoop | None = ..., executor: Executor | None = ...) -> None: ...
 
-    If dir_fd is not None, it should be a file descriptor open to a directory,
-      and path should be relative; path will then be relative to that directory.
-    dir_fd may not be implemented on your platform.
-      If it is unavailable, using it will raise a NotImplementedError.
-    """
-    ...
-async def removedirs(name: StrOrBytesPath, *, loop: AbstractEventLoop | None = ..., executor: Executor | None = ...) -> None:
-    """
-    removedirs(name)
-
-    Super-rmdir; remove a leaf directory and all empty intermediate
-    ones.  Works like rmdir except that, if the leaf directory is
-    successfully removed, directories corresponding to rightmost path
-    segments will be pruned away until either the whole path is
-    consumed or an error occurs.  Errors during this latter phase are
-    ignored -- they generally mean that a directory was not empty.
-    """
-    ...
 @overload
 async def scandir(
     path: None = None, *, loop: AbstractEventLoop | None = ..., executor: Executor | None = ...
@@ -302,17 +283,8 @@ async def scandir(
 @overload
 async def scandir(
     path: GenericPath[AnyStr], *, loop: AbstractEventLoop | None = ..., executor: Executor | None = ...
-) -> _ScandirIterator[AnyStr]:
-    """
-    Return an iterator of DirEntry objects for given path.
+) -> _ScandirIterator[AnyStr]: ...
 
-    path can be specified as either str, bytes, or a path-like object.  If path
-    is bytes, the names of yielded DirEntry objects will also be bytes; in
-    all other circumstances they will be str.
-
-    If path is None, uses the path='.'.
-    """
-    ...
 @overload
 async def listdir(
     path: StrPath | None, *, loop: AbstractEventLoop | None = ..., executor: Executor | None = ...
@@ -350,22 +322,8 @@ async def listdir(path: BytesPath, *, loop: AbstractEventLoop | None = ..., exec
     """
     ...
 @overload
-async def listdir(path: int, *, loop: AbstractEventLoop | None = ..., executor: Executor | None = ...) -> list[str]:
-    r"""
-    Return a list containing the names of the files in the directory.
+async def listdir(path: int, *, loop: AbstractEventLoop | None = ..., executor: Executor | None = ...) -> list[str]: ...
 
-    path can be specified as either str, bytes, or a path-like object.  If path is bytes,
-      the filenames returned will also be bytes; in all other circumstances
-      the filenames returned will be str.
-    If path is None, uses the path='.'.
-    On some platforms, path may also be specified as an open file descriptor;\
-      the file descriptor must refer to a directory.
-      If this functionality is unavailable, using it raises NotImplementedError.
-
-    The list is in arbitrary order.  It does not include the special
-    entries '.' and '..' even if they are present in the directory.
-    """
-    ...
 async def access(
     path: FileDescriptorOrPath, mode: int, *, dir_fd: int | None = None, effective_ids: bool = False, follow_symlinks: bool = True
 ) -> bool:
@@ -429,15 +387,6 @@ if sys.platform != "win32":
         *,
         loop: AbstractEventLoop | None = ...,
         executor: Executor | None = ...,
-    ) -> int:
-        """Copy count bytes from file descriptor in_fd to file descriptor out_fd."""
-        ...
-    async def statvfs(path: FileDescriptorOrPath) -> statvfs_result:
-        """
-        Perform a statvfs system call on the given path.
+    ) -> int: ...  # FreeBSD and Mac OS X only
 
-        path may always be specified as a string.
-        On some platforms, path may also be specified as an open file descriptor.
-          If this functionality is unavailable, using it raises an exception.
-        """
-        ...
+    async def statvfs(path: FileDescriptorOrPath) -> statvfs_result: ...  # Unix only

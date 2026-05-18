@@ -92,10 +92,12 @@ class Worksheet(_WorkbookChild):
         ...
     @property
     def show_gridlines(self) -> bool | None: ...
+
     @property
     def freeze_panes(self) -> str | None: ...
     @freeze_panes.setter
     def freeze_panes(self, topLeftCell: str | Cell | None = None) -> None: ...
+
     # A MergedCell value should be kept to None
     @overload
     def cell(self, row: int, column: int, value: None = None) -> _CellOrMergedCell:
@@ -120,27 +122,8 @@ class Worksheet(_WorkbookChild):
         """
         ...
     @overload
-    def cell(self, row: int, column: int, value: _CellSetValue = None) -> Cell:
-        """
-        Returns a cell object based on the given coordinates.
+    def cell(self, row: int, column: int, value: _CellSetValue = None) -> Cell: ...
 
-        Usage: cell(row=15, column=1, value=5)
-
-        Calling `cell` creates cells in memory when they
-        are first accessed.
-
-        :param row: row index of the cell (e.g. 4)
-        :type row: int
-
-        :param column: column index of the cell (e.g. 3)
-        :type column: int
-
-        :param value: value of the cell (e.g. 5)
-        :type value: numeric or time or string or bool or none
-
-        :rtype: openpyxl.cell.cell.Cell
-        """
-        ...
     # An int is necessarily a row selection
     @overload
     def __getitem__(self, key: int) -> tuple[_CellOrMergedCell, ...]:
@@ -175,19 +158,8 @@ class Worksheet(_WorkbookChild):
     @overload
     def __getitem__(
         self, key: str
-    ) -> Any:
-        """
-        Convenience access by Excel style coordinates
+    ) -> Any: ...  # AnyOf[_CellOrMergedCell, tuple[_CellOrMergedCell, ...], tuple[tuple[_CellOrMergedCell, ...], ...]]
 
-        The key can be a single cell coordinate 'A1', a range of cells 'A1:D25',
-        individual rows or columns 'A', 4 or ranges of rows or columns 'A:D',
-        4:10.
-
-        Single cells will always be created if they do not exist.
-
-        Returns either a single cell or a tuple of rows or columns.
-        """
-        ...
     def __setitem__(self, key: str, value: _CellSetValue) -> None: ...
     def __iter__(self) -> Iterator[tuple[_CellOrMergedCell, ...]]: ...
     def __delitem__(self, key: str) -> None: ...
@@ -231,9 +203,8 @@ class Worksheet(_WorkbookChild):
         """
         ...
     @property
-    def dimensions(self) -> str:
-        """Returns the result of :func:`calculate_dimension`"""
-        ...
+    def dimensions(self) -> str: ...
+
     @overload
     def iter_rows(
         self, min_row: int | None, max_row: int | None, min_col: int | None, max_col: int | None, values_only: Literal[True]
@@ -374,33 +345,8 @@ class Worksheet(_WorkbookChild):
         max_col: int | None = None,
         *,
         values_only: bool,
-    ) -> Generator[tuple[_CellOrMergedCell, ...]] | Generator[tuple[_CellGetValue, ...]]:
-        """
-        Produces cells from the worksheet, by row. Specify the iteration range
-        using indices of rows and columns.
+    ) -> Generator[tuple[_CellOrMergedCell, ...]] | Generator[tuple[_CellGetValue, ...]]: ...
 
-        If no indices are specified the range starts at A1.
-
-        If no cells are in the worksheet an empty tuple will be returned.
-
-        :param min_col: smallest column index (1-based index)
-        :type min_col: int
-
-        :param min_row: smallest row index (1-based index)
-        :type min_row: int
-
-        :param max_col: largest column index (1-based index)
-        :type max_col: int
-
-        :param max_row: largest row index (1-based index)
-        :type max_row: int
-
-        :param values_only: whether only cell values should be returned
-        :type values_only: bool
-
-        :rtype: generator
-        """
-        ...
     @property
     def rows(self) -> Generator[tuple[_CellOrMergedCell, ...]]:
         """
@@ -410,13 +356,8 @@ class Worksheet(_WorkbookChild):
         """
         ...
     @property
-    def values(self) -> Generator[tuple[_CellGetValue, ...]]:
-        """
-        Produces all cell values in the worksheet, by row
+    def values(self) -> Generator[tuple[_CellGetValue, ...]]: ...
 
-        :type: generator
-        """
-        ...
     @overload
     def iter_cols(
         self, min_col: int | None, max_col: int | None, min_row: int | None, max_row: int | None, values_only: Literal[True]
@@ -557,33 +498,8 @@ class Worksheet(_WorkbookChild):
         max_row: int | None = None,
         *,
         values_only: bool,
-    ) -> Generator[tuple[_CellOrMergedCell, ...]] | Generator[tuple[_CellGetValue, ...]]:
-        """
-        Produces cells from the worksheet, by column. Specify the iteration range
-        using indices of rows and columns.
+    ) -> Generator[tuple[_CellOrMergedCell, ...]] | Generator[tuple[_CellGetValue, ...]]: ...
 
-        If no indices are specified the range starts at A1.
-
-        If no cells are in the worksheet an empty tuple will be returned.
-
-        :param min_col: smallest column index (1-based index)
-        :type min_col: int
-
-        :param min_row: smallest row index (1-based index)
-        :type min_row: int
-
-        :param max_col: largest column index (1-based index)
-        :type max_col: int
-
-        :param max_row: largest row index (1-based index)
-        :type max_row: int
-
-        :param values_only: whether only cell values should be returned
-        :type values_only: bool
-
-        :rtype: generator
-        """
-        ...
     @property
     def columns(self) -> Generator[tuple[_CellOrMergedCell, ...]]:
         """Produces all cells in the worksheet, by column  (see :func:`iter_cols`)"""
@@ -625,6 +541,7 @@ class Worksheet(_WorkbookChild):
     @property
     def tables(self) -> TableList: ...
     def add_pivot(self, pivot) -> None: ...
+
     # Same overload as CellRange.__init__
     @overload
     def merge_cells(
@@ -652,9 +569,8 @@ class Worksheet(_WorkbookChild):
         start_column: ConvertibleToInt,
         end_row: ConvertibleToInt,
         end_column: ConvertibleToInt,
-    ) -> None:
-        """Set merge on a cell range.  Range is a cell range (e.g. A1:E1) """
-        ...
+    ) -> None: ...
+
     # Will always raise: TypeError: 'set' object is not subscriptable
     @property
     @deprecated("Use ws.merged_cells.ranges")
@@ -685,64 +601,30 @@ class Worksheet(_WorkbookChild):
             | GeneratorType[_CellOrMergedCell | _CellGetValue, object, object]
             | dict[int | str, _AnyCellValue]
         ),
-    ) -> None:
-        """
-        Appends a group of values at the bottom of the current sheet.
+    ) -> None: ...
+    def insert_rows(self, idx: int, amount: int = 1) -> None: ...
+    def insert_cols(self, idx: int, amount: int = 1) -> None: ...
+    def delete_rows(self, idx: int, amount: int = 1) -> None: ...
+    def delete_cols(self, idx: int, amount: int = 1) -> None: ...
+    def move_range(self, cell_range: CellRange | str, rows: int = 0, cols: int = 0, translate: bool = False) -> None: ...
 
-        * If it's a list: all values are added in order, starting from the first column
-        * If it's a dict: values are assigned to the columns indicated by the keys (numbers or letters)
-
-        :param iterable: list, range or generator, or dict containing values to append
-        :type iterable: list|tuple|range|generator or dict
-
-        Usage:
-
-        * append(['This is A1', 'This is B1', 'This is C1'])
-        * **or** append({'A' : 'This is A1', 'C' : 'This is C1'})
-        * **or** append({1 : 'This is A1', 3 : 'This is C1'})
-
-        :raise: TypeError when iterable is neither a list/tuple nor a dict
-        """
-        ...
-    def insert_rows(self, idx: int, amount: int = 1) -> None:
-        """Insert row or rows before row==idx"""
-        ...
-    def insert_cols(self, idx: int, amount: int = 1) -> None:
-        """Insert column or columns before col==idx"""
-        ...
-    def delete_rows(self, idx: int, amount: int = 1) -> None:
-        """Delete row or rows from row==idx"""
-        ...
-    def delete_cols(self, idx: int, amount: int = 1) -> None:
-        """Delete column or columns from col==idx"""
-        ...
-    def move_range(self, cell_range: CellRange | str, rows: int = 0, cols: int = 0, translate: bool = False) -> None:
-        """
-        Move a cell range by the number of rows and/or columns:
-        down if rows > 0 and up if rows < 0
-        right if cols > 0 and left if cols < 0
-        Existing cells will be overwritten.
-        Formulae and references will not be updated.
-        """
-        ...
     @property
     def print_title_rows(self) -> str | None:
         """Rows to be printed at the top of every page (ex: '1:3')"""
         ...
     @print_title_rows.setter
-    def print_title_rows(self, rows: str | None) -> None:
-        """Rows to be printed at the top of every page (ex: '1:3')"""
-        ...
+    def print_title_rows(self, rows: str | None) -> None: ...
+
     @property
     def print_title_cols(self) -> str | None:
         """Columns to be printed at the left side of every page (ex: 'A:C')"""
         ...
     @print_title_cols.setter
-    def print_title_cols(self, cols: str | None) -> None:
-        """Columns to be printed at the left side of every page (ex: 'A:C')"""
-        ...
+    def print_title_cols(self, cols: str | None) -> None: ...
+
     @property
     def print_titles(self) -> str: ...
+
     @property
     def print_area(self) -> str:
         """

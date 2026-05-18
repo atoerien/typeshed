@@ -56,27 +56,17 @@ machine: Final[
     Literal["AMD64", "x86", "ARM64", "sw_64", "loongarch64", "arm", "intel", "ppc", "mips", "riscv", "s390x", "unknown"] | None
 ]
 
-def is_wine_dll(filename: FileDescriptorOrPath) -> bool:
-    """
-    Check if the given PE file is a Wine DLL (PE-converted built-in, or fake/placeholder one).
+def is_wine_dll(filename: FileDescriptorOrPath) -> bool: ...
 
-    Returns True if the given file is a Wine DLL, False if not (or if file cannot be analyzed or does not exist).
-    """
-    ...
 @overload
 def getenv(name: str, default: str) -> str:
     """Returns unicode string containing value of environment variable 'name'."""
     ...
 @overload
-def getenv(name: str, default: None = None) -> str | None:
-    """Returns unicode string containing value of environment variable 'name'."""
-    ...
-def setenv(name: str, value: str) -> None:
-    """Accepts unicode string and set it as environment variable 'name' containing value 'value'."""
-    ...
-def unsetenv(name: str) -> None:
-    """Delete the environment variable 'name'."""
-    ...
+def getenv(name: str, default: None = None) -> str | None: ...
+
+def setenv(name: str, value: str) -> None: ...
+def unsetenv(name: str) -> None: ...
 def exec_command(
     *cmdargs: str, encoding: str | None = None, raise_enoent: bool | None = None, **kwargs: int | bool | Iterable[int] | None
 ) -> str:

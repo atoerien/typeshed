@@ -59,10 +59,12 @@ class Workbook:
     # ExcelReader can add ReadOnlyWorksheet in read_only mode.
     # _sheets: list[_WorksheetOrChartsheetLike]
     def __init__(self, write_only: bool = False, iso_dates: bool = False) -> None: ...
+
     @property
     def epoch(self) -> datetime: ...
     @epoch.setter
     def epoch(self, value: datetime) -> None: ...
+
     @property
     def read_only(self) -> bool: ...
     @property
@@ -71,6 +73,7 @@ class Workbook:
     def write_only(self) -> bool: ...
     @property
     def excel_base_date(self) -> datetime: ...
+
     @property
     def active(self) -> _WorksheetOrChartsheetLike | None:
         """
@@ -80,13 +83,8 @@ class Workbook:
         """
         ...
     @active.setter
-    def active(self, value: Worksheet | Chartsheet | int) -> None:
-        """
-        Get the currently active sheet or None
+    def active(self, value: Worksheet | Chartsheet | int) -> None: ...
 
-        :type: :class:`openpyxl.worksheet.worksheet.Worksheet`
-        """
-        ...
     # read_only workbook cannot call this method
     # Could be generic based on write_only
     def create_sheet(

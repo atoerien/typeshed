@@ -61,6 +61,7 @@ class Button(enum.Enum):
 class Controller:
     """A controller for sending virtual mouse events to the system."""
     def __init__(self) -> None: ...
+
     @property
     def position(self) -> tuple[int, int]:
         """
@@ -70,76 +71,14 @@ class Controller:
         """
         ...
     @position.setter
-    def position(self, position: tuple[int, int]) -> None:
-        """
-        The current position of the mouse pointer.
+    def position(self, position: tuple[int, int]) -> None: ...
 
-        This is the tuple ``(x, y)``, and setting it will move the pointer.
-        """
-        ...
-    def scroll(self, dx: int, dy: int) -> None:
-        """
-        Sends scroll events.
-
-        :param int dx: The horizontal scroll. The units of scrolling is
-            undefined.
-
-        :param int dy: The vertical scroll. The units of scrolling is
-            undefined.
-
-        :raises ValueError: if the values are invalid, for example out of
-            bounds
-        """
-        ...
-    def press(self, button: Button) -> None:
-        """
-        Emits a button press event at the current position.
-
-        :param Button button: The button to press.
-        """
-        ...
-    def release(self, button: Button) -> None:
-        """
-        Emits a button release event at the current position.
-
-        :param Button button: The button to release.
-        """
-        ...
-    def move(self, dx: int, dy: int) -> None:
-        """
-        Moves the mouse pointer a number of pixels from its current
-        position.
-
-        :param int dx: The horizontal offset.
-
-        :param int dy: The vertical offset.
-
-        :raises ValueError: if the values are invalid, for example out of
-            bounds
-        """
-        ...
-    def click(self, button: Button, count: int = 1) -> None:
-        """
-        Emits a button click event at the current position.
-
-        The default implementation sends a series of press and release events.
-
-        :param Button button: The button to click.
-
-        :param int count: The number of clicks to send.
-        """
-        ...
-    def __enter__(self) -> Self:
-        """
-        Begins a series of clicks.
-
-        In the default :meth:`click` implementation, the return value of this
-        method is used for the calls to :meth:`press` and :meth:`release`
-        instead of ``self``.
-
-        The default implementation is a no-op.
-        """
-        ...
+    def scroll(self, dx: int, dy: int) -> None: ...
+    def press(self, button: Button) -> None: ...
+    def release(self, button: Button) -> None: ...
+    def move(self, dx: int, dy: int) -> None: ...
+    def click(self, button: Button, count: int = 1) -> None: ...
+    def __enter__(self) -> Self: ...
     def __exit__(
         self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None
     ) -> None:

@@ -438,10 +438,12 @@ class SSLSocket(socket.socket):
     ) -> tuple[int, socket._RetAddress]: ...
     def send(self, data: ReadableBuffer, flags: int = 0) -> int: ...
     def sendall(self, data: ReadableBuffer, flags: int = 0) -> None: ...
+
     @overload
     def sendto(self, data: ReadableBuffer, flags_or_addr: socket._Address, addr: None = None) -> int: ...
     @overload
     def sendto(self, data: ReadableBuffer, flags_or_addr: int, addr: socket._Address) -> int: ...
+
     def shutdown(self, how: int) -> None: ...
     @deprecated("Deprecated since Python 3.6. Use `SSLSocket.recv` method instead.")
     def read(self, len: int = 1024, buffer: WriteableBuffer | None = None) -> bytes:
@@ -451,15 +453,9 @@ class SSLSocket(socket.socket):
         """
         ...
     @deprecated("Deprecated since Python 3.6. Use `SSLSocket.send` method instead.")
-    def write(self, data: ReadableBuffer) -> int:
-        """
-        Write DATA to the underlying SSL channel.  Returns
-        number of bytes of DATA actually transmitted.
-        """
-        ...
-    def do_handshake(self, block: bool = False) -> None:
-        """Start the SSL/TLS handshake."""
-        ...
+    def write(self, data: ReadableBuffer) -> int: ...
+    def do_handshake(self, block: bool = False) -> None: ...  # block is undocumented
+
     @overload
     def getpeercert(self, binary_form: Literal[False] = False) -> _PeerCertRetDictType | None:
         """
@@ -481,33 +477,11 @@ class SSLSocket(socket.socket):
         """
         ...
     @overload
-    def getpeercert(self, binary_form: bool) -> _PeerCertRetType:
-        """
-        Returns a formatted version of the data in the certificate provided
-        by the other end of the SSL channel.
+    def getpeercert(self, binary_form: bool) -> _PeerCertRetType: ...
 
-        Return None if no certificate was provided, {} if a certificate was
-        provided, but not validated.
-        """
-        ...
-    def cipher(self) -> tuple[str, str, int] | None:
-        """
-        Return the currently selected cipher as a 3-tuple ``(name,
-        ssl_version, secret_bits)``.
-        """
-        ...
-    def shared_ciphers(self) -> list[tuple[str, str, int]] | None:
-        """
-        Return a list of ciphers shared by the client during the handshake or
-        None if this is not a valid server connection.
-        """
-        ...
-    def compression(self) -> str | None:
-        """
-        Return the current compression algorithm in use, or ``None`` if
-        compression was not negotiated or not supported by one of the peers.
-        """
-        ...
+    def cipher(self) -> tuple[str, str, int] | None: ...
+    def shared_ciphers(self) -> list[tuple[str, str, int]] | None: ...
+    def compression(self) -> str | None: ...
     if sys.version_info >= (3, 15):
         def group(self) -> str | None: ...
         def client_sigalg(self) -> str | None: ...
@@ -674,11 +648,13 @@ class SSLContext(_SSLContext):
     keylog_filename: str
     post_handshake_auth: bool
     security_level: int
+
     @overload
     def __new__(cls, protocol: int, *args: Any, **kwargs: Any) -> Self: ...
     @overload
     @deprecated("Deprecated since Python 3.10. Use a specific version of the SSL protocol.")
     def __new__(cls, protocol: None = None, *args: Any, **kwargs: Any) -> Self: ...
+
     def load_default_certs(self, purpose: Purpose = Purpose.SERVER_AUTH) -> None: ...
     def load_verify_locations(
         self,
@@ -686,6 +662,7 @@ class SSLContext(_SSLContext):
         capath: StrOrBytesPath | None = None,
         cadata: str | ReadableBuffer | None = None,
     ) -> None: ...
+
     @overload
     def get_ca_certs(self, binary_form: Literal[False] = False) -> list[_PeerCertRetDictType]:
         """
@@ -711,17 +688,8 @@ class SSLContext(_SSLContext):
         """
         ...
     @overload
-    def get_ca_certs(self, binary_form: bool = False) -> Any:
-        """
-        Returns a list of dicts with information of loaded CA certs.
+    def get_ca_certs(self, binary_form: bool = False) -> Any: ...
 
-        If the optional argument is True, returns a DER-encoded copy of the CA
-        certificate.
-
-        NOTE: Certificates in a capath directory aren't loaded unless they have
-        been used at least once.
-        """
-        ...
     def get_ciphers(self) -> list[_Cipher]: ...
     if sys.version_info >= (3, 15):
         def set_ciphersuites(self, ciphersuites: str, /) -> None: ...
@@ -829,22 +797,9 @@ class SSLObject:
         """Was the client session reused during handshake"""
         ...
     def __init__(self, *args: Any, **kwargs: Any) -> None: ...
-    def read(self, len: int = 1024, buffer: WriteableBuffer | None = None) -> bytes:
-        """
-        Read up to 'len' bytes from the SSL object and return them.
+    def read(self, len: int = 1024, buffer: WriteableBuffer | None = None) -> bytes: ...
+    def write(self, data: ReadableBuffer) -> int: ...
 
-        If 'buffer' is provided, read into this buffer and return the number of
-        bytes read.
-        """
-        ...
-    def write(self, data: ReadableBuffer) -> int:
-        """
-        Write 'data' to the SSL object and return the number of bytes
-        written.
-
-        The 'data' argument must support the buffer interface.
-        """
-        ...
     @overload
     def getpeercert(self, binary_form: Literal[False] = False) -> _PeerCertRetDictType | None:
         """
@@ -866,22 +821,9 @@ class SSLObject:
         """
         ...
     @overload
-    def getpeercert(self, binary_form: bool) -> _PeerCertRetType:
-        """
-        Returns a formatted version of the data in the certificate provided
-        by the other end of the SSL channel.
+    def getpeercert(self, binary_form: bool) -> _PeerCertRetType: ...
 
-        Return None if no certificate was provided, {} if a certificate was
-        provided, but not validated.
-        """
-        ...
-    def selected_alpn_protocol(self) -> str | None:
-        """
-        Return the currently selected ALPN protocol as a string, or ``None``
-        if a next protocol was not negotiated or if ALPN is not supported by one
-        of the peers.
-        """
-        ...
+    def selected_alpn_protocol(self) -> str | None: ...
     @deprecated("Deprecated since Python 3.10. Use ALPN instead.")
     def selected_npn_protocol(self) -> str | None:
         """

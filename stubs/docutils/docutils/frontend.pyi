@@ -261,18 +261,8 @@ def make_paths_absolute(
     ...
 @deprecated("The `frontend.make_one_path_absolute` will be removed in Docutils 2.0 or later.")
 def make_one_path_absolute(base_path: StrPath, path: StrPath) -> str: ...
-def filter_settings_spec(settings_spec, *exclude, **replace) -> tuple[Any, ...]:
-    """
-    Return a copy of `settings_spec` excluding/replacing some settings.
+def filter_settings_spec(settings_spec, *exclude, **replace) -> tuple[Any, ...]: ...
 
-    `settings_spec` is a tuple of configuration settings
-    (cf. `docutils.SettingsSpec.settings_spec`).
-
-    Optional positional arguments are names of to-be-excluded settings.
-    Keyword arguments are option specification replacements.
-    (See the html4strict writer for an example.)
-    """
-    ...
 @deprecated("The `frontend.Values` class will be removed in Docutils 2.0 or later.")
 class Values(optparse.Values):
     """
@@ -410,11 +400,13 @@ class ConfigParser(RawConfigParser):
     old_settings: ClassVar[dict[str, tuple[str, str]]]
     old_warning: ClassVar[str]
     not_utf8_error: ClassVar[str]
+
     @overload  # type: ignore[override]
     def read(self, filenames: str | Sequence[str]) -> list[str]: ...
     @overload
     @deprecated("The `option_parser` parameter is deprecated and will be removed in Docutils 0.24.")
     def read(self, filenames: str | Sequence[str], option_parser: OptionParser | None) -> list[str]: ...
+
     def handle_old_config(self, filename: str) -> None: ...
     def validate_settings(self, filename: str, option_parser: OptionParser) -> None:
         """

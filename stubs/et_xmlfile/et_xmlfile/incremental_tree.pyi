@@ -90,37 +90,8 @@ def write_elem_start(
     default_ns_attr_prefix: str | None = None,
     new_nsmap: dict[str, str] | None = None,
     **kwargs: Unused,
-) -> tuple[str | None, dict[str, str], str | None, dict[str, str] | None, bool]:
-    """
-    Write the opening tag (including self closing) and element text.
+) -> tuple[str | None, dict[str, str], str | None, dict[str, str] | None, bool]: ...
 
-    Refer to _serialize_ns_xml for description of arguments.
-
-    nsmap_scope should be an empty dictionary on first call. All nsmap prefixes
-    must be strings with the default namespace prefix represented by "".
-
-    eg.
-    - <foo attr1="one">      (returns tag = 'foo')
-    - <foo attr1="one">text  (returns tag = 'foo')
-    - <foo attr1="one" />    (returns tag = None)
-
-    Returns:
-        tag:
-            The tag name to be closed or None if no closing required.
-        nsmap_scope:
-            The current nsmap after any prefix to uri additions from this
-            element. This is the input dict if unmodified or an updated copy.
-        default_ns_attr_prefix:
-            The prefix for the default namespace to use with attrs.
-        uri_to_prefix:
-            The current uri to prefix map after any uri to prefix additions
-            from this element. This is the input dict if unmodified or an
-            updated copy.
-        next_remains_root:
-            A bool indicating if the child element(s) should be treated as
-            their own roots.
-    """
-    ...
 @overload
 def tostring(
     element: ET.Element[Any],
@@ -190,21 +161,8 @@ def tostring(
     root_ns_only: bool = False,
     minimal_ns_only: bool = False,
     tree_cls: type[ET.ElementTree] = ...,
-) -> Any:
-    """
-    Generate string representation of XML element.
+) -> Any: ...
 
-    All subelements are included.  If encoding is "unicode", a string
-    is returned. Otherwise a bytestring is returned.
-
-    *element* is an Element instance, *encoding* is an optional output
-    encoding defaulting to US-ASCII, *method* is an optional output which can
-    be one of "xml" (default), "html", "text" or "c14n", *default_namespace*
-    sets the default XML namespace (for "xmlns").
-
-    Returns an (optionally) encoded string containing the XML data.
-    """
-    ...
 @overload
 def tostringlist(
     element: ET.Element[Any],
@@ -247,6 +205,7 @@ def tostringlist(
     minimal_ns_only: bool = False,
     tree_cls: type[ET.ElementTree] = ...,
 ) -> list[Any]: ...
+
 @overload
 def compat_tostring(
     element: ET.Element[Any],

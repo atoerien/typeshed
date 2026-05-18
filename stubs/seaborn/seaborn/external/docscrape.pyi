@@ -38,26 +38,13 @@ def strip_blank_lines(l: _S) -> _S:
     ...
 
 class Reader:
-    """
-    A line-based string reader.
+    def __init__(self, data: str | list[str]) -> None: ...
 
-    
-    """
-    def __init__(self, data: str | list[str]) -> None:
-        """
-                Parameters
-                ----------
-                data : str
-                   String with lines separated by '
-        '.
-
-        
-        """
-        ...
     @overload
     def __getitem__(self, n: slice) -> list[str]: ...
     @overload
     def __getitem__(self, n: SupportsIndex) -> str: ...
+
     def reset(self) -> None: ...
     def read(self) -> str: ...
     def seek_next_non_empty_line(self) -> None: ...
@@ -103,6 +90,7 @@ class FunctionDoc(NumpyDocString):
 class ClassDoc(NumpyDocString):
     extra_public_methods: list[str]
     show_inherited_members: bool
+
     @overload
     def __init__(
         self, cls: None, doc: str, modulename: str = "", func_doc: type[FunctionDoc] = ..., config: Mapping[str, Any] = {}
@@ -116,6 +104,7 @@ class ClassDoc(NumpyDocString):
         func_doc: type[FunctionDoc] = ...,
         config: Mapping[str, Any] = {},
     ) -> None: ...
+
     @property
     def methods(self) -> list[str]: ...
     @property

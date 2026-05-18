@@ -106,9 +106,8 @@ class Year:
     def __init__(self, year: int) -> None: ...
     def __len__(self) -> int: ...
     def __eq__(self, other: object) -> bool: ...
-    def __add__(self, other: int) -> Year:
-        """Add int to year."""
-        ...
+    def __add__(self, other: int) -> Year: ...
+
     @overload
     def __sub__(self, other: int) -> Year:
         """
@@ -119,14 +118,8 @@ class Year:
         """
         ...
     @overload
-    def __sub__(self, other: Year) -> int:
-        """
-        Subtract int or Year from Year.
+    def __sub__(self, other: Year) -> int: ...
 
-        If other is an int return a new Year other before original year. If
-        other is a Year object, return delta of the two years as an int.
-        """
-        ...
     def __gt__(self, other: Year) -> bool: ...
     def __ge__(self, other: Year) -> bool: ...
     def __lt__(self, other: Year) -> bool: ...
@@ -255,10 +248,12 @@ class Month:
     def __iter__(self) -> Generator[int]: ...
     def __eq__(self, other: object) -> bool: ...
     def __add__(self, other: int) -> Month: ...
+
     @overload
     def __sub__(self, other: int) -> Month: ...
     @overload
     def __sub__(self, other: Month) -> int: ...
+
     def __gt__(self, other: Month) -> bool: ...
     def __ge__(self, other: Month) -> bool: ...
     def __lt__(self, other: Month) -> bool: ...
@@ -469,6 +464,7 @@ class HebrewCalendar(calendar.Calendar):
         hebrewmonths: bool = False,
         hebrewyear: bool = False,
     ) -> None: ...
+
     @property
     def firstweekday(self) -> int:
         """
@@ -480,197 +476,18 @@ class HebrewCalendar(calendar.Calendar):
         """
         ...
     @firstweekday.setter
-    def firstweekday(self, thefirstweekday: int) -> None:
-        """
-        Get and set the weekday the weeks should start with.
+    def firstweekday(self, thefirstweekday: int) -> None: ...
 
-        Returns
-        -------
-        int
-        """
-        ...
-    def iterweekdays(self) -> Generator[int]:
-        """
-        Return one week of weekday numbers.
-
-        The numbers start with the configured first one.
-
-        Yields
-        ------
-        :obj:`int`
-            The next weekday with 1-7 for Sunday - Shabbos.
-            The iterator starts with the ``HebrewCalendar`` object's
-            configured first weekday ie. if configured to start with
-            Monday it will first yield `2` and end with `1`.
-        """
-        ...
-    def itermonthdates(self, year: int, month: int) -> Generator[HebrewDate]:
-        """
-        Yield dates for one month.
-
-        The iterator will always iterate through complete weeks, so it
-        will yield dates outside the specified month.
-
-        Parameters
-        ----------
-        year : int
-        month : int
-            The Hebrew month starting with 1 for Nissan through 13 for
-            Adar Sheni if necessary.
-
-        Yields
-        ------
-        :obj:`pyluach.dates.HebrewDate`
-            The next Hebrew Date of the month starting with the first
-            date of the week the first of the month falls in, and ending
-            with the last date of the week that the last day of the month
-            falls in.
-        """
-        ...
-    def itermonthdays(self, year: int, month: int) -> Generator[int]:
-        """
-        Like ``itermonthdates()`` but will yield day numbers.
-        For days outside the specified month the day number is 0.
-
-        Parameters
-        ----------
-        year : int
-        month : int
-
-        Yields
-        ------
-        :obj:`int`
-            The day of the month or 0 if the date is before or after the
-            month.
-        """
-        ...
-    def itermonthdays2(self, year: int, month: int) -> Generator[tuple[int, int]]:
-        """
-        Return iterator for the days and weekdays of the month.
-
-        Parameters
-        ----------
-        year : int
-        month : int
-
-        Yields
-        ------
-        :obj:`tuple` of :obj:`int`
-            A tuple of ints in the form ``(day of month, weekday)``.
-        """
-        ...
-    def itermonthdays3(self, year: int, month: int) -> Generator[tuple[int, int, int]]:
-        """
-        Return iterator for the year, month, and day of the month.
-
-        Parameters
-        ----------
-        year : int
-        month : int
-
-        Yields
-        ------
-        :obj:`tuple` of :obj:`int`
-            A tuple of ints in the form ``(year, month, day)``.
-        """
-        ...
-    def itermonthdays4(self, year: int, month: int) -> Generator[tuple[int, int, int, int]]:
-        """
-        Return iterator for the year, month, day, and weekday
-
-        Parameters
-        ----------
-        year : int
-        month : int
-
-        Yields
-        ------
-        :obj:`tuple` of :obj:`int`
-            A tuple of ints in the form ``(year, month, day, weekday)``.
-        """
-        ...
-    def yeardatescalendar(self, year: int, width: int = 3) -> list[list[list[list[HebrewDate]]]]:
-        """
-        Return data of specified year ready for formatting.
-
-        Parameters
-        ----------
-        year : int
-        width : int, optional
-            The number of months per row. Default is 3.
-
-        Returns
-        ------
-        :obj:`list` of list of list of list of :obj:`pyluach.dates.HebrewDate`
-            Returns a list of month rows. Each month row contains a list
-            of up to `width` months. Each month contains either 5 or 6
-            weeks, and each week contains 7 days. Days are ``HebrewDate``
-            objects.
-        """
-        ...
-    def yeardays2calendar(self, year: int, width: int = 3) -> list[list[list[list[tuple[int, int]]]]]:
-        """
-        Return the data of the specified year ready for formatting.
-
-        This method is similar to the ``yeardatescalendar`` except the
-        entries in the week lists are ``(day number, weekday number)``
-        tuples.
-
-        Parameters
-        ----------
-        year : int
-        width : int, optional
-            The number of months per row. Default is 3.
-
-        Returns
-        -------
-        :obj:`list` of list of list of list of :obj:`tuple`
-            Returns a list of month rows. Each month row contains a list
-            of up to `width` months. Each month contains between 4 and 6
-            weeks, and each week contains 1-7 days. Days are tuples with
-            the form ``(day number, weekday number)``.
-        """
-        ...
-    def yeardayscalendar(self, year: int, width: int = 3) -> list[list[list[list[int]]]]:
-        """
-        Return the data of the specified year ready for formatting.
-
-        This method is similar to the ``yeardatescalendar`` except the
-        entries in the week lists are day numbers.
-
-        Parameters
-        ----------
-        year : int
-        width : int, optional
-            The number of months per row. Default is 3.
-
-        Returns
-        -------
-        :obj:`list` of list of list of list of :obj:`int`
-            Returns a list of month rows. Each month row contains a list
-            of up to `width` months. Each month contains either 5 or 6
-            weeks, and each week contains 1-7 days. Each day is the day of
-            the month as an int.
-        """
-        ...
-    def monthdatescalendar(self, year: int, month: int) -> list[list[HebrewDate]]:
-        """
-        Return matrix (list of lists) of dates for month's calendar.
-
-        Each row represents a week; week entries are HebrewDate instances.
-
-        Parameters
-        ----------
-        year : int
-        month : int
-
-        Returns
-        -------
-        :obj:`list` of list of :obj:`pyluach.dates.HebrewDate`
-            List of weeks in the month containing 7 ``HebrewDate``
-            instances each.
-        """
-        ...
+    def iterweekdays(self) -> Generator[int]: ...
+    def itermonthdates(self, year: int, month: int) -> Generator[HebrewDate]: ...  # type: ignore[override]
+    def itermonthdays(self, year: int, month: int) -> Generator[int]: ...
+    def itermonthdays2(self, year: int, month: int) -> Generator[tuple[int, int]]: ...
+    def itermonthdays3(self, year: int, month: int) -> Generator[tuple[int, int, int]]: ...
+    def itermonthdays4(self, year: int, month: int) -> Generator[tuple[int, int, int, int]]: ...
+    def yeardatescalendar(self, year: int, width: int = 3) -> list[list[list[list[HebrewDate]]]]: ...  # type: ignore[override]
+    def yeardays2calendar(self, year: int, width: int = 3) -> list[list[list[list[tuple[int, int]]]]]: ...
+    def yeardayscalendar(self, year: int, width: int = 3) -> list[list[list[list[int]]]]: ...
+    def monthdatescalendar(self, year: int, month: int) -> list[list[HebrewDate]]: ...  # type: ignore[override]
 
 class HebrewHTMLCalendar(HebrewCalendar, calendar.HTMLCalendar):
     """

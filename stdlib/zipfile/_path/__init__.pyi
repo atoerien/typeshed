@@ -28,21 +28,8 @@ if sys.version_info >= (3, 12):
         def __setstate__(self, state: Sequence[tuple[list[object], dict[object, object]]]) -> None: ...
 
     class CompleteDirs(InitializedState, ZipFile):
-        """
-        A ZipFile subclass that ensures that implied directories
-        are always included in the namelist.
+        def resolve_dir(self, name: str) -> str: ...
 
-        >>> list(CompleteDirs._implied_dirs(['foo/bar.txt', 'foo/bar/baz.txt']))
-        ['foo/', 'foo/bar/']
-        >>> list(CompleteDirs._implied_dirs(['foo/bar.txt', 'foo/bar/baz.txt', 'foo/bar/']))
-        ['foo/']
-        """
-        def resolve_dir(self, name: str) -> str:
-            """
-            If the name represents a directory, return that name
-            as a directory (with the trailing slash).
-            """
-            ...
         @overload
         @classmethod
         def make(cls, source: ZipFile) -> CompleteDirs:
@@ -53,12 +40,8 @@ if sys.version_info >= (3, 12):
             ...
         @overload
         @classmethod
-        def make(cls, source: StrPath | IO[bytes]) -> Self:
-            """
-            Given a source (filename or zipfile), return an
-            appropriate CompleteDirs subclass.
-            """
-            ...
+        def make(cls, source: StrPath | IO[bytes]) -> Self: ...
+
         if sys.version_info >= (3, 13):
             @classmethod
             def inject(cls, zf: _ZF) -> _ZF:
@@ -195,6 +178,7 @@ if sys.version_info >= (3, 12):
         def suffixes(self) -> list[str]: ...
         @property
         def stem(self) -> str: ...
+
         @overload
         def open(
             self,
@@ -214,13 +198,8 @@ if sys.version_info >= (3, 12):
             """
             ...
         @overload
-        def open(self, mode: Literal["rb", "wb"], *, pwd: bytes | None = None) -> IO[bytes]:
-            """
-            Open this entry as text or binary following the semantics
-            of ``pathlib.Path.open()`` by passing arguments through
-            to io.TextIOWrapper().
-            """
-            ...
+        def open(self, mode: Literal["rb", "wb"], *, pwd: bytes | None = None) -> IO[bytes]: ...
+
         def iterdir(self) -> Iterator[Self]: ...
         def is_dir(self) -> bool: ...
         def is_file(self) -> bool: ...

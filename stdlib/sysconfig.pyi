@@ -29,14 +29,8 @@ def get_config_var(name: Literal["SO"]) -> Any:
     """
     ...
 @overload
-def get_config_var(name: str) -> Any:
-    """
-    Return the value of a single variable using the dictionary returned by
-    'get_config_vars()'.
+def get_config_var(name: str) -> Any: ...
 
-    Equivalent to get_config_vars().get(name)
-    """
-    ...
 @overload
 def get_config_vars() -> dict[str, Any]:
     """
@@ -51,21 +45,9 @@ def get_config_vars() -> dict[str, Any]:
     """
     ...
 @overload
-def get_config_vars(arg: str, /, *args: str) -> list[Any]:
-    """
-    With no arguments, return a dictionary of all configuration
-    variables relevant for the current platform.
+def get_config_vars(arg: str, /, *args: str) -> list[Any]: ...
 
-    On Unix, this means every variable defined in Python's installed Makefile;
-    On Windows it's a much smaller set.
-
-    With arguments, return a list of values that result from looking up
-    each argument in the configuration variable dictionary.
-    """
-    ...
-def get_scheme_names() -> tuple[str, ...]:
-    """Return a tuple containing the schemes names."""
-    ...
+def get_scheme_names() -> tuple[str, ...]: ...
 def get_default_scheme() -> LiteralString: ...
 def get_preferred_scheme(key: Literal["prefix", "home", "user"]) -> LiteralString: ...
 
@@ -122,14 +104,12 @@ def get_platform() -> str:
 
 if sys.version_info >= (3, 15):
     def is_python_build() -> bool: ...
-
 elif sys.version_info >= (3, 11):
     @overload
     def is_python_build() -> bool: ...
     @overload
     @deprecated("The `check_home` parameter is deprecated since Python 3.12; removed in Python 3.15.")
     def is_python_build(check_home: object = None) -> bool: ...
-
 else:
     @overload
     def is_python_build() -> bool: ...

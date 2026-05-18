@@ -139,64 +139,11 @@ class FFI:
         alloc: Callable[[int], CData] | None = None,
         free: Callable[[CData], Any] | None = None,
         should_clear_after_alloc: bool = True,
-    ) -> _cffi_backend._Allocator:
-        """
-        Return a new allocator, i.e. a function that behaves like ffi.new()
-        but uses the provided low-level 'alloc' and 'free' functions.
+    ) -> _cffi_backend._Allocator: ...
+    def cast(self, cdecl: str | CType, source: CData | float) -> CData: ...
+    def string(self, cdata: CData, maxlen: int = -1) -> bytes | str: ...
+    def unpack(self, cdata: CData, length: int) -> bytes | str | list[Any]: ...
 
-        'alloc' is called with the size as argument.  If it returns NULL, a
-        MemoryError is raised.  'free' is called with the result of 'alloc'
-        as argument.  Both can be either Python function or directly C
-        functions.  If 'free' is None, then no free function is called.
-        If both 'alloc' and 'free' are None, the default is used.
-
-        If 'should_clear_after_alloc' is set to False, then the memory
-        returned by 'alloc' is assumed to be already cleared (or you are
-        fine with garbage); otherwise CFFI will clear it.
-        """
-        ...
-    def cast(self, cdecl: str | CType, source: CData | float) -> CData:
-        """
-        Similar to a C cast: returns an instance of the named C
-        type initialized with the given 'source'.  The source is
-        casted between integers or pointers of any type.
-        """
-        ...
-    def string(self, cdata: CData, maxlen: int = -1) -> bytes | str:
-        """
-        Return a Python string (or unicode string) from the 'cdata'.
-        If 'cdata' is a pointer or array of characters or bytes, returns
-        the null-terminated string.  The returned string extends until
-        the first null character, or at most 'maxlen' characters.  If
-        'cdata' is an array then 'maxlen' defaults to its length.
-
-        If 'cdata' is a pointer or array of wchar_t, returns a unicode
-        string following the same rules.
-
-        If 'cdata' is a single character or byte or a wchar_t, returns
-        it as a string or unicode string.
-
-        If 'cdata' is an enum, returns the value of the enumerator as a
-        string, or 'NUMBER' if the value is out of range.
-        """
-        ...
-    def unpack(self, cdata: CData, length: int) -> bytes | str | list[Any]:
-        """
-        Unpack an array of C data of the given length,
-        returning a Python string/unicode/list.
-
-        If 'cdata' is a pointer to 'char', returns a byte string.
-        It does not stop at the first null.  This is equivalent to:
-        ffi.buffer(cdata, length)[:]
-
-        If 'cdata' is a pointer to 'wchar_t', returns a unicode string.
-        'length' is measured in wchar_t's; it is not the size in bytes.
-
-        If 'cdata' is a pointer to anything else, returns a list of
-        'length' items.  This is a faster equivalent to:
-        [cdata[i] for i in range(length)]
-        """
-        ...
     @overload
     def from_buffer(self, cdecl: ReadableBuffer, require_writable: Literal[False] = False) -> CData:
         """
@@ -239,34 +186,10 @@ class FFI:
         """
         ...
     @overload
-    def from_buffer(self, cdecl: str | CType, python_buffer: WriteableBuffer, require_writable: Literal[True]) -> CData:
-        """
-        Return a cdata of the given type pointing to the data of the
-        given Python object, which must support the buffer interface.
-        Note that this is not meant to be used on the built-in types
-        str or unicode (you can build 'char[]' arrays explicitly)
-        but only on objects containing large quantities of raw data
-        in some other format, like 'array.array' or numpy arrays.
+    def from_buffer(self, cdecl: str | CType, python_buffer: WriteableBuffer, require_writable: Literal[True]) -> CData: ...
 
-        The first argument is optional and default to 'char[]'.
-        """
-        ...
-    def memmove(self, dest: CData | WriteableBuffer, src: CData | ReadableBuffer, n: int) -> None:
-        """
-        ffi.memmove(dest, src, n) copies n bytes of memory from src to dest.
+    def memmove(self, dest: CData | WriteableBuffer, src: CData | ReadableBuffer, n: int) -> None: ...
 
-        Like the C function memmove(), the memory areas may overlap;
-        apart from that it behaves like the C function memcpy().
-
-        'src' can be any cdata ptr or array, or any Python buffer object.
-        'dest' can be any cdata ptr or array, or a writable Python buffer
-        object.  The size to copy, 'n', is always measured in bytes.
-
-        Unlike other methods, this one supports all Python buffer including
-        byte strings and bytearrays---but it still does not support
-        non-contiguous buffers.
-        """
-        ...
     @overload
     def callback(
         self,
@@ -291,24 +214,10 @@ class FFI:
         python_callable: Callable[..., _T],
         error: Any = None,
         onerror: Callable[[Exception, Any, Any], None] | None = None,
-    ) -> Callable[..., _T]:
-        """
-        Return a callback object or a decorator making such a
-        callback object.  'cdecl' must name a C function pointer type.
-        The callback invokes the specified 'python_callable' (which may
-        be provided either directly or via a decorator).  Important: the
-        callback object must be manually kept alive for as long as the
-        callback may be invoked from the C level.
-        """
-        ...
-    def getctype(self, cdecl: str | CType, replace_with: str = "") -> str:
-        """
-        Return a string giving the C type 'cdecl', which may be itself
-        a string or a <ctype> object.  If 'replace_with' is given, it gives
-        extra text to append (or insert for more complicated C types), like
-        a variable name, or '*' to get actually the C type 'pointer-to-cdecl'.
-        """
-        ...
+    ) -> Callable[..., _T]: ...
+
+    def getctype(self, cdecl: str | CType, replace_with: str = "") -> str: ...
+
     @overload
     def gc(self, cdata: CData, destructor: Callable[[CData], Any], size: int = 0) -> CData:
         """
@@ -323,29 +232,9 @@ class FFI:
         """
         ...
     @overload
-    def gc(self, cdata: CData, destructor: None, size: int = 0) -> None:
-        """
-        Return a new cdata object that points to the same
-        data.  Later, when this new cdata object is garbage-collected,
-        'destructor(old_cdata_object)' will be called.
+    def gc(self, cdata: CData, destructor: None, size: int = 0) -> None: ...
 
-        The optional 'size' gives an estimate of the size, used to
-        trigger the garbage collection more eagerly.  So far only used
-        on PyPy.  It tells the GC that the returned object keeps alive
-        roughly 'size' bytes of external memory.
-        """
-        ...
-    def verify(self, source: str = "", tmpdir: str | None = None, **kwargs: Any) -> _cffi_backend.Lib:
-        """
-        Verify that the current ffi signatures compile on this
-        machine, and return a dynamic library object.  The dynamic
-        library can be used to call functions and access global
-        variables declared in this 'ffi'.  The library is compiled
-        by the C compiler: it gives you C-level API compatibility
-        (including calling macros).  This is unlike 'ffi.dlopen()',
-        which requires binary compatibility in the signatures.
-        """
-        ...
+    def verify(self, source: str = "", tmpdir: str | None = None, **kwargs: Any) -> _cffi_backend.Lib: ...
     # Technically exists on all OSs, but crashes on all but Windows. So we hide it in stubs
     if sys.platform == "win32":
         def getwinerror(self, code: int = -1) -> tuple[int, str] | None: ...

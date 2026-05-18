@@ -142,26 +142,9 @@ class SMTPAuthenticationError(SMTPResponseException):
     """
     Authentication error.
 
-    Most probably the server didn't accept the username/password
-    combination provided.
-    """
-    ...
+def quoteaddr(addrstring: str) -> str: ...
+def quotedata(data: str) -> str: ...
 
-def quoteaddr(addrstring: str) -> str:
-    """
-    Quote a subset of the email addresses defined by RFC 821.
-
-    Should be able to handle anything email.utils.parseaddr can handle.
-    """
-    ...
-def quotedata(data: str) -> str:
-    r"""
-    Quote data for email.
-
-    Double leading '.', and change Unix newline '\n', or Mac '\r' into
-    internet CRLF end-of-line.
-    """
-    ...
 @type_check_only
 class _AuthObject(Protocol):
     @overload
@@ -363,27 +346,8 @@ class SMTP:
         ...
     user: str
     password: str
-    def auth(self, mechanism: str, authobject: _AuthObject, *, initial_response_ok: bool = True) -> _Reply:
-        """
-        Authentication command - requires response processing.
+    def auth(self, mechanism: str, authobject: _AuthObject, *, initial_response_ok: bool = True) -> _Reply: ...
 
-        'mechanism' specifies which authentication mechanism is to
-        be used - the valid values are those listed in the 'auth'
-        element of 'esmtp_features'.
-
-        'authobject' must be a callable object taking a single argument:
-
-                data = authobject(challenge)
-
-        It will be called to process the server's challenge response; the
-        challenge argument it is passed will be a bytes.  It should return
-        an ASCII string that will be base64 encoded and sent to the server.
-
-        Keyword arguments:
-            - initial_response_ok: Allow sending the RFC 4954 initial-response
-              to the AUTH command, if the authentication methods supports it.
-        """
-        ...
     @overload
     def auth_cram_md5(self, challenge: None = None) -> None:
         """
@@ -392,53 +356,11 @@ class SMTP:
         """
         ...
     @overload
-    def auth_cram_md5(self, challenge: ReadableBuffer) -> str:
-        """
-        Authobject to use with CRAM-MD5 authentication. Requires self.user
-        and self.password to be set.
-        """
-        ...
-    def auth_plain(self, challenge: ReadableBuffer | None = None) -> str:
-        """
-        Authobject to use with PLAIN authentication. Requires self.user and
-        self.password to be set.
-        """
-        ...
-    def auth_login(self, challenge: ReadableBuffer | None = None) -> str:
-        """
-        Authobject to use with LOGIN authentication. Requires self.user and
-        self.password to be set.
-        """
-        ...
-    def login(self, user: str, password: str, *, initial_response_ok: bool = True) -> _Reply:
-        """
-        Log in on an SMTP server that requires authentication.
+    def auth_cram_md5(self, challenge: ReadableBuffer) -> str: ...
 
-        The arguments are:
-            - user:         The user name to authenticate with.
-            - password:     The password for the authentication.
-
-        Keyword arguments:
-            - initial_response_ok: Allow sending the RFC 4954 initial-response
-              to the AUTH command, if the authentication methods supports it.
-
-        If there has been no previous EHLO or HELO command this session, this
-        method tries ESMTP EHLO first.
-
-        This method will return normally if the authentication was successful.
-
-        This method may raise the following exceptions:
-
-         SMTPHeloError            The server didn't reply properly to
-                                  the helo greeting.
-         SMTPAuthenticationError  The server didn't accept the username/
-                                  password combination.
-         SMTPNotSupportedError    The AUTH command is not supported by the
-                                  server.
-         SMTPException            No suitable authentication method was
-                                  found.
-        """
-        ...
+    def auth_plain(self, challenge: ReadableBuffer | None = None) -> str: ...
+    def auth_login(self, challenge: ReadableBuffer | None = None) -> str: ...
+    def login(self, user: str, password: str, *, initial_response_ok: bool = True) -> _Reply: ...
     if sys.version_info >= (3, 12):
         def starttls(self, *, context: SSLContext | None = None) -> _Reply:
             """
@@ -664,6 +586,7 @@ class SMTP_SSL(SMTP):
             source_address: _SourceAddress | None = None,
             context: None = None,
         ) -> None: ...
+
         keyfile: StrOrBytesPath | None
         certfile: StrOrBytesPath | None
 

@@ -317,6 +317,7 @@ class OptionContainer:
     def _check_conflict(self, option: Option) -> None: ...
     def _create_option_mappings(self) -> None: ...
     def _share_option_mappings(self, parser: OptionParser) -> None: ...
+
     @overload
     def add_option(self, opt: Option, /) -> Option:
         """
@@ -343,12 +344,8 @@ class OptionContainer:
         help: str | None = None,
         metavar: str | None = None,
         **kwargs: Any,  # Allow arbitrary keyword arguments for user defined option_class
-    ) -> Option:
-        """
-        add_option(Option)
-        add_option(opt_str, ..., kwarg=val, ...)
-        """
-        ...
+    ) -> Option: ...
+
     def add_options(self, option_list: Iterable[Option]) -> None: ...
     def destroy(self) -> None:
         """see OptionParser.destroy()."""
@@ -525,48 +522,16 @@ class OptionParser(OptionContainer):
         ...
     def _process_long_opt(self, rargs: list[str], values: Values) -> None: ...
     def _process_short_opts(self, rargs: list[str], values: Values) -> None: ...
+
     @overload
     def add_option_group(self, opt_group: OptionGroup, /) -> OptionGroup: ...
     @overload
     def add_option_group(self, title: str, /, description: str | None = None) -> OptionGroup: ...
-    def check_values(self, values: Values, args: list[str]) -> tuple[Values, list[str]]:
-        """
-        check_values(values : Values, args : [string])
-        -> (values : Values, args : [string])
 
-        Check that the supplied option values and leftover arguments are
-        valid.  Returns the option values and leftover arguments
-        (possibly adjusted, possibly completely new -- whatever you
-        like).  Default implementation just returns the passed-in
-        values; subclasses may override as desired.
-        """
-        ...
-    def disable_interspersed_args(self) -> None:
-        """
-        Set parsing to stop on the first non-option. Use this if
-        you have a command processor which runs another command that
-        has options of its own and you want to make sure these options
-        don't get confused.
-        """
-        ...
-    def enable_interspersed_args(self) -> None:
-        """
-        Set parsing to not stop on the first non-option, allowing
-        interspersing switches with command arguments. This is the
-        default behavior. See also disable_interspersed_args() and the
-        class documentation description of the attribute
-        allow_interspersed_args.
-        """
-        ...
-    def error(self, msg: str) -> NoReturn:
-        """
-        error(msg : string)
-
-        Print a usage message incorporating 'msg' to stderr and exit.
-        If you override this in a subclass, it should not return -- it
-        should either exit or raise an exception.
-        """
-        ...
+    def check_values(self, values: Values, args: list[str]) -> tuple[Values, list[str]]: ...
+    def disable_interspersed_args(self) -> None: ...
+    def enable_interspersed_args(self) -> None: ...
+    def error(self, msg: str) -> NoReturn: ...
     def exit(self, status: int = 0, msg: str | None = None) -> NoReturn: ...
     def expand_prog_name(self, s: str) -> str: ...
     def format_epilog(self, formatter: HelpFormatter) -> str: ...

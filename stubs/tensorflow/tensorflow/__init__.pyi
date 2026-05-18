@@ -1676,48 +1676,12 @@ class TensorShape(metaclass=ABCMeta):
         """
         ...
     @property
-    def rank(self) -> int:
-        """Returns the rank of this shape, or None if it is unspecified."""
-        ...
-    def as_list(self) -> list[int | None]:
-        """
-        Returns a list of integers or `None` for each dimension.
+    def rank(self) -> int: ...
+    def as_list(self) -> list[int | None]: ...
+    def assert_has_rank(self, rank: int) -> None: ...
+    def assert_is_compatible_with(self, other: Iterable[int | None]) -> None: ...
+    def __bool__(self) -> _bool: ...
 
-        Returns:
-          A list of integers or `None` for each dimension.
-
-        Raises:
-          ValueError: If `self` is an unknown shape with an unknown rank.
-        """
-        ...
-    def assert_has_rank(self, rank: int) -> None:
-        """
-        Raises an exception if `self` is not compatible with the given `rank`.
-
-        Args:
-          rank: An integer.
-
-        Raises:
-          ValueError: If `self` does not represent a shape with the given `rank`.
-        """
-        ...
-    def assert_is_compatible_with(self, other: Iterable[int | None]) -> None:
-        """
-        Raises exception if `self` and `other` do not represent the same shape.
-
-        This method can be used to assert that there exists a shape that both
-        `self` and `other` represent.
-
-        Args:
-          other: Another TensorShape.
-
-        Raises:
-          ValueError: If `self` and `other` do not represent the same shape.
-        """
-        ...
-    def __bool__(self) -> _bool:
-        """Returns True if this shape contains non-zero information."""
-        ...
     @overload
     def __getitem__(self, key: int) -> int | None:
         """
@@ -1738,30 +1702,10 @@ class TensorShape(metaclass=ABCMeta):
         """
         ...
     @overload
-    def __getitem__(self, key: slice) -> TensorShape:
-        """
-        Returns the value of a dimension or a shape, depending on the key.
+    def __getitem__(self, key: slice) -> TensorShape: ...
 
-        Args:
-          key: If `key` is an integer, returns the dimension at that index;
-            otherwise if `key` is a slice, returns a TensorShape whose dimensions
-            are those selected by the slice from `self`.
-
-        Returns:
-          An integer if `key` is an integer, or a `TensorShape` if `key` is a
-          slice.
-
-        Raises:
-          ValueError: If `key` is a slice and `self` is completely unknown and
-            the step is set.
-        """
-        ...
-    def __iter__(self) -> Iterator[int | None]:
-        """Returns `self.dims` if the rank is known, otherwise raises ValueError."""
-        ...
-    def __len__(self) -> int:
-        """Returns the rank of this shape, or raises ValueError if unspecified."""
-        ...
+    def __iter__(self) -> Iterator[int | None]: ...
+    def __len__(self) -> int: ...
     def __add__(self, other: Iterable[int | None]) -> TensorShape: ...
     def __radd__(self, other: Iterable[int | None]) -> TensorShape: ...
     def __getattr__(self, name: str) -> Incomplete: ...
@@ -2631,69 +2575,8 @@ def convert_to_tensor(
     dtype: DTypeLike | None = None,
     dtype_hint: DTypeLike | None = None,
     name: str | None = None,
-) -> Tensor:
-    """
-    Converts the given `value` to a `Tensor`.
+) -> Tensor: ...
 
-    This function converts Python objects of various types to `Tensor`
-    objects. It accepts `Tensor` objects, numpy arrays, Python lists,
-    and Python scalars.
-
-    For example:
-
-    >>> import numpy as np
-    >>> def my_func(arg):
-    ...   arg = tf.convert_to_tensor(arg, dtype=tf.float32)
-    ...   return arg
-
-    >>> # The following calls are equivalent.
-    ...
-    >>> value_1 = my_func(tf.constant([[1.0, 2.0], [3.0, 4.0]]))
-    >>> print(value_1)
-    tf.Tensor(
-      [[1. 2.]
-       [3. 4.]], shape=(2, 2), dtype=float32)
-    >>> value_2 = my_func([[1.0, 2.0], [3.0, 4.0]])
-    >>> print(value_2)
-    tf.Tensor(
-      [[1. 2.]
-       [3. 4.]], shape=(2, 2), dtype=float32)
-    >>> value_3 = my_func(np.array([[1.0, 2.0], [3.0, 4.0]], dtype=np.float32))
-    >>> print(value_3)
-    tf.Tensor(
-      [[1. 2.]
-       [3. 4.]], shape=(2, 2), dtype=float32)
-
-    This function can be useful when composing a new operation in Python
-    (such as `my_func` in the example above). All standard Python op
-    constructors apply this function to each of their Tensor-valued
-    inputs, which allows those ops to accept numpy arrays, Python lists,
-    and scalars in addition to `Tensor` objects.
-
-    Note: This function diverges from default Numpy behavior for `float` and
-      `string` types when `None` is present in a Python list or scalar. Rather
-      than silently converting `None` values, an error will be thrown.
-
-    Args:
-      value: An object whose type has a registered `Tensor` conversion function.
-      dtype: Optional element type for the returned tensor. If missing, the type
-        is inferred from the type of `value`.
-      dtype_hint: Optional element type for the returned tensor, used when dtype
-        is None. In some cases, a caller may not have a dtype in mind when
-        converting to a tensor, so dtype_hint can be used as a soft preference. If
-        the conversion to `dtype_hint` is not possible, this argument has no
-        effect.
-      name: Optional name to use if a new `Tensor` is created.
-
-    Returns:
-      A `Tensor` based on `value`.
-
-    Raises:
-      TypeError: If no conversion function is registered for `value` to `dtype`.
-      RuntimeError: If a registered conversion function returns an invalid value.
-      ValueError: If the `value` is a tensor not of given `dtype` in graph mode.
-    """
-    ...
 @overload
 def expand_dims(input: TensorCompatible, axis: int, name: str | None = None) -> Tensor:
     """
@@ -2763,73 +2646,8 @@ def expand_dims(input: TensorCompatible, axis: int, name: str | None = None) -> 
     """
     ...
 @overload
-def expand_dims(input: RaggedTensor, axis: int, name: str | None = None) -> RaggedTensor:
-    """
-    Returns a tensor with a length 1 axis inserted at index `axis`.
+def expand_dims(input: RaggedTensor, axis: int, name: str | None = None) -> RaggedTensor: ...
 
-    Given a tensor `input`, this operation inserts a dimension of length 1 at the
-    dimension index `axis` of `input`'s shape. The dimension index follows Python
-    indexing rules: It's zero-based, and a negative index is counted backward
-    from the end.
-
-    This operation is useful to:
-
-    * Add an outer "batch" dimension to a single element.
-    * Align axes for broadcasting.
-    * To add an inner vector length axis to a tensor of scalars.
-
-    For example:
-
-    If you have a single image of shape `[height, width, channels]`:
-
-    >>> image = tf.zeros([10,10,3])
-
-    You can add an outer `batch` axis by passing `axis=0`:
-
-    >>> tf.expand_dims(image, axis=0).shape.as_list()
-    [1, 10, 10, 3]
-
-    The new axis location matches Python `list.insert(axis, 1)`:
-
-    >>> tf.expand_dims(image, axis=1).shape.as_list()
-    [10, 1, 10, 3]
-
-    Following standard Python indexing rules, a negative `axis` counts from the
-    end so `axis=-1` adds an inner most dimension:
-
-    >>> tf.expand_dims(image, -1).shape.as_list()
-    [10, 10, 3, 1]
-
-    This operation requires that `axis` is a valid index for `input.shape`,
-    following Python indexing rules:
-
-    ```
-    -1-tf.rank(input) <= axis <= tf.rank(input)
-    ```
-
-    This operation is related to:
-
-    * `tf.squeeze`, which removes dimensions of size 1.
-    * `tf.reshape`, which provides more flexible reshaping capability.
-    * `tf.sparse.expand_dims`, which provides this functionality for
-      `tf.SparseTensor`
-
-    Args:
-      input: A `Tensor`.
-      axis: Integer specifying the dimension index at which to expand the
-        shape of `input`. Given an input of D dimensions, `axis` must be in range
-        `[-(D+1), D]` (inclusive).
-      name: Optional string. The name of the output `Tensor`.
-
-    Returns:
-      A tensor with the same data as `input`, with an additional dimension
-      inserted at the index specified by `axis`.
-
-    Raises:
-      TypeError: If `axis` is not specified.
-      InvalidArgumentError: If `axis` is out of range `[-(D+1), D]`.
-    """
-    ...
 @overload
 def concat(values: TensorCompatible, axis: int, name: str | None = "concat") -> Tensor:
     """
@@ -2911,85 +2729,8 @@ def concat(values: TensorCompatible, axis: int, name: str | None = "concat") -> 
     """
     ...
 @overload
-def concat(values: Sequence[RaggedTensor], axis: int, name: str | None = "concat") -> RaggedTensor:
-    """
-    Concatenates tensors along one dimension.
+def concat(values: Sequence[RaggedTensor], axis: int, name: str | None = "concat") -> RaggedTensor: ...
 
-    See also `tf.tile`, `tf.stack`, `tf.repeat`.
-
-    Concatenates the list of tensors `values` along dimension `axis`.  If
-    `values[i].shape = [D0, D1, ... Daxis(i), ...Dn]`, the concatenated
-    result has shape
-
-        [D0, D1, ... Raxis, ...Dn]
-
-    where
-
-        Raxis = sum(Daxis(i))
-
-    That is, the data from the input tensors is joined along the `axis`
-    dimension.
-
-    The number of dimensions of the input tensors must match, and all dimensions
-    except the `axis` must be equal.
-
-    For example:
-
-    >>> t1 = [[1, 2, 3], [4, 5, 6]]
-    >>> t2 = [[7, 8, 9], [10, 11, 12]]
-    >>> tf.concat([t1, t2], 0)
-    <tf.Tensor: shape=(4, 3), dtype=int32, numpy=
-    array([[ 1,  2,  3],
-           [ 4,  5,  6],
-           [ 7,  8,  9],
-           [10, 11, 12]], dtype=int32)>
-
-    >>> tf.concat([t1, t2], 1)
-    <tf.Tensor: shape=(2, 6), dtype=int32, numpy=
-    array([[ 1,  2,  3,  7,  8,  9],
-           [ 4,  5,  6, 10, 11, 12]], dtype=int32)>
-
-    As in Python, the `axis` could also be negative numbers. Negative `axis`
-    are interpreted as counting from the end of the rank, i.e.,
-     `axis + rank(values)`-th dimension.
-
-    For example:
-
-    >>> t1 = [[[1, 2], [2, 3]], [[4, 4], [5, 3]]]
-    >>> t2 = [[[7, 4], [8, 4]], [[2, 10], [15, 11]]]
-    >>> tf.concat([t1, t2], -1)
-    <tf.Tensor: shape=(2, 2, 4), dtype=int32, numpy=
-      array([[[ 1,  2,  7,  4],
-              [ 2,  3,  8,  4]],
-             [[ 4,  4,  2, 10],
-              [ 5,  3, 15, 11]]], dtype=int32)>
-
-    Note: If you are concatenating along a new axis consider using stack.
-    E.g.
-
-    ```python
-    tf.concat([tf.expand_dims(t, axis) for t in tensors], axis)
-    ```
-
-    can be rewritten as
-
-    ```python
-    tf.stack(tensors, axis=axis)
-    ```
-
-    Args:
-      values: A list of `Tensor` objects or a single `Tensor`.
-      axis: 0-D `int32` `Tensor`.  Dimension along which to concatenate. Must be
-        in the range `[-rank(values), rank(values))`. As in Python, indexing for
-        axis is 0-based. Positive axis in the rage of `[0, rank(values))` refers
-        to `axis`-th dimension. And negative axis refers to `axis +
-        rank(values)`-th dimension.
-      name: A name for the operation (optional).
-
-    Returns:
-      A `Tensor` resulting from concatenation of the input tensors.
-    """
-    ...
 @overload
 def squeeze(
     input: TensorCompatible, axis: int | tuple[int, ...] | list[int] | None = None, name: str | None = None
@@ -3066,78 +2807,8 @@ def squeeze(
     """
     ...
 @overload
-def squeeze(input: RaggedTensor, axis: int | tuple[int, ...] | list[int], name: str | None = None) -> RaggedTensor:
-    """
-    Removes dimensions of size 1 from the shape of a tensor.
+def squeeze(input: RaggedTensor, axis: int | tuple[int, ...] | list[int], name: str | None = None) -> RaggedTensor: ...
 
-    Given a tensor `input`, this operation returns a tensor of the same type with
-    all dimensions of size 1 removed. If you don't want to remove all size 1
-    dimensions, you can remove specific size 1 dimensions by specifying
-    `axis`.
-
-    For example:
-
-    ```python
-    # 't' is a tensor of shape [1, 2, 1, 3, 1, 1]
-    tf.shape(tf.squeeze(t))  # [2, 3]
-    ```
-
-    Or, to remove specific size 1 dimensions:
-
-    ```python
-    # 't' is a tensor of shape [1, 2, 1, 3, 1, 1]
-    tf.shape(tf.squeeze(t, [2, 4]))  # [1, 2, 3, 1]
-    ```
-
-    Unlike the older op `tf.compat.v1.squeeze`, this op does not accept a
-    deprecated `squeeze_dims` argument.
-
-    Note: if `input` is a `tf.RaggedTensor`, then this operation takes `O(N)`
-    time, where `N` is the number of elements in the squeezed dimensions.
-
-    Note: If squeeze is performed on dimensions of unknown sizes, then the
-    returned Tensor will be of unknown shape. A common situation is when the
-    first (batch) dimension is of size `None`, `tf.squeeze` returns
-    `<unknown>` shape which may be a surprise. Specify the `axis=` argument
-    to get the expected result, as illustrated in the following example:
-
-    ```python
-    @tf.function
-    def func(x):
-      print('x.shape:', x.shape)
-      known_axes = [i for i, size in enumerate(x.shape) if size == 1]
-      y = tf.squeeze(x, axis=known_axes)
-      print('shape of tf.squeeze(x, axis=known_axes):', y.shape)
-      y = tf.squeeze(x)
-      print('shape of tf.squeeze(x):', y.shape)
-      return 0
-
-    _ = func.get_concrete_function(tf.TensorSpec([None, 1, 2], dtype=tf.int32))
-    # Output is.
-    # x.shape: (None, 1, 2)
-    # shape of tf.squeeze(x, axis=known_axes): (None, 2)
-    # shape of tf.squeeze(x): <unknown>
-    ```
-
-    Args:
-      input: A `Tensor`. The `input` to squeeze.
-      axis: An optional list of `ints`. Defaults to `[]`. If specified, only
-        squeezes the dimensions listed. The dimension index starts at 0. It is an
-        error to squeeze a dimension that is not 1. Must be in the range
-        `[-rank(input), rank(input))`. Must be specified if `input` is a
-        `RaggedTensor`.
-      name: A name for the operation (optional).
-
-    Returns:
-      A `Tensor`. Has the same type as `input`.
-      Contains the same data as `input`, but has one or more dimensions of
-      size 1 removed.
-
-    Raises:
-      ValueError: The input cannot be converted to a tensor, or the specified
-        axis cannot be squeezed.
-    """
-    ...
 def split(
     value: TensorCompatible,
     num_or_size_splits: int | TensorCompatible,
@@ -3486,104 +3157,8 @@ def tensor_scatter_nd_update(
     ...
 def constant(
     value: TensorCompatible, dtype: DTypeLike | None = None, shape: ShapeLike | None = None, name: str | None = "Const"
-) -> Tensor:
-    """
-    Creates a constant tensor from a tensor-like object.
+) -> Tensor: ...
 
-    Note: All eager `tf.Tensor` values are immutable (in contrast to
-    `tf.Variable`). There is nothing especially _constant_ about the value
-    returned from `tf.constant`. This function is not fundamentally different from
-    `tf.convert_to_tensor`. The name `tf.constant` comes from the `value` being
-    embedded in a `Const` node in the `tf.Graph`. `tf.constant` is useful
-    for asserting that the value can be embedded that way.
-
-    If the argument `dtype` is not specified, then the type is inferred from
-    the type of `value`.
-
-    >>> # Constant 1-D Tensor from a python list.
-    >>> tf.constant([1, 2, 3, 4, 5, 6])
-    <tf.Tensor: shape=(6,), dtype=int32,
-        numpy=array([1, 2, 3, 4, 5, 6], dtype=int32)>
-    >>> # Or a numpy array
-    >>> a = np.array([[1, 2, 3], [4, 5, 6]])
-    >>> tf.constant(a)
-    <tf.Tensor: shape=(2, 3), dtype=int64, numpy=
-      array([[1, 2, 3],
-             [4, 5, 6]])>
-
-    If `dtype` is specified, the resulting tensor values are cast to the requested
-    `dtype`.
-
-    >>> tf.constant([1, 2, 3, 4, 5, 6], dtype=tf.float64)
-    <tf.Tensor: shape=(6,), dtype=float64,
-        numpy=array([1., 2., 3., 4., 5., 6.])>
-
-    If `shape` is set, the `value` is reshaped to match. Scalars are expanded to
-    fill the `shape`:
-
-    >>> tf.constant(0, shape=(2, 3))
-      <tf.Tensor: shape=(2, 3), dtype=int32, numpy=
-      array([[0, 0, 0],
-             [0, 0, 0]], dtype=int32)>
-    >>> tf.constant([1, 2, 3, 4, 5, 6], shape=[2, 3])
-    <tf.Tensor: shape=(2, 3), dtype=int32, numpy=
-      array([[1, 2, 3],
-             [4, 5, 6]], dtype=int32)>
-
-    `tf.constant` has no effect if an eager Tensor is passed as the `value`, it
-    even transmits gradients:
-
-    >>> v = tf.Variable([0.0])
-    >>> with tf.GradientTape() as g:
-    ...     loss = tf.constant(v + v)
-    >>> g.gradient(loss, v).numpy()
-    array([2.], dtype=float32)
-
-    But, since `tf.constant` embeds the value in the `tf.Graph` this fails for
-    symbolic tensors:
-
-    >>> with tf.compat.v1.Graph().as_default():
-    ...   i = tf.compat.v1.placeholder(shape=[None, None], dtype=tf.float32)
-    ...   t = tf.constant(i)
-    Traceback (most recent call last):
-    ...
-    TypeError: ...
-
-    `tf.constant` will create tensors on the current device. Inputs which are
-    already tensors maintain their placements unchanged.
-
-    Related Ops:
-
-    * `tf.convert_to_tensor` is similar but:
-      * It has no `shape` argument.
-      * Symbolic tensors are allowed to pass through.
-
-      >>> with tf.compat.v1.Graph().as_default():
-      ...   i = tf.compat.v1.placeholder(shape=[None, None], dtype=tf.float32)
-      ...   t = tf.convert_to_tensor(i)
-
-    * `tf.fill`: differs in a few ways:
-      *   `tf.constant` supports arbitrary constants, not just uniform scalar
-          Tensors like `tf.fill`.
-      *   `tf.fill` creates an Op in the graph that is expanded at runtime, so it
-          can efficiently represent large tensors.
-      *   Since `tf.fill` does not embed the value, it can produce dynamically
-          sized outputs.
-
-    Args:
-      value: A constant value (or list) of output type `dtype`.
-      dtype: The type of the elements of the resulting tensor.
-      shape: Optional dimensions of resulting tensor.
-      name: Optional name for the tensor.
-
-    Returns:
-      A Constant Tensor.
-
-    Raises:
-      TypeError: if shape is incorrectly specified or unsupported.
-      ValueError: if called on a symbolic tensor.
-    """
-    ...
 @overload
 def cast(x: TensorCompatible, dtype: DTypeLike, name: str | None = None) -> Tensor:
     """
@@ -3693,116 +3268,11 @@ def cast(x: SparseTensor, dtype: DTypeLike, name: str | None = None) -> SparseTe
     """
     ...
 @overload
-def cast(x: RaggedTensor, dtype: DTypeLike, name: str | None = None) -> RaggedTensor:
-    """
-    Casts a tensor to a new type.
+def cast(x: RaggedTensor, dtype: DTypeLike, name: str | None = None) -> RaggedTensor: ...
 
-    The operation casts `x` (in case of `Tensor`) or `x.values`
-    (in case of `SparseTensor` or `IndexedSlices`) to `dtype`.
+def zeros(shape: ShapeLike, dtype: DTypeLike = ..., name: str | None = None, layout: Layout | None = None) -> Tensor: ...
+def ones(shape: ShapeLike, dtype: DTypeLike = ..., name: str | None = None, layout: Layout | None = None) -> Tensor: ...
 
-    For example:
-
-    >>> x = tf.constant([1.8, 2.2], dtype=tf.float32)
-    >>> tf.cast(x, tf.int32)
-    <tf.Tensor: shape=(2,), dtype=int32, numpy=array([1, 2], dtype=int32)>
-
-    Notice `tf.cast` has an alias `tf.dtypes.cast`:
-
-    >>> x = tf.constant([1.8, 2.2], dtype=tf.float32)
-    >>> tf.dtypes.cast(x, tf.int32)
-    <tf.Tensor: shape=(2,), dtype=int32, numpy=array([1, 2], dtype=int32)>
-
-    The operation supports data types (for `x` and `dtype`) of
-    `uint8`, `uint16`, `uint32`, `uint64`, `int8`, `int16`, `int32`, `int64`,
-    `float16`, `float32`, `float64`, `complex64`, `complex128`, `bfloat16`.
-    In case of casting from complex types (`complex64`, `complex128`) to real
-    types, only the real part of `x` is returned. In case of casting from real
-    types to complex types (`complex64`, `complex128`), the imaginary part of the
-    returned value is set to `0`. The handling of complex types here matches the
-    behavior of numpy.
-
-    Note casting nan and inf values to integral types has undefined behavior.
-
-    Note this operation can lead to a loss of precision when converting native
-    Python `float` and `complex` variables to `tf.float64` or `tf.complex128`
-    tensors, since the input is first converted to the `float32` data type and
-    then widened. It is recommended to use `tf.convert_to_tensor` instead of
-    `tf.cast` for any non-tensor inputs.
-
-    Args:
-      x: A `Tensor` or `SparseTensor` or `IndexedSlices` of numeric type. It could
-        be `uint8`, `uint16`, `uint32`, `uint64`, `int8`, `int16`, `int32`,
-        `int64`, `float16`, `float32`, `float64`, `complex64`, `complex128`,
-        `bfloat16`.
-      dtype: The destination type. The list of supported dtypes is the same as
-        `x`.
-      name: A name for the operation (optional).
-
-    Returns:
-      A `Tensor` or `SparseTensor` or `IndexedSlices` with same shape as `x` and
-        same type as `dtype`.
-
-    Raises:
-      TypeError: If `x` cannot be cast to the `dtype`.
-    """
-    ...
-def zeros(shape: ShapeLike, dtype: DTypeLike = ..., name: str | None = None, layout: Layout | None = None) -> Tensor:
-    """
-    Creates a tensor with all elements set to zero.
-
-    See also `tf.zeros_like`, `tf.ones`, `tf.fill`, `tf.eye`.
-
-    This operation returns a tensor of type `dtype` with shape `shape` and
-    all elements set to zero.
-
-    >>> tf.zeros([3, 4], tf.int32)
-    <tf.Tensor: shape=(3, 4), dtype=int32, numpy=
-    array([[0, 0, 0, 0],
-           [0, 0, 0, 0],
-           [0, 0, 0, 0]], dtype=int32)>
-
-    Args:
-      shape: A `list` of integers, a `tuple` of integers, or a 1-D `Tensor` of
-        type `int32`.
-      dtype: The DType of an element in the resulting `Tensor`.
-      name: Optional string. A name for the operation.
-      layout: Optional, `tf.experimental.dtensor.Layout`. If provided, the result
-        is a [DTensor](https://www.tensorflow.org/guide/dtensor_overview) with the
-        provided layout.
-
-    Returns:
-      A `Tensor` with all elements set to zero.
-    """
-    ...
-def ones(shape: ShapeLike, dtype: DTypeLike = ..., name: str | None = None, layout: Layout | None = None) -> Tensor:
-    """
-    Creates a tensor with all elements set to one (1).
-
-    See also `tf.ones_like`, `tf.zeros`, `tf.fill`, `tf.eye`.
-
-    This operation returns a tensor of type `dtype` with shape `shape` and
-    all elements set to one.
-
-    >>> tf.ones([3, 4], tf.int32)
-    <tf.Tensor: shape=(3, 4), dtype=int32, numpy=
-    array([[1, 1, 1, 1],
-           [1, 1, 1, 1],
-           [1, 1, 1, 1]], dtype=int32)>
-
-    Args:
-      shape: A `list` of integers, a `tuple` of integers, or a 1-D `Tensor` of
-        type `int32`.
-      dtype: Optional DType of an element in the resulting `Tensor`. Default is
-        `tf.float32`.
-      name: Optional string. A name for the operation.
-      layout: Optional, `tf.experimental.dtensor.Layout`. If provided, the result
-        is a [DTensor](https://www.tensorflow.org/guide/dtensor_overview) with the
-        provided layout.
-
-    Returns:
-      A `Tensor` with all elements set to one (1).
-    """
-    ...
 @overload
 def zeros_like(
     input: TensorCompatible | IndexedSlices, dtype: DTypeLike | None = None, name: str | None = None, layout: Layout | None = None
@@ -3855,52 +3325,8 @@ def zeros_like(
 @overload
 def zeros_like(
     input: RaggedTensor, dtype: DTypeLike | None = None, name: str | None = None, layout: Layout | None = None
-) -> RaggedTensor:
-    """
-    Creates a tensor with all elements set to zero.
+) -> RaggedTensor: ...
 
-    See also `tf.zeros`.
-
-    Given a single tensor or array-like object (`input`), this operation returns
-    a tensor of the same type and shape as `input` with all elements set to zero.
-    Optionally, you can use `dtype` to specify a new type for the returned tensor.
-
-    Note that the layout of the input tensor is not preserved if the op
-    is used inside tf.function. To obtain a tensor with the same layout as the
-    input, chain the returned value to a `dtensor.relayout_like`.
-
-    Examples:
-
-      >>> tensor = tf.constant([[1, 2, 3], [4, 5, 6]])
-      >>> tf.zeros_like(tensor)
-      <tf.Tensor: shape=(2, 3), dtype=int32, numpy=
-      array([[0, 0, 0],
-             [0, 0, 0]], dtype=int32)>
-
-      >>> tf.zeros_like(tensor, dtype=tf.float32)
-      <tf.Tensor: shape=(2, 3), dtype=float32, numpy=
-      array([[0., 0., 0.],
-             [0., 0., 0.]], dtype=float32)>
-
-      >>> tf.zeros_like([[1, 2, 3], [4, 5, 6]])
-      <tf.Tensor: shape=(2, 3), dtype=int32, numpy=
-      array([[0, 0, 0],
-             [0, 0, 0]], dtype=int32)>
-
-    Args:
-      input: A `Tensor` or array-like object.
-      dtype: A type for the returned `Tensor`. Must be `float16`, `float32`,
-        `float64`, `int8`, `uint8`, `int16`, `uint16`, `int32`, `int64`,
-        `complex64`, `complex128`, `bool` or `string` (optional).
-      name: A name for the operation (optional).
-      layout: Optional, `tf.experimental.dtensor.Layout`. If provided, the result
-        is a [DTensor](https://www.tensorflow.org/guide/dtensor_overview) with the
-        provided layout.
-
-    Returns:
-      A `Tensor` with all elements set to zero.
-    """
-    ...
 @overload
 def ones_like(
     input: TensorCompatible, dtype: DTypeLike | None = None, name: str | None = None, layout: Layout | None = None
@@ -3943,178 +3369,9 @@ def ones_like(
 @overload
 def ones_like(
     input: RaggedTensor, dtype: DTypeLike | None = None, name: str | None = None, layout: Layout | None = None
-) -> RaggedTensor:
-    """
-    Creates a tensor of all ones that has the same shape as the input.
+) -> RaggedTensor: ...
 
-    See also `tf.ones`.
-
-    Given a single tensor (`tensor`), this operation returns a tensor of the
-    same type and shape as `tensor` with all elements set to 1. Optionally,
-    you can use `dtype` to specify a new type for the returned tensor.
-
-    For example:
-
-    >>> tensor = tf.constant([[1, 2, 3], [4, 5, 6]])
-    >>> tf.ones_like(tensor)
-    <tf.Tensor: shape=(2, 3), dtype=int32, numpy=
-      array([[1, 1, 1],
-             [1, 1, 1]], dtype=int32)>
-
-    Note that the layout of the input tensor is not preserved if the op
-    is used inside tf.function. To obtain a tensor with the same layout as the
-    input, chain the returned value to a `dtensor.relayout_like`.
-
-    Args:
-      input: A `Tensor`.
-      dtype: A type for the returned `Tensor`. Must be `float16`, `float32`,
-        `float64`, `int8`, `uint8`, `int16`, `uint16`, `int32`, `int64`,
-        `complex64`, `complex128`, `bool` or `string`.
-      name: A name for the operation (optional).
-      layout: Optional, `tf.experimental.dtensor.Layout`. If provided, the result
-        is a [DTensor](https://www.tensorflow.org/guide/dtensor_overview) with the
-        provided layout.
-
-    Returns:
-      A `Tensor` with all elements set to one.
-    """
-    ...
-def reshape(tensor: TensorCompatible, shape: ShapeLike | Tensor, name: str | None = None) -> Tensor:
-    """
-    Reshapes a tensor.
-
-    Given `tensor`, this operation returns a new `tf.Tensor` that has the same
-    values as `tensor` in the same order, except with a new shape given by
-    `shape`.
-
-    >>> t1 = [[1, 2, 3],
-    ...       [4, 5, 6]]
-    >>> print(tf.shape(t1).numpy())
-    [2 3]
-    >>> t2 = tf.reshape(t1, [6])
-    >>> t2
-    <tf.Tensor: shape=(6,), dtype=int32,
-      numpy=array([1, 2, 3, 4, 5, 6], dtype=int32)>
-    >>> tf.reshape(t2, [3, 2])
-    <tf.Tensor: shape=(3, 2), dtype=int32, numpy=
-      array([[1, 2],
-             [3, 4],
-             [5, 6]], dtype=int32)>
-
-    The `tf.reshape` does not change the order of or the total number of elements
-    in the tensor, and so it can reuse the underlying data buffer. This makes it
-    a fast operation independent of how big of a tensor it is operating on.
-
-    >>> tf.reshape([1, 2, 3], [2, 2])
-    Traceback (most recent call last):
-    ...
-    InvalidArgumentError: Input to reshape is a tensor with 3 values, but the
-    requested shape has 4
-
-    To instead reorder the data to rearrange the dimensions of a tensor, see
-    `tf.transpose`.
-
-    >>> t = [[1, 2, 3],
-    ...      [4, 5, 6]]
-    >>> tf.reshape(t, [3, 2]).numpy()
-    array([[1, 2],
-           [3, 4],
-           [5, 6]], dtype=int32)
-    >>> tf.transpose(t, perm=[1, 0]).numpy()
-    array([[1, 4],
-           [2, 5],
-           [3, 6]], dtype=int32)
-
-    If one component of `shape` is the special value -1, the size of that
-    dimension is computed so that the total size remains constant.  In particular,
-    a `shape` of `[-1]` flattens into 1-D.  At most one component of `shape` can
-    be -1.
-
-    >>> t = [[1, 2, 3],
-    ...      [4, 5, 6]]
-    >>> tf.reshape(t, [-1])
-    <tf.Tensor: shape=(6,), dtype=int32,
-      numpy=array([1, 2, 3, 4, 5, 6], dtype=int32)>
-    >>> tf.reshape(t, [3, -1])
-    <tf.Tensor: shape=(3, 2), dtype=int32, numpy=
-      array([[1, 2],
-             [3, 4],
-             [5, 6]], dtype=int32)>
-    >>> tf.reshape(t, [-1, 2])
-    <tf.Tensor: shape=(3, 2), dtype=int32, numpy=
-      array([[1, 2],
-             [3, 4],
-             [5, 6]], dtype=int32)>
-
-    `tf.reshape(t, [])` reshapes a tensor `t` with one element to a scalar.
-
-    >>> tf.reshape([7], []).numpy().item()
-    7
-
-    More examples:
-
-    >>> t = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    >>> print(tf.shape(t).numpy())
-    [9]
-    >>> tf.reshape(t, [3, 3])
-    <tf.Tensor: shape=(3, 3), dtype=int32, numpy=
-      array([[1, 2, 3],
-             [4, 5, 6],
-             [7, 8, 9]], dtype=int32)>
-
-    >>> t = [[[1, 1], [2, 2]],
-    ...      [[3, 3], [4, 4]]]
-    >>> print(tf.shape(t).numpy())
-    [2 2 2]
-    >>> tf.reshape(t, [2, 4])
-    <tf.Tensor: shape=(2, 4), dtype=int32, numpy=
-      array([[1, 1, 2, 2],
-             [3, 3, 4, 4]], dtype=int32)>
-
-    >>> t = [[[1, 1, 1],
-    ...       [2, 2, 2]],
-    ...      [[3, 3, 3],
-    ...       [4, 4, 4]],
-    ...      [[5, 5, 5],
-    ...       [6, 6, 6]]]
-    >>> print(tf.shape(t).numpy())
-    [3 2 3]
-    >>> # Pass '[-1]' to flatten 't'.
-    >>> tf.reshape(t, [-1])
-    <tf.Tensor: shape=(18,), dtype=int32,
-      numpy=array([1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6],
-      dtype=int32)>
-    >>> # -- Using -1 to infer the shape --
-    >>> # Here -1 is inferred to be 9:
-    >>> tf.reshape(t, [2, -1])
-    <tf.Tensor: shape=(2, 9), dtype=int32, numpy=
-      array([[1, 1, 1, 2, 2, 2, 3, 3, 3],
-             [4, 4, 4, 5, 5, 5, 6, 6, 6]], dtype=int32)>
-    >>> # -1 is inferred to be 2:
-    >>> tf.reshape(t, [-1, 9])
-    <tf.Tensor: shape=(2, 9), dtype=int32, numpy=
-      array([[1, 1, 1, 2, 2, 2, 3, 3, 3],
-             [4, 4, 4, 5, 5, 5, 6, 6, 6]], dtype=int32)>
-    >>> # -1 is inferred to be 3:
-    >>> tf.reshape(t, [ 2, -1, 3])
-    <tf.Tensor: shape=(2, 3, 3), dtype=int32, numpy=
-      array([[[1, 1, 1],
-              [2, 2, 2],
-              [3, 3, 3]],
-             [[4, 4, 4],
-              [5, 5, 5],
-              [6, 6, 6]]], dtype=int32)>
-
-    Args:
-      tensor: A `Tensor`.
-      shape: A `Tensor`. Must be one of the following types: `int32`, `int64`.
-        Defines the shape of the output tensor.
-      name: Optional string. A name for the operation.
-
-    Returns:
-      A `Tensor`. Has the same type as `tensor`.
-    """
-    ...
+def reshape(tensor: TensorCompatible, shape: ShapeLike | Tensor, name: str | None = None) -> Tensor: ...
 def pad(
     tensor: TensorCompatible,
     paddings: Tensor | IntArray | Iterable[Iterable[int]],

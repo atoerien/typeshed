@@ -110,18 +110,8 @@ def compress(
     ...
 def decompress(
     data: ReadableBuffer, zstd_dict: ZstdDict | tuple[ZstdDict, int] | None = None, options: Mapping[int, int] | None = None
-) -> bytes:
-    """
-    Decompress one or more frames of Zstandard compressed *data*.
+) -> bytes: ...
 
-    *zstd_dict* is a ZstdDict object, a pre-trained Zstandard dictionary. See
-    the function train_dict for how to train a ZstdDict on sample data.
-    *options* is a dict object that contains advanced compression
-    parameters. See DecompressionParameter for more on options.
-
-    For incremental decompression, use a ZstdDecompressor instead.
-    """
-    ...
 @final
 class CompressionParameter(enum.IntEnum):
     """Compression parameters."""

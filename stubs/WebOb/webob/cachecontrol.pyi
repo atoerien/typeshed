@@ -25,16 +25,19 @@ class exists_property(Generic[_ScopeT]):
     def __init__(self: exists_property[None], prop: str) -> None: ...
     @overload
     def __init__(self, prop: str, type: _ScopeT) -> None: ...
+
     @overload
     def __get__(self, obj: None, type: type[CacheControl[Any]] | None = None) -> Self: ...
     @overload
     def __get__(self: exists_property[None], obj: CacheControl[Any], type: type[CacheControl[Any]] | None = None) -> bool: ...
     @overload
     def __get__(self, obj: CacheControl[_ScopeT], type: type[CacheControl[Any]] | None = None) -> bool: ...
+
     @overload
     def __set__(self: exists_property[None], obj: CacheControl[Any], value: bool | None) -> None: ...
     @overload
     def __set__(self, obj: CacheControl[_ScopeT], value: bool | None) -> None: ...
+
     @overload
     def __delete__(self, obj: CacheControl[Any]) -> None: ...
     @overload
@@ -47,6 +50,7 @@ class value_property(Generic[_T, _DefaultT, _NoneLiteral, _ScopeT]):
     When no value is actually given, the value of self.none is returned.
     """
     def __init__(self, prop: str, default: _DefaultT = None, none: _NoneLiteral = None, type: _ScopeT = None) -> None: ...  # type: ignore[assignment]
+
     @overload
     def __get__(self, obj: None, type: type[CacheControl[Any]] | None = None) -> Self: ...
     @overload
@@ -59,6 +63,7 @@ class value_property(Generic[_T, _DefaultT, _NoneLiteral, _ScopeT]):
     def __get__(
         self, obj: CacheControl[_ScopeT] | None, type: type[CacheControl[Any]] | None = None
     ) -> _T | _DefaultT | _NoneLiteral: ...
+
     @overload
     def __set__(
         self: value_property[_T, _DefaultT, _NoneLiteral, None],
@@ -67,6 +72,7 @@ class value_property(Generic[_T, _DefaultT, _NoneLiteral, _ScopeT]):
     ) -> None: ...
     @overload
     def __set__(self, obj: CacheControl[_ScopeT], value: _T | _DefaultT | Literal[True] | None) -> None: ...
+
     @overload
     def __delete__(self, obj: CacheControl[Any]) -> None: ...
     @overload
@@ -85,6 +91,7 @@ class CacheControl(Generic[_ScopeT]):
     properties: dict[str, Any]
     type: _ScopeT
     def __init__(self, properties: dict[str, Any], type: _ScopeT) -> None: ...
+
     @overload
     @classmethod
     def parse(
@@ -111,14 +118,8 @@ class CacheControl(Generic[_ScopeT]):
     @classmethod
     def parse(
         cls, header: str, updates_to: Callable[[dict[str, Any]], Any] | None = None, *, type: _ScopeT2
-    ) -> CacheControl[_ScopeT2]:
-        """
-        Parse the header, returning a CacheControl object.
+    ) -> CacheControl[_ScopeT2]: ...
 
-        The object is bound to the request or response object
-        ``updates_to``, if that is given.
-        """
-        ...
     max_stale: value_property[int, None, Literal["*"], Literal["request"]]
     min_fresh: value_property[int, None, None, Literal["request"]]
     only_if_cached: exists_property[Literal["request"]]

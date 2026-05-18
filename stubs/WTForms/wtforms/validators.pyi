@@ -322,6 +322,7 @@ class AnyOf:
     values: Collection[Any]
     message: str | None
     values_formatter: Callable[[Any], str]
+
     @overload
     def __init__(self, values: Collection[Any], message: str | None = None, values_formatter: None = None) -> None: ...
     @overload
@@ -332,6 +333,7 @@ class AnyOf:
     def __init__(
         self, values: _ValuesT_contra, message: str | None = None, *, values_formatter: Callable[[_ValuesT_contra], str]
     ) -> None: ...
+
     def __call__(self, form: BaseForm, field: Field) -> None: ...
     @staticmethod
     def default_values_formatter(values: Iterable[object]) -> str: ...
@@ -351,6 +353,7 @@ class NoneOf:
     values: Collection[Any]
     message: str | None
     values_formatter: Callable[[Any], str]
+
     @overload
     def __init__(self, values: Collection[Any], message: str | None = None, values_formatter: None = None) -> None: ...
     @overload
@@ -361,6 +364,7 @@ class NoneOf:
     def __init__(
         self, values: _ValuesT_contra, message: str | None = None, *, values_formatter: Callable[[_ValuesT_contra], str]
     ) -> None: ...
+
     def __call__(self, form: BaseForm, field: Field) -> None: ...
     @staticmethod
     def default_values_formatter(v: Iterable[object]) -> str: ...

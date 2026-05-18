@@ -34,22 +34,9 @@ def cleaned_date(day: _D, keep_datetime: Literal[True]) -> _D:
     """
     ...
 @overload
-def cleaned_date(day: datetime.date | datetime.datetime, keep_datetime: Literal[False] | None = False) -> datetime.date:
-    """
-    Return a "clean" date type.
+def cleaned_date(day: datetime.date | datetime.datetime, keep_datetime: Literal[False] | None = False) -> datetime.date: ...
 
-    * keep a `date` unchanged
-    * convert a datetime into a date,
-    * convert any "duck date" type into a date using its `date()` method.
-    """
-    ...
-def daterange(start: _DT, end: _DT) -> Generator[_DT]:
-    """
-    Yield days from ``start`` to ``end`` including both of them.
-
-    If start and end are in opposite order, they'll be swapped silently.
-    """
-    ...
+def daterange(start: _DT, end: _DT) -> Generator[_DT]: ...
 
 class ChristianMixin:
     EASTER_METHOD: ClassVar[Literal[1, 2, 3] | None]

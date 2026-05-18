@@ -51,78 +51,28 @@ class RefactoringTool:
     bmi_post_order: list[BaseFix]
     def __init__(
         self, fixer_names: Iterable[str], options: Mapping[str, object] | None = None, explicit: Container[str] | None = None
-    ) -> None:
-        """
-        Initializer.
+    ) -> None: ...
+    def get_fixers(self) -> tuple[list[BaseFix], list[BaseFix]]: ...
+    def log_error(self, msg: str, *args: Iterable[str], **kwargs: _ExcInfoType) -> NoReturn: ...
 
-        Args:
-            fixer_names: a list of fixers to import
-            options: a dict with configuration.
-            explicit: a list of fixers to run even if they are explicit.
-        """
-        ...
-    def get_fixers(self) -> tuple[list[BaseFix], list[BaseFix]]:
-        """
-        Inspects the options to load the requested patterns and handlers.
-
-        Returns:
-          (pre_order, post_order), where pre_order is the list of fixers that
-          want a pre-order AST traversal, and post_order is the list that want
-          post-order traversal.
-        """
-        ...
-    def log_error(self, msg: str, *args: Iterable[str], **kwargs: _ExcInfoType) -> NoReturn:
-        """Called when an error occurs."""
-        ...
     @overload
     def log_message(self, msg: object) -> None:
         """Hook to log a message."""
         ...
     @overload
-    def log_message(self, msg: str, *args: object) -> None:
-        """Hook to log a message."""
-        ...
+    def log_message(self, msg: str, *args: object) -> None: ...
+
     @overload
     def log_debug(self, msg: object) -> None: ...
     @overload
     def log_debug(self, msg: str, *args: object) -> None: ...
-    def print_output(self, old_text: str, new_text: str, filename: StrPath, equal: bool) -> None:
-        """
-        Called with the old version, new version, and filename of a
-        refactored file.
-        """
-        ...
-    def refactor(self, items: Iterable[str], write: bool = False, doctests_only: bool = False) -> None:
-        """Refactor a list of files and directories."""
-        ...
-    def refactor_dir(self, dir_name: str, write: bool = False, doctests_only: bool = False) -> None:
-        """
-        Descends down a directory and refactor every Python file found.
 
-        Python files are assumed to have a .py extension.
-
-        Files and subdirectories starting with '.' are skipped.
-        """
-        ...
-    def _read_python_source(self, filename: FileDescriptorOrPath) -> tuple[str, str]:
-        """Do our best to decode a Python source file correctly."""
-        ...
-    def refactor_file(self, filename: StrPath, write: bool = False, doctests_only: bool = False) -> None:
-        """Refactors a file."""
-        ...
-    def refactor_string(self, data: str, name: str) -> Node | None:
-        """
-        Refactor a given input string.
-
-        Args:
-            data: a string holding the code to be refactored.
-            name: a human-readable name for use in error/log messages.
-
-        Returns:
-            An AST corresponding to the refactored input stream; None if
-            there were errors during the parse.
-        """
-        ...
+    def print_output(self, old_text: str, new_text: str, filename: StrPath, equal: bool) -> None: ...
+    def refactor(self, items: Iterable[str], write: bool = False, doctests_only: bool = False) -> None: ...
+    def refactor_dir(self, dir_name: str, write: bool = False, doctests_only: bool = False) -> None: ...
+    def _read_python_source(self, filename: FileDescriptorOrPath) -> tuple[str, str]: ...
+    def refactor_file(self, filename: StrPath, write: bool = False, doctests_only: bool = False) -> None: ...
+    def refactor_string(self, data: str, name: str) -> Node | None: ...
     def refactor_stdin(self, doctests_only: bool = False) -> None: ...
     def refactor_tree(self, tree: Node, name: str) -> bool:
         """

@@ -231,35 +231,8 @@ def asynccontextmanager(func: Callable[_P, AsyncGenerator[_T_co]]) -> Callable[_
     "Annotating the return type as `-> AsyncIterator[Foo]` with `@asynccontextmanager` is deprecated. "
     "Use `-> AsyncGenerator[Foo]` instead."
 )
-def asynccontextmanager(func: Callable[_P, AsyncIterator[_T_co]]) -> Callable[_P, _AsyncGeneratorContextManager[_T_co]]:
-    """
-    @asynccontextmanager decorator.
+def asynccontextmanager(func: Callable[_P, AsyncIterator[_T_co]]) -> Callable[_P, _AsyncGeneratorContextManager[_T_co]]: ...
 
-    Typical usage:
-
-        @asynccontextmanager
-        async def some_async_generator(<arguments>):
-            <setup>
-            try:
-                yield <value>
-            finally:
-                <cleanup>
-
-    This makes this:
-
-        async with some_async_generator(<arguments>) as <variable>:
-            <body>
-
-    equivalent to this:
-
-        <setup>
-        try:
-            <variable> = <value>
-            <body>
-        finally:
-            <cleanup>
-    """
-    ...
 @type_check_only
 class _SupportsClose(Protocol):
     def close(self) -> object: ...
@@ -487,10 +460,12 @@ class nullcontext(AbstractContextManager[_T, None], AbstractAsyncContextManager[
         # Perform operation, using optional_cm if condition is True
     """
     enter_result: _T
+
     @overload
     def __init__(self: nullcontext[None]) -> None: ...
     @overload
     def __init__(self: nullcontext[_T], enter_result: _T) -> None: ...  # pyright: ignore[reportInvalidTypeVarUse]  #11780
+
     def __enter__(self) -> _T: ...
     def __exit__(self, *exctype: Unused) -> None: ...
     async def __aenter__(self) -> _T: ...

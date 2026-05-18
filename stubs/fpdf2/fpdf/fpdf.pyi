@@ -289,10 +289,12 @@ class FPDF(GraphicsStateMixin):
         ...
     @property
     def is_ttf_font(self) -> bool: ...
+
     @property
     def page_mode(self) -> PageMode: ...
     @page_mode.setter
     def page_mode(self, page_mode: PageMode) -> None: ...
+
     @property
     def output_intents(self): ...
     def add_output_intent(
@@ -2227,46 +2229,8 @@ class FPDF(GraphicsStateMixin):
         outer_border_width: float | None = None,
         num_heading_rows: int = 1,
         repeat_headings: TableHeadingsDisplay | int = 1,
-    ) -> _GeneratorContextManager[Table]:
-        """
-        Inserts a table, that can be built using the `fpdf.table.Table` object yield.
-        Detailed usage documentation: https://py-pdf.github.io/fpdf2/Tables.html
+    ) -> _GeneratorContextManager[Table]: ...
 
-        Args:
-            rows: optional. Sequence of rows (iterable) of str to initiate the table cells with text content.
-            align (str, fpdf.enums.Align): optional, default to CENTER. Sets the table horizontal position
-                relative to the page, when it's not using the full page width.
-            borders_layout (str, fpdf.enums.TableBordersLayout): optional, default to ALL. Control what cell
-                borders are drawn.
-            cell_fill_color (int, tuple, fpdf.drawing.DeviceCMYK, fpdf.drawing.DeviceGray, fpdf.drawing.DeviceRGB): optional.
-                Defines the cells background color.
-            cell_fill_mode (str, fpdf.enums.TableCellFillMode): optional. Defines which cells are filled
-                with color in the background.
-            col_widths (int, tuple): optional. Sets column width. Can be a single number or a sequence of numbers.
-            first_row_as_headings (bool): optional, default to True. If False, the first row of the table
-                is not styled differently from the others.
-            gutter_height (float): optional vertical space between rows.
-            gutter_width (float): optional horizontal space between columns.
-            headings_style (fpdf.fonts.FontFace): optional, default to bold.
-                Defines the visual style of the top headings row: size, color, emphasis...
-            line_height (number): optional. Defines how much vertical space a line of text will occupy.
-            markdown (bool): optional, default to False. Enable markdown interpretation of cells textual content.
-            text_align (str, fpdf.enums.Align): optional, default to JUSTIFY. Control text alignment inside cells.
-            v_align (str, fpdf.enums.VAlign): optional, default to CENTER. Control vertical alignment of cells content.
-            width (number): optional. Sets the table width.
-            wrapmode (fpdf.enums.WrapMode): "WORD" for word based line wrapping (default),
-                "CHAR" for character based line wrapping.
-            padding (number, tuple, Padding): optional. Sets the cell padding. Can be a single number or a sequence
-                of numbers, default:0
-                If padding for left or right ends up being non-zero then the respective c_margin is ignored.
-            outer_border_width (number): optional. The outer_border_width will trigger rendering of the outer
-                border of the table with the given width regardless of any other defined border styles.
-            num_heading_rows (number): optional. Sets the number of heading rows, default value is 1. If this value is not 1,
-                first_row_as_headings needs to be True if num_heading_rows>1 and False if num_heading_rows=0. For backwards compatibility,
-                first_row_as_headings is used in case num_heading_rows is 1.
-            repeat_headings (fpdf.enums.TableHeadingsDisplay): optional, indicates whether to print table headings on every page, default to 1.
-        """
-        ...
     @overload
     def output(  # type: ignore[overload-overlap]
         self,

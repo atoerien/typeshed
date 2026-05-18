@@ -185,10 +185,12 @@ class Resource(Card32):
     class_name: str
     codes: tuple[int, ...]
     def __init__(self, name: str, codes: tuple[int, ...] = (), default: int | None = None) -> None: ...
+
     @overload  # type: ignore[override]
     def check_value(self, value: Callable[[], _T]) -> _T: ...
     @overload
     def check_value(self, value: _T) -> _T: ...
+
     def parse_value(self, value: int, display: _BaseDisplay) -> int: ...  # type: ignore[override]  # display: None will error. See: https://github.com/python-xlib/python-xlib/pull/248
 
 class Window(Resource):
@@ -247,6 +249,7 @@ class Binary(ValueField):
     def pack_value(  # type: ignore[override]  # Override Callable
         self, val: bytes | bytearray
     ) -> tuple[bytes | bytearray, int, None]: ...
+
     @overload  # type: ignore[override]  # Overload for specific values
     def parse_binary_value(self, data: _T, display: Unused, length: None, format: Unused) -> tuple[_T, Literal[b""]]: ...
     @overload
@@ -259,6 +262,7 @@ class String8(ValueField):
     pad: int
     def __init__(self, name: str, pad: int = 1) -> None: ...
     def pack_value(self, val: bytes | str) -> tuple[bytes, int, None]: ...  # type: ignore[override]  # Override Callable
+
     @overload  # type: ignore[override]  # Overload for specific values
     def parse_binary_value(
         self, data: bytes | bytearray, display: Unused, length: None, format: Unused
@@ -435,25 +439,9 @@ class Struct:
     structcode: str | None
     structvalues: int
     def __init__(self, *fields: Field) -> None: ...
-    def to_binary(self, *varargs: object, **keys: object) -> bytes:
-        """
-        data = s.to_binary(...)
+    def to_binary(self, *varargs: object, **keys: object) -> bytes: ...
+    def pack_value(self, value: tuple[object, ...] | dict[str, Any] | DictWrapper) -> bytes: ...
 
-        Convert Python values into the binary representation.  The
-        arguments will be all value fields with names, in the order
-        given when the Struct object was instantiated.  With one
-        exception: fields with default arguments will be last.
-
-        Returns the binary representation as the string DATA.
-        """
-        ...
-    def pack_value(self, value: tuple[object, ...] | dict[str, Any] | DictWrapper) -> bytes:
-        """
-        This function allows Struct objects to be used in List and
-        Object fields.  Each item represents the arguments to pass to
-        to_binary, either a tuple, a dictionary or a DictWrapper.
-        """
-        ...
     @overload
     def parse_value(self, val: SliceableBuffer, display: display.Display | None, rawdict: Literal[True]) -> dict[str, Any]:
         """
@@ -464,12 +452,8 @@ class Struct:
     @overload
     def parse_value(
         self, val: SliceableBuffer, display: display.Display | None, rawdict: Literal[False] = False
-    ) -> DictWrapper:
-        """
-        This function is used by List and Object fields to convert
-        Struct objects with no var_fields into Python values.
-        """
-        ...
+    ) -> DictWrapper: ...
+
     @overload
     def parse_binary(
         self, data: SliceableBuffer, display: display.Display | None, rawdict: Literal[True]
@@ -495,25 +479,8 @@ class Struct:
     @overload
     def parse_binary(
         self, data: SliceableBuffer, display: display.Display | None, rawdict: Literal[False] = False
-    ) -> tuple[DictWrapper, SliceableBuffer]:
-        """
-        values, remdata = s.parse_binary(data, display, rawdict = False)
+    ) -> tuple[DictWrapper, SliceableBuffer]: ...
 
-        Convert a binary representation of the structure into Python values.
-
-        DATA is a string or a buffer containing the binary data.
-        DISPLAY should be a Xlib.protocol.display.Display object if
-        there are any Resource fields or Lists with ResourceObjs.
-
-        The Python values are returned as VALUES.  If RAWDICT is true,
-        a Python dictionary is returned, where the keys are field
-        names and the values are the corresponding Python value.  If
-        RAWDICT is false, a DictWrapper will be returned where all
-        fields are available as attributes.
-
-        REMDATA are the remaining binary data, unused by the Struct object.
-        """
-        ...
     # Structs generate their attributes
     # TODO: Create a specific type-only class for all instances of `Struct`
     @type_check_only

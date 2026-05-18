@@ -108,19 +108,8 @@ def subs_list_to_dict(
 @overload
 def subs_list_to_dict(
     subs: list[dict[str, Any]] | None, /, *, lang: str | None = "und", ext: str | None = None
-) -> dict[str, list[dict[str, Any]]]:
-    """
-    Convert subtitles from a traversal into a subtitle dict.
-    The path should have an `all` immediately before this function.
+) -> dict[str, list[dict[str, Any]]]: ...
 
-    Arguments:
-    `ext`      The default value for `ext` in the subtitle dict
-
-    In the dict you can set the following additional items:
-    `id`       The subtitle id to sort the dict into
-    `quality`  The sort order for each subtitle
-    """
-    ...
 @overload
 def find_element(*, attr: str, value: str, tag: str | None = None, html: bool = False, regex: bool = False) -> str: ...
 @overload
@@ -140,6 +129,7 @@ def find_element(
     html: bool = False,
     regex: bool = False,
 ) -> str: ...
+
 @overload
 def find_elements(*, cls: str, html: bool = False) -> list[str]: ...
 @overload
@@ -154,6 +144,7 @@ def find_elements(
     html: bool = False,
     regex: bool = False,
 ) -> list[str]: ...
+
 def trim_str(*, start: str | None = None, end: str | None = None) -> Callable[[str], str]: ...
 
 # Returns a callable f(items) which calls func(*items, **kwargs).
@@ -168,6 +159,7 @@ def get_first(
     is_user_input: bool | type[NO_DEFAULT] = ...,
     traverse_string: bool = False,
 ) -> Any: ...
+
 @overload
 def dict_get(d: str, key_or_keys: str | Collection[str]) -> Any | None: ...
 @overload

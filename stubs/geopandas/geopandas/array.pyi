@@ -64,36 +64,15 @@ def to_shapely(geoms: GeometryArray) -> _Array1D[np.object_]:
     ...
 def from_wkb(
     data, crs: _ConvertibleToCRS | None = None, on_invalid: Literal["raise", "warn", "ignore", "fix"] = "raise"
-) -> GeometryArray:
-    """
-    Convert a list or array of WKB objects to a GeometryArray.
+) -> GeometryArray: ...
 
-    Parameters
-    ----------
-    data : array-like
-        list or array of WKB objects
-    crs : value, optional
-        Coordinate Reference System of the geometry objects. Can be anything accepted by
-        :meth:`pyproj.CRS.from_user_input() <pyproj.crs.CRS.from_user_input>`,
-        such as an authority string (eg "EPSG:4326") or a WKT string.
-    on_invalid: {"raise", "warn", "ignore"}, default "raise"
-        - raise: an exception will be raised if a WKB input geometry is invalid.
-        - warn: a warning will be raised and invalid WKB geometries will be returned as
-          None.
-        - ignore: invalid WKB geometries will be returned as None without a warning.
-        - fix: an effort is made to fix invalid input geometries (e.g. close
-          unclosed rings). If this is not possible, they are returned as ``None``
-          without a warning. Requires GEOS >= 3.11 and shapely >= 2.1.
-    """
-    ...
 @overload
 def to_wkb(geoms: GeometryArray, hex: Literal[False] = False, **kwargs) -> _Array1D[np.bytes_]:
     """Convert GeometryArray to a numpy object array of WKB objects."""
     ...
 @overload
-def to_wkb(geoms: GeometryArray, hex: Literal[True], **kwargs) -> _Array1D[np.str_]:
-    """Convert GeometryArray to a numpy object array of WKB objects."""
-    ...
+def to_wkb(geoms: GeometryArray, hex: Literal[True], **kwargs) -> _Array1D[np.str_]: ...
+
 def from_wkt(
     data, crs: _ConvertibleToCRS | None = None, on_invalid: Literal["raise", "warn", "ignore", "fix"] = "raise"
 ) -> GeometryArray:
@@ -180,29 +159,8 @@ class GeometryArray(ExtensionArray):
         """Spatial index for the geometries in this array."""
         ...
     @property
-    def has_sindex(self) -> bool:
-        """
-        Check the existence of the spatial index without generating it.
+    def has_sindex(self) -> bool: ...
 
-        Use the `.sindex` attribute on a GeoDataFrame or GeoSeries
-        to generate a spatial index if it does not yet exist,
-        which may take considerable time based on the underlying index
-        implementation.
-
-        Note that the underlying spatial index may not be fully
-        initialized until the first use.
-
-        See Also
-        --------
-        GeoDataFrame.has_sindex
-
-        Returns
-        -------
-        bool
-            `True` if the spatial index has been generated or
-            `False` if not.
-        """
-        ...
     @property
     def crs(self) -> CRS | None:
         """
@@ -215,27 +173,19 @@ class GeometryArray(ExtensionArray):
         """
         ...
     @crs.setter
-    def crs(self, value: _ConvertibleToCRS | None) -> None:
-        """
-        The Coordinate Reference System (CRS) represented as a ``pyproj.CRS`` object.
+    def crs(self, value: _ConvertibleToCRS | None) -> None: ...
 
-        Returns a ``pyproj.CRS`` or None. When setting, the value
-        Coordinate Reference System of the geometry objects. Can be anything accepted by
-        :meth:`pyproj.CRS.from_user_input() <pyproj.crs.CRS.from_user_input>`,
-        such as an authority string (eg "EPSG:4326") or a WKT string.
-        """
-        ...
-    def check_geographic_crs(self, stacklevel: int) -> None:
-        """Check CRS and warn if the planar operation is done in a geographic CRS."""
-        ...
+    def check_geographic_crs(self, stacklevel: int) -> None: ...
     @property
     def dtype(self) -> GeometryDtype: ...
     def __len__(self) -> int: ...
+
     # np.integer[Any] because precision is not important
     @overload
     def __getitem__(self, idx: ScalarIndexer) -> BaseGeometry: ...  # Always 1-D, doesn't accept tuple
     @overload
     def __getitem__(self, idx: SequenceIndexer) -> GeometryArray: ...
+
     def __setitem__(
         self, key, value: _ArrayOrGeom | pd.DataFrame | pd.Series[Any]  # Cannot use pd.Series[BaseGeometry]
     ) -> None: ...
@@ -416,34 +366,8 @@ class GeometryArray(ExtensionArray):
         method: Literal["backfill", "bfill", "pad", "ffill"] | None = None,
         limit: int | None = None,
         copy: bool = True,
-    ) -> GeometryArray:
-        """
-        Fill NA values with geometry (or geometries) or using the specified method.
+    ) -> GeometryArray: ...
 
-        Parameters
-        ----------
-        value : shapely geometry object or GeometryArray
-            If a geometry value is passed it is used to fill all missing values.
-            Alternatively, a GeometryArray 'value' can be given. It's expected
-            that the GeometryArray has the same length as 'self'.
-
-        method : {'backfill', 'bfill', 'pad', 'ffill', None}, default None
-            Method to use for filling holes in reindexed Series
-            pad / ffill: propagate last valid observation forward to next valid
-            backfill / bfill: use NEXT valid observation to fill gap
-
-        limit : int, default None
-            The maximum number of entries where NA values will be filled.
-
-        copy : bool, default True
-            Whether to make a copy of the data before filling. If False, then
-            the original should be modified and no new memory should be allocated.
-
-        Returns
-        -------
-        GeometryArray
-        """
-        ...
     @overload  # type: ignore[override]
     def astype(self, dtype: GeometryDtype, copy: bool = True) -> GeometryArray:
         """
@@ -485,51 +409,11 @@ class GeometryArray(ExtensionArray):
         """
         ...
     @overload
-    def astype(self, dtype: DTypeLike, copy: bool = True) -> _Array1D[Incomplete]:
-        """
-        Cast to a NumPy array with 'dtype'.
+    def astype(self, dtype: DTypeLike, copy: bool = True) -> _Array1D[Incomplete]: ...
 
-        Parameters
-        ----------
-        dtype : str or dtype
-            Typecode or data-type to which the array is cast.
-        copy : bool, default True
-            Whether to copy the data, even if not necessary. If False,
-            a copy is made only if the old dtype does not match the
-            new dtype.
-
-        Returns
-        -------
-        array : ndarray
-            NumPy ndarray with 'dtype' for its dtype.
-        """
-        ...
-    def isna(self) -> _Array1D[np.bool_]:
-        """Boolean NumPy array indicating if each value is missing."""
-        ...
-    def value_counts(self, dropna: bool = True) -> pd.Series[int]:
-        """
-        Compute a histogram of the counts of non-null values.
-
-        Parameters
-        ----------
-        dropna : bool, default True
-            Don't include counts of NaN
-
-        Returns
-        -------
-        pd.Series
-        """
-        ...
-    def unique(self) -> GeometryArray:
-        """
-        Compute the ExtensionArray of unique values.
-
-        Returns
-        -------
-        uniques : ExtensionArray
-        """
-        ...
+    def isna(self) -> _Array1D[np.bool_]: ...
+    def value_counts(self, dropna: bool = True) -> pd.Series[int]: ...
+    def unique(self) -> GeometryArray: ...
     @property
     def nbytes(self) -> int: ...
     def shift(self, periods: int = 1, fill_value: Geometry | None = None) -> GeometryArray:

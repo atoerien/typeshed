@@ -358,12 +358,14 @@ if sys.version_info < (3, 12):
         1
         """
         def __getitem__(self, name: _KT) -> _VT: ...
+
         @overload
         def get(self, name: _KT, default: None = None) -> _VT | None: ...
         @overload
         def get(self, name: _KT, default: _VT) -> _VT: ...
         @overload
         def get(self, name: _KT, default: _T) -> _VT | _T: ...
+
         def __iter__(self) -> Iterator[_KT]: ...
         def __contains__(self, *args: object) -> bool: ...
         def keys(self) -> dict_keys[_KT, _VT]: ...
@@ -380,13 +382,8 @@ if sys.version_info < (3, 12):
         @property
         def groups(self) -> set[str]: ...
         @property
-        def names(self) -> set[str]:
-            """
-            for coverage:
-            >>> SelectableGroups().names
-            set()
-            """
-            ...
+        def names(self) -> set[str]: ...
+
         @overload
         def select(self) -> Self: ...
         @overload
@@ -468,18 +465,8 @@ class Distribution(_distribution_parent):
         """
         ...
     @classmethod
-    def from_name(cls, name: str) -> Distribution:
-        """
-        Return the Distribution for the given package name.
+    def from_name(cls, name: str) -> Distribution: ...
 
-        :param name: The name of the distribution package to search for.
-        :return: The Distribution instance (or subclass thereof) for the named
-            package, if found.
-        :raises PackageNotFoundError: When the named package's distribution
-            metadata cannot be found.
-        :raises ValueError: When an invalid value is supplied for name.
-        """
-        ...
     @overload
     @classmethod
     def discover(cls, *, context: DistributionFinder.Context) -> Iterable[Distribution]:
@@ -498,18 +485,8 @@ class Distribution(_distribution_parent):
     @classmethod
     def discover(
         cls, *, context: None = None, name: str | None = ..., path: list[str] = ..., **kwargs: Any
-    ) -> Iterable[Distribution]:
-        """
-        Return an iterable of Distribution objects for all packages.
+    ) -> Iterable[Distribution]: ...
 
-        Pass a ``context`` or pass keyword arguments for constructing
-        a context.
-
-        :context: A ``DistributionFinder.Context`` object.
-        :return: Iterable of Distribution objects for packages matching
-          the context.
-        """
-        ...
     @staticmethod
     def at(path: StrPath) -> PathDistribution:
         """
@@ -685,14 +662,8 @@ class PathDistribution(Distribution):
         ...
     def locate_file(self, path: StrPath) -> _SimplePath: ...
 
-def distribution(distribution_name: str) -> Distribution:
-    """
-    Get the ``Distribution`` instance for the named package.
+def distribution(distribution_name: str) -> Distribution: ...
 
-    :param distribution_name: The name of the distribution package as a string.
-    :return: A ``Distribution`` instance (or subclass thereof).
-    """
-    ...
 @overload
 def distributions(*, context: DistributionFinder.Context) -> Iterable[Distribution]:
     """
@@ -704,21 +675,9 @@ def distributions(*, context: DistributionFinder.Context) -> Iterable[Distributi
 @overload
 def distributions(
     *, context: None = None, name: str | None = ..., path: list[str] = ..., **kwargs: Any
-) -> Iterable[Distribution]:
-    """
-    Get all ``Distribution`` instances in the current environment.
+) -> Iterable[Distribution]: ...
 
-    :return: An iterable of ``Distribution`` instances.
-    """
-    ...
-def metadata(distribution_name: str) -> PackageMetadata:
-    """
-    Get the metadata for the named package.
-
-    :param distribution_name: The name of the distribution package to query.
-    :return: A PackageMetadata containing the parsed metadata.
-    """
-    ...
+def metadata(distribution_name: str) -> PackageMetadata: ...
 
 if sys.version_info >= (3, 12):
     def entry_points(

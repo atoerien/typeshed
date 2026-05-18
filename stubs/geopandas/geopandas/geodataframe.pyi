@@ -116,6 +116,7 @@ class GeoDataFrame(GeoPandasBase, pd.DataFrame):  # type: ignore[misc]
         geometry: _GeomCol | None = None,
         crs: _ConvertibleToCRS | None = None,
     ) -> Self: ...
+
     def __init__(
         self,
         data: _ConvertibleToDataFrame | None = None,
@@ -128,14 +129,14 @@ class GeoDataFrame(GeoPandasBase, pd.DataFrame):  # type: ignore[misc]
         crs: _ConvertibleToCRS | None = None,
     ) -> None: ...
     def __setattr__(self, attr: str, val: Any) -> None: ...  # type: ignore[misc]  # Can set arbitrary objects
+
     @property
     def geometry(self) -> GeoSeries:
         """Geometry data for GeoDataFrame"""
         ...
     @geometry.setter
-    def geometry(self, col: _GeomSeq) -> None:
-        """Geometry data for GeoDataFrame"""
-        ...
+    def geometry(self, col: _GeomSeq) -> None: ...
+
     @overload
     def set_geometry(
         self, col: _GeomCol, drop: bool | None = None, inplace: Literal[False] = False, crs: _ConvertibleToCRS | None = None
@@ -281,74 +282,8 @@ class GeoDataFrame(GeoPandasBase, pd.DataFrame):  # type: ignore[misc]
     @overload
     def set_geometry(
         self, col: _GeomCol, drop: bool | None, inplace: Literal[True], crs: _ConvertibleToCRS | None = None
-    ) -> None:
-        """
-        Set the GeoDataFrame geometry using either an existing column or
-        the specified input. By default yields a new object.
+    ) -> None: ...
 
-        The original geometry column is replaced with the input.
-
-        Parameters
-        ----------
-        col : column label or array-like
-            An existing column name or values to set as the new geometry column.
-            If values (array-like, (Geo)Series) are passed, then if they are named
-            (Series) the new geometry column will have the corresponding name,
-            otherwise the existing geometry column will be replaced. If there is
-            no existing geometry column, the new geometry column will use the
-            default name "geometry".
-        drop : boolean, default False
-            When specifying a named Series or an existing column name for `col`,
-            controls if the previous geometry column should be dropped from the
-            result. The default of False keeps both the old and new geometry column.
-
-            .. deprecated:: 1.0.0
-
-        inplace : boolean, default False
-            Modify the GeoDataFrame in place (do not create a new object)
-        crs : pyproj.CRS, optional
-            Coordinate system to use. The value can be anything accepted
-            by :meth:`pyproj.CRS.from_user_input() <pyproj.crs.CRS.from_user_input>`,
-            such as an authority string (eg "EPSG:4326") or a WKT string.
-            If passed, overrides both DataFrame and col's crs.
-            Otherwise, tries to get crs from passed col values or DataFrame.
-
-        Examples
-        --------
-        >>> from shapely.geometry import Point
-        >>> d = {'col1': ['name1', 'name2'], 'geometry': [Point(1, 2), Point(2, 1)]}
-        >>> gdf = geopandas.GeoDataFrame(d, crs="EPSG:4326")
-        >>> gdf
-            col1     geometry
-        0  name1  POINT (1 2)
-        1  name2  POINT (2 1)
-
-        Passing an array:
-
-        >>> df1 = gdf.set_geometry([Point(0,0), Point(1,1)])
-        >>> df1
-            col1     geometry
-        0  name1  POINT (0 0)
-        1  name2  POINT (1 1)
-
-        Using existing column:
-
-        >>> gdf["buffered"] = gdf.buffer(2)
-        >>> df2 = gdf.set_geometry("buffered")
-        >>> df2.geometry
-        0    POLYGON ((3 2, 2.99037 1.80397, 2.96157 1.6098...
-        1    POLYGON ((4 1, 3.99037 0.80397, 3.96157 0.6098...
-        Name: buffered, dtype: geometry
-
-        Returns
-        -------
-        GeoDataFrame
-
-        See Also
-        --------
-        GeoDataFrame.rename_geometry : rename an active geometry column
-        """
-        ...
     @overload
     def rename_geometry(self, col: Hashable, inplace: Literal[False] = False) -> Self:
         """
@@ -383,62 +318,11 @@ class GeoDataFrame(GeoPandasBase, pd.DataFrame):  # type: ignore[misc]
         """
         ...
     @overload
-    def rename_geometry(self, col: Hashable, inplace: Literal[True]) -> None:
-        """
-        Rename the GeoDataFrame geometry column to the specified name.
+    def rename_geometry(self, col: Hashable, inplace: Literal[True]) -> None: ...
 
-        By default yields a new object.
-
-        The original geometry column is replaced with the input.
-
-        Parameters
-        ----------
-        col : new geometry column label
-        inplace : boolean, default False
-            Modify the GeoDataFrame in place (do not create a new object)
-
-        Examples
-        --------
-        >>> from shapely.geometry import Point
-        >>> d = {'col1': ['name1', 'name2'], 'geometry': [Point(1, 2), Point(2, 1)]}
-        >>> df = geopandas.GeoDataFrame(d, crs="EPSG:4326")
-        >>> df1 = df.rename_geometry('geom1')
-        >>> df1.geometry.name
-        'geom1'
-        >>> df.rename_geometry('geom1', inplace=True)
-        >>> df.geometry.name
-        'geom1'
-
-
-        See Also
-        --------
-        GeoDataFrame.set_geometry : set the active geometry
-        """
-        ...
     @property
-    def active_geometry_name(self) -> str | None:
-        """
-        Return the name of the active geometry column.
+    def active_geometry_name(self) -> str | None: ...
 
-        Returns a name if a GeoDataFrame has an active geometry column set,
-        otherwise returns None. The return type is usually a string, but may be
-        an integer, tuple or other hashable, depending on the contents of the
-        dataframe columns.
-
-        You can also access the active geometry column using the
-        ``.geometry`` property. You can set a GeoSeries to be an active geometry
-        using the :meth:`~GeoDataFrame.set_geometry` method.
-
-        Returns
-        -------
-        str or other index label supported by pandas
-            name of an active geometry column or None
-
-        See Also
-        --------
-        GeoDataFrame.set_geometry : set the active geometry
-        """
-        ...
     @property
     def crs(self) -> CRS | None:
         """
@@ -472,37 +356,8 @@ class GeoDataFrame(GeoPandasBase, pd.DataFrame):  # type: ignore[misc]
         """
         ...
     @crs.setter
-    def crs(self, value: _ConvertibleToCRS | None) -> None:
-        """
-        The Coordinate Reference System (CRS) represented as a ``pyproj.CRS``
-        object.
+    def crs(self, value: _ConvertibleToCRS | None) -> None: ...
 
-        Returns
-        -------
-        ``pyproj.CRS`` | None
-            CRS assigned to an active geometry column
-
-        Examples
-        --------
-        >>> gdf.crs  # doctest: +SKIP
-        <Geographic 2D CRS: EPSG:4326>
-        Name: WGS 84
-        Axis Info [ellipsoidal]:
-        - Lat[north]: Geodetic latitude (degree)
-        - Lon[east]: Geodetic longitude (degree)
-        Area of Use:
-        - name: World
-        - bounds: (-180.0, -90.0, 180.0, 90.0)
-        Datum: World Geodetic System 1984
-        - Ellipsoid: WGS 84
-        - Prime Meridian: Greenwich
-
-        See Also
-        --------
-        GeoDataFrame.set_crs : assign CRS
-        GeoDataFrame.to_crs : re-project to another CRS
-        """
-        ...
     @classmethod
     def from_dict(  # type: ignore[override]
         # Mapping[Any, Any] because of invariance keys and arbitrary values
@@ -600,65 +455,8 @@ class GeoDataFrame(GeoPandasBase, pd.DataFrame):  # type: ignore[misc]
         ),
         crs: _ConvertibleToCRS | None = None,
         columns: Axes | None = None,
-    ) -> Self:
-        """
-        Alternate constructor to create GeoDataFrame from an iterable of
-        features or a feature collection.
+    ) -> Self: ...
 
-        Parameters
-        ----------
-        features
-            - Iterable of features, where each element must be a feature
-              dictionary or implement the __geo_interface__.
-            - Feature collection, where the 'features' key contains an
-              iterable of features.
-            - Object holding a feature collection that implements the
-              ``__geo_interface__``.
-        crs : str or dict (optional)
-            Coordinate reference system to set on the resulting frame.
-        columns : list of column names, optional
-            Optionally specify the column names to include in the output frame.
-            This does not overwrite the property names of the input, but can
-            ensure a consistent output format.
-
-        Returns
-        -------
-        GeoDataFrame
-
-        Notes
-        -----
-        For more information about the ``__geo_interface__``, see
-        https://gist.github.com/sgillies/2217756
-
-        Examples
-        --------
-        >>> feature_coll = {
-        ...     "type": "FeatureCollection",
-        ...     "features": [
-        ...         {
-        ...             "id": "0",
-        ...             "type": "Feature",
-        ...             "properties": {"col1": "name1"},
-        ...             "geometry": {"type": "Point", "coordinates": (1.0, 2.0)},
-        ...             "bbox": (1.0, 2.0, 1.0, 2.0),
-        ...         },
-        ...         {
-        ...             "id": "1",
-        ...             "type": "Feature",
-        ...             "properties": {"col1": "name2"},
-        ...             "geometry": {"type": "Point", "coordinates": (2.0, 1.0)},
-        ...             "bbox": (2.0, 1.0, 2.0, 1.0),
-        ...         },
-        ...     ],
-        ...     "bbox": (1.0, 1.0, 2.0, 2.0),
-        ... }
-        >>> df = geopandas.GeoDataFrame.from_features(feature_coll)
-        >>> df
-              geometry   col1
-        0  POINT (1 2)  name1
-        1  POINT (2 1)  name2
-        """
-        ...
     @overload
     @classmethod
     def from_postgis(
@@ -744,64 +542,8 @@ class GeoDataFrame(GeoPandasBase, pd.DataFrame):  # type: ignore[misc]
         parse_dates: Container[str | Mapping[str, Incomplete]] | Mapping[str, str | Mapping[str, Incomplete]] | None = None,
         params: SupportsLenAndGetItem[Scalar] | Mapping[str, Scalar] | None = None,
         chunksize: None = None,
-    ) -> GeoDataFrame:
-        """
-        Alternate constructor to create a ``GeoDataFrame`` from a sql query
-        containing a geometry column in WKB representation.
+    ) -> GeoDataFrame: ...
 
-        Parameters
-        ----------
-        sql : string
-        con : sqlalchemy.engine.Connection or sqlalchemy.engine.Engine
-        geom_col : string, default 'geom'
-            column name to convert to shapely geometries
-        crs : optional
-            Coordinate reference system to use for the returned GeoDataFrame
-        index_col : string or list of strings, optional, default: None
-            Column(s) to set as index(MultiIndex)
-        coerce_float : boolean, default True
-            Attempt to convert values of non-string, non-numeric objects (like
-            decimal.Decimal) to floating point, useful for SQL result sets
-        parse_dates : list or dict, default None
-            - List of column names to parse as dates.
-            - Dict of ``{column_name: format string}`` where format string is
-              strftime compatible in case of parsing string times, or is one of
-              (D, s, ns, ms, us) in case of parsing integer timestamps.
-            - Dict of ``{column_name: arg dict}``, where the arg dict
-              corresponds to the keyword arguments of
-              :func:`pandas.to_datetime`. Especially useful with databases
-              without native Datetime support, such as SQLite.
-        params : list, tuple or dict, optional, default None
-            List of parameters to pass to execute method.
-        chunksize : int, default None
-            If specified, return an iterator where chunksize is the number
-            of rows to include in each chunk.
-
-        Examples
-        --------
-        PostGIS
-
-        >>> from sqlalchemy import create_engine  # doctest: +SKIP
-        >>> db_connection_url = "postgresql://myusername:mypassword@myhost:5432/mydb"
-        >>> con = create_engine(db_connection_url)  # doctest: +SKIP
-        >>> sql = "SELECT geom, highway FROM roads"
-        >>> df = geopandas.GeoDataFrame.from_postgis(sql, con)  # doctest: +SKIP
-
-        SpatiaLite
-
-        >>> sql = "SELECT ST_Binary(geom) AS geom, highway FROM roads"
-        >>> df = geopandas.GeoDataFrame.from_postgis(sql, con)  # doctest: +SKIP
-
-        The recommended method of reading from PostGIS is
-        :func:`geopandas.read_postgis`:
-
-        >>> df = geopandas.read_postgis(sql, con)  # doctest: +SKIP
-
-        See Also
-        --------
-        geopandas.read_postgis : read PostGIS database to GeoDataFrame
-        """
-        ...
     @classmethod
     def from_arrow(
         cls, table, geometry: str | None = None, to_pandas_kwargs: Mapping[str, Incomplete] | None = None
@@ -1293,100 +1035,8 @@ class GeoDataFrame(GeoPandasBase, pd.DataFrame):  # type: ignore[misc]
         encoding: str | None = None,
         overwrite: bool | None = ...,
         **kwargs,  # engine and driver dependent
-    ) -> None:
-        """
-        Write the ``GeoDataFrame`` to a file.
+    ) -> None: ...
 
-        By default, an ESRI shapefile is written, but any OGR data source
-        supported by Pyogrio or Fiona can be written. A dictionary of supported OGR
-        providers is available via:
-
-        >>> import pyogrio
-        >>> pyogrio.list_drivers()  # doctest: +SKIP
-
-        Parameters
-        ----------
-        filename : string
-            File path or file handle to write to. The path may specify a
-            GDAL VSI scheme.
-        driver : string, default None
-            The OGR format driver used to write the vector file.
-            If not specified, it attempts to infer it from the file extension.
-            If no extension is specified, it saves ESRI Shapefile to a folder.
-        schema : dict, default None
-            If specified, the schema dictionary is passed to Fiona to
-            better control how the file is written. If None, GeoPandas
-            will determine the schema based on each column's dtype.
-            Not supported for the "pyogrio" engine.
-        index : bool, default None
-            If True, write index into one or more columns (for MultiIndex).
-            Default None writes the index into one or more columns only if
-            the index is named, is a MultiIndex, or has a non-integer data
-            type. If False, no index is written.
-
-            .. versionadded:: 0.7
-                Previously the index was not written.
-        mode : string, default 'w'
-            The write mode, 'w' to overwrite the existing file and 'a' to append.
-            Not all drivers support appending. The drivers that support appending
-            are listed in fiona.supported_drivers or
-            https://github.com/Toblerity/Fiona/blob/master/fiona/drvsupport.py
-        crs : pyproj.CRS, default None
-            If specified, the CRS is passed to Fiona to
-            better control how the file is written. If None, GeoPandas
-            will determine the crs based on crs df attribute.
-            The value can be anything accepted
-            by :meth:`pyproj.CRS.from_user_input() <pyproj.crs.CRS.from_user_input>`,
-            such as an authority string (eg "EPSG:4326") or a WKT string. The keyword
-            is not supported for the "pyogrio" engine.
-        engine : str, "pyogrio" or "fiona"
-            The underlying library that is used to write the file. Currently, the
-            supported options are "pyogrio" and "fiona". Defaults to "pyogrio" if
-            installed, otherwise tries "fiona".
-        metadata : dict[str, str], default None
-            Optional metadata to be stored in the file. Keys and values must be
-            strings. Supported only for "GPKG" driver.
-        **kwargs :
-            Keyword args to be passed to the engine, and can be used to write
-            to multi-layer data, store data within archives (zip files), etc.
-            In case of the "pyogrio" engine, the keyword arguments are passed to
-            `pyogrio.write_dataframe`. In case of the "fiona" engine, the keyword
-            arguments are passed to fiona.open`. For more information on possible
-            keywords, type: ``import pyogrio; help(pyogrio.write_dataframe)``.
-
-        Notes
-        -----
-        The format drivers will attempt to detect the encoding of your data, but
-        may fail. In this case, the proper encoding can be specified explicitly
-        by using the encoding keyword parameter, e.g. ``encoding='utf-8'``.
-
-        See Also
-        --------
-        GeoSeries.to_file
-        GeoDataFrame.to_postgis : write GeoDataFrame to PostGIS database
-        GeoDataFrame.to_parquet : write GeoDataFrame to parquet
-        GeoDataFrame.to_feather : write GeoDataFrame to feather
-
-        Examples
-        --------
-        >>> gdf.to_file('dataframe.shp')  # doctest: +SKIP
-
-        >>> gdf.to_file('dataframe.gpkg', driver='GPKG', layer='name')  # doctest: +SKIP
-
-        >>> gdf.to_file('dataframe.geojson', driver='GeoJSON')  # doctest: +SKIP
-
-        With selected drivers you can also append to a file with `mode="a"`:
-
-        >>> gdf.to_file('dataframe.shp', mode="a")  # doctest: +SKIP
-
-        Using the engine-specific keyword arguments it is possible to e.g. create a
-        spatialite file with a custom layer name:
-
-        >>> gdf.to_file(
-        ...     'dataframe.sqlite', driver='SQLite', spatialite=True, layer='test'
-        ... )  # doctest: +SKIP
-        """
-        ...
     @overload
     def set_crs(
         self, crs: _ConvertibleToCRS, epsg: int | None = None, inplace: bool = False, allow_override: bool = False
@@ -1542,80 +1192,8 @@ class GeoDataFrame(GeoPandasBase, pd.DataFrame):  # type: ignore[misc]
         """
         ...
     @overload
-    def set_crs(self, crs: _ConvertibleToCRS | None, epsg: int, inplace: bool = False, allow_override: bool = False) -> Self:
-        """
-        Set the Coordinate Reference System (CRS) of the ``GeoDataFrame``.
+    def set_crs(self, crs: _ConvertibleToCRS | None, epsg: int, inplace: bool = False, allow_override: bool = False) -> Self: ...
 
-        If there are multiple geometry columns within the GeoDataFrame, only
-        the CRS of the active geometry column is set.
-
-        Pass ``None`` to remove CRS from the active geometry column.
-
-        Notes
-        -----
-        The underlying geometries are not transformed to this CRS. To
-        transform the geometries to a new CRS, use the ``to_crs`` method.
-
-        Parameters
-        ----------
-        crs : pyproj.CRS | None, optional
-            The value can be anything accepted
-            by :meth:`pyproj.CRS.from_user_input() <pyproj.crs.CRS.from_user_input>`,
-            such as an authority string (eg "EPSG:4326") or a WKT string.
-        epsg : int, optional
-            EPSG code specifying the projection.
-        inplace : bool, default False
-            If True, the CRS of the GeoDataFrame will be changed in place
-            (while still returning the result) instead of making a copy of
-            the GeoDataFrame.
-        allow_override : bool, default False
-            If the the GeoDataFrame already has a CRS, allow to replace the
-            existing CRS, even when both are not equal.
-
-        Examples
-        --------
-        >>> from shapely.geometry import Point
-        >>> d = {'col1': ['name1', 'name2'], 'geometry': [Point(1, 2), Point(2, 1)]}
-        >>> gdf = geopandas.GeoDataFrame(d)
-        >>> gdf
-            col1     geometry
-        0  name1  POINT (1 2)
-        1  name2  POINT (2 1)
-
-        Setting CRS to a GeoDataFrame without one:
-
-        >>> gdf.crs is None
-        True
-
-        >>> gdf = gdf.set_crs('epsg:3857')
-        >>> gdf.crs  # doctest: +SKIP
-        <Projected CRS: EPSG:3857>
-        Name: WGS 84 / Pseudo-Mercator
-        Axis Info [cartesian]:
-        - X[east]: Easting (metre)
-        - Y[north]: Northing (metre)
-        Area of Use:
-        - name: World - 85°S to 85°N
-        - bounds: (-180.0, -85.06, 180.0, 85.06)
-        Coordinate Operation:
-        - name: Popular Visualisation Pseudo-Mercator
-        - method: Popular Visualisation Pseudo Mercator
-        Datum: World Geodetic System 1984
-        - Ellipsoid: WGS 84
-        - Prime Meridian: Greenwich
-
-        Overriding existing CRS:
-
-        >>> gdf = gdf.set_crs(4326, allow_override=True)
-
-        Without ``allow_override=True``, ``set_crs`` returns an error if you try to
-        override CRS.
-
-        See Also
-        --------
-        GeoDataFrame.to_crs : re-project to another CRS
-        """
-        ...
     @overload
     def to_crs(self, crs: _ConvertibleToCRS, epsg: int | None = None, inplace: Literal[False] = False) -> Self:
         """
@@ -2091,122 +1669,9 @@ class GeoDataFrame(GeoPandasBase, pd.DataFrame):  # type: ignore[misc]
         """
         ...
     @overload
-    def to_crs(self, crs: _ConvertibleToCRS | None, epsg: int, inplace: Literal[True]) -> None:
-        """
-        Transform geometries to a new coordinate reference system.
+    def to_crs(self, crs: _ConvertibleToCRS | None, epsg: int, inplace: Literal[True]) -> None: ...
 
-        Transform all geometries in an active geometry column to a different coordinate
-        reference system.  The ``crs`` attribute on the current GeoSeries must
-        be set.  Either ``crs`` or ``epsg`` may be specified for output.
-
-        This method will transform all points in all objects. It has no notion
-        of projecting entire geometries.  All segments joining points are
-        assumed to be lines in the current projection, not geodesics. Objects
-        crossing the dateline (or other projection boundary) will have
-        undesirable behavior.
-
-        Parameters
-        ----------
-        crs : pyproj.CRS, optional if `epsg` is specified
-            The value can be anything accepted by
-            :meth:`pyproj.CRS.from_user_input() <pyproj.crs.CRS.from_user_input>`,
-            such as an authority string (eg "EPSG:4326") or a WKT string.
-        epsg : int, optional if `crs` is specified
-            EPSG code specifying output projection.
-        inplace : bool, optional, default: False
-            Whether to return a new GeoDataFrame or do the transformation in
-            place.
-
-        Returns
-        -------
-        GeoDataFrame
-
-        Examples
-        --------
-        >>> from shapely.geometry import Point
-        >>> d = {'col1': ['name1', 'name2'], 'geometry': [Point(1, 2), Point(2, 1)]}
-        >>> gdf = geopandas.GeoDataFrame(d, crs=4326)
-        >>> gdf
-            col1     geometry
-        0  name1  POINT (1 2)
-        1  name2  POINT (2 1)
-        >>> gdf.crs  # doctest: +SKIP
-        <Geographic 2D CRS: EPSG:4326>
-        Name: WGS 84
-        Axis Info [ellipsoidal]:
-        - Lat[north]: Geodetic latitude (degree)
-        - Lon[east]: Geodetic longitude (degree)
-        Area of Use:
-        - name: World
-        - bounds: (-180.0, -90.0, 180.0, 90.0)
-        Datum: World Geodetic System 1984
-        - Ellipsoid: WGS 84
-        - Prime Meridian: Greenwich
-
-        >>> gdf = gdf.to_crs(3857)
-        >>> gdf
-            col1                       geometry
-        0  name1  POINT (111319.491 222684.209)
-        1  name2  POINT (222638.982 111325.143)
-        >>> gdf.crs  # doctest: +SKIP
-        <Projected CRS: EPSG:3857>
-        Name: WGS 84 / Pseudo-Mercator
-        Axis Info [cartesian]:
-        - X[east]: Easting (metre)
-        - Y[north]: Northing (metre)
-        Area of Use:
-        - name: World - 85°S to 85°N
-        - bounds: (-180.0, -85.06, 180.0, 85.06)
-        Coordinate Operation:
-        - name: Popular Visualisation Pseudo-Mercator
-        - method: Popular Visualisation Pseudo Mercator
-        Datum: World Geodetic System 1984
-        - Ellipsoid: WGS 84
-        - Prime Meridian: Greenwich
-
-        See Also
-        --------
-        GeoDataFrame.set_crs : assign CRS without re-projection
-        """
-        ...
-    def estimate_utm_crs(self, datum_name: str = "WGS 84") -> CRS:
-        """
-        Return the estimated UTM CRS based on the bounds of the dataset.
-
-        .. versionadded:: 0.9
-
-        Parameters
-        ----------
-        datum_name : str, optional
-            The name of the datum to use in the query. Default is WGS 84.
-
-        Returns
-        -------
-        pyproj.CRS
-
-        Examples
-        --------
-        >>> import geodatasets
-        >>> df = geopandas.read_file(
-        ...     geodatasets.get_path("geoda.chicago_health")
-        ... )
-        >>> df.estimate_utm_crs()  # doctest: +SKIP
-        <Derived Projected CRS: EPSG:32616>
-        Name: WGS 84 / UTM zone 16N
-        Axis Info [cartesian]:
-        - E[east]: Easting (metre)
-        - N[north]: Northing (metre)
-        Area of Use:
-        - name: Between 90°W and 84°W, northern hemisphere between equator and 84°N...
-        - bounds: (-90.0, 0.0, -84.0, 84.0)
-        Coordinate Operation:
-        - name: UTM zone 16N
-        - method: Transverse Mercator
-        Datum: World Geodetic System 1984 ensemble
-        - Ellipsoid: WGS 84
-        - Prime Meridian: Greenwich
-        """
-        ...
+    def estimate_utm_crs(self, datum_name: str = "WGS 84") -> CRS: ...
     # def __getitem__(self, key): ...
     def __delitem__(self, key) -> None:
         """If the last geometry column is removed, downcast to a dataframe."""

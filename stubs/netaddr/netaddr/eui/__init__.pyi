@@ -97,26 +97,15 @@ class EUI(BaseIdentifier):
     __slots__ = ("_module", "_dialect")
     def __init__(
         self, addr: EUI | int | str, version: int | None = None, dialect: type[mac_eui48 | eui64_base] | None = None
-    ) -> None:
-        """
-        Constructor.
+    ) -> None: ...
 
-        :param addr: an EUI-48 (MAC) or EUI-64 address in string format or             an unsigned integer. May also be another EUI object (copy             construction).
-
-        :param version: (optional) the explicit EUI address version, either             48 or 64. Mainly used to distinguish EUI-48 and EUI-64 identifiers             specified as integers which may be numerically equivalent.
-
-        :param dialect: (optional) one of the :ref:`mac_formatting_dialects` to
-            be used to configure the formatting of EUI-48 (MAC) addresses.
-        """
-        ...
     @property
     def value(self) -> int:
         """a positive integer representing the value of this EUI identifier."""
         ...
     @value.setter
-    def value(self, value: ConvertibleToInt) -> None:
-        """a positive integer representing the value of this EUI identifier."""
-        ...
+    def value(self, value: ConvertibleToInt) -> None: ...
+
     @property
     def dialect(self) -> type[mac_eui48 | eui64_base]:
         """
@@ -125,12 +114,8 @@ class EUI(BaseIdentifier):
         """
         ...
     @dialect.setter
-    def dialect(self, value: type[mac_eui48 | eui64_base] | None) -> None:
-        """
-        a Python class providing support for the interpretation of various MAC
-        address formats.
-        """
-        ...
+    def dialect(self, value: type[mac_eui48 | eui64_base] | None) -> None: ...
+
     @property
     def oui(self) -> OUI:
         """The OUI (Organisationally Unique Identifier) for this EUI."""
@@ -150,9 +135,8 @@ class EUI(BaseIdentifier):
         """
         ...
     @property
-    def version(self) -> Literal[48, 64]:
-        """The EUI version represented by this EUI object."""
-        ...
+    def version(self) -> Literal[48, 64]: ...
+
     @overload
     def __getitem__(self, idx: int) -> int:
         """:return: The integer value of the word referenced by index (both             positive and negative). Raises ``IndexError`` if index is out             of bounds. Also supports Python list slices for accessing             word groups."""
@@ -162,40 +146,17 @@ class EUI(BaseIdentifier):
         """:return: The integer value of the word referenced by index (both             positive and negative). Raises ``IndexError`` if index is out             of bounds. Also supports Python list slices for accessing             word groups."""
         ...
     @overload
-    def __getitem__(self, idx: int | slice) -> int | list[int]:
-        """:return: The integer value of the word referenced by index (both             positive and negative). Raises ``IndexError`` if index is out             of bounds. Also supports Python list slices for accessing             word groups."""
-        ...
-    def __setitem__(self, idx: int, value: int) -> None:
-        """Set the value of the word referenced by index in this address"""
-        ...
-    def __hash__(self) -> int:
-        """:return: hash of this EUI object suitable for dict keys, sets etc"""
-        ...
-    def __eq__(self, other: object) -> bool:
-        """:return: ``True`` if this EUI object is numerically the same as other,             ``False`` otherwise."""
-        ...
-    def __ne__(self, other: object) -> bool:
-        """:return: ``True`` if this EUI object is numerically the same as other,             ``False`` otherwise."""
-        ...
-    def __lt__(self, other: EUI | int | str) -> bool:
-        """:return: ``True`` if this EUI object is numerically lower in value than             other, ``False`` otherwise."""
-        ...
-    def __le__(self, other: EUI | int | str) -> bool:
-        """:return: ``True`` if this EUI object is numerically lower or equal in             value to other, ``False`` otherwise."""
-        ...
-    def __gt__(self, other: EUI | int | str) -> bool:
-        """:return: ``True`` if this EUI object is numerically greater in value             than other, ``False`` otherwise."""
-        ...
-    def __ge__(self, other: EUI | int | str) -> bool:
-        """:return: ``True`` if this EUI object is numerically greater or equal             in value to other, ``False`` otherwise."""
-        ...
-    def bits(self, word_sep: str | None = None) -> str:
-        """
-        :param word_sep: (optional) the separator to insert between words.             Default: None - use default separator for address type.
+    def __getitem__(self, idx: int | slice) -> int | list[int]: ...
 
-        :return: human-readable binary digit string of this address.
-        """
-        ...
+    def __setitem__(self, idx: int, value: int) -> None: ...
+    def __hash__(self) -> int: ...
+    def __eq__(self, other: object) -> bool: ...
+    def __ne__(self, other: object) -> bool: ...
+    def __lt__(self, other: EUI | int | str) -> bool: ...
+    def __le__(self, other: EUI | int | str) -> bool: ...
+    def __gt__(self, other: EUI | int | str) -> bool: ...
+    def __ge__(self, other: EUI | int | str) -> bool: ...
+    def bits(self, word_sep: str | None = None) -> str: ...
     @property
     def packed(self) -> bytes:
         """The value of this EUI address as a packed binary string."""

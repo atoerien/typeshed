@@ -56,30 +56,34 @@ class Client:
         """
         ...
     def __getattr__(self, name: str) -> Any: ...
+
     @property
     def adapter(self) -> Adapter[Any]:
         """Adapter for all client's connections."""
         ...
     @adapter.setter
-    def adapter(self, adapter: Adapter[Any]) -> None:
-        """Adapter for all client's connections."""
-        ...
+    def adapter(self, adapter: Adapter[Any]) -> None: ...
+
     @property
     def url(self) -> str: ...
     @url.setter
     def url(self, url: str) -> None: ...
+
     @property
     def token(self) -> str: ...
     @token.setter
     def token(self, token: str) -> None: ...
+
     @property
     def session(self) -> Session: ...
     @session.setter
     def session(self, session: Session) -> None: ...
+
     @property
     def allow_redirects(self) -> bool: ...
     @allow_redirects.setter
     def allow_redirects(self, allow_redirects: bool) -> None: ...
+
     @property
     def auth(self) -> AuthMethods:
         """
@@ -184,33 +188,9 @@ class Client:
         ...
     def write_data(
         self, path: str, *, data: dict[str, Any] | None = None, wrap_ttl: int | str | None = None
-    ) -> dict[str, Any] | Response:
-        """
-        Write data to a path. Similar to write() without restrictions on data keys.
+    ) -> dict[str, Any] | Response: ...
+    def delete(self, path: str) -> None: ...
 
-        Supported methods:
-            POST /<path>
-
-        :param path:
-        :type path: str
-        :param data:
-        :type data: dict | None
-        :param wrap_ttl:
-        :type wrap_ttl: str | None
-        :return:
-        :rtype:
-        """
-        ...
-    def delete(self, path: str) -> None:
-        """
-        DELETE /<path>
-
-        :param path:
-        :type path:
-        :return:
-        :rtype:
-        """
-        ...
     @overload
     def get_policy(self, name: str, parse: Literal[False] = False) -> str | None:
         """
@@ -225,18 +205,8 @@ class Client:
         """
         ...
     @overload
-    def get_policy(self, name: str, parse: Literal[True]) -> dict[str, Any] | None:
-        """
-        Retrieve the policy body for the named policy.
+    def get_policy(self, name: str, parse: Literal[True]) -> dict[str, Any] | None: ...
 
-        :param name: The name of the policy to retrieve.
-        :type name: str | unicode
-        :param parse: Specifies whether to parse the policy body using pyhcl or not.
-        :type parse: bool
-        :return: The (optionally parsed) policy body for the specified policy.
-        :rtype: str | dict
-        """
-        ...
     def lookup_token(
         self, token: str | None = None, accessor: bool = False, wrap_ttl: int | str | None = None
     ) -> dict[str, Any] | Response:

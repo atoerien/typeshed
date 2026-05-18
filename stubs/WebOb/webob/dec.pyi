@@ -101,6 +101,7 @@ class wsgify(Generic[_P, _RequestT_contra]):
     args: tuple[Any, ...]
     kwargs: dict[str, Any]
     middleware_wraps: WSGIApplication | None
+
     # NOTE: We disallow passing args/kwargs using this direct API, because
     #       we can't really make it work as a decorator this way, these
     #       arguments should only really be used indirectly through the
@@ -163,10 +164,12 @@ class wsgify(Generic[_P, _RequestT_contra]):
         kwargs: None = None,
         middleware_wraps: _AppT_contra,
     ) -> None: ...
+
     @overload
     def __get__(self, obj: None, type: type[_S]) -> _unbound_wsgify[_P, _S, _RequestT_contra]: ...
     @overload
     def __get__(self, obj: object, type: type | None = None) -> Self: ...
+
     @overload
     def __call__(self, env: WSGIEnvironment, /, start_response: StartResponse) -> Iterable[bytes]:
         """Call this as a WSGI application or with a request"""
@@ -180,22 +183,9 @@ class wsgify(Generic[_P, _RequestT_contra]):
         """Call this as a WSGI application or with a request"""
         ...
     @overload
-    def __call__(self, req: _RequestT_contra, *args: _P.args, **kw: _P.kwargs) -> _AnyResponse:
-        """Call this as a WSGI application or with a request"""
-        ...
-    def get(self, url: str, **kw: Any) -> _AnyResponse:
-        """
-        Run a GET request on this application, returning a Response.
+    def __call__(self, req: _RequestT_contra, *args: _P.args, **kw: _P.kwargs) -> _AnyResponse: ...
 
-        This creates a request object using the given URL, and any
-        other keyword arguments are set on the request object (e.g.,
-        ``last_modified=datetime.now()``).
-
-        ::
-
-            resp = myapp.get('/article?id=10')
-        """
-        ...
+    def get(self, url: str, **kw: Any) -> _AnyResponse: ...
     def post(
         self, url: str, POST: str | bytes | Mapping[Any, Any] | Mapping[Any, list[Any] | tuple[Any, ...]] | None = None, **kw: Any
     ) -> _AnyResponse:
@@ -237,6 +227,7 @@ class wsgify(Generic[_P, _RequestT_contra]):
         ...
     @property
     def undecorated(self) -> _RequestHandler[_RequestT_contra, _P] | None: ...
+
     @overload
     @classmethod
     def middleware(
@@ -558,6 +549,7 @@ class _UnboundMiddleware(Generic[_P, _AppT_contra, _RequestT_contra]):
         app: _AppT_contra | None,
         kw: dict[str, Any],
     ) -> None: ...
+
     @overload
     def __call__(self, func: None, app: _AppT_contra | None = None) -> Self: ...
     @overload
@@ -583,6 +575,7 @@ class _MiddlewareFactory(Generic[_P, _AppT_contra, _RequestT_contra]):
         middleware: _Middleware[_RequestT_contra, _AppT_contra, _P],
         kw: dict[str, Any],
     ) -> None: ...
+
     # NOTE: Technically you are not allowed to pass args, but we give up all kinds
     #       of other safety if we don't use ParamSpec
     @overload

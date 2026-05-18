@@ -135,22 +135,8 @@ class Command:
         ...
     def ensure_dirname(self, option: str) -> None: ...
     def get_command_name(self) -> str: ...
-    def set_undefined_options(self, src_cmd: str, *option_pairs: tuple[str, str]) -> None:
-        """
-        Set the values of any "undefined" options from corresponding
-        option values in some other command object.  "Undefined" here means
-        "is None", which is the convention used to indicate that an option
-        has not been changed between 'initialize_options()' and
-        'finalize_options()'.  Usually called from 'finalize_options()' for
-        options that depend on some other command rather than another
-        option of the same command.  'src_cmd' is the other command from
-        which option values will be taken (a command object will be created
-        for it if necessary); the remaining arguments are
-        '(src_option,dst_option)' tuples which mean "take the value of
-        'src_option' in the 'src_cmd' command object, and copy it to
-        'dst_option' in the current command object".
-        """
-        ...
+    def set_undefined_options(self, src_cmd: str, *option_pairs: tuple[str, str]) -> None: ...
+
     # NOTE: This list comes directly from the distutils/command folder. Minus bdist_msi and bdist_wininst.
     @overload
     def get_finalized_command(self, command: Literal["bdist"], create: bool | Literal[0, 1] = 1) -> bdist:
@@ -335,14 +321,8 @@ class Command:
         """
         ...
     @overload
-    def get_finalized_command(self, command: str, create: bool | Literal[0, 1] = 1) -> Command:
-        """
-        Wrapper around Distribution's 'get_command_obj()' method: find
-        (create if necessary and 'create' is true) the command object for
-        'command', call its 'ensure_finalized()' method, and return the
-        finalized command object.
-        """
-        ...
+    def get_finalized_command(self, command: str, create: bool | Literal[0, 1] = 1) -> Command: ...
+
     @overload
     def reinitialize_command(self, command: Literal["bdist"], reinit_subcommands: bool | Literal[0, 1] = 0) -> bdist: ...
     @overload
@@ -403,27 +383,15 @@ class Command:
     def reinitialize_command(self, command: str, reinit_subcommands: bool | Literal[0, 1] = 0) -> Command: ...
     @overload
     def reinitialize_command(self, command: _CommandT, reinit_subcommands: bool | Literal[0, 1] = 0) -> _CommandT: ...
-    def run_command(self, command: str) -> None:
-        """
-        Run some other command: uses the 'run_command()' method of
-        Distribution, which creates and finalizes the command object if
-        necessary and then invokes its 'run()' method.
-        """
-        ...
-    def get_sub_commands(self) -> list[str]:
-        """
-        Determine the sub-commands that are relevant in the current
-        distribution (ie., that need to be run).  This is based on the
-        'sub_commands' class attribute: each tuple in that list may include
-        a method that we call to determine if the subcommand needs to be
-        run for the current distribution.  Return a list of command names.
-        """
-        ...
+
+    def run_command(self, command: str) -> None: ...
+    def get_sub_commands(self) -> list[str]: ...
     def warn(self, msg: str) -> None: ...
     def execute(
         self, func: Callable[[Unpack[_Ts]], Unused], args: tuple[Unpack[_Ts]], msg: str | None = None, level: int = 1
     ) -> None: ...
     def mkpath(self, name: str, mode: int = 0o777) -> None: ...
+
     @overload
     def copy_file(
         self,
@@ -449,13 +417,8 @@ class Command:
         preserve_times: bool | Literal[0, 1] = 1,
         link: str | None = None,
         level: Unused = 1,
-    ) -> tuple[_BytesPathT | bytes, bool]:
-        """
-        Copy a file respecting verbose, dry-run and force flags.  (The
-        former two default to whatever is in the Distribution object, and
-        the latter defaults to false for commands that don't define it.)
-        """
-        ...
+    ) -> tuple[_BytesPathT | bytes, bool]: ...
+
     def copy_tree(
         self,
         infile: StrPath,
@@ -464,23 +427,17 @@ class Command:
         preserve_times: bool | Literal[0, 1] = 1,
         preserve_symlinks: bool | Literal[0, 1] = 0,
         level: Unused = 1,
-    ) -> list[str]:
-        """
-        Copy an entire directory tree respecting verbose, dry-run,
-        and force flags.
-        """
-        ...
+    ) -> list[str]: ...
+
     @overload
     def move_file(self, src: StrPath, dst: _StrPathT, level: Unused = 1) -> _StrPathT | str:
         """Move a file respecting dry-run flag."""
         ...
     @overload
-    def move_file(self, src: BytesPath, dst: _BytesPathT, level: Unused = 1) -> _BytesPathT | bytes:
-        """Move a file respecting dry-run flag."""
-        ...
-    def spawn(self, cmd: Iterable[str], search_path: bool | Literal[0, 1] = 1, level: Unused = 1) -> None:
-        """Spawn an external command respecting dry-run flag."""
-        ...
+    def move_file(self, src: BytesPath, dst: _BytesPathT, level: Unused = 1) -> _BytesPathT | bytes: ...
+
+    def spawn(self, cmd: Iterable[str], search_path: bool | Literal[0, 1] = 1, level: Unused = 1) -> None: ...
+
     @overload
     def make_archive(
         self,
@@ -501,6 +458,7 @@ class Command:
         owner: str | None = None,
         group: str | None = None,
     ) -> str: ...
+
     def make_file(
         self,
         infiles: str | list[str] | tuple[str, ...],

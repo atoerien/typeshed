@@ -78,20 +78,8 @@ class STRtree:
         """Return the number of geometries in the tree."""
         ...
     @property
-    def geometries(self) -> GeoArray:
-        """
-        Geometries stored in the tree in the order used to construct the tree.
+    def geometries(self) -> GeoArray: ...
 
-        The order of this array corresponds to the tree indices returned by
-        other STRtree methods.
-
-        Do not attempt to modify items in the returned array.
-
-        Returns
-        -------
-        ndarray of Geometry objects
-        """
-        ...
     @overload
     def query(
         self, geometry: OptGeoArrayLike, predicate: Literal["dwithin"], distance: ArrayLike[float]
@@ -228,136 +216,8 @@ class STRtree:
     @overload
     def query(
         self, geometry: OptGeoArrayLike, predicate: _BinaryPredicate | None = None, distance: object = None
-    ) -> NDArray[np.int64]:
-        """
-        Get the index combinations of all possibly intersecting geometries.
+    ) -> NDArray[np.int64]: ...
 
-        Returns the integer indices of all combinations of each input geometry
-        and tree geometries where the bounding box of each input geometry
-        intersects the bounding box of a tree geometry.
-
-        If the input geometry is a scalar, this returns an array of shape (n, ) with
-        the indices of the matching tree geometries.  If the input geometry is an
-        array_like, this returns an array with shape (2,n) where the subarrays
-        correspond to the indices of the input geometries and indices of the
-        tree geometries associated with each.  To generate an array of pairs of
-        input geometry index and tree geometry index, simply transpose the
-        result.
-
-        If a predicate is provided, the tree geometries are first queried based
-        on the bounding box of the input geometry and then are further filtered
-        to those that meet the predicate when comparing the input geometry to
-        the tree geometry:
-        predicate(geometry, tree_geometry)
-
-        The 'dwithin' predicate requires GEOS >= 3.10.
-
-        Bounding boxes are limited to two dimensions and are axis-aligned
-        (equivalent to the ``bounds`` property of a geometry); any Z values
-        present in input geometries are ignored when querying the tree.
-
-        Any input geometry that is None or empty will never match geometries in
-        the tree.
-
-        Parameters
-        ----------
-        geometry : Geometry or array_like
-            Input geometries to query the tree and filter results using the
-            optional predicate.
-        predicate : {None, 'intersects', 'within', 'contains', 'overlaps', 'crosses','touches', 'covers', 'covered_by', 'contains_properly', 'dwithin'}, optional
-            The predicate to use for testing geometries from the tree
-            that are within the input geometry's bounding box.
-        distance : number or array_like, optional
-            Distances around each input geometry within which to query the tree
-            for the 'dwithin' predicate.  If array_like, shape must be
-            broadcastable to shape of geometry.  Required if predicate='dwithin'.
-
-        Returns
-        -------
-        ndarray with shape (n,) if geometry is a scalar
-            Contains tree geometry indices.
-
-        OR
-
-        ndarray with shape (2, n) if geometry is an array_like
-            The first subarray contains input geometry indices.
-            The second subarray contains tree geometry indices.
-
-        Examples
-        --------
-        >>> from shapely import box, Point, STRtree
-        >>> import numpy as np
-        >>> points = [Point(0, 0), Point(1, 1), Point(2,2), Point(3, 3)]
-        >>> tree = STRtree(points)
-
-        Query the tree using a scalar geometry:
-
-        >>> indices = tree.query(box(0, 0, 1, 1))
-        >>> indices.tolist()
-        [0, 1]
-
-        Query using an array of geometries:
-
-        >>> boxes = np.array([box(0, 0, 1, 1), box(2, 2, 3, 3)])
-        >>> arr_indices = tree.query(boxes)
-        >>> arr_indices.tolist()
-        [[0, 0, 1, 1], [0, 1, 2, 3]]
-
-        Or transpose to get all pairs of input and tree indices:
-
-        >>> arr_indices.T.tolist()
-        [[0, 0], [0, 1], [1, 2], [1, 3]]
-
-        Retrieve the tree geometries by results of query:
-
-        >>> tree.geometries.take(indices).tolist()
-        [<POINT (0 0)>, <POINT (1 1)>]
-
-        Retrieve all pairs of input and tree geometries:
-
-        >>> np.array([boxes.take(arr_indices[0]),tree.geometries.take(arr_indices[1])]).T.tolist()
-        [[<POLYGON ((1 0, 1 1, 0 1, 0 0, 1 0))>, <POINT (0 0)>],
-         [<POLYGON ((1 0, 1 1, 0 1, 0 0, 1 0))>, <POINT (1 1)>],
-         [<POLYGON ((3 2, 3 3, 2 3, 2 2, 3 2))>, <POINT (2 2)>],
-         [<POLYGON ((3 2, 3 3, 2 3, 2 2, 3 2))>, <POINT (3 3)>]]
-
-        Query using a predicate:
-
-        >>> tree = STRtree([box(0, 0, 0.5, 0.5), box(0.5, 0.5, 1, 1), box(1, 1, 2, 2)])
-        >>> tree.query(box(0, 0, 1, 1), predicate="contains").tolist()
-        [0, 1]
-        >>> tree.query(Point(0.75, 0.75), predicate="dwithin", distance=0.5).tolist()
-        [0, 1, 2]
-
-        >>> tree.query(boxes, predicate="contains").tolist()
-        [[0, 0], [0, 1]]
-        >>> tree.query(boxes, predicate="dwithin", distance=0.5).tolist()
-        [[0, 0, 0, 1], [0, 1, 2, 2]]
-
-        Retrieve custom items associated with tree geometries (records can
-        be in whatever data structure so long as geometries and custom data
-        can be extracted into arrays of the same length and order):
-
-        >>> records = [
-        ...     {"geometry": Point(0, 0), "value": "A"},
-        ...     {"geometry": Point(2, 2), "value": "B"}
-        ... ]
-        >>> tree = STRtree([record["geometry"] for record in records])
-        >>> items = np.array([record["value"] for record in records])
-        >>> items.take(tree.query(box(0, 0, 1, 1))).tolist()
-        ['A']
-
-
-        Notes
-        -----
-        In the context of a spatial join, input geometries are the "left"
-        geometries that determine the order of the results, and tree geometries
-        are "right" geometries that are joined against the left geometries. This
-        effectively performs an inner join, where only those combinations of
-        geometries that can be joined based on overlapping bounding boxes or
-        optional predicate are returned.
-        """
-        ...
     # nearest may return `None` if the tree is empty, use the "Any trick"
     @overload
     def nearest(self, geometry: Geometry) -> np.int64 | Any:
@@ -425,70 +285,8 @@ class STRtree:
         """
         ...
     @overload
-    def nearest(self, geometry: GeoArrayLikeSeq) -> NDArray[np.int64] | Any:
-        """
-        Return the index of the nearest geometry in the tree.
+    def nearest(self, geometry: GeoArrayLikeSeq) -> NDArray[np.int64] | Any: ...
 
-        This is determined for each input geometry based on distance within
-        two-dimensional Cartesian space.
-
-        This distance will be 0 when input geometries intersect tree geometries.
-
-        If there are multiple equidistant or intersected geometries in the tree,
-        only a single result is returned for each input geometry, based on the
-        order that tree geometries are visited; this order may be
-        nondeterministic.
-
-        If any input geometry is None or empty, an error is raised.  Any Z
-        values present in input geometries are ignored when finding nearest
-        tree geometries.
-
-        Parameters
-        ----------
-        geometry : Geometry or array_like
-            Input geometries to query the tree.
-
-        Returns
-        -------
-        scalar or ndarray
-            Indices of geometries in tree. Return value will have the same shape
-            as the input.
-
-            None is returned if this index is empty. This may change in
-            version 2.0.
-
-        See Also
-        --------
-        query_nearest: returns all equidistant geometries, exclusive geometries, and optional distances
-
-        Examples
-        --------
-        >>> from shapely import Point, STRtree
-        >>> tree = STRtree([Point(i, i) for i in range(10)])
-
-        Query the tree for nearest using a scalar geometry:
-
-        >>> index = tree.nearest(Point(2.2, 2.2))
-        >>> index
-        2
-        >>> tree.geometries.take(index)
-        <POINT (2 2)>
-
-        Query the tree for nearest using an array of geometries:
-
-        >>> indices = tree.nearest([Point(2.2, 2.2), Point(4.4, 4.4)])
-        >>> indices.tolist()
-        [2, 4]
-        >>> tree.geometries.take(indices).tolist()
-        [<POINT (2 2)>, <POINT (4 4)>]
-
-        Nearest only return one object if there are multiple equidistant results:
-
-        >>> tree = STRtree ([Point(0, 0), Point(0, 0)])
-        >>> tree.nearest(Point(0, 0))
-        0
-        """
-        ...
     @overload  # return_distance=False
     def query_nearest(
         self,

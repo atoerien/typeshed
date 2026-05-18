@@ -250,9 +250,8 @@ class Layer(tf.Module, Generic[_InputT_contra, _OutputT_co]):
         """Settable boolean, whether this layer should be trainable or not."""
         ...
     @trainable.setter
-    def trainable(self, value: bool) -> None:
-        """Settable boolean, whether this layer should be trainable or not."""
-        ...
+    def trainable(self, value: bool) -> None: ...
+
     def __init__(
         self,
         *,
@@ -277,10 +276,12 @@ class Layer(tf.Module, Generic[_InputT_contra, _OutputT_co]):
     # input_shape's real type depends on _InputT_contra, but we can't express that without HKT.
     # For example _InputT_contra tf.Tensor -> tf.TensorShape, _InputT_contra dict[str, tf.Tensor] -> dict[str, tf.TensorShape].
     def build(self, input_shape: Any, /) -> None: ...
+
     @overload
     def compute_output_shape(self: Layer[tf.Tensor, tf.Tensor], input_shape: tf.TensorShape, /) -> tf.TensorShape: ...
     @overload
     def compute_output_shape(self, input_shape: Any, /) -> Any: ...
+
     def add_weight(
         self,
         shape: Iterable[int | None] | None = None,
@@ -1976,6 +1977,7 @@ class MultiHeadAttention(Layer[Any, tf.Tensor]):
         autocast: bool = True,
         name: str | None = None,
     ) -> None: ...
+
     @overload  # type: ignore[override]
     def __call__(
         self,

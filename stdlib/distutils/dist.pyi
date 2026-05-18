@@ -184,70 +184,14 @@ class Distribution:
         """
         ...
     commands: Incomplete
-    def parse_command_line(self):
-        """
-        Parse the setup script's command line, taken from the
-        'script_args' instance attribute (which defaults to 'sys.argv[1:]'
-        -- see 'setup()' in core.py).  This list is first processed for
-        "global options" -- options that set attributes of the Distribution
-        instance.  Then, it is alternately scanned for Distutils commands
-        and options for that command.  Each new command terminates the
-        options for the previous command.  The allowed options for a
-        command are determined by the 'user_options' attribute of the
-        command class -- thus, we have to be able to load command classes
-        in order to parse the command line.  Any error in that 'options'
-        attribute raises DistutilsGetoptError; any error on the
-        command-line raises DistutilsArgError.  If no Distutils commands
-        were found on the command line, raises DistutilsArgError.  Return
-        true if command-line was successfully parsed and we should carry
-        on with executing commands; false if no errors but we shouldn't
-        execute commands (currently, this only happens if user asks for
-        help).
-        """
-        ...
-    def finalize_options(self) -> None:
-        """
-        Set final values for all the options on the Distribution
-        instance, analogous to the .finalize_options() method of Command
-        objects.
-        """
-        ...
-    def handle_display_options(self, option_order):
-        """
-        If there were any non-global "display-only" options
-        (--help-commands or the metadata display options) on the command
-        line, display the requested info and return true; else return
-        false.
-        """
-        ...
-    def print_command_list(self, commands, header, max_length) -> None:
-        """
-        Print a subset of the list of all commands -- used by
-        'print_commands()'.
-        """
-        ...
-    def print_commands(self) -> None:
-        """
-        Print out a help message listing all available commands with a
-        description of each.  The list is divided into "standard commands"
-        (listed in distutils.command.__all__) and "extra commands"
-        (mentioned in self.cmdclass, but not a standard command).  The
-        descriptions come from the command class attribute
-        'description'.
-        """
-        ...
-    def get_command_list(self):
-        """
-        Get a list of (command, description) tuples.
-        The list is divided into "standard commands" (listed in
-        distutils.command.__all__) and "extra commands" (mentioned in
-        self.cmdclass, but not a standard command).  The descriptions come
-        from the command class attribute 'description'.
-        """
-        ...
-    def get_command_packages(self):
-        """Return a list of packages from which commands are loaded."""
-        ...
+    def parse_command_line(self): ...
+    def finalize_options(self) -> None: ...
+    def handle_display_options(self, option_order): ...
+    def print_command_list(self, commands, header, max_length) -> None: ...
+    def print_commands(self) -> None: ...
+    def get_command_list(self): ...
+    def get_command_packages(self): ...
+
     # NOTE: This list comes directly from the distutils/command folder. Minus bdist_msi and bdist_wininst.
     @overload
     def get_command_obj(self, command: Literal["bdist"], create: Literal[1, True] = 1) -> bdist:
@@ -440,14 +384,8 @@ class Distribution:
         ...
     # Not replicating the overloads for "Command | None", user may use "isinstance"
     @overload
-    def get_command_obj(self, command: str, create: Literal[0, False]) -> Command | None:
-        """
-        Return the command object for 'command'.  Normally this object
-        is cached on a previous call to 'get_command_obj()'; if no command
-        object for 'command' is in the cache, then we either create and
-        return it (if 'create' is true) or return None.
-        """
-        ...
+    def get_command_obj(self, command: str, create: Literal[0, False]) -> Command | None: ...
+
     @overload
     def get_command_class(self, command: Literal["bdist"]) -> type[bdist]:
         """
@@ -749,20 +687,8 @@ class Distribution:
         """
         ...
     @overload
-    def get_command_class(self, command: str) -> type[Command]:
-        """
-        Return the class that implements the Distutils command named by
-        'command'.  First we check the 'cmdclass' dictionary; if the
-        command is mentioned there, we fetch the class object from the
-        dictionary and return it.  Otherwise we load the command module
-        ("distutils.command." + command) and fetch the command class from
-        the module.  The loaded class is also stored in 'cmdclass'
-        to speed future calls to 'get_command_class()'.
+    def get_command_class(self, command: str) -> type[Command]: ...
 
-        Raises DistutilsModuleError if the expected module could not be
-        found, or if that module does not define the expected class.
-        """
-        ...
     @overload
     def reinitialize_command(self, command: Literal["bdist"], reinit_subcommands: bool = False) -> bdist:
         """
@@ -1228,27 +1154,8 @@ class Distribution:
         """
         ...
     @overload
-    def reinitialize_command(self, command: _CommandT, reinit_subcommands: bool = False) -> _CommandT:
-        """
-        Reinitializes a command to the state it was in when first
-        returned by 'get_command_obj()': ie., initialized but not yet
-        finalized.  This provides the opportunity to sneak option
-        values in programmatically, overriding or supplementing
-        user-supplied values from the config files and command line.
-        You'll have to re-finalize the command object (by calling
-        'finalize_options()' or 'ensure_finalized()') before using it for
-        real.
+    def reinitialize_command(self, command: _CommandT, reinit_subcommands: bool = False) -> _CommandT: ...
 
-        'command' should be a command name (string) or command object.  If
-        'reinit_subcommands' is true, also reinitializes the command's
-        sub-commands, as declared by the 'sub_commands' class attribute (if
-        it has one).  See the "install" command for an example.  Only
-        reinitializes the sub-commands that actually matter, ie. those
-        whose test predicates return true.
-
-        Returns the reinitialized command object.
-        """
-        ...
     def announce(self, msg, level: int = 2) -> None: ...
     def run_commands(self) -> None:
         """

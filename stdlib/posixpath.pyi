@@ -113,20 +113,19 @@ if sys.version_info >= (3, 15):
     def basename(p: PathLike[AnyStr], /) -> AnyStr: ...
     @overload
     def basename(p: AnyOrLiteralStr, /) -> AnyOrLiteralStr: ...
+
     @overload
     def dirname(p: PathLike[AnyStr], /) -> AnyStr: ...
     @overload
     def dirname(p: AnyOrLiteralStr, /) -> AnyOrLiteralStr: ...
-
 else:
     @overload
     def basename(p: PathLike[AnyStr]) -> AnyStr:
         """Returns the final component of a pathname"""
         ...
     @overload
-    def basename(p: AnyOrLiteralStr) -> AnyOrLiteralStr:
-        """Returns the final component of a pathname"""
-        ...
+    def basename(p: AnyOrLiteralStr) -> AnyOrLiteralStr: ...
+
     @overload
     def dirname(p: PathLike[AnyStr]) -> AnyStr:
         """Returns the directory component of a pathname"""
@@ -144,12 +143,8 @@ def expanduser(path: PathLike[AnyStr]) -> AnyStr:
     """
     ...
 @overload
-def expanduser(path: AnyStr) -> AnyStr:
-    """
-    Expand ~ and ~user constructions.  If user or $HOME is unknown,
-    do nothing.
-    """
-    ...
+def expanduser(path: AnyStr) -> AnyStr: ...
+
 @overload
 def expandvars(path: PathLike[AnyStr]) -> AnyStr:
     """
@@ -170,7 +165,6 @@ if sys.version_info >= (3, 15):
     def normcase(s: PathLike[AnyStr], /) -> AnyStr: ...
     @overload
     def normcase(s: AnyOrLiteralStr, /) -> AnyOrLiteralStr: ...
-
 else:
     @overload
     def normcase(s: PathLike[AnyStr]) -> AnyStr:
@@ -186,9 +180,8 @@ def normpath(path: PathLike[AnyStr]) -> AnyStr:
     """Normalize path, eliminating double slashes, etc."""
     ...
 @overload
-def normpath(path: AnyOrLiteralStr) -> AnyOrLiteralStr:
-    """Normalize path, eliminating double slashes, etc."""
-    ...
+def normpath(path: AnyOrLiteralStr) -> AnyOrLiteralStr: ...
+
 @overload
 def commonpath(paths: Iterable[LiteralString]) -> LiteralString:
     """Given a sequence of path names, returns the longest common sub-path."""
@@ -238,7 +231,6 @@ if sys.version_info >= (3, 15):
     def realpath(filename: PathLike[AnyStr], /, *, strict: bool | _AllowMissingType = False) -> AnyStr: ...
     @overload
     def realpath(filename: AnyStr, /, *, strict: bool | _AllowMissingType = False) -> AnyStr: ...
-
 else:
     @overload
     def realpath(filename: PathLike[AnyStr], *, strict: bool | _AllowMissingType = False) -> AnyStr:
@@ -273,11 +265,11 @@ if sys.version_info >= (3, 15):
     def split(p: PathLike[AnyStr], /) -> tuple[AnyStr, AnyStr]: ...
     @overload
     def split(p: AnyOrLiteralStr, /) -> tuple[AnyOrLiteralStr, AnyOrLiteralStr]: ...
+
     @overload
     def splitdrive(p: PathLike[AnyStr], /) -> tuple[AnyStr, AnyStr]: ...
     @overload
     def splitdrive(p: AnyOrLiteralStr, /) -> tuple[AnyOrLiteralStr, AnyOrLiteralStr]: ...
-
 else:
     @overload
     def split(p: PathLike[AnyStr]) -> tuple[AnyStr, AnyStr]:
@@ -287,12 +279,8 @@ else:
         """
         ...
     @overload
-    def split(p: AnyOrLiteralStr) -> tuple[AnyOrLiteralStr, AnyOrLiteralStr]:
-        """
-        Split a pathname.  Returns tuple "(head, tail)" where "tail" is
-        everything after the final slash.  Either part may be empty.
-        """
-        ...
+    def split(p: AnyOrLiteralStr) -> tuple[AnyOrLiteralStr, AnyOrLiteralStr]: ...
+
     @overload
     def splitdrive(p: PathLike[AnyStr]) -> tuple[AnyStr, AnyStr]:
         """
@@ -313,7 +301,6 @@ if sys.version_info >= (3, 15):
     def splitext(p: PathLike[AnyStr], /) -> tuple[AnyStr, AnyStr]: ...
     @overload
     def splitext(p: AnyOrLiteralStr, /) -> tuple[AnyOrLiteralStr, AnyOrLiteralStr]: ...
-
 else:
     @overload
     def splitext(p: PathLike[AnyStr]) -> tuple[AnyStr, AnyStr]:
@@ -353,12 +340,8 @@ def lexists(path: FileDescriptorOrPath) -> bool:
     ...
 
 if sys.version_info >= (3, 12):
-    def isjunction(path: StrOrBytesPath) -> bool:
-        """
-        Test whether a path is a junction
-        Junctions are not supported on the current platform
-        """
-        ...
+    def isjunction(path: StrOrBytesPath) -> bool: ...
+
     if sys.version_info >= (3, 15):
         @overload
         def splitroot(path: AnyOrLiteralStr, /) -> tuple[AnyOrLiteralStr, AnyOrLiteralStr, AnyOrLiteralStr]: ...

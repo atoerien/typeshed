@@ -46,10 +46,12 @@ class _CBufferType:
     def __getitem__(self, key: int) -> str: ...
     @overload
     def __getitem__(self, key: slice) -> bytes: ...
+
     @overload
     def __setitem__(self, key: int, val: str) -> None: ...
     @overload
     def __setitem__(self, key: slice, val: bytes) -> None: ...
+
     def __len__(self) -> int: ...
     def __bytes__(self) -> bytes: ...
 
@@ -185,9 +187,8 @@ class Client:
         """
         ...
     @property
-    def samplerate(self) -> int:
-        """The sample rate of the JACK system (read-only)."""
-        ...
+    def samplerate(self) -> int: ...
+
     @property
     def blocksize(self) -> int:
         """
@@ -207,23 +208,8 @@ class Client:
         """
         ...
     @blocksize.setter
-    def blocksize(self, blocksize: int) -> None:
-        """
-        The JACK block size (must be a power of two).
+    def blocksize(self, blocksize: int) -> None: ...
 
-        The current maximum size that will ever be passed to the process
-        callback.  It should only be queried *before* `activate()` has
-        been called.  This size may change, clients that depend on it
-        must register a callback with `set_blocksize_callback()` so they
-        will be notified if it does.
-
-        Changing the blocksize stops the JACK engine process cycle, then
-        calls all registered callback functions (see
-        `set_blocksize_callback()`) before restarting the process
-        cycle.  This will cause a gap in the audio flow, so it should
-        only be done at appropriate stopping points.
-        """
-        ...
     @property
     def status(self) -> Status:
         """JACK client status.  See `Status`."""
@@ -423,17 +409,8 @@ class Client:
         """Stop JACK transport."""
         ...
     @property
-    def transport_state(self) -> TransportState:
-        """
-        JACK transport state.
+    def transport_state(self) -> TransportState: ...
 
-        This is one of `STOPPED`, `ROLLING`, `STARTING`, `NETSTARTING`.
-
-        See Also
-        --------
-        transport_query
-        """
-        ...
     @property
     def transport_frame(self) -> int:
         """
@@ -445,378 +422,20 @@ class Client:
         """
         ...
     @transport_frame.setter
-    def transport_frame(self, frame: int) -> None:
-        """
-        Get/set current JACK transport frame.
-
-        Return an estimate of the current transport frame, including any
-        time elapsed since the last transport positional update.
-        Assigning a frame number repositions the JACK transport.
-        """
-        ...
-    def transport_locate(self, frame: int) -> None:
-        """
-        .. deprecated:: 0.4.1
-            Use `transport_frame` instead
-        """
-        ...
-    def transport_query(self) -> tuple[TransportState, dict[str, Any]]:
-        """
-        Query the current transport state and position.
-
-        This is a convenience function that does the same as
-        `transport_query_struct()`, but it only returns the valid fields
-        in an easy-to-use ``dict``.
-
-        Returns
-        -------
-        state : TransportState
-            The transport state can take following values:
-            `STOPPED`, `ROLLING`, `STARTING` and `NETSTARTING`.
-        position : dict
-            A dictionary containing only the valid fields of the
-            structure returned by `transport_query_struct()`.
-
-        See Also
-        --------
-        :attr:`transport_state`, transport_query_struct
-        """
-        ...
-    def transport_query_struct(self) -> tuple[TransportState, _JackPositionT]:
-        """
-        Query the current transport state and position.
-
-        This function is realtime-safe, and can be called from any
-        thread.  If called from the process thread, the returned
-        position corresponds to the first frame of the current cycle and
-        the state returned is valid for the entire cycle.
-
-        Returns
-        -------
-        state : int
-            The transport state can take following values: `STOPPED`,
-            `ROLLING`, `STARTING` and `NETSTARTING`.
-        position : jack_position_t
-            See the `JACK transport documentation`__ for the available
-            fields.
-
-            __ https://jackaudio.org/api/structjack__position__t.html
-
-        See Also
-        --------
-        transport_query, transport_reposition_struct
-        """
-        ...
-    def transport_reposition_struct(self, position: _JackPositionT) -> None:
-        """
-        Request a new transport position.
-
-        May be called at any time by any client.  The new position takes
-        effect in two process cycles.  If there are slow-sync clients
-        and the transport is already rolling, it will enter the
-        `STARTING` state and begin invoking their sync callbacks
-        (see `set_sync_callback()`) until ready.
-        This function is realtime-safe.
-
-        Parameters
-        ----------
-        position : jack_position_t
-            Requested new transport position.  This is the same
-            structure as returned by `transport_query_struct()`.
-
-        See Also
-        --------
-        transport_query_struct, transport_locate
-        """
-        ...
-    def set_sync_timeout(self, timeout: int) -> None:
-        """
-        Set the timeout value for slow-sync clients.
-
-        This timeout prevents unresponsive slow-sync clients from
-        completely halting the transport mechanism.  The default is two
-        seconds.  When the timeout expires, the transport starts
-        rolling, even if some slow-sync clients are still unready.
-        The *sync callbacks* of these clients continue being invoked,
-        giving them a chance to catch up.
-
-        Parameters
-        ----------
-        timeout : int
-            Delay (in microseconds) before the timeout expires.
-
-        See Also
-        --------
-        set_sync_callback
-        """
-        ...
-    def set_freewheel(self, onoff: bool) -> None:
-        """
-        Start/Stop JACK's "freewheel" mode.
-
-        When in "freewheel" mode, JACK no longer waits for any external
-        event to begin the start of the next process cycle.
-
-        As a result, freewheel mode causes "faster than realtime"
-        execution of a JACK graph. If possessed, real-time scheduling is
-        dropped when entering freewheel mode, and if appropriate it is
-        reacquired when stopping.
-
-        IMPORTANT: on systems using capabilities to provide real-time
-        scheduling (i.e. Linux kernel 2.4), if onoff is zero, this
-        function must be called from the thread that originally called
-        `activate()`.  This restriction does not apply to other systems
-        (e.g. Linux kernel 2.6 or OS X).
-
-        Parameters
-        ----------
-        onoff : bool
-            If ``True``, freewheel mode starts. Otherwise freewheel mode
-            ends.
-
-        See Also
-        --------
-        set_freewheel_callback
-        """
-        ...
-    def set_shutdown_callback(self, callback: Callable[[Status, str], object]) -> None:
-        """
-        Register shutdown callback.
-
-        Register a function (and optional argument) to be called if and
-        when the JACK server shuts down the client thread.
-        The function must be written as if it were an asynchonrous POSIX
-        signal handler -- use only async-safe functions, and remember
-        that it is executed from another thread.
-        A typical function might set a flag or write to a pipe so that
-        the rest of the application knows that the JACK client thread
-        has shut down.
-
-        .. note:: Clients do not need to call this.  It exists only to
-           help more complex clients understand what is going on.  It
-           should be called before `activate()`.
-
-        Parameters
-        ----------
-        callback : callable
-            User-supplied function that is called whenever the JACK
-            daemon is shutdown.  It must have this signature::
-
-                callback(status: Status, reason: str) -> None
-
-            The argument *status* is of type `jack.Status`.
-
-            .. note:: The *callback* should typically signal another
-               thread to correctly finish cleanup by calling `close()`
-               (since it cannot be called directly in the context of the
-               thread that calls the shutdown callback).
-
-               After server shutdown, the client is *not* deallocated by
-               JACK, the user (that's you!) is responsible to properly
-               use `close()` to release client ressources.
-               Alternatively, the `Client` object can be used as a
-               *context manager* in a *with statement*, which takes care
-               of activating, deactivating and closing the client
-               automatically.
-
-            .. note:: Same as with most callbacks, no functions that
-               interact with the JACK daemon should be used here.
-        """
-        ...
-    def set_process_callback(self, callback: Callable[[int], object]) -> None:
-        """
-        Register process callback.
-
-        Tell the JACK server to call *callback* whenever there is work
-        be done.
-
-        The code in the supplied function must be suitable for real-time
-        execution.  That means that it cannot call functions that might
-        block for a long time. This includes malloc, free, printf,
-        pthread_mutex_lock, sleep, wait, poll, select, pthread_join,
-        pthread_cond_wait, etc, etc.
-
-        .. warning:: Most Python interpreters use a `global interpreter
-           lock (GIL)`__, which violates the above real-time
-           requirement.  Furthermore, Python's `garbage collector`__
-           might become active at an inconvenient time and block the
-           process callback for some time.
-
-           Because of this, Python is not really suitable for real-time
-           processing.  If you want to implement a *reliable* real-time
-           audio/MIDI application, you should use a different
-           programming language, such as C or C++.
-
-           If you can live with some random audio drop-outs now and
-           then, feel free to continue using Python!
-
-        __ https://en.wikipedia.org/wiki/Global_Interpreter_Lock
-        __ https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)
-
-        .. note:: This function cannot be called while the client is
-           activated (after `activate()` has been called).
-
-        Parameters
-        ----------
-        callback : callable
-            User-supplied function that is called by the engine anytime
-            there is work to be done.  It must have this signature::
-
-                callback(frames: int) -> None
-
-            The argument *frames* specifies the number of frames that
-            have to be processed in the current audio block.
-            It will be the same number as `blocksize` and it will be a
-            power of two.
-
-            As long as the client is active, the *callback* will be
-            called once in each process cycle.  However, if an exception
-            is raised inside of a *callback*, it will not be called
-            anymore.  The exception `CallbackExit` can be used to
-            silently prevent further callback invocations, all other
-            exceptions will print an error message to *stderr*.
-        """
-        ...
-    def set_freewheel_callback(self, callback: Callable[[bool], object]) -> None:
-        """
-        Register freewheel callback.
-
-        Tell the JACK server to call *callback* whenever we enter or
-        leave "freewheel" mode.
-        The argument to the callback will be ``True`` if JACK is
-        entering freewheel mode, and ``False`` otherwise.
-
-        All "notification events" are received in a separated non RT
-        thread, the code in the supplied function does not need to be
-        suitable for real-time execution.
-
-        .. note:: This function cannot be called while the client is
-           activated (after `activate()` has been called).
-
-        Parameters
-        ----------
-        callback : callable
-            User-supplied function that is called whenever JACK starts
-            or stops freewheeling.  It must have this signature::
-
-                callback(starting: bool) -> None
-
-            The argument *starting* is ``True`` if we start to
-            freewheel, ``False`` otherwise.
-
-            .. note:: Same as with most callbacks, no functions that
-               interact with the JACK daemon should be used here.
-
-        See Also
-        --------
-        set_freewheel
-        """
-        ...
-    def set_blocksize_callback(self, callback: Callable[[int], object]) -> None:
-        """
-        Register blocksize callback.
-
-        Tell JACK to call *callback* whenever the size of the the buffer
-        that will be passed to the process callback is about to change.
-        Clients that depend on knowing the buffer size must supply a
-        *callback* before activating themselves.
-
-        All "notification events" are received in a separated non RT
-        thread, the code in the supplied function does not need to be
-        suitable for real-time execution.
-
-        .. note:: This function cannot be called while the client is
-           activated (after `activate()` has been called).
-
-        Parameters
-        ----------
-        callback : callable
-            User-supplied function that is invoked whenever the JACK
-            engine buffer size changes.  It must have this signature::
-
-                callback(blocksize: int) -> None
-
-            The argument *blocksize* is the new buffer size.
-            The *callback* is supposed to raise `CallbackExit` on error.
-
-            .. note:: Although this function is called in the JACK
-               process thread, the normal process cycle is suspended
-               during its operation, causing a gap in the audio flow.
-               So, the *callback* can allocate storage, touch memory not
-               previously referenced, and perform other operations that
-               are not realtime safe.
-
-            .. note:: Same as with most callbacks, no functions that
-               interact with the JACK daemon should be used here.
-
-        See Also
-        --------
-        :attr:`blocksize`
-        """
-        ...
-    def set_samplerate_callback(self, callback: Callable[[int], object]) -> None:
-        """
-        Register samplerate callback.
-
-        Tell the JACK server to call *callback* whenever the system
-        sample rate changes.
-
-        All "notification events" are received in a separated non RT
-        thread, the code in the supplied function does not need to be
-        suitable for real-time execution.
-
-        .. note:: This function cannot be called while the client is
-           activated (after `activate()` has been called).
-
-        Parameters
-        ----------
-        callback : callable
-            User-supplied function that is called when the engine sample
-            rate changes.  It must have this signature::
-
-                callback(samplerate: int) -> None
-
-            The argument *samplerate* is the new engine sample rate.
-            The *callback* is supposed to raise `CallbackExit` on error.
-
-            .. note:: Same as with most callbacks, no functions that
-               interact with the JACK daemon should be used here.
-
-        See Also
-        --------
-        :attr:`samplerate`
-        """
-        ...
-    def set_client_registration_callback(self, callback: Callable[[str, bool], object]) -> None:
-        """
-        Register client registration callback.
-
-        Tell the JACK server to call *callback* whenever a client is
-        registered or unregistered.
-
-        All "notification events" are received in a separated non RT
-        thread, the code in the supplied function does not need to be
-        suitable for real-time execution.
-
-        .. note:: This function cannot be called while the client is
-           activated (after `activate()` has been called).
-
-        Parameters
-        ----------
-        callback : callable
-            User-supplied function that is called whenever a client is
-            registered or unregistered.  It must have this signature::
-
-                callback(name: str, register: bool) -> None
-
-            The first argument contains the client name, the second
-            argument is ``True`` if the client is being registered and
-            ``False`` if the client is being unregistered.
-
-            .. note:: Same as with most callbacks, no functions that
-               interact with the JACK daemon should be used here.
-        """
-        ...
+    def transport_frame(self, frame: int) -> None: ...
+
+    def transport_locate(self, frame: int) -> None: ...
+    def transport_query(self) -> tuple[TransportState, dict[str, Any]]: ...  # Anyof[int, float, _CDataBase]
+    def transport_query_struct(self) -> tuple[TransportState, _JackPositionT]: ...
+    def transport_reposition_struct(self, position: _JackPositionT) -> None: ...
+    def set_sync_timeout(self, timeout: int) -> None: ...
+    def set_freewheel(self, onoff: bool) -> None: ...
+    def set_shutdown_callback(self, callback: Callable[[Status, str], object]) -> None: ...
+    def set_process_callback(self, callback: Callable[[int], object]) -> None: ...
+    def set_freewheel_callback(self, callback: Callable[[bool], object]) -> None: ...
+    def set_blocksize_callback(self, callback: Callable[[int], object]) -> None: ...
+    def set_samplerate_callback(self, callback: Callable[[int], object]) -> None: ...
+    def set_client_registration_callback(self, callback: Callable[[str, bool], object]) -> None: ...
     def set_port_registration_callback(
         self, callback: Callable[[Port, bool], object] | None = None, only_available: bool = True
     ) -> None:
@@ -1436,9 +1055,8 @@ class Port:
         """This should be implemented whenever __eq__() is implemented."""
         ...
     @property
-    def name(self) -> str:
-        """Full name of the JACK port (read-only)."""
-        ...
+    def name(self) -> str: ...
+
     @property
     def shortname(self) -> str:
         """
@@ -1452,17 +1070,8 @@ class Port:
         """
         ...
     @shortname.setter
-    def shortname(self, shortname: str) -> None:
-        """
-        Short name of the JACK port, not including the client name.
+    def shortname(self, shortname: str) -> None: ...
 
-        Must be unique among all ports owned by a client.
-
-        May be modified at any time.  If the resulting full name
-        (including the ``client_name:`` prefix) is longer than
-        `port_name_size()`, it will be truncated.
-        """
-        ...
     @property
     def aliases(self) -> list[str]:
         """Returns a list of strings with the aliases for the JACK port."""

@@ -98,14 +98,8 @@ class JWS:
     objects: dict[str, Incomplete]
     verifylog: list[str] | None
     header_registry: Incomplete
-    def __init__(self, payload=None, header_registry=None) -> None:
-        """
-        Creates a JWS object.
+    def __init__(self, payload=None, header_registry=None) -> None: ...
 
-        :param payload(bytes): An arbitrary value (optional).
-        :param header_registry: Optional additions to the header registry
-        """
-        ...
     @property
     def allowed_algs(self):
         """
@@ -116,14 +110,8 @@ class JWS:
         """
         ...
     @allowed_algs.setter
-    def allowed_algs(self, algs) -> None:
-        """
-        Allowed algorithms.
+    def allowed_algs(self, algs) -> None: ...
 
-        The list of allowed algorithms.
-        Can be changed by setting a list of algorithm names.
-        """
-        ...
     @property
     def is_valid(self): ...
     def verify(self, key, alg=None, detached_payload=None) -> None:

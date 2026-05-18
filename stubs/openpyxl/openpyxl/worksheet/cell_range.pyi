@@ -69,6 +69,7 @@ class CellRange(Serialisable):
         max_row: ConvertibleToInt,
         title: str | None = None,
     ) -> None: ...
+
     @property
     def bounds(self) -> tuple[int, int, int, int]:
         """Vertices of the range as a tuple"""

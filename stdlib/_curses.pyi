@@ -927,6 +927,7 @@ class error(Exception): ...
 @final
 class window:  # undocumented
     encoding: str
+
     @overload
     def addch(self, ch: _ChType, attr: int = ...) -> None:
         """
@@ -949,26 +950,8 @@ class window:  # undocumented
         """
         ...
     @overload
-    def addch(self, y: int, x: int, ch: _ChType, attr: int = ...) -> None:
-        """
-        addch([y, x,] ch, [attr=_curses.A_NORMAL])
-        Paint the character.
+    def addch(self, y: int, x: int, ch: _ChType, attr: int = ...) -> None: ...
 
-          y
-            Y-coordinate.
-          x
-            X-coordinate.
-          ch
-            Character to add.
-          attr
-            Attributes for the character.
-
-        Paint character ch at (y, x) with attributes attr,
-        overwriting any character previously painted at that location.
-        By default, the character position and attributes are the
-        current settings for the window object.
-        """
-        ...
     @overload
     def addnstr(self, str: str, n: int, attr: int = ...) -> None:
         """
@@ -993,28 +976,8 @@ class window:  # undocumented
         """
         ...
     @overload
-    def addnstr(self, y: int, x: int, str: str, n: int, attr: int = ...) -> None:
-        """
-        addnstr([y, x,] str, n, [attr])
-        Paint at most n characters of the string.
+    def addnstr(self, y: int, x: int, str: str, n: int, attr: int = ...) -> None: ...
 
-          y
-            Y-coordinate.
-          x
-            X-coordinate.
-          str
-            String to add.
-          n
-            Maximal number of characters.
-          attr
-            Attributes for characters.
-
-        Paint at most n characters of the string str at (y, x) with
-        attributes attr, overwriting anything previously on the display.
-        By default, the character position and attributes are the
-        current settings for the window object.
-        """
-        ...
     @overload
     def addstr(self, str: str, attr: int = ...) -> None:
         """
@@ -1037,55 +1000,13 @@ class window:  # undocumented
         """
         ...
     @overload
-    def addstr(self, y: int, x: int, str: str, attr: int = ...) -> None:
-        """
-        addstr([y, x,] str, [attr])
-        Paint the string.
+    def addstr(self, y: int, x: int, str: str, attr: int = ...) -> None: ...
 
-          y
-            Y-coordinate.
-          x
-            X-coordinate.
-          str
-            String to add.
-          attr
-            Attributes for characters.
-
-        Paint the string str at (y, x) with attributes attr,
-        overwriting anything previously on the display.
-        By default, the character position and attributes are the
-        current settings for the window object.
-        """
-        ...
-    def attroff(self, attr: int, /) -> None:
-        """Remove attribute attr from the "background" set."""
-        ...
-    def attron(self, attr: int, /) -> None:
-        """Add attribute attr to the "background" set."""
-        ...
-    def attrset(self, attr: int, /) -> None:
-        """Set the "background" set of attributes."""
-        ...
-    def bkgd(self, ch: _ChType, attr: int = 0, /) -> None:
-        """
-        Set the background property of the window.
-
-        ch
-          Background character.
-        attr
-          Background attributes.
-        """
-        ...
-    def bkgdset(self, ch: _ChType, attr: int = 0, /) -> None:
-        """
-        Set the window's background.
-
-        ch
-          Background character.
-        attr
-          Background attributes.
-        """
-        ...
+    def attroff(self, attr: int, /) -> None: ...
+    def attron(self, attr: int, /) -> None: ...
+    def attrset(self, attr: int, /) -> None: ...
+    def bkgd(self, ch: _ChType, attr: int = 0, /) -> None: ...
+    def bkgdset(self, ch: _ChType, attr: int = 0, /) -> None: ...
     def border(
         self,
         ls: _ChType = ...,
@@ -1096,33 +1017,8 @@ class window:  # undocumented
         tr: _ChType = ...,
         bl: _ChType = ...,
         br: _ChType = ...,
-    ) -> None:
-        """
-        Draw a border around the edges of the window.
+    ) -> None: ...
 
-          ls
-            Left side.
-          rs
-            Right side.
-          ts
-            Top side.
-          bs
-            Bottom side.
-          tl
-            Upper-left corner.
-          tr
-            Upper-right corner.
-          bl
-            Bottom-left corner.
-          br
-            Bottom-right corner.
-
-        Each parameter specifies the character to use for a specific part of the
-        border.  The characters can be specified as integers or as one-character
-        strings.  A 0 value for any parameter will cause the default character to be
-        used for that parameter.
-        """
-        ...
     @overload
     def box(self) -> None:
         """
@@ -1139,20 +1035,8 @@ class window:  # undocumented
         """
         ...
     @overload
-    def box(self, vertch: _ChType = 0, horch: _ChType = 0) -> None:
-        """
-        box([verch=0, horch=0])
-        Draw a border around the edges of the window.
+    def box(self, vertch: _ChType = 0, horch: _ChType = 0) -> None: ...
 
-          verch
-            Left and right side.
-          horch
-            Top and bottom side.
-
-        Similar to border(), but both ls and rs are verch and both ts and bs are
-        horch.  The default corner characters are always used by this function.
-        """
-        ...
     @overload
     def chgat(self, attr: int) -> None:
         """
@@ -1223,33 +1107,14 @@ class window:  # undocumented
         """
         ...
     @overload
-    def chgat(self, y: int, x: int, num: int, attr: int) -> None:
-        """
-        chgat([y, x,] [n=-1,] attr)
-        Set the attributes of characters.
+    def chgat(self, y: int, x: int, num: int, attr: int) -> None: ...
 
-          y
-            Y-coordinate.
-          x
-            X-coordinate.
-          n
-            Number of characters.
-          attr
-            Attributes for characters.
-
-        Set the attributes of num characters at the current cursor position, or at
-        position (y, x) if supplied.  If no value of num is given or num = -1, the
-        attribute will be set on all the characters to the end of the line.  This
-        function does not move the cursor.  The changed line will be touched using
-        the touchline() method so that the contents will be redisplayed by the next
-        window refresh.
-        """
-        ...
     def clear(self) -> None: ...
     def clearok(self, yes: int) -> None: ...
     def clrtobot(self) -> None: ...
     def clrtoeol(self) -> None: ...
     def cursyncup(self) -> None: ...
+
     @overload
     def delch(self) -> None:
         """
@@ -1263,18 +1128,10 @@ class window:  # undocumented
         """
         ...
     @overload
-    def delch(self, y: int, x: int) -> None:
-        """
-        delch([y, x])
-        Delete any character at (y, x).
+    def delch(self, y: int, x: int) -> None: ...
 
-          y
-            Y-coordinate.
-          x
-            X-coordinate.
-        """
-        ...
     def deleteln(self) -> None: ...
+
     @overload
     def derwin(self, begin_y: int, begin_x: int) -> window:
         """
@@ -1296,50 +1153,14 @@ class window:  # undocumented
         """
         ...
     @overload
-    def derwin(self, nlines: int, ncols: int, begin_y: int, begin_x: int) -> window:
-        """
-        derwin([nlines=0, ncols=0,] begin_y, begin_x)
-        Create a sub-window (window-relative coordinates).
+    def derwin(self, nlines: int, ncols: int, begin_y: int, begin_x: int) -> window: ...
 
-          nlines
-            Height.
-          ncols
-            Width.
-          begin_y
-            Top side y-coordinate.
-          begin_x
-            Left side x-coordinate.
-
-        derwin() is the same as calling subwin(), except that begin_y and begin_x
-        are relative to the origin of the window, rather than relative to the entire
-        screen.
-        """
-        ...
-    def echochar(self, ch: _ChType, attr: int = 0, /) -> None:
-        """
-        Add character ch with attribute attr, and refresh.
-
-        ch
-          Character to add.
-        attr
-          Attributes for the character.
-        """
-        ...
-    def enclose(self, y: int, x: int, /) -> bool:
-        """
-        Return True if the screen-relative coordinates are enclosed by the window.
-
-        y
-          Y-coordinate.
-        x
-          X-coordinate.
-        """
-        ...
+    def echochar(self, ch: _ChType, attr: int = 0, /) -> None: ...
+    def enclose(self, y: int, x: int, /) -> bool: ...
     def erase(self) -> None: ...
     def getbegyx(self) -> tuple[int, int]: ...
-    def getbkgd(self) -> tuple[int, int]:
-        """Return the window's current background character/attribute pair."""
-        ...
+    def getbkgd(self) -> tuple[int, int]: ...
+
     @overload
     def getch(self) -> int:
         """
@@ -1357,21 +1178,8 @@ class window:  # undocumented
         """
         ...
     @overload
-    def getch(self, y: int, x: int) -> int:
-        """
-        getch([y, x])
-        Get a character code from terminal keyboard.
+    def getch(self, y: int, x: int) -> int: ...
 
-          y
-            Y-coordinate.
-          x
-            X-coordinate.
-
-        The integer returned does not have to be in ASCII range: function keys,
-        keypad keys and so on return numbers higher than 256.  In no-delay mode, -1
-        is returned if there is no input, else getch() waits until a key is pressed.
-        """
-        ...
     @overload
     def get_wch(self) -> int | str:
         """
@@ -1388,20 +1196,8 @@ class window:  # undocumented
         """
         ...
     @overload
-    def get_wch(self, y: int, x: int) -> int | str:
-        """
-        get_wch([y, x])
-        Get a wide character from terminal keyboard.
+    def get_wch(self, y: int, x: int) -> int | str: ...
 
-          y
-            Y-coordinate.
-          x
-            X-coordinate.
-
-        Return a character for most keys, or an integer for function keys,
-        keypad keys, and other special keys.
-        """
-        ...
     @overload
     def getkey(self) -> str:
         """
@@ -1419,23 +1215,11 @@ class window:  # undocumented
         """
         ...
     @overload
-    def getkey(self, y: int, x: int) -> str:
-        """
-        getkey([y, x])
-        Get a character (string) from terminal keyboard.
+    def getkey(self, y: int, x: int) -> str: ...
 
-          y
-            Y-coordinate.
-          x
-            X-coordinate.
-
-        Returning a string instead of an integer, as getch() does.  Function keys,
-        keypad keys and other special keys return a multibyte string containing the
-        key name.  In no-delay mode, an exception is raised if there is no input.
-        """
-        ...
     def getmaxyx(self) -> tuple[int, int]: ...
     def getparyx(self) -> tuple[int, int]: ...
+
     @overload
     def getstr(self) -> bytes:
         """
@@ -1479,20 +1263,10 @@ class window:  # undocumented
         """
         ...
     @overload
-    def getstr(self, y: int, x: int, n: int) -> bytes:
-        """
-        getstr([[y, x,] n=2047])
-        Read a string from the user, with primitive line editing capacity.
+    def getstr(self, y: int, x: int, n: int) -> bytes: ...
 
-          y
-            Y-coordinate.
-          x
-            X-coordinate.
-          n
-            Maximal number of characters.
-        """
-        ...
     def getyx(self) -> tuple[int, int]: ...
+
     @overload
     def hline(self, ch: _ChType, n: int) -> None:
         """
@@ -1512,26 +1286,12 @@ class window:  # undocumented
         """
         ...
     @overload
-    def hline(self, y: int, x: int, ch: _ChType, n: int) -> None:
-        """
-        hline([y, x,] ch, n, [attr=_curses.A_NORMAL])
-        Display a horizontal line.
+    def hline(self, y: int, x: int, ch: _ChType, n: int) -> None: ...
 
-          y
-            Starting Y-coordinate.
-          x
-            Starting X-coordinate.
-          ch
-            Character to draw.
-          n
-            Line length.
-          attr
-            Attributes for the characters.
-        """
-        ...
     def idcok(self, flag: bool) -> None: ...
     def idlok(self, yes: bool) -> None: ...
     def immedok(self, flag: bool) -> None: ...
+
     @overload
     def inch(self) -> int:
         """
@@ -1547,19 +1307,8 @@ class window:  # undocumented
         """
         ...
     @overload
-    def inch(self, y: int, x: int) -> int:
-        """
-        inch([y, x])
-        Return the character at the given position in the window.
+    def inch(self, y: int, x: int) -> int: ...
 
-          y
-            Y-coordinate.
-          x
-            X-coordinate.
-
-        The bottom 8 bits are the character proper, and upper bits are the attributes.
-        """
-        ...
     @overload
     def insch(self, ch: _ChType, attr: int = ...) -> None:
         """
@@ -1580,26 +1329,11 @@ class window:  # undocumented
         """
         ...
     @overload
-    def insch(self, y: int, x: int, ch: _ChType, attr: int = ...) -> None:
-        """
-        insch([y, x,] ch, [attr=_curses.A_NORMAL])
-        Insert a character before the current or specified position.
+    def insch(self, y: int, x: int, ch: _ChType, attr: int = ...) -> None: ...
 
-          y
-            Y-coordinate.
-          x
-            X-coordinate.
-          ch
-            Character to insert.
-          attr
-            Attributes for the character.
-
-        All characters to the right of the cursor are shifted one position right, with
-        the rightmost characters on the line being lost.
-        """
-        ...
     def insdelln(self, nlines: int) -> None: ...
     def insertln(self) -> None: ...
+
     @overload
     def insnstr(self, str: str, n: int, attr: int = ...) -> None:
         """
@@ -1626,30 +1360,8 @@ class window:  # undocumented
         """
         ...
     @overload
-    def insnstr(self, y: int, x: int, str: str, n: int, attr: int = ...) -> None:
-        """
-        insnstr([y, x,] str, n, [attr])
-        Insert at most n characters of the string.
+    def insnstr(self, y: int, x: int, str: str, n: int, attr: int = ...) -> None: ...
 
-          y
-            Y-coordinate.
-          x
-            X-coordinate.
-          str
-            String to insert.
-          n
-            Maximal number of characters.
-          attr
-            Attributes for characters.
-
-        Insert a character string (as many characters as will fit on the line)
-        before the character under the cursor, up to n characters.  If n is zero
-        or negative, the entire string is inserted.  All characters to the right
-        of the cursor are shifted right, with the rightmost characters on the line
-        being lost.  The cursor position does not change (after moving to y, x, if
-        specified).
-        """
-        ...
     @overload
     def insstr(self, str: str, attr: int = ...) -> None:
         """
@@ -1673,27 +1385,8 @@ class window:  # undocumented
         """
         ...
     @overload
-    def insstr(self, y: int, x: int, str: str, attr: int = ...) -> None:
-        """
-        insstr([y, x,] str, [attr])
-        Insert the string before the current or specified position.
+    def insstr(self, y: int, x: int, str: str, attr: int = ...) -> None: ...
 
-          y
-            Y-coordinate.
-          x
-            X-coordinate.
-          str
-            String to insert.
-          attr
-            Attributes for characters.
-
-        Insert a character string (as many characters as will fit on the line)
-        before the character under the cursor.  All characters to the right of
-        the cursor are shifted right, with the rightmost characters on the line
-        being lost.  The cursor position does not change (after moving to y, x,
-        if specified).
-        """
-        ...
     @overload
     def instr(self, n: int = 2047) -> bytes:
         """
@@ -1714,34 +1407,9 @@ class window:  # undocumented
         """
         ...
     @overload
-    def instr(self, y: int, x: int, n: int = 2047) -> bytes:
-        """
-        instr([y, x,] n=2047)
-        Return a string of characters, extracted from the window.
+    def instr(self, y: int, x: int, n: int = 2047) -> bytes: ...
 
-          y
-            Y-coordinate.
-          x
-            X-coordinate.
-          n
-            Maximal number of characters.
-
-        Return a string of characters, extracted from the window starting at the
-        current cursor position, or at y, x if specified.  Attributes are stripped
-        from the characters.  If n is specified, instr() returns a string at most
-        n characters long (exclusive of the trailing NUL).
-        """
-        ...
-    def is_linetouched(self, line: int, /) -> bool:
-        """
-        Return True if the specified line was modified, otherwise return False.
-
-          line
-            Line number.
-
-        Raise a curses.error exception if line is not valid for the given window.
-        """
-        ...
+    def is_linetouched(self, line: int, /) -> bool: ...
     def is_wintouched(self) -> bool: ...
     def keypad(self, yes: bool, /) -> None: ...
     def leaveok(self, yes: bool) -> None: ...
@@ -1750,6 +1418,7 @@ class window:  # undocumented
     def mvwin(self, new_y: int, new_x: int) -> None: ...
     def nodelay(self, yes: bool) -> None: ...
     def notimeout(self, yes: bool) -> None: ...
+
     @overload
     def noutrefresh(self) -> None:
         """
@@ -1762,16 +1431,8 @@ class window:  # undocumented
         """
         ...
     @overload
-    def noutrefresh(self, pminrow: int, pmincol: int, sminrow: int, smincol: int, smaxrow: int, smaxcol: int) -> None:
-        """
-        noutrefresh([pminrow, pmincol, sminrow, smincol, smaxrow, smaxcol])
-        Mark for refresh but wait.
+    def noutrefresh(self, pminrow: int, pmincol: int, sminrow: int, smincol: int, smaxrow: int, smaxcol: int) -> None: ...
 
-        This function updates the data structure representing the desired state of the
-        window, but does not force an update of the physical screen.  To accomplish
-        that, call doupdate().
-        """
-        ...
     @overload
     def overlay(self, destwin: window) -> None:
         """
@@ -1791,21 +1452,8 @@ class window:  # undocumented
     @overload
     def overlay(
         self, destwin: window, sminrow: int, smincol: int, dminrow: int, dmincol: int, dmaxrow: int, dmaxcol: int
-    ) -> None:
-        """
-        overlay(destwin, [sminrow, smincol, dminrow, dmincol, dmaxrow, dmaxcol])
-        Overlay the window on top of destwin.
+    ) -> None: ...
 
-        The windows need not be the same size, only the overlapping region is copied.
-        This copy is non-destructive, which means that the current background
-        character does not overwrite the old contents of destwin.
-
-        To get fine-grained control over the copied region, the second form of
-        overlay() can be used.  sminrow and smincol are the upper-left coordinates
-        of the source window, and the other variables mark a rectangle in the
-        destination window.
-        """
-        ...
     @overload
     def overwrite(self, destwin: window) -> None:
         """
@@ -1826,42 +1474,12 @@ class window:  # undocumented
     @overload
     def overwrite(
         self, destwin: window, sminrow: int, smincol: int, dminrow: int, dmincol: int, dmaxrow: int, dmaxcol: int
-    ) -> None:
-        """
-        overwrite(destwin, [sminrow, smincol, dminrow, dmincol, dmaxrow,
-                  dmaxcol])
-        Overwrite the window on top of destwin.
+    ) -> None: ...
 
-        The windows need not be the same size, in which case only the overlapping
-        region is copied.  This copy is destructive, which means that the current
-        background character overwrites the old contents of destwin.
-
-        To get fine-grained control over the copied region, the second form of
-        overwrite() can be used. sminrow and smincol are the upper-left coordinates
-        of the source window, the other variables mark a rectangle in the destination
-        window.
-        """
-        ...
-    def putwin(self, file: SupportsWrite[bytes], /) -> None:
-        """
-        Write all data associated with the window into the provided file object.
-
-        This information can be later retrieved using the getwin() function.
-        """
-        ...
-    def redrawln(self, beg: int, num: int, /) -> None:
-        """
-        Mark the specified lines corrupted.
-
-          beg
-            Starting line number.
-          num
-            The number of lines.
-
-        They should be completely redrawn on the next refresh() call.
-        """
-        ...
+    def putwin(self, file: SupportsWrite[bytes], /) -> None: ...
+    def redrawln(self, beg: int, num: int, /) -> None: ...
     def redrawwin(self) -> None: ...
+
     @overload
     def refresh(self) -> None:
         """
@@ -1882,24 +1500,8 @@ class window:  # undocumented
         """
         ...
     @overload
-    def refresh(self, pminrow: int, pmincol: int, sminrow: int, smincol: int, smaxrow: int, smaxcol: int) -> None:
-        """
-        refresh([pminrow, pmincol, sminrow, smincol, smaxrow, smaxcol])
-        Update the display immediately.
+    def refresh(self, pminrow: int, pmincol: int, sminrow: int, smincol: int, smaxrow: int, smaxcol: int) -> None: ...
 
-        Synchronize actual screen with previous drawing/deleting methods.
-        The 6 optional arguments can only be specified when the window is a pad
-        created with newpad().  The additional parameters are needed to indicate
-        what part of the pad and screen are involved.  pminrow and pmincol specify
-        the upper left-hand corner of the rectangle to be displayed in the pad.
-        sminrow, smincol, smaxrow, and smaxcol specify the edges of the rectangle to
-        be displayed on the screen.  The lower right-hand corner of the rectangle to
-        be displayed in the pad is calculated from the screen coordinates, since the
-        rectangles must be the same size.  Both rectangles must be entirely contained
-        within their respective structures.  Negative values of pminrow, pmincol,
-        sminrow, or smincol are treated as if they were zero.
-        """
-        ...
     def resize(self, nlines: int, ncols: int) -> None: ...
     def scroll(self, lines: int = 1) -> None:
         """
@@ -1927,6 +1529,7 @@ class window:  # undocumented
         ...
     def standend(self) -> None: ...
     def standout(self) -> None: ...
+
     @overload
     def subpad(self, begin_y: int, begin_x: int) -> window:
         """
@@ -1947,24 +1550,8 @@ class window:  # undocumented
         """
         ...
     @overload
-    def subpad(self, nlines: int, ncols: int, begin_y: int, begin_x: int) -> window:
-        """
-        subwin([nlines=0, ncols=0,] begin_y, begin_x)
-        Create a sub-window (screen-relative coordinates).
+    def subpad(self, nlines: int, ncols: int, begin_y: int, begin_x: int) -> window: ...
 
-          nlines
-            Height.
-          ncols
-            Width.
-          begin_y
-            Top side y-coordinate.
-          begin_x
-            Left side x-coordinate.
-
-        By default, the sub-window will extend from the specified position to the
-        lower right corner of the window.
-        """
-        ...
     @overload
     def subwin(self, begin_y: int, begin_x: int) -> window:
         """
@@ -1985,24 +1572,8 @@ class window:  # undocumented
         """
         ...
     @overload
-    def subwin(self, nlines: int, ncols: int, begin_y: int, begin_x: int) -> window:
-        """
-        subwin([nlines=0, ncols=0,] begin_y, begin_x)
-        Create a sub-window (screen-relative coordinates).
+    def subwin(self, nlines: int, ncols: int, begin_y: int, begin_x: int) -> window: ...
 
-          nlines
-            Height.
-          ncols
-            Width.
-          begin_y
-            Top side y-coordinate.
-          begin_x
-            Left side x-coordinate.
-
-        By default, the sub-window will extend from the specified position to the
-        lower right corner of the window.
-        """
-        ...
     def syncdown(self) -> None: ...
     def syncok(self, flag: bool) -> None: ...
     def syncup(self) -> None: ...
@@ -2018,6 +1589,7 @@ class window:  # undocumented
         ...
     def touchwin(self) -> None: ...
     def untouchwin(self) -> None: ...
+
     @overload
     def vline(self, ch: _ChType, n: int) -> None:
         """

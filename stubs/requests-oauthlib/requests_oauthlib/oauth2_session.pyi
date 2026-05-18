@@ -69,63 +69,36 @@ class OAuth2Session(requests.Session):
         token_updater=None,
         pkce=None,
         **kwargs,
-    ) -> None:
-        """
-        Construct a new OAuth 2 client session.
+    ) -> None: ...
 
-        :param client_id: Client id obtained during registration
-        :param client: :class:`oauthlib.oauth2.Client` to be used. Default is
-                       WebApplicationClient which is useful for any
-                       hosted application but not mobile or desktop.
-        :param scope: List of scopes you wish to request access to
-        :param redirect_uri: Redirect URI you registered as callback
-        :param token: Token dictionary, must include access_token
-                      and token_type.
-        :param state: State string used to prevent CSRF. This will be given
-                      when creating the authorization url and must be supplied
-                      when parsing the authorization response.
-                      Can be either a string or a no argument callable.
-        :auto_refresh_url: Refresh token endpoint URL, must be HTTPS. Supply
-                           this if you wish the client to automatically refresh
-                           your access tokens.
-        :auto_refresh_kwargs: Extra arguments to pass to the refresh token
-                              endpoint.
-        :token_updater: Method with one argument, token, to be used to update
-                        your token database on automatic token refresh. If not
-                        set a TokenUpdated warning will be raised when a token
-                        has been refreshed. This warning will carry the token
-                        in its token argument.
-        :param pkce: Set "S256" or "plain" to enable PKCE. Default is disabled.
-        :param kwargs: Arguments to pass to the Session constructor.
-        """
-        ...
     @property
     def scope(self) -> Incomplete | None:
         """By default the scope from the client is used, except if overridden"""
         ...
     @scope.setter
-    def scope(self, value: Incomplete | None) -> None:
-        """By default the scope from the client is used, except if overridden"""
-        ...
-    def new_state(self):
-        """Generates a state string to be used in authorizations."""
-        ...
+    def scope(self, value: Incomplete | None) -> None: ...
+
+    def new_state(self): ...
+
     @property
     def client_id(self) -> Incomplete | None: ...  # oauthlib.oauth2.Client.client_id
     @client_id.setter
     def client_id(self, value: Incomplete | None) -> None: ...
     @client_id.deleter
     def client_id(self) -> None: ...
+
     @property
     def token(self): ...  # oauthlib.oauth2.Client.token
     @token.setter
     def token(self, value) -> None: ...
+
     @property
     def access_token(self): ...  # oauthlib.oauth2.Client.access_token
     @access_token.setter
     def access_token(self, value) -> None: ...
     @access_token.deleter
     def access_token(self) -> None: ...
+
     @property
     def authorized(self) -> bool:
         """
@@ -273,9 +246,8 @@ class OAuth2Session(requests.Session):
         verify: requests.sessions._Verify | None = None,
         cert: requests.sessions._Cert | None = None,
         json=None,
-    ) -> requests.Response:
-        """Intercept all requests and add the OAuth 2 token if present."""
-        ...
+    ) -> requests.Response: ...
+
     @overload
     def register_compliance_hook(self, hook_type: Literal["access_token_response"], hook: _AccessTokenResponseHook) -> None:
         """

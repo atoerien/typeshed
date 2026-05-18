@@ -948,17 +948,15 @@ class connection:
         """The current client encoding."""
         ...
     @property
-    def info(self) -> ConnectionInfo:
-        """info -- Get connection info."""
-        ...
+    def info(self) -> ConnectionInfo: ...
+
     @property
     def isolation_level(self) -> int | None:
         """Set or return the connection transaction isolation level."""
         ...
     @isolation_level.setter
-    def isolation_level(self, value: str | bytes | int | None, /) -> None:
-        """Set or return the connection transaction isolation level."""
-        ...
+    def isolation_level(self, value: str | bytes | int | None, /) -> None: ...
+
     notices: list[str]
     notifies: list[Notify]
     @property
@@ -966,25 +964,22 @@ class connection:
         """pgconn_ptr -- Get the PGconn structure pointer."""
         ...
     @property
-    def protocol_version(self) -> int:
-        """Protocol version used for this connection. Currently always 3."""
-        ...
+    def protocol_version(self) -> int: ...
+
     @property
     def deferrable(self) -> bool | None:
         """Set or return the connection deferrable status."""
         ...
     @deferrable.setter
-    def deferrable(self, value: Literal["default"] | bool | None, /) -> None:
-        """Set or return the connection deferrable status."""
-        ...
+    def deferrable(self, value: Literal["default"] | bool | None, /) -> None: ...
+
     @property
     def readonly(self) -> bool | None:
         """Set or return the connection read-only status."""
         ...
     @readonly.setter
-    def readonly(self, value: Literal["default"] | bool | None, /) -> None:
-        """Set or return the connection read-only status."""
-        ...
+    def readonly(self, value: Literal["default"] | bool | None, /) -> None: ...
+
     @property
     def server_version(self) -> int:
         """Server version."""
@@ -1000,15 +995,10 @@ class connection:
     # Really it's dsn: str, async: int = 0, async_: int = 0, but
     # that would be a syntax error.
     def __init__(self, dsn: str, *, async_: int = 0) -> None: ...
-    def cancel(self) -> None:
-        """cancel() -- cancel the current operation"""
-        ...
-    def close(self) -> None:
-        """close() -- Close the connection."""
-        ...
-    def commit(self) -> None:
-        """commit() -- Commit all changes to database."""
-        ...
+    def cancel(self) -> None: ...
+    def close(self) -> None: ...
+    def commit(self) -> None: ...
+
     @overload
     def cursor(
         self, name: str | bytes | None = None, cursor_factory: None = None, withhold: bool = False, scrollable: bool | None = None
@@ -1055,51 +1045,15 @@ class connection:
         cursor_factory: Callable[[connection, str | bytes | None], _T_cur],
         withhold: bool = False,
         scrollable: bool | None = None,
-    ) -> _T_cur:
-        """
-        cursor(name=None, cursor_factory=extensions.cursor, withhold=False) -- new cursor
+    ) -> _T_cur: ...
 
-        Return a new cursor.
-
-        The ``cursor_factory`` argument can be used to
-        create non-standard cursors by passing a class different from the
-        default. Note that the new class *should* be a sub-class of
-        `extensions.cursor`.
-
-        :rtype: `extensions.cursor`
-        """
-        ...
-    def fileno(self) -> int:
-        """fileno() -> int -- Return file descriptor associated to database connection."""
-        ...
-    def get_backend_pid(self) -> int:
-        """get_backend_pid() -- Get backend process id."""
-        ...
-    def get_dsn_parameters(self) -> dict[str, str]:
-        """get_dsn_parameters() -- Get effective connection parameters."""
-        ...
-    def get_native_connection(self):
-        """get_native_connection() -- Return the internal PGconn* as a Python Capsule."""
-        ...
-    def get_parameter_status(self, parameter: str) -> str | None:
-        """
-        get_parameter_status(parameter) -- Get backend parameter status.
-
-        Potential values for ``parameter``:
-          server_version, server_encoding, client_encoding, is_superuser,
-          session_authorization, DateStyle, TimeZone, integer_datetimes,
-          and standard_conforming_strings
-        If server did not report requested parameter, None is returned.
-
-        See libpq docs for PQparameterStatus() for further details.
-        """
-        ...
-    def get_transaction_status(self) -> int:
-        """get_transaction_status() -- Get backend transaction status."""
-        ...
-    def isexecuting(self) -> bool:
-        """isexecuting() -> bool -- Return True if the connection is executing an asynchronous operation."""
-        ...
+    def fileno(self) -> int: ...
+    def get_backend_pid(self) -> int: ...
+    def get_dsn_parameters(self) -> dict[str, str]: ...
+    def get_native_connection(self): ...
+    def get_parameter_status(self, parameter: str) -> str | None: ...
+    def get_transaction_status(self) -> int: ...
+    def isexecuting(self) -> bool: ...
     def lobject(
         self,
         oid: int = ...,
@@ -1187,6 +1141,7 @@ class ReplicationConnection(connection):
     set_isolation_level: Any
     set_session: Any
     def __init__(self, *args, **kwargs) -> None: ...
+
     # https://github.com/python/typeshed/issues/11282
     # The return type should be exactly extras.ReplicationCursor (not _psycopg.ReplicationCursor)
     # See the C code: replicationConnection_init(), psyco_conn_cursor()

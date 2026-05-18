@@ -50,14 +50,17 @@ class BaseRequest:
     request_body_tempfile_limit: ClassVar[int]
     environ: WSGIEnvironment
     def __init__(self, environ: WSGIEnvironment, **kw: Any) -> None: ...
+
     @overload
     def encget(self, key: str, default: _T, encattr: str | None = None) -> str | _T: ...
     @overload
     def encget(self, key: str, *, encattr: str | None = None) -> str: ...
+
     def encset(self, key: str, val: str, encattr: str | None = None) -> None: ...
     @property
     def charset(self) -> str | None: ...
     def decode(self, charset: str | None = None, errors: str = "strict") -> Self: ...
+
     @property
     def body_file(self) -> SupportsRead[bytes]:
         """
@@ -75,13 +78,8 @@ class BaseRequest:
         """
         ...
     @body_file.deleter
-    def body_file(self) -> None:
-        """
-        Input stream of the request (wsgi.input).
-        Setting this property resets the content_length and seekable flag
-        (unlike setting req.body_file_raw).
-        """
-        ...
+    def body_file(self) -> None: ...
+
     content_length: SymmetricPropertyWithDelete[int | None]
     body_file_raw: SymmetricProperty[SupportsRead[bytes]]
     is_body_seekable: bool
@@ -214,26 +212,8 @@ class BaseRequest:
         ...
     host: SymmetricPropertyWithDelete[str]
     @property
-    def domain(self) -> str:
-        """
-        Returns the domain portion of the host value.  Equivalent to:
+    def domain(self) -> str: ...
 
-        .. code-block:: python
-
-           domain = request.host
-           if ':' in domain and domain[-1] != ']': # Check for ] because of IPv6
-               domain = domain.rsplit(':', 1)[0]
-
-        This will be equivalent to the domain portion of the ``HTTP_HOST``
-        value in the environment if it exists, or the ``SERVER_NAME`` value in
-        the environment if it doesn't.  For example, if the environment
-        contains an ``HTTP_HOST`` value of ``foo.example.com:8000``,
-        ``request.domain`` will return ``foo.example.com``.
-
-        Note that this value cannot be *set* on the request.  To set the host
-        value use :meth:`webob.request.Request.host` instead.
-        """
-        ...
     @property
     def body(self) -> bytes:
         """Return the content of the request body."""
@@ -243,9 +223,8 @@ class BaseRequest:
         """Return the content of the request body."""
         ...
     @body.deleter
-    def body(self) -> None:
-        """Return the content of the request body."""
-        ...
+    def body(self) -> None: ...
+
     json: SymmetricPropertyWithDelete[Any]
     json_body: SymmetricPropertyWithDelete[Any]
     text: SymmetricPropertyWithDelete[str]
@@ -274,20 +253,9 @@ class BaseRequest:
         """
         ...
     cookies: AsymmetricProperty[RequestCookies, SupportsKeysAndGetItem[str, str] | Iterable[tuple[str, str]]]
-    def copy(self) -> Self:
-        """
-        Copy the request and environment object.
+    def copy(self) -> Self: ...
+    def copy_get(self) -> Self: ...
 
-        This only does a shallow copy, except of wsgi.input
-        """
-        ...
-    def copy_get(self) -> Self:
-        """
-        Copies the request and environment object, but turning this request
-        into a GET along the way.  If this was a POST request (or any other
-        verb) then it becomes GET, and the request body is thrown away.
-        """
-        ...
     @property
     def is_body_readable(self) -> bool:
         """
@@ -296,41 +264,11 @@ class BaseRequest:
         """
         ...
     @is_body_readable.setter
-    def is_body_readable(self, flag: bool) -> None:
-        """
-        webob.is_body_readable is a flag that tells us that we can read the
-        input stream even though CONTENT_LENGTH is missing.
-        """
-        ...
-    def make_body_seekable(self) -> None:
-        """
-        This forces ``environ['wsgi.input']`` to be seekable.
-        That means that, the content is copied into a BytesIO or temporary
-        file and flagged as seekable, so that it will not be unnecessarily
-        copied again.
+    def is_body_readable(self, flag: bool) -> None: ...
 
-        After calling this method the .body_file is always seeked to the
-        start of file and .content_length is not None.
-
-        The choice to copy to BytesIO is made from
-        ``self.request_body_tempfile_limit``
-        """
-        ...
-    def copy_body(self) -> None:
-        """
-        Copies the body, in cases where it might be shared with another request
-        object and that is not desired.
-
-        This copies the body either into a BytesIO object (through setting
-        req.body) or a temporary file.
-        """
-        ...
-    def make_tempfile(self) -> io.BufferedRandom:
-        """
-        Create a tempfile to store big request body.
-        This API is not stable yet. A 'size' argument might be added.
-        """
-        ...
+    def make_body_seekable(self) -> None: ...
+    def copy_body(self) -> None: ...
+    def make_tempfile(self) -> io.BufferedRandom: ...
     def remove_conditional_headers(
         self, remove_encoding: bool = True, remove_range: bool = True, remove_match: bool = True, remove_modified: bool = True
     ) -> None:
@@ -385,19 +323,8 @@ class BaseRequest:
     @classmethod
     def from_text(cls, s: str) -> Self: ...
     @classmethod
-    def from_file(cls, fp: _SupportsReadAndNoArgReadline) -> Self:
-        """
-        Read a request from a file-like object (it must implement
-        ``.read(size)`` and ``.readline()``).
+    def from_file(cls, fp: _SupportsReadAndNoArgReadline) -> Self: ...
 
-        It will read up to the end of the request, not the end of the
-        file (unless the request is a POST or PUT and has no
-        Content-Length, in that case, the entire file is read).
-
-        This reads the request as represented by ``str(req)``; it may
-        not read every valid HTTP request properly.
-        """
-        ...
     @overload
     def call_application(
         self, application: WSGIApplication, catch_exc_info: Literal[False] = False
@@ -437,20 +364,8 @@ class BaseRequest:
         self, application: WSGIApplication, catch_exc_info: bool
     ) -> (
         tuple[str, list[tuple[str, str]], Iterable[bytes], OptExcInfo | None] | tuple[str, list[tuple[str, str]], Iterable[bytes]]
-    ):
-        """
-        Call the given WSGI application, returning ``(status_string,
-        headerlist, app_iter)``
+    ): ...
 
-        Be sure to call ``app_iter.close()`` if it's there.
-
-        If catch_exc_info is true, then returns ``(status_string,
-        headerlist, app_iter, exc_info)``, where the fourth item may
-        be None, but won't be if there was an exception.  If you don't
-        do this and there was an exception, the exception will be
-        raised directly.
-        """
-        ...
     ResponseClass: type[Response]
     def send(self, application: WSGIApplication | None = None, catch_exc_info: bool = False) -> Response:
         """
@@ -500,17 +415,15 @@ class LegacyRequest(BaseRequest):
         """upath_property('SCRIPT_NAME')"""
         ...
     @uscript_name.setter
-    def uscript_name(self, value: str) -> None:
-        """upath_property('SCRIPT_NAME')"""
-        ...
+    def uscript_name(self, value: str) -> None: ...
+
     @property  # type: ignore[override]
     def upath_info(self) -> str:
         """upath_property('PATH_INFO')"""
         ...
     @upath_info.setter
-    def upath_info(self, value: str) -> None:
-        """upath_property('PATH_INFO')"""
-        ...
+    def upath_info(self, value: str) -> None: ...
+
     def encget(self, key: str, default: Any = ..., encattr: str | None = None) -> Any: ...
 
 class AdhocAttrMixin:

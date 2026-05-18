@@ -240,14 +240,14 @@ class URL:
         ...
     query_params: Incomplete
     qp: Incomplete
+
     @property
     def path(self):
         """The URL's path, in text form."""
         ...
     @path.setter
-    def path(self, path_text) -> None:
-        """The URL's path, in text form."""
-        ...
+    def path(self, path_text) -> None: ...
+
     @property
     def uses_netloc(self):
         """

@@ -1728,48 +1728,8 @@ class Dataset(ABC, Generic[_T1_co]):
     @staticmethod
     def random(
         seed: int | None = None, rerandomize_each_iteration: bool | None = None, name: str | None = None
-    ) -> Dataset[tf.Tensor]:
-        """
-        Creates a `Dataset` of pseudorandom values.
+    ) -> Dataset[tf.Tensor]: ...
 
-        The dataset generates a sequence of uniformly distributed integer values.
-
-        `rerandomize_each_iteration` controls whether the sequence of random number
-        generated should be re-randomized for each epoch. The default value is False
-        where the dataset generates the same sequence of random numbers for each
-        epoch.
-
-        >>> ds1 = tf.data.Dataset.random(seed=4).take(10)
-        >>> ds2 = tf.data.Dataset.random(seed=4).take(10)
-        >>> print(list(ds1.as_numpy_iterator())==list(ds2.as_numpy_iterator()))
-        True
-
-        >>> ds3 = tf.data.Dataset.random(seed=4).take(10)
-        >>> ds3_first_epoch = list(ds3.as_numpy_iterator())
-        >>> ds3_second_epoch = list(ds3.as_numpy_iterator())
-        >>> print(ds3_first_epoch == ds3_second_epoch)
-        True
-
-        >>> ds4 = tf.data.Dataset.random(
-        ...     seed=4, rerandomize_each_iteration=True).take(10)
-        >>> ds4_first_epoch = list(ds4.as_numpy_iterator())
-        >>> ds4_second_epoch = list(ds4.as_numpy_iterator())
-        >>> print(ds4_first_epoch == ds4_second_epoch)
-        False
-
-        Args:
-          seed: (Optional) If specified, the dataset produces a deterministic
-            sequence of values.
-          rerandomize_each_iteration: (Optional) If set to False, the dataset
-          generates the same sequence of random numbers for each epoch. If set to
-          True, it generates a different deterministic sequence of random numbers
-          for each epoch. It is defaulted to False if left unspecified.
-          name: (Optional.) A name for the tf.data operation.
-
-        Returns:
-          Dataset: A `Dataset`.
-        """
-        ...
     @staticmethod
     @overload
     def range(stop: ScalarTensorCompatible, /, output_type: DType = ..., name: str | None = None) -> Dataset[tf.Tensor]:
@@ -1826,51 +1786,8 @@ class Dataset(ABC, Generic[_T1_co]):
         /,
         output_type: DType = ...,
         name: str | None = None,
-    ) -> Dataset[tf.Tensor]:
-        """
-        Creates a `Dataset` of a step-separated range of values.
+    ) -> Dataset[tf.Tensor]: ...
 
-        >>> ds = Dataset.range(5)
-        >>> [a.item() for a in ds.as_numpy_iterator()]
-        [0, 1, 2, 3, 4]
-        >>> ds = Dataset.range(2, 5)
-        >>> [a.item() for a in ds.as_numpy_iterator()]
-        [2, 3, 4]
-        >>> ds = Dataset.range(1, 5, 2)
-        >>> [a.item() for a in ds.as_numpy_iterator()]
-        [1, 3]
-        >>> ds = Dataset.range(1, 5, -2)
-        >>> [a.item() for a in ds.as_numpy_iterator()]
-        []
-        >>> ds = Dataset.range(5, 1)
-        >>> [a.item() for a in ds.as_numpy_iterator()]
-        []
-        >>> ds = Dataset.range(5, 1, -2)
-        >>> [a.item() for a in ds.as_numpy_iterator()]
-        [5, 3]
-        >>> ds = Dataset.range(2, 5, output_type=tf.int32)
-        >>> [a.item() for a in ds.as_numpy_iterator()]
-        [2, 3, 4]
-        >>> ds = Dataset.range(1, 5, 2, output_type=tf.float32)
-        >>> [a.item() for a in ds.as_numpy_iterator()]
-        [1.0, 3.0]
-
-        Args:
-          *args: follows the same semantics as python's range.
-            len(args) == 1 -> start = 0, stop = args[0], step = 1.
-            len(args) == 2 -> start = args[0], stop = args[1], step = 1.
-            len(args) == 3 -> start = args[0], stop = args[1], step = args[2].
-          **kwargs:
-            - output_type: Its expected dtype. (Optional, default: `tf.int64`).
-            - name: (Optional.) A name for the tf.data operation.
-
-        Returns:
-          Dataset: A `RangeDataset`.
-
-        Raises:
-          ValueError: if len(args) == 0.
-        """
-        ...
     def rebatch(
         self, batch_size: ScalarTensorCompatible, drop_remainder: bool = False, name: str | None = None
     ) -> Dataset[_T1_co]:
@@ -2613,180 +2530,9 @@ class Dataset(ABC, Generic[_T1_co]):
         stride: ScalarTensorCompatible = 1,
         drop_remainder: bool = False,
         name: str | None = None,
-    ) -> Dataset[Dataset[_T1_co]]:
-        """
-        Returns a dataset of "windows".
+    ) -> Dataset[Dataset[_T1_co]]: ...
+    def with_options(self, options: Options, name: str | None = None) -> Dataset[_T1_co]: ...
 
-        Each "window" is a dataset that contains a subset of elements of the
-        input dataset. These are finite datasets of size `size` (or possibly fewer
-        if there are not enough input elements to fill the window and
-        `drop_remainder` evaluates to `False`).
-
-        For example:
-
-        >>> dataset = tf.data.Dataset.range(7).window(3)
-        >>> for window in dataset:
-        ...   print(window)
-        <...Dataset element_spec=TensorSpec(shape=(), dtype=tf.int64, name=None)>
-        <...Dataset element_spec=TensorSpec(shape=(), dtype=tf.int64, name=None)>
-        <...Dataset element_spec=TensorSpec(shape=(), dtype=tf.int64, name=None)>
-
-        Since windows are datasets, they can be iterated over:
-
-        >>> for window in dataset:
-        ...   print([a.item() for a in window.as_numpy_iterator()])
-        [0, 1, 2]
-        [3, 4, 5]
-        [6]
-
-        #### Shift
-
-        The `shift` argument determines the number of input elements to shift
-        between the start of each window. If windows and elements are both numbered
-        starting at 0, the first element in window `k` will be element `k * shift`
-        of the input dataset. In particular, the first element of the first window
-        will always be the first element of the input dataset.
-
-        >>> dataset = tf.data.Dataset.range(7).window(3, shift=1,
-        ...                                           drop_remainder=True)
-        >>> for window in dataset:
-        ...   print([a.item() for a in window.as_numpy_iterator()])
-        [0, 1, 2]
-        [1, 2, 3]
-        [2, 3, 4]
-        [3, 4, 5]
-        [4, 5, 6]
-
-        #### Stride
-
-        The `stride` argument determines the stride between input elements within a
-        window.
-
-        >>> dataset = tf.data.Dataset.range(7).window(3, shift=1, stride=2,
-        ...                                           drop_remainder=True)
-        >>> for window in dataset:
-        ...   print([a.item() for a in window.as_numpy_iterator()])
-        [0, 2, 4]
-        [1, 3, 5]
-        [2, 4, 6]
-
-        #### Nested elements
-
-        When the `window` transformation is applied to a dataset whos elements are
-        nested structures, it produces a dataset where the elements have the same
-        nested structure but each leaf is replaced by a window. In other words,
-        the nesting is applied outside of the windows as opposed inside of them.
-
-        The type signature is:
-
-        ```
-        def window(
-            self: Dataset[Nest[T]], ...
-        ) -> Dataset[Nest[Dataset[T]]]
-        ```
-
-        Applying `window` to a `Dataset` of tuples gives a tuple of windows:
-
-        >>> dataset = tf.data.Dataset.from_tensor_slices(([1, 2, 3, 4, 5],
-        ...                                               [6, 7, 8, 9, 10]))
-        >>> dataset = dataset.window(2)
-        >>> windows = next(iter(dataset))
-        >>> windows
-        (<...Dataset element_spec=TensorSpec(shape=(), dtype=tf.int32, name=None)>,
-         <...Dataset element_spec=TensorSpec(shape=(), dtype=tf.int32, name=None)>)
-
-        >>> def to_numpy(ds):
-        ...   return [a.item() for a in ds.as_numpy_iterator()]
-        >>>
-        >>> for windows in dataset:
-        ...   print(to_numpy(windows[0]), to_numpy(windows[1]))
-        [1, 2] [6, 7]
-        [3, 4] [8, 9]
-        [5] [10]
-
-        Applying `window` to a `Dataset` of dictionaries gives a dictionary of
-        `Datasets`:
-
-        >>> dataset = tf.data.Dataset.from_tensor_slices({'a': [1, 2, 3],
-        ...                                               'b': [4, 5, 6],
-        ...                                               'c': [7, 8, 9]})
-        >>> dataset = dataset.window(2)
-        >>> def to_numpy(ds):
-        ...   return [a.item() for a in ds.as_numpy_iterator()]
-        >>>
-        >>> for windows in dataset:
-        ...   print(tf.nest.map_structure(to_numpy, windows))
-        {'a': [1, 2], 'b': [4, 5], 'c': [7, 8]}
-        {'a': [3], 'b': [6], 'c': [9]}
-
-        #### Flatten a dataset of windows
-
-        The `Dataset.flat_map` and `Dataset.interleave` methods can be used to
-        flatten a dataset of windows into a single dataset.
-
-        The argument to `flat_map` is a function that takes an element from the
-        dataset and returns a `Dataset`. `flat_map` chains together the resulting
-        datasets sequentially.
-
-        For example, to turn each window into a dense tensor:
-
-        >>> dataset = tf.data.Dataset.range(7).window(3, shift=1,
-        ...                                           drop_remainder=True)
-        >>> batched = dataset.flat_map(lambda x:x.batch(3))
-        >>> for batch in batched:
-        ...   print(batch.numpy())
-        [0 1 2]
-        [1 2 3]
-        [2 3 4]
-        [3 4 5]
-        [4 5 6]
-
-        Args:
-          size: A `tf.int64` scalar `tf.Tensor`, representing the number of elements
-            of the input dataset to combine into a window. Must be positive.
-          shift: (Optional.) A `tf.int64` scalar `tf.Tensor`, representing the
-            number of input elements by which the window moves in each iteration.
-            Defaults to `size`. Must be positive.
-          stride: (Optional.) A `tf.int64` scalar `tf.Tensor`, representing the
-            stride of the input elements in the sliding window. Must be positive.
-            The default value of 1 means "retain every input element".
-          drop_remainder: (Optional.) A `tf.bool` scalar `tf.Tensor`, representing
-            whether the last windows should be dropped if their size is smaller than
-            `size`.
-          name: (Optional.) A name for the tf.data operation.
-
-        Returns:
-          A new `Dataset` with the transformation applied as described above.
-        """
-        ...
-    def with_options(self, options: Options, name: str | None = None) -> Dataset[_T1_co]:
-        """
-        Returns a new `tf.data.Dataset` with the given options set.
-
-        The options are "global" in the sense they apply to the entire dataset.
-        If options are set multiple times, they are merged as long as different
-        options do not use different non-default values.
-
-        >>> ds = tf.data.Dataset.range(5)
-        >>> ds = ds.interleave(lambda x: tf.data.Dataset.range(5),
-        ...                    cycle_length=3,
-        ...                    num_parallel_calls=3)
-        >>> options = tf.data.Options()
-        >>> # This will make the interleave order non-deterministic.
-        >>> options.deterministic = False
-        >>> ds = ds.with_options(options)
-
-        Args:
-          options: A `tf.data.Options` that identifies the options the use.
-          name: (Optional.) A name for the tf.data operation.
-
-        Returns:
-          A new `Dataset` with the transformation applied as described above.
-
-        Raises:
-          ValueError: when an option is set more than once to a non-default value
-        """
-        ...
     @overload
     @staticmethod
     def zip(
@@ -2899,74 +2645,9 @@ class Dataset(ABC, Generic[_T1_co]):
     @staticmethod
     def zip(
         *, datasets: tuple[Dataset[_T2], Dataset[_T3]] | None = None, name: str | None = None
-    ) -> Dataset[tuple[_T2, _T3]]:
-        """
-        Creates a `Dataset` by zipping together the given datasets.
+    ) -> Dataset[tuple[_T2, _T3]]: ...
 
-        This method has similar semantics to the built-in `zip()` function
-        in Python, with the main difference being that the `datasets`
-        argument can be a (nested) structure of `Dataset` objects. The supported
-        nesting mechanisms are documented
-        [here] (https://www.tensorflow.org/guide/data#dataset_structure).
-
-        >>> # The datasets or nested structure of datasets `*args` argument
-        >>> # determines the structure of elements in the resulting dataset.
-        >>> a = tf.data.Dataset.range(1, 4)  # ==> [ 1, 2, 3 ]
-        >>> b = tf.data.Dataset.range(4, 7)  # ==> [ 4, 5, 6 ]
-        >>> ds = tf.data.Dataset.zip(a, b)
-        >>> [(i.item(), j.item()) for i, j in ds.as_numpy_iterator()]
-        [(1, 4), (2, 5), (3, 6)]
-        >>> ds = tf.data.Dataset.zip(b, a)
-        >>> [(i.item(), j.item()) for i, j in ds.as_numpy_iterator()]
-        [(4, 1), (5, 2), (6, 3)]
-        >>>
-        >>> # The `datasets` argument may contain an arbitrary number of datasets.
-        >>> c = tf.data.Dataset.range(7, 13).batch(2)  # ==> [ [7, 8],
-        ...                                            #       [9, 10],
-        ...                                            #       [11, 12] ]
-        >>> ds = tf.data.Dataset.zip(a, b, c)
-        >>> for i, j, k in ds.as_numpy_iterator():
-        ...   print(i.item(), j.item(), k)
-        1 4 [7 8]
-        2 5 [ 9 10]
-        3 6 [11 12]
-        >>>
-        >>> # The number of elements in the resulting dataset is the same as
-        >>> # the size of the smallest dataset in `datasets`.
-        >>> d = tf.data.Dataset.range(13, 15)  # ==> [ 13, 14 ]
-        >>> ds = tf.data.Dataset.zip(a, d)
-        >>> [(i.item(), j.item()) for i, j in ds.as_numpy_iterator()]
-        [(1, 13), (2, 14)]
-
-        Args:
-          *args: Datasets or nested structures of datasets to zip together. This
-            can't be set if `datasets` is set.
-          datasets: A (nested) structure of datasets. This can't be set if `*args`
-            is set. Note that this exists only for backwards compatibility and it is
-            preferred to use *args.
-          name: (Optional.) A name for the tf.data operation.
-
-        Returns:
-          A new `Dataset` with the transformation applied as described above.
-        """
-        ...
-    def __len__(self) -> int:
-        """
-        Returns the length of the dataset if it is known and finite.
-
-        This method requires that you are running in eager mode, and that the
-        length of the dataset is known and non-infinite. When the length may be
-        unknown or infinite, or if you are running in graph mode, use
-        `tf.data.Dataset.cardinality` instead.
-
-        Returns:
-          An integer representing the length of the dataset.
-
-        Raises:
-          RuntimeError: If the dataset length is unknown or infinite, or if eager
-            execution is not enabled.
-        """
-        ...
+    def __len__(self) -> int: ...
     def __nonzero__(self) -> bool: ...
     def __getattr__(self, name: str) -> Incomplete: ...
 

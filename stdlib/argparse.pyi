@@ -168,12 +168,8 @@ class _ActionsContainer:
         dest: str | None = ...,
         version: str = ...,
         **kwargs: Any,
-    ) -> Action:
-        """
-        add_argument(dest, ..., name=value, ...)
-        add_argument(option_string, option_string, ..., name=value, ...)
-        """
-        ...
+    ) -> Action: ...
+
     @overload
     def add_argument_group(
         self,
@@ -195,6 +191,7 @@ class _ActionsContainer:
         argument_default: Any = ...,
         conflict_handler: str = ...,
     ) -> _ArgumentGroup: ...
+
     def add_mutually_exclusive_group(self, *, required: bool = False) -> _MutuallyExclusiveGroup: ...
     def _add_action(self, action: _ActionT) -> _ActionT: ...
     def _remove_action(self, action: Action) -> None: ...
@@ -320,6 +317,7 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
     def parse_args(self, args: Iterable[str] | None, namespace: _N) -> _N: ...
     @overload
     def parse_args(self, *, namespace: _N) -> _N: ...
+
     @overload
     def add_subparsers(
         self: _ArgumentParserT,
@@ -349,6 +347,7 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
         help: str | None = None,
         metavar: str | None = None,
     ) -> _SubParsersAction[_ArgumentParserT]: ...
+
     def print_usage(self, file: SupportsWrite[str] | None = None) -> None: ...
     def print_help(self, file: SupportsWrite[str] | None = None) -> None: ...
     if sys.version_info >= (3, 15):
@@ -365,25 +364,18 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
     def parse_known_args(self, args: Iterable[str] | None, namespace: _N) -> tuple[_N, list[str]]: ...
     @overload
     def parse_known_args(self, *, namespace: _N) -> tuple[_N, list[str]]: ...
+
     def convert_arg_line_to_args(self, arg_line: str) -> list[str]: ...
     def exit(self, status: int = 0, message: str | None = None) -> NoReturn: ...
-    def error(self, message: str) -> NoReturn:
-        """
-        error(message: string)
+    def error(self, message: str) -> NoReturn: ...
 
-        Prints a usage message incorporating the message to stderr and
-        exits.
-
-        If you override this in a subclass, it should not return -- it
-        should either exit or raise an exception.
-        """
-        ...
     @overload
     def parse_intermixed_args(self, args: Iterable[str] | None = None, namespace: None = None) -> Namespace: ...
     @overload
     def parse_intermixed_args(self, args: Iterable[str] | None, namespace: _N) -> _N: ...
     @overload
     def parse_intermixed_args(self, *, namespace: _N) -> _N: ...
+
     @overload
     def parse_known_intermixed_args(
         self, args: Iterable[str] | None = None, namespace: None = None
@@ -392,6 +384,7 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
     def parse_known_intermixed_args(self, args: Iterable[str] | None, namespace: _N) -> tuple[_N, list[str]]: ...
     @overload
     def parse_known_intermixed_args(self, *, namespace: _N) -> tuple[_N, list[str]]: ...
+
     # undocumented
     def _get_optional_actions(self) -> list[Action]: ...
     def _get_positional_actions(self) -> list[Action]: ...
@@ -762,6 +755,7 @@ class FileType:
 class _ArgumentGroup(_ActionsContainer):
     title: str | None
     _group_actions: list[Action]
+
     @overload
     def __init__(
         self,

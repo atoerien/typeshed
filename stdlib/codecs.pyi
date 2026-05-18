@@ -193,31 +193,10 @@ else:
             _is_text_encoding: bool | None = None,
         ) -> Self: ...
 
-def getencoder(encoding: str) -> _Encoder:
-    """
-    Lookup up the codec for the given encoding and return
-    its encoder function.
+def getencoder(encoding: str) -> _Encoder: ...
+def getdecoder(encoding: str) -> _Decoder: ...
+def getincrementalencoder(encoding: str) -> _IncrementalEncoder: ...
 
-    Raises a LookupError in case the encoding cannot be found.
-    """
-    ...
-def getdecoder(encoding: str) -> _Decoder:
-    """
-    Lookup up the codec for the given encoding and return
-    its decoder function.
-
-    Raises a LookupError in case the encoding cannot be found.
-    """
-    ...
-def getincrementalencoder(encoding: str) -> _IncrementalEncoder:
-    """
-    Lookup up the codec for the given encoding and return
-    its IncrementalEncoder class or factory function.
-
-    Raises a LookupError in case the encoding cannot be found
-    or the codecs doesn't provide an incremental encoder.
-    """
-    ...
 @overload
 def getincrementaldecoder(encoding: _BufferedEncoding) -> _BufferedIncrementalDecoder:
     """
@@ -229,31 +208,10 @@ def getincrementaldecoder(encoding: _BufferedEncoding) -> _BufferedIncrementalDe
     """
     ...
 @overload
-def getincrementaldecoder(encoding: str) -> _IncrementalDecoder:
-    """
-    Lookup up the codec for the given encoding and return
-    its IncrementalDecoder class or factory function.
+def getincrementaldecoder(encoding: str) -> _IncrementalDecoder: ...
 
-    Raises a LookupError in case the encoding cannot be found
-    or the codecs doesn't provide an incremental decoder.
-    """
-    ...
-def getreader(encoding: str) -> _StreamReader:
-    """
-    Lookup up the codec for the given encoding and return
-    its StreamReader class or factory function.
-
-    Raises a LookupError in case the encoding cannot be found.
-    """
-    ...
-def getwriter(encoding: str) -> _StreamWriter:
-    """
-    Lookup up the codec for the given encoding and return
-    its StreamWriter class or factory function.
-
-    Raises a LookupError in case the encoding cannot be found.
-    """
-    ...
+def getreader(encoding: str) -> _StreamReader: ...
+def getwriter(encoding: str) -> _StreamWriter: ...
 @deprecated("Deprecated since Python 3.14. Use `open()` instead.")
 def open(
     filename: str, mode: str = "r", encoding: str | None = None, errors: str = "strict", buffering: int = -1

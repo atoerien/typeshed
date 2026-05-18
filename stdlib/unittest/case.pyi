@@ -188,83 +188,47 @@ class TestCase:
     if sys.version_info < (3, 11):
         def _addSkip(self, result: unittest.result.TestResult, test_case: TestCase, reason: str) -> None: ...
 
-    def assertEqual(self, first: Any, second: Any, msg: Any = None) -> None:
-        """
-        Fail if the two objects are unequal as determined by the '=='
-        operator.
-        """
-        ...
-    def assertNotEqual(self, first: Any, second: Any, msg: Any = None) -> None:
-        """
-        Fail if the two objects are equal as determined by the '!='
-        operator.
-        """
-        ...
-    def assertTrue(self, expr: Any, msg: Any = None) -> None:
-        """Check that the expression is true."""
-        ...
-    def assertFalse(self, expr: Any, msg: Any = None) -> None:
-        """Check that the expression is false."""
-        ...
-    def assertIs(self, expr1: object, expr2: object, msg: Any = None) -> None:
-        """Just like self.assertTrue(a is b), but with a nicer default message."""
-        ...
-    def assertIsNot(self, expr1: object, expr2: object, msg: Any = None) -> None:
-        """Just like self.assertTrue(a is not b), but with a nicer default message."""
-        ...
-    def assertIsNone(self, obj: object, msg: Any = None) -> None:
-        """Same as self.assertTrue(obj is None), with a nicer default message."""
-        ...
-    def assertIsNotNone(self, obj: object, msg: Any = None) -> None:
-        """Included for symmetry with assertIsNone."""
-        ...
-    def assertIn(self, member: Any, container: Iterable[Any] | Container[Any], msg: Any = None) -> None:
-        """Just like self.assertTrue(a in b), but with a nicer default message."""
-        ...
-    def assertNotIn(self, member: Any, container: Iterable[Any] | Container[Any], msg: Any = None) -> None:
-        """Just like self.assertTrue(a not in b), but with a nicer default message."""
-        ...
-    def assertIsInstance(self, obj: object, cls: _ClassInfo, msg: Any = None) -> None:
-        """
-        Same as self.assertTrue(isinstance(obj, cls)), with a nicer
-        default message.
-        """
-        ...
-    def assertNotIsInstance(self, obj: object, cls: _ClassInfo, msg: Any = None) -> None:
-        """Included for symmetry with assertIsInstance."""
-        ...
+    def assertEqual(self, first: Any, second: Any, msg: Any = None) -> None: ...
+    def assertNotEqual(self, first: Any, second: Any, msg: Any = None) -> None: ...
+    def assertTrue(self, expr: Any, msg: Any = None) -> None: ...
+    def assertFalse(self, expr: Any, msg: Any = None) -> None: ...
+    def assertIs(self, expr1: object, expr2: object, msg: Any = None) -> None: ...
+    def assertIsNot(self, expr1: object, expr2: object, msg: Any = None) -> None: ...
+    def assertIsNone(self, obj: object, msg: Any = None) -> None: ...
+    def assertIsNotNone(self, obj: object, msg: Any = None) -> None: ...
+    def assertIn(self, member: Any, container: Iterable[Any] | Container[Any], msg: Any = None) -> None: ...
+    def assertNotIn(self, member: Any, container: Iterable[Any] | Container[Any], msg: Any = None) -> None: ...
+    def assertIsInstance(self, obj: object, cls: _ClassInfo, msg: Any = None) -> None: ...
+    def assertNotIsInstance(self, obj: object, cls: _ClassInfo, msg: Any = None) -> None: ...
+
     @overload
     def assertGreater(self, a: SupportsDunderGT[_T], b: _T, msg: Any = None) -> None:
         """Just like self.assertTrue(a > b), but with a nicer default message."""
         ...
     @overload
-    def assertGreater(self, a: _T, b: SupportsDunderLT[_T], msg: Any = None) -> None:
-        """Just like self.assertTrue(a > b), but with a nicer default message."""
-        ...
+    def assertGreater(self, a: _T, b: SupportsDunderLT[_T], msg: Any = None) -> None: ...
+
     @overload
     def assertGreaterEqual(self, a: SupportsDunderGE[_T], b: _T, msg: Any = None) -> None:
         """Just like self.assertTrue(a >= b), but with a nicer default message."""
         ...
     @overload
-    def assertGreaterEqual(self, a: _T, b: SupportsDunderLE[_T], msg: Any = None) -> None:
-        """Just like self.assertTrue(a >= b), but with a nicer default message."""
-        ...
+    def assertGreaterEqual(self, a: _T, b: SupportsDunderLE[_T], msg: Any = None) -> None: ...
+
     @overload
     def assertLess(self, a: SupportsDunderLT[_T], b: _T, msg: Any = None) -> None:
         """Just like self.assertTrue(a < b), but with a nicer default message."""
         ...
     @overload
-    def assertLess(self, a: _T, b: SupportsDunderGT[_T], msg: Any = None) -> None:
-        """Just like self.assertTrue(a < b), but with a nicer default message."""
-        ...
+    def assertLess(self, a: _T, b: SupportsDunderGT[_T], msg: Any = None) -> None: ...
+
     @overload
     def assertLessEqual(self, a: SupportsDunderLE[_T], b: _T, msg: Any = None) -> None:
         """Just like self.assertTrue(a <= b), but with a nicer default message."""
         ...
     @overload
-    def assertLessEqual(self, a: _T, b: SupportsDunderGE[_T], msg: Any = None) -> None:
-        """Just like self.assertTrue(a <= b), but with a nicer default message."""
-        ...
+    def assertLessEqual(self, a: _T, b: SupportsDunderGE[_T], msg: Any = None) -> None: ...
+
     # `assertRaises`, `assertRaisesRegex`, and `assertRaisesRegexp`
     # are not using `ParamSpec` intentionally,
     # because they might be used with explicitly wrong arg types to raise some error in tests.
@@ -306,34 +270,8 @@ class TestCase:
     @overload
     def assertRaises(
         self, expected_exception: type[_E] | tuple[type[_E], ...], *, msg: Any = ...
-    ) -> _AssertRaisesContext[_E]:
-        """
-        Fail unless an exception of class expected_exception is raised
-        by the callable when invoked with specified positional and
-        keyword arguments. If a different type of exception is
-        raised, it will not be caught, and the test case will be
-        deemed to have suffered an error, exactly as for an
-        unexpected exception.
+    ) -> _AssertRaisesContext[_E]: ...
 
-        If called with the callable and arguments omitted, will return a
-        context object used like this::
-
-             with self.assertRaises(SomeException):
-                 do_something()
-
-        An optional keyword argument 'msg' can be provided when assertRaises
-        is used as a context object.
-
-        The context manager keeps a reference to the exception as
-        the 'exception' attribute. This allows you to inspect the
-        exception after the assertion::
-
-            with self.assertRaises(SomeException) as cm:
-                do_something()
-            the_exception = cm.exception
-            self.assertEqual(the_exception.error_code, 3)
-        """
-        ...
     @overload
     def assertRaisesRegex(
         self,
@@ -359,20 +297,8 @@ class TestCase:
     @overload
     def assertRaisesRegex(
         self, expected_exception: type[_E] | tuple[type[_E], ...], expected_regex: str | Pattern[str], *, msg: Any = ...
-    ) -> _AssertRaisesContext[_E]:
-        """
-        Asserts that the message in a raised exception matches a regex.
+    ) -> _AssertRaisesContext[_E]: ...
 
-        Args:
-            expected_exception: Exception class expected to be raised.
-            expected_regex: Regex (re.Pattern object or string) expected
-                    to be found in error message.
-            args: Function to be called and extra positional args.
-            kwargs: Extra kwargs.
-            msg: Optional message used in case of failure. Can only be used
-                    when assertRaisesRegex is used as a context manager.
-        """
-        ...
     @overload
     def assertWarns(
         self,
@@ -413,36 +339,8 @@ class TestCase:
     @overload
     def assertWarns(
         self, expected_warning: type[Warning] | tuple[type[Warning], ...], *, msg: Any = ...
-    ) -> _AssertWarnsContext:
-        """
-        Fail unless a warning of class warnClass is triggered
-        by the callable when invoked with specified positional and
-        keyword arguments.  If a different type of warning is
-        triggered, it will not be handled: depending on the other
-        warning filtering rules in effect, it might be silenced, printed
-        out, or raised as an exception.
+    ) -> _AssertWarnsContext: ...
 
-        If called with the callable and arguments omitted, will return a
-        context object used like this::
-
-             with self.assertWarns(SomeWarning):
-                 do_something()
-
-        An optional keyword argument 'msg' can be provided when assertWarns
-        is used as a context object.
-
-        The context manager keeps a reference to the first matching
-        warning as the 'warning' attribute; similarly, the 'filename'
-        and 'lineno' attributes give you information about the line
-        of Python code from which the warning was triggered.
-        This allows you to inspect the warning after the assertion::
-
-            with self.assertWarns(SomeWarning) as cm:
-                do_something()
-            the_warning = cm.warning
-            self.assertEqual(the_warning.some_attribute, 147)
-        """
-        ...
     @overload
     def assertWarnsRegex(
         self,
@@ -471,23 +369,8 @@ class TestCase:
     @overload
     def assertWarnsRegex(
         self, expected_warning: type[Warning] | tuple[type[Warning], ...], expected_regex: str | Pattern[str], *, msg: Any = ...
-    ) -> _AssertWarnsContext:
-        """
-        Asserts that the message in a triggered warning matches a regexp.
-        Basic functioning is similar to assertWarns() with the addition
-        that only warnings whose messages also match the regular expression
-        are considered successful matches.
+    ) -> _AssertWarnsContext: ...
 
-        Args:
-            expected_warning: Warning class expected to be triggered.
-            expected_regex: Regex (re.Pattern object or string) expected
-                    to be found in error message.
-            args: Function to be called and extra positional args.
-            kwargs: Extra kwargs.
-            msg: Optional message used in case of failure. Can only be used
-                    when assertWarnsRegex is used as a context manager.
-        """
-        ...
     if sys.version_info >= (3, 15):
         def assertLogs(
             self,
@@ -523,14 +406,8 @@ class TestCase:
 
     def assertNoLogs(
         self, logger: str | logging.Logger | None = None, level: int | str | None = None
-    ) -> _AssertLogsContext[None]:
-        """
-        Fail unless no log messages of level *level* or higher are emitted
-        on *logger_name* or its children.
+    ) -> _AssertLogsContext[None]: ...
 
-        This method must be used as a context manager.
-        """
-        ...
     @overload
     def assertAlmostEqual(self, first: _S, second: _S, places: None, msg: Any, delta: _SupportsAbsAndDunderGE) -> None:
         """
@@ -596,21 +473,8 @@ class TestCase:
         places: int | None = None,
         msg: Any = None,
         delta: None = None,
-    ) -> None:
-        """
-        Fail if the two objects are unequal as determined by their
-        difference rounded to the given number of decimal places
-        (default 7) and comparing to zero, or by comparing that the
-        difference between the two objects is more than the given
-        delta.
+    ) -> None: ...
 
-        Note that decimal places (from zero) are usually not the same
-        as significant digits (measured from the most significant digit).
-
-        If the two objects compare equal then they will automatically
-        compare almost equal.
-        """
-        ...
     @overload
     def assertNotAlmostEqual(self, first: _S, second: _S, places: None, msg: Any, delta: _SupportsAbsAndDunderGE) -> None:
         """
@@ -670,56 +534,13 @@ class TestCase:
         places: int | None = None,
         msg: Any = None,
         delta: None = None,
-    ) -> None:
-        """
-        Fail if the two objects are equal as determined by their
-        difference rounded to the given number of decimal places
-        (default 7) and comparing to zero, or by comparing that the
-        difference between the two objects is less than the given delta.
+    ) -> None: ...
 
-        Note that decimal places (from zero) are usually not the same
-        as significant digits (measured from the most significant digit).
-
-        Objects that are equal automatically fail.
-        """
-        ...
-    def assertRegex(self, text: AnyStr, expected_regex: AnyStr | Pattern[AnyStr], msg: Any = None) -> None:
-        """Fail the test unless the text matches the regular expression."""
-        ...
-    def assertNotRegex(self, text: AnyStr, unexpected_regex: AnyStr | Pattern[AnyStr], msg: Any = None) -> None:
-        """Fail the test if the text matches the regular expression."""
-        ...
-    def assertCountEqual(self, first: Iterable[Any], second: Iterable[Any], msg: Any = None) -> None:
-        """
-        Asserts that two iterables have the same elements, the same number of
-        times, without regard to order.
-
-            self.assertEqual(Counter(list(first)),
-                             Counter(list(second)))
-
-         Example:
-            - [0, 1, 1] and [1, 0, 1] compare equal.
-            - [0, 0, 1] and [0, 1] compare unequal.
-        """
-        ...
-    def addTypeEqualityFunc(self, typeobj: type[Any], function: Callable[..., None]) -> None:
-        """
-        Add a type specific assertEqual style function to compare a type.
-
-        This method is for use by TestCase subclasses that need to register
-        their own type equality functions to provide nicer error messages.
-
-        Args:
-            typeobj: The data type to call this function on when both values
-                    are of the same type in assertEqual().
-            function: The callable taking two arguments and an optional
-                    msg= argument that raises self.failureException with a
-                    useful error message when the two arguments are not equal.
-        """
-        ...
-    def assertMultiLineEqual(self, first: str, second: str, msg: Any = None) -> None:
-        """Assert that two multi-line strings are equal."""
-        ...
+    def assertRegex(self, text: AnyStr, expected_regex: AnyStr | Pattern[AnyStr], msg: Any = None) -> None: ...
+    def assertNotRegex(self, text: AnyStr, unexpected_regex: AnyStr | Pattern[AnyStr], msg: Any = None) -> None: ...
+    def assertCountEqual(self, first: Iterable[Any], second: Iterable[Any], msg: Any = None) -> None: ...
+    def addTypeEqualityFunc(self, typeobj: type[Any], function: Callable[..., None]) -> None: ...
+    def assertMultiLineEqual(self, first: str, second: str, msg: Any = None) -> None: ...
     def assertSequenceEqual(
         self, seq1: Sequence[Any], seq2: Sequence[Any], msg: Any = None, seq_type: type[Sequence[Any]] | None = None
     ) -> None:

@@ -251,72 +251,8 @@ class tqdm(Comparable, Generic[_T]):
         unit_divisor: float | None = 1000,
         initial: float | None = 0,
         colour: str | None = None,
-    ) -> str:
-        """
-        Return a string-based progress bar given some parameters
+    ) -> str: ...
 
-        Parameters
-        ----------
-        n  : int or float
-            Number of finished iterations.
-        total  : int or float
-            The expected total number of iterations. If meaningless (None),
-            only basic progress statistics are displayed (no ETA).
-        elapsed  : float
-            Number of seconds passed since start.
-        ncols  : int, optional
-            The width of the entire output message. If specified,
-            dynamically resizes `{bar}` to stay within this bound
-            [default: None]. If `0`, will not print any bar (only stats).
-            The fallback is `{bar:10}`.
-        prefix  : str, optional
-            Prefix message (included in total width) [default: ''].
-            Use as {desc} in bar_format string.
-        ascii  : bool, optional or str, optional
-            If not set, use unicode (smooth blocks) to fill the meter
-            [default: False]. The fallback is to use ASCII characters
-            " 123456789#".
-        unit  : str, optional
-            The iteration unit [default: 'it'].
-        unit_scale  : bool or int or float, optional
-            If 1 or True, the number of iterations will be printed with an
-            appropriate SI metric prefix (k = 10^3, M = 10^6, etc.)
-            [default: False]. If any other non-zero number, will scale
-            `total` and `n`.
-        rate  : float, optional
-            Manual override for iteration rate.
-            If [default: None], uses n/elapsed.
-        bar_format  : str, optional
-            Specify a custom bar string formatting. May impact performance.
-            [default: '{l_bar}{bar}{r_bar}'], where
-            l_bar='{desc}: {percentage:3.0f}%|' and
-            r_bar='| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, '
-              '{rate_fmt}{postfix}]'
-            Possible vars: l_bar, bar, r_bar, n, n_fmt, total, total_fmt,
-              percentage, elapsed, elapsed_s, ncols, nrows, desc, unit,
-              rate, rate_fmt, rate_noinv, rate_noinv_fmt,
-              rate_inv, rate_inv_fmt, postfix, unit_divisor,
-              remaining, remaining_s, eta.
-            Note that a trailing ": " is automatically removed after {desc}
-            if the latter is empty.
-        postfix  : *, optional
-            Similar to `prefix`, but placed at the end
-            (e.g. for additional stats).
-            Note: postfix is usually a string (not a dict) for this method,
-            and will if possible be set to postfix = ', ' + postfix.
-            However other types are supported (#382).
-        unit_divisor  : float, optional
-            [default: 1000], ignored unless `unit_scale` is True.
-        initial  : int or float, optional
-            The initial counter value [default: 0].
-        colour  : str, optional
-            Bar colour (e.g. 'green', '#00ff00').
-
-        Returns
-        -------
-        out  : Formatted meter and stats, ready to display.
-        """
-        ...
     @overload
     def __init__(
         self,
@@ -379,6 +315,7 @@ class tqdm(Comparable, Generic[_T]):
         gui: bool = False,
         **kwargs,
     ) -> None: ...
+
     def __new__(cls, *_, **__) -> Self: ...
     @classmethod
     def write(cls, s: str, file: SupportsWrite[str] | None = None, end: str = "\n", nolock: bool = False) -> None:
@@ -604,23 +541,9 @@ class tqdm(Comparable, Generic[_T]):
         ...
     def moveto(self, n) -> None: ...
     @property
-    def format_dict(self) -> MutableMapping[str, Any]:
-        """Public API for read-only member access."""
-        ...
-    def display(self, msg: str | None = None, pos: int | None = None) -> None:
-        """
-        Use `self.sp` to display `msg` in the specified `pos`.
+    def format_dict(self) -> MutableMapping[str, Any]: ...
+    def display(self, msg: str | None = None, pos: int | None = None) -> None: ...
 
-        Consider overloading this function when inheriting to use e.g.:
-        `self.some_frontend(**self.format_dict)` instead of `self.sp`.
-
-        Parameters
-        ----------
-        msg  : str, optional. What to display (default: `repr(self)`).
-        pos  : int, optional. Position to `moveto`
-          (default: `abs(self.pos)`).
-        """
-        ...
     @overload
     @classmethod
     def wrapattr(

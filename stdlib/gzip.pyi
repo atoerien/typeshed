@@ -193,6 +193,7 @@ class GzipFile(BaseStream):
     name: str
     compress: zlib._Compress
     fileobj: _ReadableFileobj | _WritableFileobj
+
     @overload
     def __init__(
         self,
@@ -373,41 +374,8 @@ class GzipFile(BaseStream):
         compresslevel: int = 9,
         fileobj: _ReadableFileobj | _WritableFileobj | None = None,
         mtime: float | None = None,
-    ) -> None:
-        """
-        Constructor for the GzipFile class.
+    ) -> None: ...
 
-        At least one of fileobj and filename must be given a
-        non-trivial value.
-
-        The new class instance is based on fileobj, which can be a regular
-        file, an io.BytesIO object, or any other object which simulates a file.
-        It defaults to None, in which case filename is opened to provide
-        a file object.
-
-        When fileobj is not None, the filename argument is only used to be
-        included in the gzip file header, which may include the original
-        filename of the uncompressed file.  It defaults to the filename of
-        fileobj, if discernible; otherwise, it defaults to the empty string,
-        and in this case the original filename is not included in the header.
-
-        The mode argument can be any of 'r', 'rb', 'a', 'ab', 'w', 'wb', 'x', or
-        'xb' depending on whether the file will be read or written.  The default
-        is the mode of fileobj if discernible; otherwise, the default is 'rb'.
-        A mode of 'r' is equivalent to one of 'rb', and similarly for 'w' and
-        'wb', 'a' and 'ab', and 'x' and 'xb'.
-
-        The compresslevel argument is an integer from 0 to 9 controlling the
-        level of compression; 1 is fastest and produces the least compression,
-        and 9 is slowest and produces the most compression. 0 is no compression
-        at all. The default is 9.
-
-        The optional mtime argument is the timestamp requested by gzip. The time
-        is in Unix format, i.e., seconds since 00:00:00 UTC, January 1, 1970.
-        If mtime is omitted or None, the current time is used. Use mtime = 0
-        to generate a compressed stream that does not depend on creation time.
-        """
-        ...
     if sys.version_info < (3, 12):
         @property
         @deprecated("Deprecated since Python 2.6; removed in Python 3.12. Use `name` attribute instead.")

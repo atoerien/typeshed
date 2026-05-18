@@ -144,6 +144,7 @@ class PivotFilter(Serialisable):
     autoFilter: Typed[AutoFilter, Literal[False]]
     extLst: Typed[ExtensionList, Literal[True]]
     __elements__: ClassVar[tuple[str, ...]]
+
     @overload
     def __init__(
         self,
@@ -224,6 +225,7 @@ class MemberProperty(Serialisable):
     pLen: Integer[Literal[True]]
     level: Integer[Literal[True]]
     field: Integer[Literal[False]]
+
     @overload
     def __init__(
         self,
@@ -375,6 +377,7 @@ class ChartFormat(Serialisable):
     series: Bool[Literal[False]]
     pivotArea: Typed[PivotArea, Literal[False]]
     __elements__: ClassVar[tuple[str, ...]]
+
     @overload
     def __init__(
         self, chart: ConvertibleToInt, format: ConvertibleToInt, series: _ConvertibleToBool = None, *, pivotArea: PivotArea
@@ -392,6 +395,7 @@ class ConditionalFormat(Serialisable):
     pivotAreas: Incomplete
     extLst: Typed[ExtensionList, Literal[True]]
     __elements__: ClassVar[tuple[str, ...]]
+
     @overload
     def __init__(
         self,
@@ -435,6 +439,7 @@ class Format(Serialisable):
     pivotArea: Typed[PivotArea, Literal[False]]
     extLst: Typed[ExtensionList, Literal[True]]
     __elements__: ClassVar[tuple[str, ...]]
+
     @overload
     def __init__(
         self,
@@ -464,6 +469,7 @@ class DataField(Serialisable):
     numFmtId: Integer[Literal[True]]
     extLst: Typed[ExtensionList, Literal[True]]
     __elements__: ClassVar[tuple[str, ...]]
+
     @overload
     def __init__(
         self,
@@ -775,6 +781,7 @@ class TableDefinition(Serialisable):
     extLst: Typed[ExtensionList, Literal[True]]
     id: Incomplete
     __elements__: ClassVar[tuple[str, ...]]
+
     @overload
     def __init__(
         self,
@@ -956,6 +963,7 @@ class TableDefinition(Serialisable):
         extLst: ExtensionList | None = None,
         id=None,
     ) -> None: ...
+
     def to_tree(self) -> Element: ...  # type: ignore[override]
     @property
     def path(self) -> str: ...

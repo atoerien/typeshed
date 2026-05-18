@@ -101,6 +101,7 @@ if sys.platform == "win32":
         lpSecurityDescriptor: int
         bInheritHandle: bool
         def __init__(self, *args, **kwargs) -> None: ...
+
         @property
         def descriptor(self): ...
         @descriptor.setter

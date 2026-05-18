@@ -127,15 +127,8 @@ class GroupMappingMixin:
     ) -> list[_S]: ...
     def map_async(
         self, func: Callable[[_T], _S], iterable: Iterable[_T], callback: Callable[[list[_S]], object] | None = None
-    ) -> Greenlet[..., list[_S]]:
-        """
-        A variant of the map() method which returns a Greenlet object that is executing
-        the map function.
+    ) -> Greenlet[..., list[_S]]: ...
 
-        If callback is specified then it should be a callable which accepts a
-        single argument.
-        """
-        ...
     @overload
     def imap(self, func: Callable[[_T1], _S], iter1: Iterable[_T1], /, *, maxsize: int | None = None) -> IMap[[_T1], _S]:
         """
@@ -371,43 +364,8 @@ class GroupMappingMixin:
         /,
         *iterables: Iterable[Any],
         maxsize: int | None = None,
-    ) -> IMap[_P, _S]:
-        """
-        imap(func, *iterables, maxsize=None) -> iterable
+    ) -> IMap[_P, _S]: ...
 
-        An equivalent of :func:`itertools.imap`, operating in parallel.
-        The *func* is applied to each element yielded from each
-        iterable in *iterables* in turn, collecting the result.
-
-        If this object has a bound on the number of active greenlets it can
-        contain (such as :class:`Pool`), then at most that number of tasks will operate
-        in parallel.
-
-        :keyword int maxsize: If given and not-None, specifies the maximum number of
-            finished results that will be allowed to accumulate awaiting the reader;
-            more than that number of results will cause map function greenlets to begin
-            to block. This is most useful if there is a great disparity in the speed of
-            the mapping code and the consumer and the results consume a great deal of resources.
-
-            .. note:: This is separate from any bound on the number of active parallel
-               tasks, though they may have some interaction (for example, limiting the
-               number of parallel tasks to the smallest bound).
-
-            .. note:: Using a bound is slightly more computationally expensive than not using a bound.
-
-            .. tip:: The :meth:`imap_unordered` method makes much better
-                use of this parameter. Some additional, unspecified,
-                number of objects may be required to be kept in memory
-                to maintain order by this function.
-
-        :return: An iterable object.
-
-        .. versionchanged:: 1.1b3
-            Added the *maxsize* keyword parameter.
-        .. versionchanged:: 1.1a1
-            Accept multiple *iterables* to iterate in parallel.
-        """
-        ...
     @overload
     def imap_unordered(
         self, func: Callable[[_T1], _S], iter1: Iterable[_T1], /, *, maxsize: int | None = None
@@ -572,73 +530,19 @@ class Group(GroupMappingMixin):
     greenlet_class: type[Greenlet[..., Any]]
     greenlets: set[Greenlet[..., Any]]
     dying: set[Greenlet[..., Any]]
+
     @overload
     def __init__(self) -> None: ...
     @overload
     def __init__(self, grenlets: Collection[Greenlet[..., object]], /) -> None: ...
-    def __len__(self) -> int:
-        """
-        Answer how many greenlets we are tracking. Note that if we are empty,
-        we are False in a boolean context.
-        """
-        ...
-    def __contains__(self, item: Greenlet[..., object]) -> bool:
-        """Answer if we are tracking the given greenlet."""
-        ...
-    def __iter__(self) -> Iterator[Greenlet[..., object]]:
-        """Iterate across all the greenlets we are tracking, in no particular order."""
-        ...
-    def add(self, greenlet: Greenlet[..., object]) -> None:
-        """
-        Begin tracking the *greenlet*.
 
-        If this group is :meth:`full`, then this method may block
-        until it is possible to track the greenlet.
-
-        Typically the *greenlet* should **not** be started when
-        it is added because if this object blocks in this method,
-        then the *greenlet* may run to completion before it is tracked.
-        """
-        ...
-    def discard(self, greenlet: Greenlet[..., object]) -> None:
-        """Stop tracking the greenlet."""
-        ...
-    def start(self, greenlet: Greenlet[..., object]) -> None:
-        """
-        Add the **unstarted** *greenlet* to the collection of greenlets
-        this group is monitoring, and then start it.
-        """
-        ...
-    def join(self, timeout: float | None = None, raise_error: bool = False) -> bool:
-        """
-        Wait for this group to become empty *at least once*.
-
-        If there are no greenlets in the group, returns immediately.
-
-        .. note:: By the time the waiting code (the caller of this
-           method) regains control, a greenlet may have been added to
-           this group, and so this object may no longer be empty. (That
-           is, ``group.join(); assert len(group) == 0`` is not
-           guaranteed to hold.) This method only guarantees that the group
-           reached a ``len`` of 0 at some point.
-
-        :keyword bool raise_error: If True (*not* the default), if any
-            greenlet that finished while the join was in progress raised
-            an exception, that exception will be raised to the caller of
-            this method. If multiple greenlets raised exceptions, which
-            one gets re-raised is not determined. Only greenlets currently
-            in the group when this method is called are guaranteed to
-            be checked for exceptions.
-
-        :return bool: A value indicating whether this group became empty.
-           If the timeout is specified and the group did not become empty
-           during that timeout, then this will be a false value. Otherwise
-           it will be a true value.
-
-        .. versionchanged:: 1.2a1
-           Add the return value.
-        """
-        ...
+    def __len__(self) -> int: ...
+    def __contains__(self, item: Greenlet[..., object]) -> bool: ...
+    def __iter__(self) -> Iterator[Greenlet[..., object]]: ...
+    def add(self, greenlet: Greenlet[..., object]) -> None: ...
+    def discard(self, greenlet: Greenlet[..., object]) -> None: ...
+    def start(self, greenlet: Greenlet[..., object]) -> None: ...
+    def join(self, timeout: float | None = None, raise_error: bool = False) -> bool: ...
     def kill(
         self, exception: type[BaseException] | BaseException = ..., block: bool = True, timeout: float | None = None
     ) -> None:

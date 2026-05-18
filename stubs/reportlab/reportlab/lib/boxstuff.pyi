@@ -15,12 +15,8 @@ def rectCorner(
     """
     ...
 @overload
-def rectCorner(x, y, width, height, anchor: str = "sw", dims: Literal[False] | None = False) -> tuple[Incomplete, Incomplete]:
-    """
-    given rectangle controlled by x,y width and height return 
-    the corner corresponding to the anchor
-    """
-    ...
+def rectCorner(x, y, width, height, anchor: str = "sw", dims: Literal[False] | None = False) -> tuple[Incomplete, Incomplete]: ...
+
 def aspectRatioFix(
     preserve, anchor, x, y, width, height, imWidth, imHeight, anchorAtXY: bool = False
 ) -> tuple[Incomplete, Incomplete, Incomplete, Incomplete, Incomplete]:

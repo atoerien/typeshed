@@ -39,13 +39,8 @@ __version__: Final[str]
 __docformat__: Final = "restructuredtext"
 __all__ = ["lex", "format", "highlight"]
 
-def lex(code: str, lexer: Lexer) -> Iterator[tuple[_TokenType, str]]:
-    """
-    Lex `code` with the `lexer` (must be a `Lexer` instance)
-    and return an iterable of tokens. Currently, this only calls
-    `lexer.get_tokens()`.
-    """
-    ...
+def lex(code: str, lexer: Lexer) -> Iterator[tuple[_TokenType, str]]: ...
+
 @overload
 def format(tokens: Iterable[tuple[_TokenType, str]], formatter: Formatter[_T], outfile: SupportsWrite[_T]) -> None:
     """
@@ -58,16 +53,8 @@ def format(tokens: Iterable[tuple[_TokenType, str]], formatter: Formatter[_T], o
     """
     ...
 @overload
-def format(tokens: Iterable[tuple[_TokenType, str]], formatter: Formatter[_T], outfile: None = None) -> _T:
-    """
-    Format ``tokens`` (an iterable of tokens) with the formatter ``formatter``
-    (a `Formatter` instance).
+def format(tokens: Iterable[tuple[_TokenType, str]], formatter: Formatter[_T], outfile: None = None) -> _T: ...
 
-    If ``outfile`` is given and a valid file object (an object with a
-    ``write`` method), the result will be written to it, otherwise it
-    is returned as a string.
-    """
-    ...
 @overload
 def highlight(code: str, lexer: Lexer, formatter: Formatter[_T], outfile: SupportsWrite[_T]) -> None:
     """

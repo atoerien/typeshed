@@ -24,6 +24,7 @@ class Greenlet(greenlet.greenlet, Generic[_P, _T]):
     args: tuple[Any, ...]
     kwargs: dict[str, Any]
     value: _T | None
+
     @overload
     def __init__(
         self: Greenlet[_P, _T],  # pyright: ignore[reportInvalidTypeVarUse]  #11780
@@ -61,36 +62,8 @@ class Greenlet(greenlet.greenlet, Generic[_P, _T]):
         """
         ...
     @overload
-    def __init__(self: Greenlet[[], None]) -> None:
-        """
-        :param args: The arguments passed to the ``run`` function.
-        :param kwargs: The keyword arguments passed to the ``run`` function.
-        :keyword callable run: The callable object to run. If not given, this object's
-            `_run` method will be invoked (typically defined by subclasses).
+    def __init__(self: Greenlet[[], None]) -> None: ...
 
-        .. versionchanged:: 1.1b1
-            The ``run`` argument to the constructor is now verified to be a callable
-            object. Previously, passing a non-callable object would fail after the greenlet
-            was spawned.
-
-        .. versionchanged:: 1.3b1
-           The ``GEVENT_TRACK_GREENLET_TREE`` configuration value may be set to
-           a false value to disable ``spawn_tree_locals``, ``spawning_greenlet``,
-           and ``spawning_stack``. The first two will be None in that case, and the
-           latter will be empty.
-
-        .. versionchanged:: 1.5
-           Greenlet objects are now more careful to verify that their ``parent`` is really
-           a gevent hub, raising a ``TypeError`` earlier instead of an ``AttributeError`` later.
-
-        .. versionchanged:: 20.12.1
-           Greenlet objects now function as context managers. Exiting the ``with`` suite
-           ensures that the greenlet has completed by :meth:`joining <join>`
-           the greenlet (blocking, with
-           no timeout). If the body of the suite raises an exception, the greenlet is
-           :meth:`killed <kill>` with the default arguments and not joined in that case.
-        """
-        ...
     @readproperty
     def name(self) -> str:
         """
@@ -227,139 +200,16 @@ class Greenlet(greenlet.greenlet, Generic[_P, _T]):
         ...
     def kill(
         self, exception: type[BaseException] | BaseException = ..., block: bool = True, timeout: float | None = None
-    ) -> None:
-        """
-        Greenlet.kill(self, exception=GreenletExit, block=True, timeout=None)
+    ) -> None: ...
+    def link(self, callback: Callable[[Self], object]) -> None: ...
+    def link_exception(self, callback: Callable[[Self], object]) -> None: ...
+    def link_value(self, callback: Callable[[Self], object]) -> None: ...
+    def rawlink(self, callback: Callable[[Self], object]) -> None: ...
+    def unlink(self, callback: Callable[[Self], Any]) -> None: ...
+    def unlink_all(self) -> None: ...
+    def ready(self) -> bool: ...
+    def run(self) -> Any: ...
 
-        Raise the ``exception`` in the greenlet.
-
-        If ``block`` is ``True`` (the default), wait until the greenlet
-        dies or the optional timeout expires; this may require switching
-        greenlets.
-        If block is ``False``, the current greenlet is not unscheduled.
-
-        This function always returns ``None`` and never raises an error. It
-        may be called multpile times on the same greenlet object, and may be
-        called on an unstarted or dead greenlet.
-
-        .. note::
-
-            Depending on what this greenlet is executing and the state
-            of the event loop, the exception may or may not be raised
-            immediately when this greenlet resumes execution. It may
-            be raised on a subsequent green call, or, if this greenlet
-            exits before making such a call, it may not be raised at
-            all. As of 1.1, an example where the exception is raised
-            later is if this greenlet had called :func:`sleep(0)
-            <gevent.sleep>`; an example where the exception is raised
-            immediately is if this greenlet had called
-            :func:`sleep(0.1) <gevent.sleep>`.
-
-        .. caution::
-
-            Use care when killing greenlets. If the code executing is not
-            exception safe (e.g., makes proper use of ``finally``) then an
-            unexpected exception could result in corrupted state. Using
-            a :meth:`link` or :meth:`rawlink` (cheaper) may be a safer way to
-            clean up resources.
-
-        See also :func:`gevent.kill` and :func:`gevent.killall`.
-
-        :keyword type exception: The type of exception to raise in the greenlet. The default
-            is :class:`GreenletExit`, which indicates a :meth:`successful` completion
-            of the greenlet.
-
-        .. versionchanged:: 0.13.0
-            *block* is now ``True`` by default.
-        .. versionchanged:: 1.1a2
-            If this greenlet had never been switched to, killing it will
-            prevent it from *ever* being switched to. Links (:meth:`rawlink`)
-            will still be executed, though.
-        .. versionchanged:: 20.12.1
-            If this greenlet is :meth:`ready`, immediately return instead of
-            requiring a trip around the event loop.
-        """
-        ...
-    def link(self, callback: Callable[[Self], object]) -> None:
-        """
-        Greenlet.link(self, callback, SpawnedLink=SpawnedLink)
-
-        Link greenlet's completion to a callable.
-
-        The *callback* will be called with this instance as an
-        argument once this greenlet is dead. A callable is called in
-        its own :class:`greenlet.greenlet` (*not* a
-        :class:`Greenlet`).
-
-        The *callback* will be called even if linked after the greenlet
-        is already ready().
-        """
-        ...
-    def link_exception(self, callback: Callable[[Self], object]) -> None:
-        """
-        Greenlet.link_exception(self, callback, SpawnedLink=FailureSpawnedLink)
-
-        Like :meth:`link` but *callback* is only notified when the
-        greenlet dies because of an unhandled exception.
-        """
-        ...
-    def link_value(self, callback: Callable[[Self], object]) -> None:
-        """
-        Greenlet.link_value(self, callback, SpawnedLink=SuccessSpawnedLink)
-
-        Like :meth:`link` but *callback* is only notified when the greenlet
-        has completed successfully.
-        """
-        ...
-    def rawlink(self, callback: Callable[[Self], object]) -> None:
-        """
-        Greenlet.rawlink(self, callback)
-
-        Register a callable to be executed when the greenlet finishes
-        execution.
-
-        The *callback* will be called with this instance as an
-        argument.
-
-        The *callback* will be called even if linked after the greenlet
-        is already ready().
-
-        .. caution::
-            The *callback* will be called in the hub and
-            **MUST NOT** raise an exception.
-        """
-        ...
-    def unlink(self, callback: Callable[[Self], Any]) -> None:
-        """
-        Greenlet.unlink(self, callback)
-
-        Remove the callback set by :meth:`link` or :meth:`rawlink`
-        """
-        ...
-    def unlink_all(self) -> None:
-        """
-        Greenlet.unlink_all(self)
-
-        Remove all the callbacks.
-
-        .. versionadded:: 1.3a2
-        """
-        ...
-    def ready(self) -> bool:
-        """
-        Greenlet.ready(self) -> bool
-
-        Return a true value if and only if the greenlet has finished
-        execution.
-
-        .. versionchanged:: 1.1
-            This function is only guaranteed to return true or false *values*, not
-            necessarily the literal constants ``True`` or ``False``.
-        """
-        ...
-    def run(self) -> Any:
-        """Greenlet.run(self)"""
-        ...
     @overload
     @classmethod
     def spawn(cls, run: Callable[_P, _T], /, *args: _P.args, **kwargs: _P.kwargs) -> Self:
@@ -380,22 +230,8 @@ class Greenlet(greenlet.greenlet, Generic[_P, _T]):
         ...
     @overload
     @classmethod
-    def spawn(cls) -> Greenlet[[], None]:
-        """
-        Greenlet.spawn(cls, *args, **kwargs)
+    def spawn(cls) -> Greenlet[[], None]: ...
 
-        spawn(function, *args, **kwargs) -> Greenlet
-
-        Create a new :class:`Greenlet` object and schedule it to run ``function(*args, **kwargs)``.
-        This can be used as ``gevent.spawn`` or ``Greenlet.spawn``.
-
-        The arguments are passed to :meth:`Greenlet.__init__`.
-
-        .. versionchanged:: 1.1b1
-            If a *function* is given that is not callable, immediately raise a :exc:`TypeError`
-            instead of spawning a greenlet that will raise an uncaught TypeError.
-        """
-        ...
     @overload
     @classmethod
     def spawn_later(cls, seconds: float, run: Callable[_P, _T], *args: _P.args, **kwargs: _P.kwargs) -> Self:
@@ -419,66 +255,14 @@ class Greenlet(greenlet.greenlet, Generic[_P, _T]):
         ...
     @overload
     @classmethod
-    def spawn_later(cls, seconds: float) -> Greenlet[[], None]:
-        """
-        Greenlet.spawn_later(cls, seconds, *args, **kwargs)
+    def spawn_later(cls, seconds: float) -> Greenlet[[], None]: ...
 
-        spawn_later(seconds, function, *args, **kwargs) -> Greenlet
-
-        Create and return a new `Greenlet` object scheduled to run ``function(*args, **kwargs)``
-        in a future loop iteration *seconds* later. This can be used as ``Greenlet.spawn_later``
-        or ``gevent.spawn_later``.
-
-        The arguments are passed to :meth:`Greenlet.__init__`.
-
-        .. versionchanged:: 1.1b1
-           If an argument that's meant to be a function (the first argument in *args*, or the ``run`` keyword )
-           is given to this classmethod (and not a classmethod of a subclass),
-           it is verified to be callable. Previously, the spawned greenlet would have failed
-           when it started running.
-        """
-        ...
-    def start(self) -> None:
-        """
-        Greenlet.start(self)
-
-        Schedule the greenlet to run in this loop iteration
-        """
-        ...
-    def start_later(self, seconds: float) -> None:
-        """
-        Greenlet.start_later(self, seconds)
-
-        start_later(seconds) -> None
-
-        Schedule the greenlet to run in the future loop iteration
-        *seconds* later
-        """
-        ...
-    def successful(self) -> bool:
-        """
-        Greenlet.successful(self) -> bool
-
-        Return a true value if and only if the greenlet has finished execution
-        successfully, that is, without raising an error.
-
-        .. tip:: A greenlet that has been killed with the default
-            :class:`GreenletExit` exception is considered successful.
-            That is, ``GreenletExit`` is not considered an error.
-
-        .. note:: This function is only guaranteed to return true or false *values*,
-              not necessarily the literal constants ``True`` or ``False``.
-        """
-        ...
-    def __bool__(self) -> bool:
-        """True if self else False"""
-        ...
-    def __enter__(self) -> Self:
-        """Greenlet.__enter__(self)"""
-        ...
-    def __exit__(self, t: type[BaseException] | None, v: BaseException | None, tb: TracebackType | None) -> None:
-        """Greenlet.__exit__(self, t, v, tb)"""
-        ...
+    def start(self) -> None: ...
+    def start_later(self, seconds: float) -> None: ...
+    def successful(self) -> bool: ...
+    def __bool__(self) -> bool: ...
+    def __enter__(self) -> Self: ...
+    def __exit__(self, t: type[BaseException] | None, v: BaseException | None, tb: TracebackType | None) -> None: ...
 
     # since these are for instrumentation which is disabled by default, we could
     # consider just not annotating them...

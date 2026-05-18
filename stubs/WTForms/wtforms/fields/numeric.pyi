@@ -94,6 +94,7 @@ class DecimalField(LocaleAwareNumberField):
     default: Decimal | Callable[[], Decimal] | None
     places: int | None
     rounding: str | None
+
     @overload
     def __init__(
         self,

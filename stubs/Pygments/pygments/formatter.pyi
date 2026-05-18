@@ -69,6 +69,7 @@ class Formatter(Generic[_T]):
     title: str
     encoding: str | None
     options: dict[str, Any]  # arbitrary values used by subclasses
+
     @overload
     def __init__(
         self: Formatter[str],
@@ -113,13 +114,8 @@ class Formatter(Generic[_T]):
         encoding: None = None,
         outencoding: str,
         **options: Any,  # arbitrary values used by subclasses
-    ) -> None:
-        """
-        As with lexers, this constructor takes arbitrary optional arguments,
-        and if you override it, you should first process your own options, then
-        call the base class implementation.
-        """
-        ...
+    ) -> None: ...
+
     def __class_getitem__(cls, name: Any) -> types.GenericAlias: ...
     def get_style_defs(self, arg: str = "") -> str:
         """

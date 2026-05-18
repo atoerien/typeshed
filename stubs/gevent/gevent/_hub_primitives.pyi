@@ -116,41 +116,8 @@ def iwait_on_objects(objects: None, timeout: float | None = None, count: int | N
 @overload
 def iwait_on_objects(
     objects: Collection[_WaitableT], timeout: float | None = None, count: int | None = None
-) -> _WaitIterator[_WaitableT]:
-    """
-    iwait_on_objects(objects, timeout=None, count=None)
+) -> _WaitIterator[_WaitableT]: ...
 
-    Iteratively yield *objects* as they are ready, until all (or *count*) are ready
-    or *timeout* expired.
-
-    If you will only be consuming a portion of the *objects*, you should
-    do so inside a ``with`` block on this object to avoid leaking resources::
-
-        with gevent.iwait((a, b, c)) as it:
-            for i in it:
-                if i is a:
-                    break
-
-    :param objects: A sequence (supporting :func:`len`) containing objects
-        implementing the wait protocol (rawlink() and unlink()).
-    :keyword int count: If not `None`, then a number specifying the maximum number
-        of objects to wait for. If ``None`` (the default), all objects
-        are waited for.
-    :keyword float timeout: If given, specifies a maximum number of seconds
-        to wait. If the timeout expires before the desired waited-for objects
-        are available, then this method returns immediately.
-
-    .. seealso:: :func:`wait`
-
-    .. versionchanged:: 1.1a1
-       Add the *count* parameter.
-    .. versionchanged:: 1.1a2
-       No longer raise :exc:`LoopExit` if our caller switches greenlets
-       in between items yielded by this function.
-    .. versionchanged:: 1.4
-       Add support to use the returned object as a context manager.
-    """
-    ...
 @overload
 def wait_on_objects(objects: None = None, timeout: float | None = None, count: int | None = None) -> bool:
     """
@@ -192,49 +159,10 @@ def wait_on_objects(objects: None = None, timeout: float | None = None, count: i
 @overload
 def wait_on_objects(
     objects: Collection[_WaitableT], timeout: float | None = None, count: int | None = None
-) -> list[_WaitableT]:
-    """
-    wait_on_objects(objects=None, timeout=None, count=None)
+) -> list[_WaitableT]: ...
 
-    Wait for *objects* to become ready or for event loop to finish.
-
-    If *objects* is provided, it must be a list containing objects
-    implementing the wait protocol (rawlink() and unlink() methods):
-
-    - :class:`gevent.Greenlet` instance
-    - :class:`gevent.event.Event` instance
-    - :class:`gevent.lock.Semaphore` instance
-    - :class:`gevent.subprocess.Popen` instance
-
-    If *objects* is ``None`` (the default), ``wait()`` blocks until
-    the current event loop has nothing to do (or until *timeout* passes):
-
-    - all greenlets have finished
-    - all servers were stopped
-    - all event loop watchers were stopped.
-
-    If *count* is ``None`` (the default), wait for all *objects*
-    to become ready.
-
-    If *count* is a number, wait for (up to) *count* objects to become
-    ready. (For example, if count is ``1`` then the function exits
-    when any object in the list is ready).
-
-    If *timeout* is provided, it specifies the maximum number of
-    seconds ``wait()`` will block.
-
-    Returns the list of ready objects, in the order in which they were
-    ready.
-
-    .. seealso:: :func:`iwait`
-    """
-    ...
-def set_default_timeout_error(e: type[BaseException]) -> None:
-    """set_default_timeout_error(e)"""
-    ...
-def wait_on_socket(socket: socket, watcher: _Watcher, timeout_exc: type[BaseException] | BaseException | None = None) -> None:
-    """wait_on_socket(socket, watcher, timeout_exc=None)"""
-    ...
+def set_default_timeout_error(e: type[BaseException]) -> None: ...
+def wait_on_socket(socket: socket, watcher: _Watcher, timeout_exc: type[BaseException] | BaseException | None = None) -> None: ...
 def wait_on_watcher(
     watcher: _Watcher,
     timeout: float | None = None,

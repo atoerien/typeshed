@@ -176,6 +176,7 @@ class Connection:
         source_port_list=None,
     ) -> None: ...
     def repr_with_sensitive_data_stripped(self): ...
+
     @property
     def stream(self):
         """
@@ -184,12 +185,8 @@ class Connection:
         """
         ...
     @stream.setter
-    def stream(self, value) -> None:
-        """
-        Used by the LDIFProducer strategy to accumulate the ldif-change operations with a single LDIF header
-        :return: reference to the response stream if defined in the strategy.
-        """
-        ...
+    def stream(self, value) -> None: ...
+
     @property
     def usage(self):
         """

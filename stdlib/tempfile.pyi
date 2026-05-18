@@ -154,32 +154,7 @@ if sys.version_info >= (3, 12):
         *,
         errors: str | None = None,
         delete_on_close: bool = True,
-    ) -> _TemporaryFileWrapper[Any]:
-        """
-        Create and return a temporary file.
-        Arguments:
-        'prefix', 'suffix', 'dir' -- as for mkstemp.
-        'mode' -- the mode argument to io.open (default "w+b").
-        'buffering' -- the buffer size argument to io.open (default -1).
-        'encoding' -- the encoding argument to io.open (default None)
-        'newline' -- the newline argument to io.open (default None)
-        'delete' -- whether the file is automatically deleted (default True).
-        'delete_on_close' -- if 'delete', whether the file is deleted on close
-           (default True) or otherwise either on context manager exit
-           (if context manager was used) or on object finalization. .
-        'errors' -- the errors argument to io.open (default None)
-        The file is created as mkstemp() would do it.
-
-        Returns an object with a file-like interface; the name of the file
-        is accessible as its 'name' attribute.  The file will be automatically
-        deleted when it is closed unless the 'delete' argument is set to False.
-
-        On POSIX, NamedTemporaryFiles cannot be automatically deleted if
-        the creating process is terminated abruptly with a SIGKILL signal.
-        Windows can delete the file even in this case.
-        """
-        ...
-
+    ) -> _TemporaryFileWrapper[Any]: ...
 else:
     @overload
     def NamedTemporaryFile(
@@ -524,18 +499,21 @@ class _TemporaryFileWrapper(IO[AnyStr]):
     def tell(self) -> int: ...
     def truncate(self, size: int | None = ...) -> int: ...
     def writable(self) -> bool: ...
+
     @overload
     def write(self: _TemporaryFileWrapper[str], s: str, /) -> int: ...
     @overload
     def write(self: _TemporaryFileWrapper[bytes], s: ReadableBuffer, /) -> int: ...
     @overload
     def write(self, s: AnyStr, /) -> int: ...
+
     @overload
     def writelines(self: _TemporaryFileWrapper[str], lines: Iterable[str]) -> None: ...
     @overload
     def writelines(self: _TemporaryFileWrapper[bytes], lines: Iterable[ReadableBuffer]) -> None: ...
     @overload
     def writelines(self, lines: Iterable[AnyStr]) -> None: ...
+
     @property
     def closed(self) -> bool: ...
 
@@ -557,6 +535,7 @@ class SpooledTemporaryFile(IO[AnyStr], _SpooledTemporaryFileBase):
     def encoding(self) -> str: ...  # undocumented
     @property
     def newlines(self) -> str | tuple[str, ...] | None: ...  # undocumented
+
     # bytes needs to go first, as default mode is to open as bytes
     @overload
     def __init__(
@@ -628,6 +607,7 @@ class SpooledTemporaryFile(IO[AnyStr], _SpooledTemporaryFileBase):
         dir: str | None = None,
         errors: str | None = None,
     ) -> None: ...
+
     @property
     def errors(self) -> str | None: ...
     def rollover(self) -> None: ...
@@ -664,12 +644,14 @@ class SpooledTemporaryFile(IO[AnyStr], _SpooledTemporaryFileBase):
     def write(self: SpooledTemporaryFile[bytes], s: ReadableBuffer) -> int: ...
     @overload
     def write(self, s: AnyStr) -> int: ...
+
     @overload  # type: ignore[override]
     def writelines(self: SpooledTemporaryFile[str], iterable: Iterable[str]) -> None: ...
     @overload
     def writelines(self: SpooledTemporaryFile[bytes], iterable: Iterable[ReadableBuffer]) -> None: ...
     @overload
     def writelines(self, iterable: Iterable[AnyStr]) -> None: ...
+
     def __iter__(self) -> Iterator[AnyStr]: ...  # type: ignore[override]
     # These exist at runtime only on 3.11+.
     def readable(self) -> bool: ...
@@ -842,20 +824,8 @@ def mkdtemp(suffix: str | None = None, prefix: str | None = None, dir: StrPath |
     """
     ...
 @overload
-def mkdtemp(suffix: bytes | None = None, prefix: bytes | None = None, dir: BytesPath | None = None) -> bytes:
-    """
-    User-callable function to create and return a unique temporary
-    directory.  The return value is the pathname of the directory.
+def mkdtemp(suffix: bytes | None = None, prefix: bytes | None = None, dir: BytesPath | None = None) -> bytes: ...
 
-    Arguments are as for mkstemp, except that the 'text' argument is
-    not accepted.
-
-    The directory is readable, writable, and searchable only by the
-    creating user.
-
-    Caller is responsible for deleting the directory when done with it.
-    """
-    ...
 @deprecated("Deprecated since Python 2.3. Use `mkstemp()` or `NamedTemporaryFile(delete=False)` instead.")
 def mktemp(suffix: str = "", prefix: str = "tmp", dir: StrPath | None = None) -> str:
     """

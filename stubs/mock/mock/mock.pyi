@@ -445,6 +445,7 @@ class _patch_dict:
 class _patcher:
     TEST_PREFIX: str
     dict: type[_patch_dict]
+
     @overload
     def __call__(
         self,
@@ -475,6 +476,7 @@ class _patcher:
         unsafe: bool = ...,
         **kwargs: Any,
     ) -> _patch[_T]: ...
+
     @overload
     def object(
         self,
@@ -504,6 +506,7 @@ class _patcher:
         unsafe: bool = ...,
         **kwargs: Any,
     ) -> _patch[_T]: ...
+
     def multiple(
         self,
         target: Any,

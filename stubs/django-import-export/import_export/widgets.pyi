@@ -10,23 +10,9 @@ def format_datetime(value: datetime, datetime_format: str) -> str: ...
 class Widget:
     """A Widget handles converting between import and export representations."""
     coerce_to_string: bool
-    def __init__(self, coerce_to_string: bool = True) -> None:
-        """
-        :param coerce_to_string: If True, :meth:`~import_export.widgets.Widget.render`
-          will return a string representation of the value, otherwise the value is
-          returned.
-        """
-        ...
-    def clean(self, value: Any, row: Mapping[str, Any] | None = None, **kwargs: Any) -> Any:
-        """
-        Returns an appropriate python object for an imported value.
-        For example, a date string will be converted to a python datetime instance.
+    def __init__(self, coerce_to_string: bool = True) -> None: ...
+    def clean(self, value: Any, row: Mapping[str, Any] | None = None, **kwargs: Any) -> Any: ...
 
-        :param value: The value to be converted to a native type.
-        :param row: A dict containing row key/value pairs.
-        :param **kwargs: Optional kwargs.
-        """
-        ...
     @overload
     @deprecated("The 'obj' parameter is deprecated and will be removed in a future release.")
     def render(self, value: Any, obj: Model, **kwargs: Any) -> Any:

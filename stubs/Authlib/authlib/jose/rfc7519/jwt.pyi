@@ -15,20 +15,9 @@ class JsonWebToken:
     SENSITIVE_VALUES: Final[Pattern[str]]
 
     def __init__(self, algorithms, private_headers=None) -> None: ...
-    def check_sensitive_data(self, payload) -> None:
-        """Check if payload contains sensitive information."""
-        ...
-    def encode(self, header, payload, key, check: bool = True) -> bytes:
-        """
-        Encode a JWT with the given header, payload and key.
+    def check_sensitive_data(self, payload) -> None: ...
+    def encode(self, header, payload, key, check: bool = True) -> bytes: ...
 
-        :param header: A dict of JWS header
-        :param payload: A dict to be encoded
-        :param key: key used to sign the signature
-        :param check: check if sensitive data in payload
-        :return: bytes
-        """
-        ...
     @overload
     def decode(
         self,
@@ -90,5 +79,6 @@ def prepare_raw_key(raw: KeySet) -> KeySet: ...
 def prepare_raw_key(raw: str) -> dict[str, Any] | str: ...  # dict is a JSON object
 @overload
 def prepare_raw_key(raw: _TL) -> _Keys[_TL]: ...
+
 def find_encode_key(key, header): ...
 def create_load_key(key: KeySet | _Keys[Incomplete] | Incomplete) -> _LoadKey: ...

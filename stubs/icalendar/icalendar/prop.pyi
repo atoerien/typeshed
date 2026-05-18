@@ -224,9 +224,8 @@ class vCalAddress(str):
     @classmethod
     def from_ical(cls, ical: ICAL_TYPE) -> Self: ...
     @property
-    def email(self) -> str:
-        """The email address without mailto: at the start."""
-        ...
+    def email(self) -> str: ...
+
     @property
     def name(self) -> str:
         """
@@ -256,19 +255,8 @@ class vCalAddress(str):
         """
         ...
     @name.deleter
-    def name(self) -> None:
-        """
-        Specify the common name to be associated with the calendar user specified.
+    def name(self) -> None: ...
 
-        Description:
-            This parameter can be specified on properties with a
-            CAL-ADDRESS value type.  The parameter specifies the common name
-            to be associated with the calendar user specified by the property.
-            The parameter value is text.  The parameter value can be used for
-            display text to be associated with the calendar address specified
-            by the property.
-        """
-        ...
     CN: property
     CUTYPE: property
     DELEGATED_FROM: property
@@ -434,6 +422,7 @@ class vDDDTypes(TimeBase):
     dt: _AnyTimeType
     def __init__(self, dt: _AnyTimeType) -> None: ...
     def to_ical(self) -> bytes: ...
+
     @overload
     @classmethod
     def from_ical(cls, ical: Self, timezone: Unused | None = None) -> _AnyTimeType: ...
@@ -792,6 +781,7 @@ class vMonth(int):
         ...
     @classmethod
     def from_ical(cls, ical: vMonth | str | int) -> Self: ...
+
     @property
     def leap(self) -> bool:
         """Whether this is a leap month."""
@@ -1042,6 +1032,7 @@ class vTime(TimeBase):
     """
     dt: datetime.time | datetime.datetime
     params: Parameters
+
     @overload
     def __init__(self, dt: datetime.time | datetime.datetime, /) -> None: ...
     # args are passed to the datetime.time() constructor
@@ -1055,6 +1046,7 @@ class vTime(TimeBase):
         tzinfo: datetime.tzinfo | None = ...,
         /,
     ) -> None: ...
+
     def to_ical(self) -> str: ...
     @staticmethod
     def from_ical(ical: ICAL_TYPE) -> datetime.time: ...

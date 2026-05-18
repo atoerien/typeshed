@@ -24,6 +24,7 @@ class LambdaContext(Context):
     segment based on environment variables set by Lambda worker.
     """
     def __init__(self) -> None: ...
+
     @property  # type: ignore[override]
     def context_missing(self) -> None: ...
     @context_missing.setter

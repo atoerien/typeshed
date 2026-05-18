@@ -239,106 +239,10 @@ class Response:
         comment: str | None = None,
         overwrite: bool = False,
         samesite: _SameSitePolicy | None = None,
-    ) -> None:
-        """
-        Set (add) a cookie for the response.
+    ) -> None: ...
+    def delete_cookie(self, name: str | bytes, path: str = "/", domain: str | None = None) -> None: ...
+    def unset_cookie(self, name: str | bytes, strict: bool = True) -> None: ...
 
-        Arguments are:
-
-        ``name``
-
-           The cookie name.
-
-        ``value``
-
-           The cookie value, which should be a string or ``None``.  If
-           ``value`` is ``None``, it's equivalent to calling the
-           :meth:`webob.response.Response.unset_cookie` method for this
-           cookie key (it effectively deletes the cookie on the client).
-
-        ``max_age``
-
-           An integer representing a number of seconds, ``datetime.timedelta``,
-           or ``None``. This value is used as the ``Max-Age`` of the generated
-           cookie.  If ``expires`` is not passed and this value is not
-           ``None``, the ``max_age`` value will also influence the ``Expires``
-           value of the cookie (``Expires`` will be set to ``now`` +
-           ``max_age``).  If this value is ``None``, the cookie will not have a
-           ``Max-Age`` value (unless ``expires`` is set). If both ``max_age``
-           and ``expires`` are set, this value takes precedence.
-
-        ``path``
-
-           A string representing the cookie ``Path`` value.  It defaults to
-           ``/``.
-
-        ``domain``
-
-           A string representing the cookie ``Domain``, or ``None``.  If
-           domain is ``None``, no ``Domain`` value will be sent in the
-           cookie.
-
-        ``secure``
-
-           A boolean.  If it's ``True``, the ``secure`` flag will be sent in
-           the cookie, if it's ``False``, the ``secure`` flag will not be
-           sent in the cookie.
-
-        ``httponly``
-
-           A boolean.  If it's ``True``, the ``HttpOnly`` flag will be sent
-           in the cookie, if it's ``False``, the ``HttpOnly`` flag will not
-           be sent in the cookie.
-
-        ``samesite``
-
-          A string representing the ``SameSite`` attribute of the cookie or
-          ``None``. If samesite is ``None`` no ``SameSite`` value will be sent
-          in the cookie. Should only be ``"strict"``, ``"lax"``, or ``"none"``.
-
-        ``comment``
-
-           A string representing the cookie ``Comment`` value, or ``None``.
-           If ``comment`` is ``None``, no ``Comment`` value will be sent in
-           the cookie.
-
-        ``expires``
-
-           A ``datetime.timedelta`` object representing an amount of time,
-           ``datetime.datetime`` or ``None``. A non-``None`` value is used to
-           generate the ``Expires`` value of the generated cookie. If
-           ``max_age`` is not passed, but this value is not ``None``, it will
-           influence the ``Max-Age`` header. If this value is ``None``, the
-           ``Expires`` cookie value will be unset (unless ``max_age`` is set).
-           If ``max_age`` is set, it will be used to generate the ``expires``
-           and this value is ignored.
-
-           If a ``datetime.datetime`` is provided it has to either be timezone
-           aware or be based on UTC. ``datetime.datetime`` objects that are
-           local time are not supported. Timezone aware ``datetime.datetime``
-           objects are converted to UTC.
-
-           This argument will be removed in future versions of WebOb (version
-           1.9).
-
-        ``overwrite``
-
-           If this key is ``True``, before setting the cookie, unset any
-           existing cookie.
-        """
-        ...
-    def delete_cookie(self, name: str | bytes, path: str = "/", domain: str | None = None) -> None:
-        """
-        Delete a cookie from the client.  Note that ``path`` and ``domain``
-        must match how the cookie was originally set.
-
-        This sets the cookie to the empty string, and ``max_age=0`` so
-        that it should expire immediately.
-        """
-        ...
-    def unset_cookie(self, name: str | bytes, strict: bool = True) -> None:
-        """Unset a cookie with the given name (remove it from the response)."""
-        ...
     @overload
     def merge_cookies(self, resp: _ResponseT) -> _ResponseT:
         """
@@ -350,15 +254,8 @@ class Response:
         """
         ...
     @overload
-    def merge_cookies(self, resp: WSGIApplication) -> WSGIApplication:
-        """
-        Merge the cookies that were set on this response with the
-        given ``resp`` object (which can be any WSGI application).
+    def merge_cookies(self, resp: WSGIApplication) -> WSGIApplication: ...
 
-        If the ``resp`` is a :class:`webob.Response` object, then the
-        other object will be modified in-place.
-        """
-        ...
     cache_control: AsymmetricProperty[_ResponseCacheControl, _ResponseCacheControl | _ResponseCacheControlDict | str | None]
     cache_expires: AsymmetricProperty[_ResponseCacheExpires, timedelta | int | bool | None]
     def encode_content(self, encoding: Literal["gzip", "identity"] = "gzip", lazy: bool = False) -> None:

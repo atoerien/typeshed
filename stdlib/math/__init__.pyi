@@ -75,84 +75,27 @@ def ceil(x: _SupportsCeil[_T], /) -> _T:
     """
     ...
 @overload
-def ceil(x: _SupportsFloatOrIndex, /) -> int:
-    """
-    Return the ceiling of x as an Integral.
+def ceil(x: _SupportsFloatOrIndex, /) -> int: ...
 
-    This is the smallest integer >= x.
-    """
-    ...
-def comb(n: SupportsIndex, k: SupportsIndex, /) -> int:
-    """
-    Number of ways to choose k items from n items without repetition and without order.
-
-    Evaluates to n! / (k! * (n - k)!) when k <= n and evaluates
-    to zero when k > n.
-
-    Also called the binomial coefficient because it is equivalent
-    to the coefficient of k-th term in polynomial expansion of the
-    expression (1 + x)**n.
-
-    Raises TypeError if either of the arguments are not integers.
-    Raises ValueError if either of the arguments are negative.
-    """
-    ...
-def copysign(x: _SupportsFloatOrIndex, y: _SupportsFloatOrIndex, /) -> float:
-    """
-    Return a float with the magnitude (absolute value) of x but the sign of y.
-
-    On platforms that support signed zeros, copysign(1.0, -0.0)
-    returns -1.0.
-    """
-    ...
-def cos(x: _SupportsFloatOrIndex, /) -> float:
-    """Return the cosine of x (measured in radians)."""
-    ...
-def cosh(x: _SupportsFloatOrIndex, /) -> float:
-    """Return the hyperbolic cosine of x."""
-    ...
-def degrees(x: _SupportsFloatOrIndex, /) -> float:
-    """Convert angle x from radians to degrees."""
-    ...
-def dist(p: Iterable[_SupportsFloatOrIndex], q: Iterable[_SupportsFloatOrIndex], /) -> float:
-    """
-    Return the Euclidean distance between two points p and q.
-
-    The points should be specified as sequences (or iterables) of
-    coordinates.  Both inputs must have the same dimension.
-
-    Roughly equivalent to:
-        sqrt(sum((px - qx) ** 2.0 for px, qx in zip(p, q)))
-    """
-    ...
-def erf(x: _SupportsFloatOrIndex, /) -> float:
-    """Error function at x."""
-    ...
-def erfc(x: _SupportsFloatOrIndex, /) -> float:
-    """Complementary error function at x."""
-    ...
-def exp(x: _SupportsFloatOrIndex, /) -> float:
-    """Return e raised to the power of x."""
-    ...
+def comb(n: SupportsIndex, k: SupportsIndex, /) -> int: ...
+def copysign(x: _SupportsFloatOrIndex, y: _SupportsFloatOrIndex, /) -> float: ...
+def cos(x: _SupportsFloatOrIndex, /) -> float: ...
+def cosh(x: _SupportsFloatOrIndex, /) -> float: ...
+def degrees(x: _SupportsFloatOrIndex, /) -> float: ...
+def dist(p: Iterable[_SupportsFloatOrIndex], q: Iterable[_SupportsFloatOrIndex], /) -> float: ...
+def erf(x: _SupportsFloatOrIndex, /) -> float: ...
+def erfc(x: _SupportsFloatOrIndex, /) -> float: ...
+def exp(x: _SupportsFloatOrIndex, /) -> float: ...
 
 if sys.version_info >= (3, 11):
     def exp2(x: _SupportsFloatOrIndex, /) -> float:
         """Return 2 raised to the power of x."""
         ...
 
-def expm1(x: _SupportsFloatOrIndex, /) -> float:
-    """
-    Return exp(x)-1.
+def expm1(x: _SupportsFloatOrIndex, /) -> float: ...
+def fabs(x: _SupportsFloatOrIndex, /) -> float: ...
+def factorial(x: SupportsIndex, /) -> int: ...
 
-    This function avoids the loss of precision involved in the direct evaluation of exp(x)-1 for small x.
-    """
-    ...
-def fabs(x: _SupportsFloatOrIndex, /) -> float:
-    """Return the absolute value of the float x."""
-    ...
-def factorial(x: SupportsIndex, /) -> int:
-    """Find n!."""
-    ...
 @type_check_only
 class _SupportsFloor(Protocol[_T_co]):
     def __floor__(self) -> _T_co: ...
@@ -166,20 +109,9 @@ def floor(x: _SupportsFloor[_T], /) -> _T:
     """
     ...
 @overload
-def floor(x: _SupportsFloatOrIndex, /) -> int:
-    """
-    Return the floor of x as an Integral.
+def floor(x: _SupportsFloatOrIndex, /) -> int: ...
 
-    This is the largest integer <= x.
-    """
-    ...
-def fmod(x: _SupportsFloatOrIndex, y: _SupportsFloatOrIndex, /) -> float:
-    """
-    Return fmod(x, y), according to platform C.
-
-    x % y may differ.
-    """
-    ...
+def fmod(x: _SupportsFloatOrIndex, y: _SupportsFloatOrIndex, /) -> float: ...
 
 if sys.version_info >= (3, 15):
     def fmax(x: _SupportsFloatOrIndex, y: _SupportsFloatOrIndex, /) -> float: ...
@@ -385,32 +317,11 @@ def prod(iterable: Iterable[_SupportsProdNoDefaultT], /) -> _SupportsProdNoDefau
     """
     ...
 @overload
-def prod(iterable: Iterable[_MultiplicableT1], /, *, start: _MultiplicableT2) -> _MultiplicableT1 | _MultiplicableT2:
-    """
-    Calculate the product of all the elements in the input iterable.
+def prod(iterable: Iterable[_MultiplicableT1], /, *, start: _MultiplicableT2) -> _MultiplicableT1 | _MultiplicableT2: ...
 
-    The default start value for the product is 1.
-
-    When the iterable is empty, return the start value.  This function is
-    intended specifically for use with numeric values and may reject
-    non-numeric types.
-    """
-    ...
-def radians(x: _SupportsFloatOrIndex, /) -> float:
-    """Convert angle x from degrees to radians."""
-    ...
-def remainder(x: _SupportsFloatOrIndex, y: _SupportsFloatOrIndex, /) -> float:
-    """
-    Difference between x and the closest integer multiple of y.
-
-    Return x - n*y where n*y is the closest integer multiple of y.
-    In the case where x is exactly halfway between two multiples of
-    y, the nearest even value of n is used. The result is always exact.
-    """
-    ...
-def sin(x: _SupportsFloatOrIndex, /) -> float:
-    """Return the sine of x (measured in radians)."""
-    ...
+def radians(x: _SupportsFloatOrIndex, /) -> float: ...
+def remainder(x: _SupportsFloatOrIndex, y: _SupportsFloatOrIndex, /) -> float: ...
+def sin(x: _SupportsFloatOrIndex, /) -> float: ...
 
 if sys.version_info >= (3, 15):
     def signbit(x: _SupportsFloatOrIndex, /) -> bool: ...

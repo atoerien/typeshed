@@ -222,16 +222,8 @@ class Connection(Generic[_C]):
         passwd: str | bytes | None = None,  # deprecated
         db: str | bytes | None = None,  # deprecated
     ) -> None: ...
-    def close(self) -> None:
-        """
-        Send the quit message and close the socket.
 
-        See `Connection.close() <https://www.python.org/dev/peps/pep-0249/#Connection.close>`_
-        in the specification.
-
-        :raise Error: If the connection is already closed.
-        """
-        ...
+    def close(self) -> None: ...
     @property
     def open(self) -> bool:
         """Return True if the connection is open."""
@@ -282,6 +274,7 @@ class Connection(Generic[_C]):
         """
         ...
     def escape_string(self, s: AnyStr) -> AnyStr: ...
+
     @overload
     def cursor(self, cursor: None = None) -> _C:
         """
@@ -293,15 +286,8 @@ class Connection(Generic[_C]):
         """
         ...
     @overload
-    def cursor(self, cursor: type[_C2]) -> _C2:
-        """
-        Create a new cursor to execute queries with.
+    def cursor(self, cursor: type[_C2]) -> _C2: ...
 
-        :param cursor: The type of cursor to create. None means use Cursor.
-        :type cursor: :py:class:`Cursor`, :py:class:`SSCursor`, :py:class:`DictCursor`,
-            or :py:class:`SSDictCursor`.
-        """
-        ...
     def query(self, sql, unbuffered: bool = False) -> int: ...
     def next_result(self, unbuffered: bool = False) -> int: ...
     def affected_rows(self): ...

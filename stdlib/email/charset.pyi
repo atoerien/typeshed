@@ -67,61 +67,11 @@ class Charset:
     input_codec: str | None
     output_codec: str | None
     def __init__(self, input_charset: str = "us-ascii") -> None: ...
-    def get_body_encoding(self) -> str | Callable[[Message], None]:
-        """
-        Return the content-transfer-encoding used for body encoding.
+    def get_body_encoding(self) -> str | Callable[[Message], None]: ...
+    def get_output_charset(self) -> str | None: ...
+    def header_encode(self, string: str) -> str: ...
+    def header_encode_lines(self, string: str, maxlengths: Iterator[int]) -> list[str | None]: ...
 
-        This is either the string 'quoted-printable' or 'base64' depending on
-        the encoding used, or it is a function in which case you should call
-        the function with a single argument, the Message object being
-        encoded.  The function should then set the Content-Transfer-Encoding
-        header itself to whatever is appropriate.
-
-        Returns "quoted-printable" if self.body_encoding is QP.
-        Returns "base64" if self.body_encoding is BASE64.
-        Returns conversion function otherwise.
-        """
-        ...
-    def get_output_charset(self) -> str | None:
-        """
-        Return the output character set.
-
-        This is self.output_charset if that is not None, otherwise it is
-        self.input_charset.
-        """
-        ...
-    def header_encode(self, string: str) -> str:
-        """
-        Header-encode a string by converting it first to bytes.
-
-        The type of encoding (base64 or quoted-printable) will be based on
-        this charset's `header_encoding`.
-
-        :param string: A unicode string for the header.  It must be possible
-            to encode this string to bytes using the character set's
-            output codec.
-        :return: The encoded string, with RFC 2047 chrome.
-        """
-        ...
-    def header_encode_lines(self, string: str, maxlengths: Iterator[int]) -> list[str | None]:
-        """
-        Header-encode a string by converting it first to bytes.
-
-        This is similar to `header_encode()` except that the string is fit
-        into maximum line lengths as given by the argument.
-
-        :param string: A unicode string for the header.  It must be possible
-            to encode this string to bytes using the character set's
-            output codec.
-        :param maxlengths: Maximum line length iterator.  Each element
-            returned from this iterator will provide the next maximum line
-            length.  This parameter is used as an argument to built-in next()
-            and should never be exhausted.  The maximum line lengths should
-            not count the RFC 2047 chrome.  These line lengths are only a
-            hint; the splitter does the best it can.
-        :return: Lines of encoded strings, each with RFC 2047 chrome.
-        """
-        ...
     @overload
     def body_encode(self, string: None) -> None:
         """
@@ -135,17 +85,8 @@ class Charset:
         """
         ...
     @overload
-    def body_encode(self, string: str | bytes) -> str:
-        """
-        Body-encode a string by converting it first to bytes.
+    def body_encode(self, string: str | bytes) -> str: ...
 
-        The type of encoding (base64 or quoted-printable) will be based on
-        self.body_encoding.  If body_encoding is None, we assume the
-        output charset is a 7bit encoding, so re-encoding the decoded
-        string using the ascii codec produces the correct string version
-        of the content.
-        """
-        ...
     __hash__: ClassVar[None]  # type: ignore[assignment]
     def __eq__(self, other: object) -> bool: ...
     def __ne__(self, value: object, /) -> bool:

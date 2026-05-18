@@ -36,6 +36,7 @@ def make(
     image_factory: type[GenericImage],
     mask_pattern: MaskPattern | None = None,
 ) -> GenericImage: ...
+
 def copy_2d_array(x: Sequence[_AnySeq]) -> list[_AnySeq]: ...
 
 class ActiveWithNeighbors(NamedTuple):
@@ -66,6 +67,7 @@ class QRCode(Generic[GenericImage]):
     box_size: int
     border: int
     image_factory: type[GenericImage] | None
+
     @overload
     def __init__(
         self,
@@ -97,14 +99,17 @@ class QRCode(Generic[GenericImage]):
         image_factory: None = None,
         mask_pattern: MaskPattern | None = None,
     ) -> None: ...
+
     @property
     def version(self) -> int: ...
     @version.setter
     def version(self, value: ConvertibleToInt | None) -> None: ...
+
     @property
     def mask_pattern(self) -> MaskPattern | None: ...
     @mask_pattern.setter
     def mask_pattern(self, pattern: MaskPattern | None) -> None: ...
+
     modules_count: int
     data_cache: list[int]
     data_list: list[QRData]
@@ -130,27 +135,11 @@ class QRCode(Generic[GenericImage]):
         ...
     def makeImpl(self, test: bool, mask_pattern: MaskPattern) -> None: ...
     def setup_position_probe_pattern(self, row: int, col: int) -> None: ...
-    def best_fit(self, start: int | None = None) -> int:
-        """Find the minimum size required to fit in the data."""
-        ...
-    def best_mask_pattern(self) -> int:
-        """Find the most efficient mask pattern."""
-        ...
-    def print_tty(self, out: _TTYWriter | None = None) -> None:
-        """
-        Output the QR Code only using TTY colors.
+    def best_fit(self, start: int | None = None) -> int: ...
+    def best_mask_pattern(self) -> int: ...
+    def print_tty(self, out: _TTYWriter | None = None) -> None: ...
+    def print_ascii(self, out: _TTYWriter | None = None, tty: bool = False, invert: bool = False) -> None: ...
 
-        If the data has not been compiled yet, make it first.
-        """
-        ...
-    def print_ascii(self, out: _TTYWriter | None = None, tty: bool = False, invert: bool = False) -> None:
-        """
-        Output the QR Code using ASCII characters.
-
-        :param tty: use fixed TTY color codes (forces invert=True)
-        :param invert: invert the ASCII characters (solid <-> transparent)
-        """
-        ...
     # kwargs are passed on to the specific image factory used, and in turn passed through to
     # their make_image method.
     @overload
@@ -162,13 +151,8 @@ class QRCode(Generic[GenericImage]):
         """
         ...
     @overload
-    def make_image(self, image_factory: type[GenericImageLocal], **kwargs: Any) -> GenericImageLocal:
-        """
-        Make an image from the QR Code data.
+    def make_image(self, image_factory: type[GenericImageLocal], **kwargs: Any) -> GenericImageLocal: ...
 
-        If the data has not been compiled yet, make it first.
-        """
-        ...
     def is_constrained(self, row: int, col: int) -> bool: ...
     def setup_timing_pattern(self) -> None: ...
     def setup_position_adjust_pattern(self) -> None: ...

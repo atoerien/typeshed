@@ -1439,23 +1439,9 @@ class socket(_socket.socket):
     ) -> None: ...
     def __enter__(self) -> Self: ...
     def __exit__(self, *args: Unused) -> None: ...
-    def dup(self) -> Self:
-        """
-        dup() -> socket object
+    def dup(self) -> Self: ...
+    def accept(self) -> tuple[socket, _RetAddress]: ...
 
-        Duplicate the socket. Return a new socket object connected to the same
-        system resource. The new socket is non-inheritable.
-        """
-        ...
-    def accept(self) -> tuple[socket, _RetAddress]:
-        """
-        accept() -> (socket object, address info)
-
-        Wait for an incoming connection.  Return a new socket
-        representing the connection, and the address of the client.
-        For IP sockets, the address info is a pair (hostaddr, port).
-        """
-        ...
     # Note that the makefile's documented windows-specific behavior is not represented
     # mode strings with duplicates are intentionally excluded
     @overload
@@ -1557,9 +1543,15 @@ class socket(_socket.socket):
         encoding: str | None = None,
         errors: str | None = None,
         newline: str | None = None,
-    ) -> TextIOWrapper:
-        """
-        makefile(...) -> an I/O stream connected to the socket
+    ) -> TextIOWrapper: ...
+
+    def sendfile(self, file: _SendableFile, offset: int = 0, count: int | None = None) -> int: ...
+    @property
+    def family(self) -> AddressFamily: ...
+    @property
+    def type(self) -> SocketKind: ...
+    def get_inheritable(self) -> bool: ...
+    def set_inheritable(self, inheritable: bool) -> None: ...
 
         The arguments are as for io.open() after the filename, except the only
         supported mode values are 'r' (default), 'w', 'b', or a combination of

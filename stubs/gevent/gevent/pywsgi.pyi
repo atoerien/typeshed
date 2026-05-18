@@ -81,10 +81,12 @@ class Input:
 class OldMessage(HTTPMessage):
     status: str
     def __init__(self) -> None: ...
+
     @overload
     def getheader(self, name: str, default: None = None) -> str | None: ...
     @overload
     def getheader(self, name: str, default: _T) -> str | _T: ...
+
     @property
     def headers(self) -> Iterator[str]: ...
     @property
@@ -448,6 +450,7 @@ class WSGIServer(StreamServer):
     secure_environ_class: type[SecureEnviron]
     base_env: WSGIEnvironment
     application: WSGIApplication
+
     @overload
     def __init__(
         self,
@@ -487,6 +490,7 @@ class WSGIServer(StreamServer):
         suppress_ragged_eofs: bool = True,
         ciphers: str = ...,
     ) -> None: ...
+
     environ: WSGIEnvironment
     def set_environ(self, environ: WSGIEnvironment | None = None) -> None: ...
     max_accept: int

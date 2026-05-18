@@ -245,91 +245,14 @@ def move_legend(obj: Grid | Axes | Figure, loc: str | int, **kwargs: Any) -> Non
     ...
 def ci(
     a: float | ArrayLike, which: float | ArrayLike = 95, axis: SupportsIndex | Sequence[SupportsIndex] | None = None
-) -> NDArray[np.float64]:
-    """Return a percentile range from an array of values."""
-    ...
-def get_dataset_names() -> list[str]:
-    """
-    Report available example datasets, useful for reporting issues.
+) -> NDArray[np.float64]: ...
+def get_dataset_names() -> list[str]: ...
+def get_data_home(data_home: str | None = None) -> str: ...
+def load_dataset(name: str, cache: bool = True, data_home: str | None = None, **kws: Any) -> DataFrame: ...
+def axis_ticklabels_overlap(labels: Iterable[Text]) -> bool: ...
+def axes_ticklabels_overlap(ax: Axes) -> tuple[bool, bool]: ...
+def locator_to_legend_entries(locator: Locator, limits: Iterable[float], dtype) -> tuple[list[Incomplete], list[str]]: ...
 
-    Requires an internet connection.
-    """
-    ...
-def get_data_home(data_home: str | None = None) -> str:
-    """
-    Return a path to the cache directory for example datasets.
-
-    This directory is used by :func:`load_dataset`.
-
-    If the ``data_home`` argument is not provided, it will use a directory
-    specified by the `SEABORN_DATA` environment variable (if it exists)
-    or otherwise default to an OS-appropriate user cache location.
-    """
-    ...
-def load_dataset(name: str, cache: bool = True, data_home: str | None = None, **kws: Any) -> DataFrame:
-    """
-    Load an example dataset from the online repository (requires internet).
-
-    This function provides quick access to a small number of example datasets
-    that are useful for documenting seaborn or generating reproducible examples
-    for bug reports. It is not necessary for normal usage.
-
-    Note that some of the datasets have a small amount of preprocessing applied
-    to define a proper ordering for categorical variables.
-
-    Use :func:`get_dataset_names` to see a list of available datasets.
-
-    Parameters
-    ----------
-    name : str
-        Name of the dataset (``{name}.csv`` on
-        https://github.com/mwaskom/seaborn-data).
-    cache : boolean, optional
-        If True, try to load from the local cache first, and save to the cache
-        if a download is required.
-    data_home : string, optional
-        The directory in which to cache data; see :func:`get_data_home`.
-    kws : keys and values, optional
-        Additional keyword arguments are passed to passed through to
-        :func:`pandas.read_csv`.
-
-    Returns
-    -------
-    df : :class:`pandas.DataFrame`
-        Tabular data, possibly with some preprocessing applied.
-    """
-    ...
-def axis_ticklabels_overlap(labels: Iterable[Text]) -> bool:
-    """
-    Return a boolean for whether the list of ticklabels have overlaps.
-
-    Parameters
-    ----------
-    labels : list of matplotlib ticklabels
-
-    Returns
-    -------
-    overlap : boolean
-        True if any of the labels overlap.
-    """
-    ...
-def axes_ticklabels_overlap(ax: Axes) -> tuple[bool, bool]:
-    """
-    Return booleans for whether the x and y ticklabels on an Axes overlap.
-
-    Parameters
-    ----------
-    ax : matplotlib Axes
-
-    Returns
-    -------
-    x_overlap, y_overlap : booleans
-        True when the labels on that axis overlap.
-    """
-    ...
-def locator_to_legend_entries(locator: Locator, limits: Iterable[float], dtype) -> tuple[list[Incomplete], list[str]]:
-    """Return levels and formatted levels for brief numeric legends."""
-    ...
 @overload
 def relative_luminance(color: ColorType) -> float:
     """
@@ -361,46 +284,7 @@ def relative_luminance(color: Sequence[ColorType]) -> NDArray[np.float64]:
     """
     ...
 @overload
-def relative_luminance(color: ColorType | Sequence[ColorType] | ArrayLike) -> float | NDArray[np.float64]:
-    """
-    Calculate the relative luminance of a color according to W3C standards
+def relative_luminance(color: ColorType | Sequence[ColorType] | ArrayLike) -> float | NDArray[np.float64]: ...
 
-    Parameters
-    ----------
-    color : matplotlib color or sequence of matplotlib colors
-        Hex code, rgb-tuple, or html color name.
-
-    Returns
-    -------
-    luminance : float(s) between 0 and 1
-    """
-    ...
-def to_utf8(obj: object) -> str:
-    """
-    Return a string representing a Python object.
-
-    Strings (i.e. type ``str``) are returned unchanged.
-
-    Byte strings (i.e. type ``bytes``) are returned as UTF-8-decoded strings.
-
-    For other objects, the method ``__str__()`` is called, and the result is
-    returned as a string.
-
-    Parameters
-    ----------
-    obj : object
-        Any Python object
-
-    Returns
-    -------
-    s : str
-        UTF-8-decoded string representation of ``obj``
-    """
-    ...
-def adjust_legend_subtitles(legend: Legend) -> None:
-    """
-    Make invisible-handle "subtitles" entries look more like titles.
-
-    Note: This function is not part of the public API and may be changed or removed.
-    """
-    ...
+def to_utf8(obj: object) -> str: ...
+def adjust_legend_subtitles(legend: Legend) -> None: ...  # not public API

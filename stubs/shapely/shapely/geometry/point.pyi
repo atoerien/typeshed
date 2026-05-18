@@ -52,6 +52,7 @@ class Point(BaseGeometry):
     1.0
     """
     __slots__: list[str] = []
+
     @overload  # no args: empty point
     def __new__(self) -> Self:
         """Create a new Point geometry."""
@@ -65,9 +66,8 @@ class Point(BaseGeometry):
         """Create a new Point geometry."""
         ...
     @overload  # three args: (x, y, z) tuple
-    def __new__(self, x: float, y: float, z: float, /) -> Self:
-        """Create a new Point geometry."""
-        ...
+    def __new__(self, x: float, y: float, z: float, /) -> Self: ...
+
     @property
     def x(self) -> float:
         """Return x coordinate."""

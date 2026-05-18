@@ -79,22 +79,13 @@ class OAuth2Client:
         """
         ...
     def client_auth(self, auth_method) -> ClientAuth: ...
+
     @property
     def token(self): ...
     @token.setter
     def token(self, token) -> None: ...
-    def create_authorization_url(self, url, state=None, code_verifier=None, **kwargs) -> tuple[str, Incomplete]:
-        """
-        Generate an authorization URL and state.
 
-        :param url: Authorization endpoint url, must be HTTPS.
-        :param state: An optional state string for CSRF protection. If not
-                      given it will be generated for you.
-        :param code_verifier: An optional code_verifier for code challenge.
-        :param kwargs: Extra parameters to include.
-        :return: authorization_url, state
-        """
-        ...
+    def create_authorization_url(self, url, state=None, code_verifier=None, **kwargs) -> tuple[str, Incomplete]: ...
     def fetch_token(
         self, url=None, body: str = "", method: str = "POST", headers=None, auth=None, grant_type=None, state=None, **kwargs
     ):

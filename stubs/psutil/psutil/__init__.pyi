@@ -371,29 +371,9 @@ class Process:
             """
             ...
     if sys.platform != "darwin":
-        def io_counters(self) -> _ntp.pio:
-            """
-            Return process I/O statistics as a
-            (read_count, write_count, read_bytes, write_bytes)
-            namedtuple.
-            Those are the number of read/write calls performed and the
-            amount of bytes read and written by the process.
-            """
-            ...
-        def ionice(self, ioclass: int | None = None, value: int | None = None) -> _ntp.pionice:
-            """
-            Get or set process I/O niceness (priority).
+        def io_counters(self) -> _ntp.pio: ...
+        def ionice(self, ioclass: int | None = None, value: int | None = None) -> _ntp.pionice: ...
 
-            On Linux *ioclass* is one of the IOPRIO_CLASS_* constants.
-            *value* is a number which goes from 0 to 7. The higher the
-            value, the lower the I/O priority of the process.
-
-            On Windows only *ioclass* is used and it can be set to 2
-            (normal), 1 (low) or 0 (very low).
-
-            Available on Linux and Windows > Vista only.
-            """
-            ...
         @overload
         def cpu_affinity(self, cpus: None = None) -> list[int]:
             """
@@ -406,29 +386,9 @@ class Process:
             """
             ...
         @overload
-        def cpu_affinity(self, cpus: list[int]) -> None:
-            """
-            Get or set process CPU affinity.
-            If specified, *cpus* must be a list of CPUs for which you
-            want to set the affinity (e.g. [0, 1]).
-            If an empty list is passed, all egible CPUs are assumed
-            (and set).
-            (Windows, Linux and BSD only).
-            """
-            ...
-        def memory_maps(self, grouped: bool = True) -> list[Incomplete]:
-            """
-            Return process' mapped memory regions as a list of namedtuples
-            whose fields are variable depending on the platform.
+        def cpu_affinity(self, cpus: list[int]) -> None: ...
 
-            If *grouped* is True the mapped regions with the same 'path'
-            are grouped together and the different memory fields are summed.
-
-            If *grouped* is False every mapped region is shown as a single
-            entity and the namedtuple will also include the mapped region's
-            address space ('addr') and permission set ('perms').
-            """
-            ...
+        def memory_maps(self, grouped: bool = True) -> list[Incomplete]: ...
     if sys.platform == "linux":
         def rlimit(self, resource: int, limits: tuple[int, int] | None = None) -> tuple[int, int]: ...
         def cpu_num(self) -> int: ...
@@ -784,60 +744,9 @@ process_iter: _ProcessIterCallable
 
 def wait_procs(
     procs: Iterable[Process], timeout: float | None = None, callback: Callable[[Process], object] | None = None
-) -> tuple[list[Process], list[Process]]:
-    """
-    Convenience function which waits for a list of processes to
-    terminate.
+) -> tuple[list[Process], list[Process]]: ...
+def cpu_count(logical: bool = True) -> int | None: ...
 
-    Return a (gone, alive) tuple indicating which processes
-    are gone and which ones are still alive.
-
-    The gone ones will have a new *returncode* attribute indicating
-    process exit status (may be None).
-
-    *callback* is a function which gets called every time a process
-    terminates (a Process instance is passed as callback argument).
-
-    Function will return as soon as all processes terminate or when
-    *timeout* occurs.
-    Differently from Process.wait() it will not raise TimeoutExpired if
-    *timeout* occurs.
-
-    Typical use case is:
-
-     - send SIGTERM to a list of processes
-     - give them some time to terminate
-     - send SIGKILL to those ones which are still alive
-
-    Example:
-
-    >>> def on_terminate(proc):
-    ...     print("process {} terminated".format(proc))
-    ...
-    >>> for p in procs:
-    ...    p.terminate()
-    ...
-    >>> gone, alive = wait_procs(procs, timeout=3, callback=on_terminate)
-    >>> for p in alive:
-    ...     p.kill()
-    """
-    ...
-def cpu_count(logical: bool = True) -> int | None:
-    """
-    Return the number of logical CPUs in the system (same as
-    os.cpu_count()).
-
-    If *logical* is False return the number of physical cores only
-    (e.g. hyper thread CPUs are excluded).
-
-    Return None if undetermined.
-
-    The return value is cached after first call.
-    If desired cache can be cleared like this:
-
-    >>> psutil.cpu_count.cache_clear()
-    """
-    ...
 @overload
 def cpu_freq(percpu: Literal[False] = False) -> _ntp.scpufreq:
     """
@@ -850,16 +759,8 @@ def cpu_freq(percpu: Literal[False] = False) -> _ntp.scpufreq:
     """
     ...
 @overload
-def cpu_freq(percpu: Literal[True]) -> list[_ntp.scpufreq]:
-    """
-    Return CPU frequency as a namedtuple including current,
-    min and max frequency expressed in Mhz.
+def cpu_freq(percpu: Literal[True]) -> list[_ntp.scpufreq]: ...
 
-    If *percpu* is True and the system supports per-cpu frequency
-    retrieval (Linux only) a list of frequencies is returned for
-    each CPU. If not a list with one element is returned.
-    """
-    ...
 @overload
 def cpu_times(percpu: Literal[False] = False) -> _ntp.scputimes:
     """
@@ -886,30 +787,8 @@ def cpu_times(percpu: Literal[False] = False) -> _ntp.scputimes:
     """
     ...
 @overload
-def cpu_times(percpu: Literal[True]) -> list[_ntp.scputimes]:
-    """
-    Return system-wide CPU times as a namedtuple.
-    Every CPU time represents the seconds the CPU has spent in the
-    given mode. The namedtuple's fields availability varies depending on the
-    platform:
+def cpu_times(percpu: Literal[True]) -> list[_ntp.scputimes]: ...
 
-     - user
-     - system
-     - idle
-     - nice (UNIX)
-     - iowait (Linux)
-     - irq (Linux, FreeBSD)
-     - softirq (Linux)
-     - steal (Linux >= 2.6.11)
-     - guest (Linux >= 2.6.24)
-     - guest_nice (Linux >= 3.2.0)
-
-    When *percpu* is True return a list of namedtuples for each CPU.
-    First element of the list refers to first CPU, second element
-    to second CPU and so on.
-    The order of the list is consistent across calls.
-    """
-    ...
 @overload
 def cpu_percent(interval: float | None = None, percpu: Literal[False] = False) -> float:
     """
@@ -987,43 +866,8 @@ def cpu_percent(interval: float | None, percpu: Literal[True]) -> list[float]:
     """
     ...
 @overload
-def cpu_percent(*, percpu: Literal[True]) -> list[float]:
-    """
-    Return a float representing the current system-wide CPU
-    utilization as a percentage.
+def cpu_percent(*, percpu: Literal[True]) -> list[float]: ...
 
-    When *interval* is > 0.0 compares system CPU times elapsed before
-    and after the interval (blocking).
-
-    When *interval* is 0.0 or None compares system CPU times elapsed
-    since last call or module import, returning immediately (non
-    blocking). That means the first time this is called it will
-    return a meaningless 0.0 value which you should ignore.
-    In this case is recommended for accuracy that this function be
-    called with at least 0.1 seconds between calls.
-
-    When *percpu* is True returns a list of floats representing the
-    utilization as a percentage for each CPU.
-    First element of the list refers to first CPU, second element
-    to second CPU and so on.
-    The order of the list is consistent across calls.
-
-    Examples:
-
-      >>> # blocking, system-wide
-      >>> psutil.cpu_percent(interval=1)
-      2.0
-      >>>
-      >>> # blocking, per-cpu
-      >>> psutil.cpu_percent(interval=1, percpu=True)
-      [2.0, 1.0]
-      >>>
-      >>> # non-blocking (percentage since last call)
-      >>> psutil.cpu_percent(interval=None)
-      2.9
-      >>>
-    """
-    ...
 @overload
 def cpu_times_percent(interval: float | None = None, percpu: Literal[False] = False) -> _ntp.scputimes:
     """
@@ -1057,120 +901,14 @@ def cpu_times_percent(interval: float | None, percpu: Literal[True]) -> list[_nt
     """
     ...
 @overload
-def cpu_times_percent(*, percpu: Literal[True]) -> list[_ntp.scputimes]:
-    """
-    Same as cpu_percent() but provides utilization percentages
-    for each specific CPU time as is returned by cpu_times().
-    For instance, on Linux we'll get:
+def cpu_times_percent(*, percpu: Literal[True]) -> list[_ntp.scputimes]: ...
 
-      >>> cpu_times_percent()
-      cpupercent(user=4.8, nice=0.0, system=4.8, idle=90.5, iowait=0.0,
-                 irq=0.0, softirq=0.0, steal=0.0, guest=0.0, guest_nice=0.0)
-      >>>
-
-    *interval* and *percpu* arguments have the same meaning as in
-    cpu_percent().
-    """
-    ...
-def cpu_stats() -> _ntp.scpustats:
-    """Return CPU statistics."""
-    ...
-def getloadavg() -> tuple[float, float, float]:
-    """
-    Return average recent system load information.
-
-    Return the number of processes in the system run queue averaged over
-    the last 1, 5, and 15 minutes as a tuple of three floats.
-    Raises OSError if the load average was unobtainable.
-    """
-    ...
-def virtual_memory() -> _ntp.svmem:
-    """
-    Return statistics about system memory usage as a namedtuple
-    including the following fields, expressed in bytes:
-
-     - total:
-       total physical memory available.
-
-     - available:
-       the memory that can be given instantly to processes without the
-       system going into swap.
-       This is calculated by summing different memory values depending
-       on the platform and it is supposed to be used to monitor actual
-       memory usage in a cross platform fashion.
-
-     - percent:
-       the percentage usage calculated as (total - available) / total * 100
-
-     - used:
-        memory used, calculated differently depending on the platform and
-        designed for informational purposes only:
-        macOS: active + wired
-        BSD: active + wired + cached
-        Linux: total - free
-
-     - free:
-       memory not being used at all (zeroed) that is readily available;
-       note that this doesn't reflect the actual memory available
-       (use 'available' instead)
-
-    Platform-specific fields:
-
-     - active (UNIX):
-       memory currently in use or very recently used, and so it is in RAM.
-
-     - inactive (UNIX):
-       memory that is marked as not used.
-
-     - buffers (BSD, Linux):
-       cache for things like file system metadata.
-
-     - cached (BSD, macOS):
-       cache for various things.
-
-     - wired (macOS, BSD):
-       memory that is marked to always stay in RAM. It is never moved to disk.
-
-     - shared (BSD):
-       memory that may be simultaneously accessed by multiple processes.
-
-    The sum of 'used' and 'available' does not necessarily equal total.
-    On Windows 'available' and 'free' are the same.
-    """
-    ...
-def swap_memory() -> _ntp.sswap:
-    """
-    Return system swap memory statistics as a namedtuple including
-    the following fields:
-
-     - total:   total swap memory in bytes
-     - used:    used swap memory in bytes
-     - free:    free swap memory in bytes
-     - percent: the percentage usage
-     - sin:     no. of bytes the system has swapped in from disk (cumulative)
-     - sout:    no. of bytes the system has swapped out from disk (cumulative)
-
-    'sin' and 'sout' on Windows are meaningless and always set to 0.
-    """
-    ...
-def disk_usage(path: str) -> _ntp.sdiskusage:
-    """
-    Return disk usage statistics about the given *path* as a
-    namedtuple including total, used and free space expressed in bytes
-    plus the percentage usage.
-    """
-    ...
-def disk_partitions(all: bool = False) -> list[_ntp.sdiskpart]:
-    """
-    Return mounted partitions as a list of
-    (device, mountpoint, fstype, opts) namedtuple.
-    'opts' field is a raw string separated by commas indicating mount
-    options which may vary depending on the platform.
-
-    If *all* parameter is False return physical devices only and ignore
-    all others.
-    """
-    ...
+def cpu_stats() -> _ntp.scpustats: ...
+def getloadavg() -> tuple[float, float, float]: ...
+def virtual_memory() -> _ntp.svmem: ...
+def swap_memory() -> _ntp.sswap: ...
+def disk_usage(path: str) -> _ntp.sdiskusage: ...
+def disk_partitions(all: bool = False) -> list[_ntp.sdiskpart]: ...
 
 # TODO: Incorrect sdiskio for BSD systems:
 @overload
@@ -1209,40 +947,8 @@ def disk_io_counters(perdisk: Literal[False] = False, nowrap: bool = True) -> _n
     """
     ...
 @overload
-def disk_io_counters(perdisk: Literal[True], nowrap: bool = True) -> dict[str, _ntp.sdiskio]:
-    """
-    Return system disk I/O statistics as a namedtuple including
-    the following fields:
+def disk_io_counters(perdisk: Literal[True], nowrap: bool = True) -> dict[str, _ntp.sdiskio]: ...
 
-     - read_count:  number of reads
-     - write_count: number of writes
-     - read_bytes:  number of bytes read
-     - write_bytes: number of bytes written
-     - read_time:   time spent reading from disk (in ms)
-     - write_time:  time spent writing to disk (in ms)
-
-    Platform specific:
-
-     - busy_time: (Linux, FreeBSD) time spent doing actual I/Os (in ms)
-     - read_merged_count (Linux): number of merged reads
-     - write_merged_count (Linux): number of merged writes
-
-    If *perdisk* is True return the same information for every
-    physical disk installed on the system as a dictionary
-    with partition names as the keys and the namedtuple
-    described above as the values.
-
-    If *nowrap* is True it detects and adjust the numbers which overflow
-    and wrap (restart from 0) and add "old value" to "new value" so that
-    the returned numbers will always be increasing or remain the same,
-    but never decrease.
-    "disk_io_counters.cache_clear()" can be used to invalidate the
-    cache.
-
-    On recent Windows versions 'diskperf -y' command may need to be
-    executed first otherwise this function won't find any disk.
-    """
-    ...
 @overload
 def net_io_counters(pernic: Literal[False] = False, nowrap: bool = True) -> _ntp.snetio:
     """
@@ -1273,114 +979,10 @@ def net_io_counters(pernic: Literal[False] = False, nowrap: bool = True) -> _ntp
     """
     ...
 @overload
-def net_io_counters(pernic: Literal[True], nowrap: bool = True) -> dict[str, _ntp.snetio]:
-    """
-    Return network I/O statistics as a namedtuple including
-    the following fields:
+def net_io_counters(pernic: Literal[True], nowrap: bool = True) -> dict[str, _ntp.snetio]: ...
 
-     - bytes_sent:   number of bytes sent
-     - bytes_recv:   number of bytes received
-     - packets_sent: number of packets sent
-     - packets_recv: number of packets received
-     - errin:        total number of errors while receiving
-     - errout:       total number of errors while sending
-     - dropin:       total number of incoming packets which were dropped
-     - dropout:      total number of outgoing packets which were dropped
-                     (always 0 on macOS and BSD)
-
-    If *pernic* is True return the same information for every
-    network interface installed on the system as a dictionary
-    with network interface names as the keys and the namedtuple
-    described above as the values.
-
-    If *nowrap* is True it detects and adjust the numbers which overflow
-    and wrap (restart from 0) and add "old value" to "new value" so that
-    the returned numbers will always be increasing or remain the same,
-    but never decrease.
-    "net_io_counters.cache_clear()" can be used to invalidate the
-    cache.
-    """
-    ...
-def net_connections(kind: str = "inet") -> list[_ntp.sconn]:
-    """
-    Return system-wide socket connections as a list of
-    (fd, family, type, laddr, raddr, status, pid) namedtuples.
-    In case of limited privileges 'fd' and 'pid' may be set to -1
-    and None respectively.
-    The *kind* parameter filters for connections that fit the
-    following criteria:
-
-    +------------+----------------------------------------------------+
-    | Kind Value | Connections using                                  |
-    +------------+----------------------------------------------------+
-    | inet       | IPv4 and IPv6                                      |
-    | inet4      | IPv4                                               |
-    | inet6      | IPv6                                               |
-    | tcp        | TCP                                                |
-    | tcp4       | TCP over IPv4                                      |
-    | tcp6       | TCP over IPv6                                      |
-    | udp        | UDP                                                |
-    | udp4       | UDP over IPv4                                      |
-    | udp6       | UDP over IPv6                                      |
-    | unix       | UNIX socket (both UDP and TCP protocols)           |
-    | all        | the sum of all the possible families and protocols |
-    +------------+----------------------------------------------------+
-
-    On macOS this function requires root privileges.
-    """
-    ...
-def net_if_addrs() -> dict[str, list[_ntp.snicaddr]]:
-    """
-    Return the addresses associated to each NIC (network interface
-    card) installed on the system as a dictionary whose keys are the
-    NIC names and value is a list of namedtuples for each address
-    assigned to the NIC. Each namedtuple includes 5 fields:
-
-     - family: can be either socket.AF_INET, socket.AF_INET6 or
-               psutil.AF_LINK, which refers to a MAC address.
-     - address: is the primary address and it is always set.
-     - netmask: and 'broadcast' and 'ptp' may be None.
-     - ptp: stands for "point to point" and references the
-            destination address on a point to point interface
-            (typically a VPN).
-     - broadcast: and *ptp* are mutually exclusive.
-
-    Note: you can have more than one address of the same family
-    associated with each interface.
-    """
-    ...
-def net_if_stats() -> dict[str, _ntp.snicstats]:
-    """
-    Return information about each NIC (network interface card)
-    installed on the system as a dictionary whose keys are the
-    NIC names and value is a namedtuple with the following fields:
-
-     - isup: whether the interface is up (bool)
-     - duplex: can be either NIC_DUPLEX_FULL, NIC_DUPLEX_HALF or
-               NIC_DUPLEX_UNKNOWN
-     - speed: the NIC speed expressed in mega bits (MB); if it can't
-              be determined (e.g. 'localhost') it will be set to 0.
-     - mtu: the maximum transmission unit expressed in bytes.
-    """
-    ...
-def boot_time() -> float:
-    """
-    Return the system boot time expressed in seconds since the epoch
-    (seconds since January 1, 1970, at midnight UTC). The returned
-    value is based on the system clock, which means it may be affected
-    by changes such as manual adjustments or time synchronization (e.g.
-    NTP).
-    """
-    ...
-def users() -> list[_ntp.suser]:
-    """
-    Return users currently connected on the system as a list of
-    namedtuples including the following fields.
-
-     - user: the name of the user
-     - terminal: the tty or pseudo-tty associated with the user, if any.
-     - host: the host name associated with the entry, if any.
-     - started: the creation time as a floating point number expressed in
-       seconds since the epoch.
-    """
-    ...
+def net_connections(kind: str = "inet") -> list[_ntp.sconn]: ...
+def net_if_addrs() -> dict[str, list[_ntp.snicaddr]]: ...
+def net_if_stats() -> dict[str, _ntp.snicstats]: ...
+def boot_time() -> float: ...
+def users() -> list[_ntp.suser]: ...

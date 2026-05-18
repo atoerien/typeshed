@@ -82,6 +82,7 @@ def namedtuple(
 
 class UserDict(MutableMapping[_KT, _VT]):
     data: dict[_KT, _VT]
+
     # __init__ should be kept roughly in line with `dict.__init__`, which has the same semantics
     @overload
     def __init__(self, dict: None = None, /) -> None: ...
@@ -111,6 +112,7 @@ class UserDict(MutableMapping[_KT, _VT]):
     def __init__(self: UserDict[str, str], iterable: Iterable[list[str]], /) -> None: ...
     @overload
     def __init__(self: UserDict[bytes, bytes], iterable: Iterable[list[bytes]], /) -> None: ...
+
     def __len__(self) -> int: ...
     def __getitem__(self, key: _KT) -> _VT: ...
     def __setitem__(self, key: _KT, item: _VT) -> None: ...
@@ -129,19 +131,23 @@ class UserDict(MutableMapping[_KT, _VT]):
     @classmethod
     @overload
     def fromkeys(cls, iterable: Iterable[_T], value: _S) -> UserDict[_T, _S]: ...
+
     @overload
     def __or__(self, other: UserDict[_KT, _VT] | dict[_KT, _VT]) -> Self: ...
     @overload
     def __or__(self, other: UserDict[_T1, _T2] | dict[_T1, _T2]) -> UserDict[_KT | _T1, _VT | _T2]: ...
+
     @overload
     def __ror__(self, other: UserDict[_KT, _VT] | dict[_KT, _VT]) -> Self: ...
     @overload
     def __ror__(self, other: UserDict[_T1, _T2] | dict[_T1, _T2]) -> UserDict[_KT | _T1, _VT | _T2]: ...
+
     # UserDict.__ior__ should be kept roughly in line with MutableMapping.update()
     @overload  # type: ignore[misc]
     def __ior__(self, other: SupportsKeysAndGetItem[_KT, _VT]) -> Self: ...
     @overload
     def __ior__(self, other: Iterable[tuple[_KT, _VT]]) -> Self: ...
+
     if sys.version_info >= (3, 12):
         @overload
         def get(self, key: _KT, default: None = None) -> _VT | None: ...
@@ -153,10 +159,12 @@ class UserDict(MutableMapping[_KT, _VT]):
 class UserList(MutableSequence[_T]):
     """A more or less complete user-defined wrapper around list objects."""
     data: list[_T]
+
     @overload
     def __init__(self, initlist: None = None) -> None: ...
     @overload
     def __init__(self, initlist: Iterable[_T]) -> None: ...
+
     __hash__: ClassVar[None]  # type: ignore[assignment]
     def __lt__(self, other: list[_T] | UserList[_T]) -> bool: ...
     def __le__(self, other: list[_T] | UserList[_T]) -> bool: ...
@@ -165,14 +173,17 @@ class UserList(MutableSequence[_T]):
     def __eq__(self, other: object) -> bool: ...
     def __contains__(self, item: object) -> bool: ...
     def __len__(self) -> int: ...
+
     @overload
     def __getitem__(self, i: SupportsIndex) -> _T: ...
     @overload
     def __getitem__(self, i: slice[SupportsIndex | None]) -> Self: ...
+
     @overload
     def __setitem__(self, i: SupportsIndex, item: _T) -> None: ...
     @overload
     def __setitem__(self, i: slice[SupportsIndex | None], item: Iterable[_T]) -> None: ...
+
     def __delitem__(self, i: SupportsIndex | slice[SupportsIndex | None]) -> None: ...
     def __add__(self, other: Iterable[_T]) -> Self: ...
     def __radd__(self, other: Iterable[_T]) -> Self: ...
@@ -191,11 +202,13 @@ class UserList(MutableSequence[_T]):
     # to `list.index`. In order to give more precise types, we pretend that the
     # `item` argument is positional-only.
     def index(self, item: _T, start: SupportsIndex = 0, stop: SupportsIndex = sys.maxsize, /) -> int: ...
+
     # All arguments are passed to `list.sort` at runtime, so the signature should be kept in line with `list.sort`.
     @overload
     def sort(self: UserList[SupportsRichComparisonT], *, key: None = None, reverse: bool = False) -> None: ...
     @overload
     def sort(self, *, key: Callable[[_T], SupportsRichComparison], reverse: bool = False) -> None: ...
+
     def extend(self, other: Iterable[_T]) -> None: ...
 
 class UserString(Sequence[UserString]):
@@ -274,59 +287,27 @@ class UserString(Sequence[UserString]):
 class deque(MutableSequence[_T]):
     """A list-like sequence optimized for data accesses near its endpoints."""
     @property
-    def maxlen(self) -> int | None:
-        """maximum size of a deque or None if unbounded"""
-        ...
+    def maxlen(self) -> int | None: ...
+
     @overload
     def __init__(self, *, maxlen: int | None = None) -> None: ...
     @overload
     def __init__(self, iterable: Iterable[_T], maxlen: int | None = None) -> None: ...
-    def append(self, x: _T, /) -> None:
-        """Add an element to the right side of the deque."""
-        ...
-    def appendleft(self, x: _T, /) -> None:
-        """Add an element to the left side of the deque."""
-        ...
-    def copy(self) -> Self:
-        """Return a shallow copy of a deque."""
-        ...
-    def count(self, x: _T, /) -> int:
-        """Return number of occurrences of value."""
-        ...
-    def extend(self, iterable: Iterable[_T], /) -> None:
-        """Extend the right side of the deque with elements from the iterable."""
-        ...
-    def extendleft(self, iterable: Iterable[_T], /) -> None:
-        """Extend the left side of the deque with elements from the iterable."""
-        ...
-    def insert(self, i: int, x: _T, /) -> None:
-        """Insert value before index."""
-        ...
-    def index(self, x: _T, start: int = 0, stop: int = ..., /) -> int:
-        """
-        Return first index of value.
 
-        Raises ValueError if the value is not present.
-        """
-        ...
-    def pop(self) -> _T:
-        """Remove and return the rightmost element."""
-        ...
-    def popleft(self) -> _T:
-        """Remove and return the leftmost element."""
-        ...
-    def remove(self, value: _T, /) -> None:
-        """Remove first occurrence of value."""
-        ...
-    def rotate(self, n: int = 1, /) -> None:
-        """Rotate the deque n steps to the right.  If n is negative, rotates left."""
-        ...
-    def __copy__(self) -> Self:
-        """Return a shallow copy of a deque."""
-        ...
-    def __len__(self) -> int:
-        """Return len(self)."""
-        ...
+    def append(self, x: _T, /) -> None: ...
+    def appendleft(self, x: _T, /) -> None: ...
+    def copy(self) -> Self: ...
+    def count(self, x: _T, /) -> int: ...
+    def extend(self, iterable: Iterable[_T], /) -> None: ...
+    def extendleft(self, iterable: Iterable[_T], /) -> None: ...
+    def insert(self, i: int, x: _T, /) -> None: ...
+    def index(self, x: _T, start: int = 0, stop: int = ..., /) -> int: ...
+    def pop(self) -> _T: ...  # type: ignore[override]
+    def popleft(self) -> _T: ...
+    def remove(self, value: _T, /) -> None: ...
+    def rotate(self, n: int = 1, /) -> None: ...
+    def __copy__(self) -> Self: ...
+    def __len__(self) -> int: ...
     __hash__: ClassVar[None]  # type: ignore[assignment]
     # These methods of deque don't take slices, unlike MutableSequence, hence the type: ignores
     def __getitem__(self, key: SupportsIndex, /) -> _T:
@@ -459,51 +440,14 @@ class Counter(dict[_T, int], Generic[_T]):
         """
         ...
     @overload
-    def __init__(self, iterable: Iterable[_T], /) -> None:
-        """
-        Create a new, empty Counter object.  And if given, count elements
-        from an input iterable.  Or, initialize the count from another mapping
-        of elements to their counts.
+    def __init__(self, iterable: Iterable[_T], /) -> None: ...
 
-        >>> c = Counter()                           # a new, empty counter
-        >>> c = Counter('gallahad')                 # a new counter from an iterable
-        >>> c = Counter({'a': 4, 'b': 2})           # a new counter from a mapping
-        >>> c = Counter(a=4, b=2)                   # a new counter from keyword args
-        """
-        ...
-    def copy(self) -> Self:
-        """Return a shallow copy."""
-        ...
-    def elements(self) -> Iterator[_T]:
-        """
-        Iterator over elements repeating each as many times as its count.
-
-        >>> c = Counter('ABCABC')
-        >>> sorted(c.elements())
-        ['A', 'A', 'B', 'B', 'C', 'C']
-
-        Knuth's example for prime factors of 1836:  2**2 * 3**3 * 17**1
-
-        >>> import math
-        >>> prime_factors = Counter({2: 2, 3: 3, 17: 1})
-        >>> math.prod(prime_factors.elements())
-        1836
-
-        Note, if an element's count has been set to zero or is a negative
-        number, elements() will ignore it.
-        """
-        ...
-    def most_common(self, n: int | None = None) -> list[tuple[_T, int]]:
-        """
-        List the n most common elements and their counts from the most
-        common to the least.  If n is None, then list all element counts.
-
-        >>> Counter('abracadabra').most_common(3)
-        [('a', 5), ('b', 2), ('r', 2)]
-        """
-        ...
+    def copy(self) -> Self: ...
+    def elements(self) -> Iterator[_T]: ...
+    def most_common(self, n: int | None = None) -> list[tuple[_T, int]]: ...
     @classmethod
     def fromkeys(cls, iterable: Any, v: int | None = None) -> NoReturn: ...  # type: ignore[override]
+
     @overload
     def subtract(self, iterable: None = None, /) -> None:
         """
@@ -541,23 +485,8 @@ class Counter(dict[_T, int], Generic[_T]):
         """
         ...
     @overload
-    def subtract(self, iterable: Iterable[_T], /) -> None:
-        """
-        Like dict.update() but subtracts counts instead of replacing them.
-        Counts can be reduced below zero.  Both the inputs and outputs are
-        allowed to contain zero and negative counts.
+    def subtract(self, iterable: Iterable[_T], /) -> None: ...
 
-        Source can be an iterable, a dictionary, or another Counter instance.
-
-        >>> c = Counter('which')
-        >>> c.subtract('witch')             # subtract elements from another iterable
-        >>> c.subtract(Counter('watch'))    # subtract elements from another counter
-        >>> c['h']                          # 2 in which, minus 1 in witch, minus 1 in watch
-        0
-        >>> c['w']                          # 1 in which, minus 1 in witch, minus 1 in watch
-        -1
-        """
-        ...
     # Unlike dict.update(), use Mapping instead of SupportsKeysAndGetItem for the first overload
     # (source code does an `isinstance(other, Mapping)` check)
     #
@@ -595,79 +524,21 @@ class Counter(dict[_T, int], Generic[_T]):
         """
         ...
     @overload
-    def update(self, iterable: None = None, /, **kwargs: int) -> None:
-        """
-        Like dict.update() but add counts instead of replacing them.
+    def update(self, iterable: None = None, /, **kwargs: int) -> None: ...
 
-        Source can be an iterable, a dictionary, or another Counter instance.
-
-        >>> c = Counter('which')
-        >>> c.update('witch')           # add elements from another iterable
-        >>> d = Counter('watch')
-        >>> c.update(d)                 # add elements from another counter
-        >>> c['h']                      # four 'h' in which, witch, and watch
-        4
-        """
-        ...
-    def total(self) -> int:
-        """Sum of the counts"""
-        ...
-    def __missing__(self, key: _T) -> int:
-        """The count of elements not in the Counter is zero."""
-        ...
-    def __delitem__(self, elem: object) -> None:
-        """Like dict.__delitem__() but does not raise KeyError for missing values."""
-        ...
-    def __eq__(self, other: object) -> bool:
-        """True if all counts agree. Missing counts are treated as zero."""
-        ...
-    def __ne__(self, other: object) -> bool:
-        """True if any counts disagree. Missing counts are treated as zero."""
-        ...
-    def __le__(self, other: Counter[Any]) -> bool:
-        """True if all counts in self are a subset of those in other."""
-        ...
-    def __lt__(self, other: Counter[Any]) -> bool:
-        """True if all counts in self are a proper subset of those in other."""
-        ...
-    def __ge__(self, other: Counter[Any]) -> bool:
-        """True if all counts in self are a superset of those in other."""
-        ...
-    def __gt__(self, other: Counter[Any]) -> bool:
-        """True if all counts in self are a proper superset of those in other."""
-        ...
-    def __add__(self, other: Counter[_S]) -> Counter[_T | _S]:
-        """
-        Add counts from two counters.
-
-        >>> Counter('abbb') + Counter('bcc')
-        Counter({'b': 4, 'c': 2, 'a': 1})
-        """
-        ...
-    def __sub__(self, other: Counter[_T]) -> Counter[_T]:
-        """
-        Subtract count, but keep only results with positive counts.
-
-        >>> Counter('abbbc') - Counter('bccd')
-        Counter({'b': 2, 'a': 1})
-        """
-        ...
-    def __and__(self, other: Counter[_T]) -> Counter[_T]:
-        """
-        Intersection is the minimum of corresponding counts.
-
-        >>> Counter('abbb') & Counter('bcc')
-        Counter({'b': 1})
-        """
-        ...
-    def __or__(self, other: Counter[_S]) -> Counter[_T | _S]:
-        """
-        Union is the maximum of value in either of the input counters.
-
-        >>> Counter('abbb') | Counter('bcc')
-        Counter({'b': 3, 'c': 2, 'a': 1})
-        """
-        ...
+    def total(self) -> int: ...
+    def __missing__(self, key: _T) -> int: ...
+    def __delitem__(self, elem: object) -> None: ...
+    def __eq__(self, other: object) -> bool: ...
+    def __ne__(self, other: object) -> bool: ...
+    def __le__(self, other: Counter[Any]) -> bool: ...
+    def __lt__(self, other: Counter[Any]) -> bool: ...
+    def __ge__(self, other: Counter[Any]) -> bool: ...
+    def __gt__(self, other: Counter[Any]) -> bool: ...
+    def __add__(self, other: Counter[_S]) -> Counter[_T | _S]: ...
+    def __sub__(self, other: Counter[_T]) -> Counter[_T]: ...
+    def __and__(self, other: Counter[_T]) -> Counter[_T]: ...
+    def __or__(self, other: Counter[_S]) -> Counter[_T | _S]: ...  # type: ignore[override]
     if sys.version_info >= (3, 15):
         def __xor__(self, other: Counter[_S]) -> Counter[_T | _S]: ...  # type: ignore[override]
 
@@ -780,6 +651,7 @@ class OrderedDict(dict[_KT, _VT]):
     def keys(self) -> _odict_keys[_KT, _VT]: ...
     def items(self) -> _odict_items[_KT, _VT]: ...
     def values(self) -> _odict_values[_KT, _VT]: ...
+
     # The signature of OrderedDict.fromkeys should be kept in line with `dict.fromkeys`, modulo positional-only differences.
     # Like dict.fromkeys, its true signature is not expressible in the current type system.
     # See #3800 & https://github.com/python/typing/issues/548#issuecomment-683336963.
@@ -790,9 +662,8 @@ class OrderedDict(dict[_KT, _VT]):
         ...
     @classmethod
     @overload
-    def fromkeys(cls, iterable: Iterable[_T], value: _S) -> OrderedDict[_T, _S]:
-        """Create a new ordered dictionary with keys from iterable and values set to value."""
-        ...
+    def fromkeys(cls, iterable: Iterable[_T], value: _S) -> OrderedDict[_T, _S]: ...
+
     # Keep OrderedDict.setdefault in line with MutableMapping.setdefault, modulo positional-only differences.
     @overload
     def setdefault(self: OrderedDict[_KT, _T | None], key: _KT, default: None = None) -> _T | None:
@@ -803,13 +674,8 @@ class OrderedDict(dict[_KT, _VT]):
         """
         ...
     @overload
-    def setdefault(self, key: _KT, default: _VT) -> _VT:
-        """
-        Insert key with a value of default if key is not in the dictionary.
+    def setdefault(self, key: _KT, default: _VT) -> _VT: ...
 
-        Return the value for key if key is in the dictionary, else default.
-        """
-        ...
     # Same as dict.pop, but accepts keyword arguments
     @overload
     def pop(self, key: _KT) -> _VT:
@@ -830,22 +696,16 @@ class OrderedDict(dict[_KT, _VT]):
         """
         ...
     @overload
-    def pop(self, key: _KT, default: _T) -> _VT | _T:
-        """
-        od.pop(key[,default]) -> v, remove specified key and return the corresponding value.
+    def pop(self, key: _KT, default: _T) -> _VT | _T: ...
 
-        If the key is not found, return the default if given; otherwise,
-        raise a KeyError.
-        """
-        ...
-    def __eq__(self, value: object, /) -> bool:
-        """Return self==value."""
-        ...
+    def __eq__(self, value: object, /) -> bool: ...
+
     if sys.version_info >= (3, 15):
         @overload
         def __or__(self, value: dict[_KT, _VT] | frozendict[_KT, _VT], /) -> Self: ...
         @overload
         def __or__(self, value: dict[_T1, _T2] | frozendict[_T1, _T2], /) -> OrderedDict[_KT | _T1, _VT | _T2]: ...
+
         @overload  # type: ignore[override]
         def __ror__(self, value: dict[_KT, _VT] | frozendict[_KT, _VT], /) -> Self: ...  # type: ignore[override,misc]
         @overload
@@ -858,9 +718,8 @@ class OrderedDict(dict[_KT, _VT]):
             """Return self|value."""
             ...
         @overload
-        def __or__(self, value: dict[_T1, _T2], /) -> OrderedDict[_KT | _T1, _VT | _T2]:
-            """Return self|value."""
-            ...
+        def __or__(self, value: dict[_T1, _T2], /) -> OrderedDict[_KT | _T1, _VT | _T2]: ...
+
         @overload
         def __ror__(self, value: dict[_KT, _VT], /) -> Self:
             """Return value|self."""
@@ -882,6 +741,7 @@ class defaultdict(dict[_KT, _VT]):
     passed to the dict constructor, including keyword arguments.
     """
     default_factory: Callable[[], _VT] | None
+
     @overload
     def __init__(self) -> None: ...
     @overload
@@ -915,20 +775,11 @@ class defaultdict(dict[_KT, _VT]):
         /,
         **kwargs: _VT,
     ) -> None: ...
-    def __missing__(self, key: _KT, /) -> _VT:
-        """
-        __missing__(key) # Called by __getitem__ for missing key; pseudo-code:
-        if self.default_factory is None: raise KeyError((key,))
-        self[key] = value = self.default_factory()
-        return value
-        """
-        ...
-    def __copy__(self) -> Self:
-        """D.copy() -> a shallow copy of D."""
-        ...
-    def copy(self) -> Self:
-        """D.copy() -> a shallow copy of D."""
-        ...
+
+    def __missing__(self, key: _KT, /) -> _VT: ...
+    def __copy__(self) -> Self: ...
+    def copy(self) -> Self: ...
+
     # defaultdict rejects frozendict in its direct __or__/__ror__ methods, even though dict accepts it.
     # See https://github.com/python/cpython/issues/149534.
     @overload  # type: ignore[override]
@@ -936,9 +787,8 @@ class defaultdict(dict[_KT, _VT]):
         """Return self|value."""
         ...
     @overload
-    def __or__(self, value: dict[_T1, _T2], /) -> defaultdict[_KT | _T1, _VT | _T2]:
-        """Return self|value."""
-        ...
+    def __or__(self, value: dict[_T1, _T2], /) -> defaultdict[_KT | _T1, _VT | _T2]: ...
+
     @overload  # type: ignore[override]
     def __ror__(self, value: dict[_KT, _VT], /) -> Self:
         """Return value|self."""
@@ -985,23 +835,25 @@ class ChainMap(MutableMapping[_KT, _VT]):
     def __iter__(self) -> Iterator[_KT]: ...
     def __len__(self) -> int: ...
     def __contains__(self, key: object) -> bool: ...
+
     @overload
     def get(self, key: _KT, default: None = None) -> _VT | None: ...
     @overload
     def get(self, key: _KT, default: _VT) -> _VT: ...
     @overload
     def get(self, key: _KT, default: _T) -> _VT | _T: ...
+
     def __missing__(self, key: _KT) -> _VT: ...  # undocumented
     def __bool__(self) -> bool: ...
+
     # Keep ChainMap.setdefault in line with MutableMapping.setdefault, modulo positional-only differences.
     @overload
     def setdefault(self: ChainMap[_KT, _T | None], key: _KT, default: None = None) -> _T | None:
         """D.setdefault(k[,d]) -> D.get(k,d), also set D[k]=d if k not in D"""
         ...
     @overload
-    def setdefault(self, key: _KT, default: _VT) -> _VT:
-        """D.setdefault(k[,d]) -> D.get(k,d), also set D[k]=d if k not in D"""
-        ...
+    def setdefault(self, key: _KT, default: _VT) -> _VT: ...
+
     @overload
     def pop(self, key: _KT) -> _VT:
         """Remove *key* from maps[0] and return its value. Raise KeyError if *key* not in maps[0]."""
@@ -1011,12 +863,9 @@ class ChainMap(MutableMapping[_KT, _VT]):
         """Remove *key* from maps[0] and return its value. Raise KeyError if *key* not in maps[0]."""
         ...
     @overload
-    def pop(self, key: _KT, default: _T) -> _VT | _T:
-        """Remove *key* from maps[0] and return its value. Raise KeyError if *key* not in maps[0]."""
-        ...
-    def copy(self) -> Self:
-        """New ChainMap or subclass with a new copy of maps[0] and refs to maps[1:]"""
-        ...
+    def pop(self, key: _KT, default: _T) -> _VT | _T: ...
+
+    def copy(self) -> Self: ...
     __copy__ = copy
     # All arguments to `fromkeys` are passed to `dict.fromkeys` at runtime,
     # so the signature should be kept in line with `dict.fromkeys`.
@@ -1041,17 +890,18 @@ class ChainMap(MutableMapping[_KT, _VT]):
         ...
     @classmethod
     @overload
-    def fromkeys(cls, iterable: Iterable[_T], value: _S, /) -> ChainMap[_T, _S]:
-        """Create a new ChainMap with keys from iterable and values set to value."""
-        ...
+    def fromkeys(cls, iterable: Iterable[_T], value: _S, /) -> ChainMap[_T, _S]: ...
+
     @overload
     def __or__(self, other: Mapping[_KT, _VT]) -> Self: ...
     @overload
     def __or__(self, other: Mapping[_T1, _T2]) -> ChainMap[_KT | _T1, _VT | _T2]: ...
+
     @overload
     def __ror__(self, other: Mapping[_KT, _VT]) -> Self: ...
     @overload
     def __ror__(self, other: Mapping[_T1, _T2]) -> ChainMap[_KT | _T1, _VT | _T2]: ...
+
     # ChainMap.__ior__ should be kept roughly in line with MutableMapping.update()
     @overload  # type: ignore[misc]
     def __ior__(self, other: SupportsKeysAndGetItem[_KT, _VT]) -> Self: ...

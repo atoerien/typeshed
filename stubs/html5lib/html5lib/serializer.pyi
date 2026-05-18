@@ -3,6 +3,7 @@ from collections.abc import Generator
 from typing import Literal, overload
 
 def htmlentityreplace_errors(exc: UnicodeError) -> tuple[str | bytes, int]: ...
+
 @overload
 def serialize(
     input,
@@ -210,10 +211,12 @@ class HTMLSerializer:
     def encode(self, string: str) -> str | bytes: ...  # result depends on self.encoding
     def encodeStrict(self, string: str) -> str | bytes: ...  # result depends on self.encoding
     encoding: str | None
+
     @overload
     def serialize(self, treewalker, encoding: Literal[""] | None = None) -> Generator[str]: ...
     @overload
     def serialize(self, treewalker, encoding: str = ...) -> Generator[bytes]: ...
+
     @overload
     def render(self, treewalker, encoding: Literal[""] | None = None) -> str:
         """
@@ -237,27 +240,8 @@ class HTMLSerializer:
         """
         ...
     @overload
-    def render(self, treewalker, encoding: str = ...) -> bytes:
-        """
-        Serializes the stream from the treewalker into a string
+    def render(self, treewalker, encoding: str = ...) -> bytes: ...
 
-        :arg treewalker: the treewalker to serialize
-
-        :arg encoding: the string encoding to use
-
-        :returns: the serialized tree
-
-        Example:
-
-        >>> from html5lib import parse, getTreeWalker
-        >>> from html5lib.serializer import HTMLSerializer
-        >>> token_stream = parse('<html><body>Hi!</body></html>')
-        >>> walker = getTreeWalker('etree')
-        >>> serializer = HTMLSerializer(omit_optional_tags=False)
-        >>> serializer.render(walker(token_stream))
-        '<html><head></head><body>Hi!</body></html>'
-        """
-        ...
     def serializeError(self, data="XXX ERROR MESSAGE NEEDED") -> None: ...
 
 class SerializeError(Exception):

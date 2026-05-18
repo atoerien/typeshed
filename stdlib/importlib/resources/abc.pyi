@@ -90,15 +90,8 @@ if sys.version_info >= (3, 11):
             ...
         @overload
         @abstractmethod
-        def open(self, mode: Literal["rb"]) -> IO[bytes]:
-            """
-            mode may be 'r' or 'rb' to open as text or binary. Return a handle
-            suitable for reading (same as pathlib.Path.open).
+        def open(self, mode: Literal["rb"]) -> IO[bytes]: ...
 
-            When opening as text, accepts encoding parameters such as those
-            accepted by io.TextIOWrapper.
-            """
-            ...
         @property
         @abstractmethod
         def name(self) -> str:
@@ -108,9 +101,8 @@ if sys.version_info >= (3, 11):
             """Return Traversable child in self"""
             ...
         @abstractmethod
-        def read_bytes(self) -> bytes:
-            """Read contents of self as bytes"""
-            ...
+        def read_bytes(self) -> bytes: ...
+
         if sys.version_info >= (3, 15):
             @abstractmethod
             def read_text(self, encoding: str | None = None, errors: str | None = None) -> str: ...

@@ -40,70 +40,87 @@ class GraphicsStateMixin:
     DEFAULT_FILL_COLOR: ClassVar[DeviceGray]
     DEFAULT_TEXT_COLOR: ClassVar[DeviceGray]
     def __init__(self, *args, **kwargs) -> None: ...
+
     @property
     def draw_color(self) -> DeviceGray | DeviceRGB: ...
     @draw_color.setter
     def draw_color(self, v: DeviceGray | DeviceRGB) -> None: ...
+
     @property
     def fill_color(self) -> DeviceGray | DeviceRGB: ...
     @fill_color.setter
     def fill_color(self, v: DeviceGray | DeviceRGB) -> None: ...
+
     @property
     def text_color(self) -> DeviceGray | DeviceRGB: ...
     @text_color.setter
     def text_color(self, v: DeviceGray | DeviceRGB) -> None: ...
+
     @property
     def underline(self) -> bool: ...
     @underline.setter
     def underline(self, v: bool) -> None: ...
+
     @property
     def strikethrough(self) -> bool: ...
     @strikethrough.setter
     def strikethrough(self, v: bool) -> None: ...
+
     @property
     def font_style(self) -> str: ...
     @font_style.setter
     def font_style(self, v: str) -> None: ...
+
     @property
     def font_stretching(self) -> float: ...
     @font_stretching.setter
     def font_stretching(self, v: float) -> None: ...
+
     @property
     def char_spacing(self) -> float: ...
     @char_spacing.setter
     def char_spacing(self, v: float) -> None: ...
+
     @property
     def font_family(self) -> str: ...
     @font_family.setter
     def font_family(self, v: str) -> None: ...
+
     @property
     def font_size_pt(self) -> float: ...
     @font_size_pt.setter
     def font_size_pt(self, v: float) -> None: ...
+
     @property
     def font_size(self) -> float: ...
     @font_size.setter
     def font_size(self, v: float) -> None: ...
+
     @property
     def current_font(self) -> dict[str, Any]: ...
     @current_font.setter
     def current_font(self, v: dict[str, Any]) -> None: ...
+
     @property
     def current_font_is_set_on_page(self) -> bool: ...
     @current_font_is_set_on_page.setter
     def current_font_is_set_on_page(self, v: bool) -> None: ...
+
     @property
     def dash_pattern(self) -> dict[str, float]: ...
     @dash_pattern.setter
     def dash_pattern(self, v: dict[str, float]) -> None: ...
+
     @property
     def line_width(self) -> float: ...
     @line_width.setter
     def line_width(self, v: float) -> None: ...
+
     @property
     def text_mode(self) -> TextMode: ...
     @text_mode.setter
     def text_mode(self, v: int | str) -> None: ...
+
     @property
     def char_vpos(self):
         """
@@ -112,12 +129,8 @@ class GraphicsStateMixin:
         """
         ...
     @char_vpos.setter
-    def char_vpos(self, v) -> None:
-        """
-        Return vertical character position relative to line.
-        ([docs](../TextStyling.html#subscript-superscript-and-fractional-numbers))
-        """
-        ...
+    def char_vpos(self, v) -> None: ...
+
     @property
     def sub_scale(self):
         """
@@ -126,12 +139,8 @@ class GraphicsStateMixin:
         """
         ...
     @sub_scale.setter
-    def sub_scale(self, v) -> None:
-        """
-        Return scale factor for subscript text.
-        ([docs](../TextStyling.html#subscript-superscript-and-fractional-numbers))
-        """
-        ...
+    def sub_scale(self, v) -> None: ...
+
     @property
     def sup_scale(self):
         """
@@ -140,12 +149,8 @@ class GraphicsStateMixin:
         """
         ...
     @sup_scale.setter
-    def sup_scale(self, v) -> None:
-        """
-        Return scale factor for superscript text.
-        ([docs](../TextStyling.html#subscript-superscript-and-fractional-numbers))
-        """
-        ...
+    def sup_scale(self, v) -> None: ...
+
     @property
     def nom_scale(self):
         """
@@ -154,12 +159,8 @@ class GraphicsStateMixin:
         """
         ...
     @nom_scale.setter
-    def nom_scale(self, v) -> None:
-        """
-        Return scale factor for nominator text.
-        ([docs](../TextStyling.html#subscript-superscript-and-fractional-numbers))
-        """
-        ...
+    def nom_scale(self, v) -> None: ...
+
     @property
     def denom_scale(self):
         """
@@ -168,12 +169,8 @@ class GraphicsStateMixin:
         """
         ...
     @denom_scale.setter
-    def denom_scale(self, v) -> None:
-        """
-        Return scale factor for denominator text.
-        ([docs](../TextStyling.html#subscript-superscript-and-fractional-numbers))
-        """
-        ...
+    def denom_scale(self, v) -> None: ...
+
     @property
     def sub_lift(self):
         """
@@ -182,12 +179,8 @@ class GraphicsStateMixin:
         """
         ...
     @sub_lift.setter
-    def sub_lift(self, v) -> None:
-        """
-        Return lift factor for subscript text.
-        ([docs](../TextStyling.html#subscript-superscript-and-fractional-numbers))
-        """
-        ...
+    def sub_lift(self, v) -> None: ...
+
     @property
     def sup_lift(self):
         """
@@ -196,12 +189,8 @@ class GraphicsStateMixin:
         """
         ...
     @sup_lift.setter
-    def sup_lift(self, v) -> None:
-        """
-        Return lift factor for superscript text.
-        ([docs](../TextStyling.html#subscript-superscript-and-fractional-numbers))
-        """
-        ...
+    def sup_lift(self, v) -> None: ...
+
     @property
     def nom_lift(self):
         """
@@ -210,12 +199,8 @@ class GraphicsStateMixin:
         """
         ...
     @nom_lift.setter
-    def nom_lift(self, v) -> None:
-        """
-        Return lift factor for nominator text.
-        ([docs](../TextStyling.html#subscript-superscript-and-fractional-numbers))
-        """
-        ...
+    def nom_lift(self, v) -> None: ...
+
     @property
     def denom_lift(self):
         """
@@ -224,21 +209,13 @@ class GraphicsStateMixin:
         """
         ...
     @denom_lift.setter
-    def denom_lift(self, v) -> None:
-        """
-        Return lift factor for denominator text.
-        ([docs](../TextStyling.html#subscript-superscript-and-fractional-numbers))
-        """
-        ...
+    def denom_lift(self, v) -> None: ...
+
     @property
     def text_shaping(self) -> _TextShaping | None: ...
     @text_shaping.setter
     def text_shaping(self, v: _TextShaping | None) -> None: ...
-    def font_face(self) -> FontFace:
-        """
-        Return a `fpdf.fonts.FontFace` instance
-        representing a subset of properties of this GraphicsState.
-        """
-        ...
+
+    def font_face(self) -> FontFace: ...
 
 __pdoc__: Final[dict[str, bool]]

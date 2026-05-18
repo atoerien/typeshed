@@ -283,6 +283,7 @@ class FileObjectThread(FileObjectBase[_IOT, AnyStr]):
     """
     threadpool: ThreadPool
     lock: Semaphore | DummySemaphore
+
     # Text mode: always binds a TextIOWrapper
     @overload
     def __init__(

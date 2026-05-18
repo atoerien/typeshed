@@ -13,14 +13,17 @@ _T = TypeVar("_T")
 
 class bytesview:
     view: memoryview
+
     @overload
     def __init__(self, data: bytes | bytesview, offset: int, size: int) -> None: ...
     @overload
     def __init__(self, data: SizedBuffer, offset: int = 0, size: int | None = None) -> None: ...
+
     @overload
     def __getitem__(self, key: slice) -> bytes: ...
     @overload
     def __getitem__(self, key: int) -> int: ...
+
     def __len__(self) -> int: ...
 
 class Display:
@@ -67,23 +70,9 @@ class Display:
     def flush(self) -> None: ...
     def close(self) -> None: ...
     def set_error_handler(self, handler: ErrorHandler[object] | None) -> None: ...
-    def allocate_resource_id(self) -> int:
-        """
-        id = d.allocate_resource_id()
+    def allocate_resource_id(self) -> int: ...
+    def free_resource_id(self, rid: int) -> None: ...
 
-        Allocate a new X resource id number ID.
-
-        Raises ResourceIDError if there are no free resource ids.
-        """
-        ...
-    def free_resource_id(self, rid: int) -> None:
-        """
-        d.free_resource_id(rid)
-
-        Free resource id RID.  Attempts to free a resource id which
-        isn't allocated by us are ignored.
-        """
-        ...
     @overload
     def get_resource_class(self, class_name: Literal["resource"], default: object = None) -> type[resource.Resource]:
         """
@@ -175,14 +164,8 @@ class Display:
         """
         ...
     @overload
-    def get_resource_class(self, class_name: str, default: None = None) -> type[_ResourceBaseClass] | None:
-        """
-        class = d.get_resource_class(class_name, default = None)
+    def get_resource_class(self, class_name: str, default: None = None) -> type[_ResourceBaseClass] | None: ...
 
-        Return the class to be used for X resource objects of type
-        CLASS_NAME, or DEFAULT if no such class is set.
-        """
-        ...
     def set_extension_major(self, extname: str, major: int) -> None: ...
     def get_extension_major(self, extname: str) -> int: ...
     def add_extension_event(self, code: int, evt: type[rq.Event], subcode: int | None = None) -> None: ...

@@ -250,16 +250,8 @@ class RegistryInfo:
         """
         ...
     @property
-    def windows_kits_roots(self) -> LiteralString:
-        """
-        Microsoft Windows Kits Roots registry key.
+    def windows_kits_roots(self) -> LiteralString: ...
 
-        Return
-        ------
-        str
-            Registry key
-        """
-        ...
     @overload
     def microsoft(self, key: LiteralString, x86: bool = False) -> LiteralString:
         """
@@ -279,40 +271,9 @@ class RegistryInfo:
         """
         ...
     @overload
-    def microsoft(self, key: str, x86: bool = False) -> str:
-        """
-        Return key in Microsoft software registry.
+    def microsoft(self, key: str, x86: bool = False) -> str: ...  # type: ignore[misc]
 
-        Parameters
-        ----------
-        key: str
-            Registry key path where look.
-        x86: bool
-            Force x86 software registry.
-
-        Return
-        ------
-        str
-            Registry key
-        """
-        ...
-    def lookup(self, key: str, name: str) -> str | None:
-        """
-        Look for values in registry in Microsoft software registry.
-
-        Parameters
-        ----------
-        key: str
-            Registry key path where look.
-        name: str
-            Value name to find.
-
-        Return
-        ------
-        str | None
-            value
-        """
-        ...
+    def lookup(self, key: str, name: str) -> str | None: ...
 
 class SystemInfo:
     """

@@ -363,14 +363,8 @@ def isgeneratorfunction(obj: Callable[_P, Any]) -> TypeGuard[Callable[_P, Genera
     """
     ...
 @overload
-def isgeneratorfunction(obj: object) -> TypeGuard[Callable[..., GeneratorType[Any, Any, Any]]]:
-    """
-    Return true if the object is a user-defined generator function.
+def isgeneratorfunction(obj: object) -> TypeGuard[Callable[..., GeneratorType[Any, Any, Any]]]: ...
 
-    Generator function objects provide the same attributes as functions.
-    See help(isfunction) for a list of attributes.
-    """
-    ...
 @overload
 def iscoroutinefunction(obj: Callable[..., Coroutine[Any, Any, Any]]) -> bool:
     """
@@ -399,40 +393,12 @@ def iscoroutinefunction(obj: Callable[_P, object]) -> TypeGuard[Callable[_P, Cor
     """
     ...
 @overload
-def iscoroutinefunction(obj: object) -> TypeGuard[Callable[..., CoroutineType[Any, Any, Any]]]:
-    """
-    Return true if the object is a coroutine function.
+def iscoroutinefunction(obj: object) -> TypeGuard[Callable[..., CoroutineType[Any, Any, Any]]]: ...
 
-    Coroutine functions are normally defined with "async def" syntax, but may
-    be marked via markcoroutinefunction.
-    """
-    ...
-def isgenerator(object: object) -> TypeIs[GeneratorType[Any, Any, Any]]:
-    """
-    Return true if the object is a generator.
+def isgenerator(object: object) -> TypeIs[GeneratorType[Any, Any, Any]]: ...
+def iscoroutine(object: object) -> TypeIs[CoroutineType[Any, Any, Any]]: ...
+def isawaitable(object: object) -> TypeIs[Awaitable[Any]]: ...
 
-    Generator objects provide these attributes:
-        gi_code         code object
-        gi_frame        frame object or possibly None once the generator has
-                        been exhausted
-        gi_running      set to 1 when generator is executing, 0 otherwise
-        gi_suspended    set to 1 when the generator is suspended at a yield point, 0 otherwise
-        gi_yieldfrom    object being iterated by yield from or None
-
-        __iter__()      defined to support iteration over container
-        close()         raises a new GeneratorExit exception inside the
-                        generator to terminate the iteration
-        send()          resumes the generator and "sends" a value that becomes
-                        the result of the current yield-expression
-        throw()         used to raise an exception inside the generator
-    """
-    ...
-def iscoroutine(object: object) -> TypeIs[CoroutineType[Any, Any, Any]]:
-    """Return true if the object is a coroutine."""
-    ...
-def isawaitable(object: object) -> TypeIs[Awaitable[Any]]:
-    """Return true if object can be passed to an ``await`` expression."""
-    ...
 @overload
 def isasyncgenfunction(obj: Callable[..., AsyncGenerator[Any, Any]]) -> bool:
     """
@@ -452,14 +418,8 @@ def isasyncgenfunction(obj: Callable[_P, Any]) -> TypeGuard[Callable[_P, AsyncGe
     """
     ...
 @overload
-def isasyncgenfunction(obj: object) -> TypeGuard[Callable[..., AsyncGeneratorType[Any, Any]]]:
-    """
-    Return true if the object is an asynchronous generator function.
+def isasyncgenfunction(obj: object) -> TypeGuard[Callable[..., AsyncGeneratorType[Any, Any]]]: ...
 
-    Asynchronous generator functions are defined with "async def"
-    syntax and have "yield" expressions in their body.
-    """
-    ...
 @type_check_only
 class _SupportsSet(Protocol[_T_contra, _V_contra]):
     def __set__(self, instance: _T_contra, value: _V_contra, /) -> None: ...
@@ -838,9 +798,8 @@ class Signature:
             globals: Mapping[str, Any] | None = None,
             locals: Mapping[str, Any] | None = None,
             eval_str: bool = False,
-        ) -> Self:
-            """Constructs Signature for the given callable object."""
-            ...
+        ) -> Self: ...
+
     if sys.version_info >= (3, 14):
         def format(self, *, max_width: int | None = None, quote_annotation_strings: bool = True) -> str:
             """

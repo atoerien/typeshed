@@ -188,34 +188,8 @@ class _Final:
     """Mixin to prohibit subclassing."""
     __slots__ = ("__weakref__",)
 
-def final(f: _T) -> _T:
-    """
-    Decorator to indicate final methods and final classes.
+def final(f: _T) -> _T: ...
 
-    Use this decorator to indicate to type checkers that the decorated
-    method cannot be overridden, and decorated class cannot be subclassed.
-
-    For example::
-
-        class Base:
-            @final
-            def done(self) -> None:
-                ...
-        class Sub(Base):
-            def done(self) -> None:  # Error reported by type checker
-                ...
-
-        @final
-        class Leaf:
-            ...
-        class Other(Leaf):  # Error reported by type checker
-            ...
-
-    There is no runtime checking of these properties. The decorator
-    attempts to set the ``__final__`` attribute to ``True`` on the decorated
-    object to allow runtime introspection.
-    """
-    ...
 @final
 class TypeVar:
     """
@@ -798,27 +772,8 @@ class _ProtocolMeta(ABCMeta):
 
 # Abstract base classes.
 
-def runtime_checkable(cls: _TC) -> _TC:
-    """
-    Mark a protocol class as a runtime protocol.
+def runtime_checkable(cls: _TC) -> _TC: ...
 
-    Such protocol can be used with isinstance() and issubclass().
-    Raise TypeError if applied to a non-protocol class.
-    This allows a simple-minded structural check very similar to
-    one trick ponies in collections.abc such as Iterable.
-
-    For example::
-
-        @runtime_checkable
-        class Closable(Protocol):
-            def close(self): ...
-
-        assert isinstance(open('/some/file'), Closable)
-
-    Warning: this will check only the presence of the required methods,
-    not their type signatures!
-    """
-    ...
 @runtime_checkable
 class SupportsInt(Protocol, metaclass=ABCMeta):
     """An ABC with one abstract method __int__."""
@@ -865,6 +820,7 @@ class SupportsAbs(Protocol[_T_co]):
 class SupportsRound(Protocol[_T_co]):
     """An ABC with one abstract method __round__ that is covariant in its return type."""
     __slots__ = ()
+
     @overload
     @abstractmethod
     def __round__(self) -> int: ...
@@ -917,12 +873,8 @@ class Generator(Iterator[_YieldT_co], Protocol[_YieldT_co, _SendT_contra, _Retur
     """Deprecated alias to collections.abc.Generator."""
     def __next__(self) -> _YieldT_co: ...
     @abstractmethod
-    def send(self, value: _SendT_contra, /) -> _YieldT_co:
-        """
-        Send a value into the generator.
-        Return next yielded value or raise StopIteration.
-        """
-        ...
+    def send(self, value: _SendT_contra, /) -> _YieldT_co: ...
+
     @overload
     @abstractmethod
     def throw(
@@ -935,12 +887,8 @@ class Generator(Iterator[_YieldT_co], Protocol[_YieldT_co, _SendT_contra, _Retur
         ...
     @overload
     @abstractmethod
-    def throw(self, typ: BaseException, val: None = None, tb: TracebackType | None = None, /) -> _YieldT_co:
-        """
-        Raise an exception in the generator.
-        Return next yielded value or raise StopIteration.
-        """
-        ...
+    def throw(self, typ: BaseException, val: None = None, tb: TracebackType | None = None, /) -> _YieldT_co: ...
+
     if sys.version_info >= (3, 13):
         def close(self) -> _ReturnT_co | None:
             """
@@ -990,12 +938,8 @@ class Coroutine(Awaitable[_ReturnT_nd_co], Generic[_YieldT_co, _SendT_nd_contra,
     __qualname__: str
 
     @abstractmethod
-    def send(self, value: _SendT_nd_contra, /) -> _YieldT_co:
-        """
-        Send a value into the coroutine.
-        Return next yielded value or raise StopIteration.
-        """
-        ...
+    def send(self, value: _SendT_nd_contra, /) -> _YieldT_co: ...
+
     @overload
     @abstractmethod
     def throw(
@@ -1008,12 +952,8 @@ class Coroutine(Awaitable[_ReturnT_nd_co], Generic[_YieldT_co, _SendT_nd_contra,
         ...
     @overload
     @abstractmethod
-    def throw(self, typ: BaseException, val: None = None, tb: TracebackType | None = None, /) -> _YieldT_co:
-        """
-        Raise an exception in the coroutine.
-        Return next yielded value or raise StopIteration.
-        """
-        ...
+    def throw(self, typ: BaseException, val: None = None, tb: TracebackType | None = None, /) -> _YieldT_co: ...
+
     @abstractmethod
     def close(self) -> None:
         """
@@ -1051,12 +991,8 @@ class AsyncGenerator(AsyncIterator[_YieldT_co], Protocol[_YieldT_co, _SendT_cont
     """Deprecated alias to collections.abc.AsyncGenerator."""
     def __anext__(self) -> Coroutine[Any, Any, _YieldT_co]: ...
     @abstractmethod
-    def asend(self, value: _SendT_contra, /) -> Coroutine[Any, Any, _YieldT_co]:
-        """
-        Send a value into the asynchronous generator.
-        Return next yielded value or raise StopAsyncIteration.
-        """
-        ...
+    def asend(self, value: _SendT_contra, /) -> Coroutine[Any, Any, _YieldT_co]: ...
+
     @overload
     @abstractmethod
     def athrow(
@@ -1071,18 +1007,9 @@ class AsyncGenerator(AsyncIterator[_YieldT_co], Protocol[_YieldT_co, _SendT_cont
     @abstractmethod
     def athrow(
         self, typ: BaseException, val: None = None, tb: TracebackType | None = None, /
-    ) -> Coroutine[Any, Any, _YieldT_co]:
-        """
-        Raise an exception in the asynchronous generator.
-        Return next yielded value or raise StopAsyncIteration.
-        """
-        ...
-    def aclose(self) -> Coroutine[Any, Any, None]:
-        """
-        Raise GeneratorExit inside coroutine.
-        
-        """
-        ...
+    ) -> Coroutine[Any, Any, _YieldT_co]: ...
+
+    def aclose(self) -> Coroutine[Any, Any, None]: ...
 
 _ContainerT_contra = TypeVar("_ContainerT_contra", contravariant=True, default=Any)
 
@@ -1109,6 +1036,7 @@ class Sequence(Reversible[_T_co], Collection[_T_co]):
     @overload
     @abstractmethod
     def __getitem__(self, index: slice[int | None], /) -> Sequence[_T_co]: ...
+
     # Mixin methods
     def index(self, value: Any, start: int = 0, stop: int = ..., /) -> int:
         """
@@ -1129,27 +1057,29 @@ class Sequence(Reversible[_T_co], Collection[_T_co]):
 class MutableSequence(Sequence[_T]):
     """Deprecated alias to collections.abc.MutableSequence."""
     @abstractmethod
-    def insert(self, index: int, value: _T, /) -> None:
-        """S.insert(index, value) -- insert value before index"""
-        ...
+    def insert(self, index: int, value: _T, /) -> None: ...
+
     @overload
     @abstractmethod
     def __getitem__(self, index: int, /) -> _T: ...
     @overload
     @abstractmethod
     def __getitem__(self, index: slice[int | None], /) -> MutableSequence[_T]: ...
+
     @overload
     @abstractmethod
     def __setitem__(self, index: int, value: _T, /) -> None: ...
     @overload
     @abstractmethod
     def __setitem__(self, index: slice[int | None], value: Iterable[_T], /) -> None: ...
+
     @overload
     @abstractmethod
     def __delitem__(self, index: int, /) -> None: ...
     @overload
     @abstractmethod
     def __delitem__(self, index: slice[int | None], /) -> None: ...
+
     # Mixin methods
     def append(self, value: _T, /) -> None:
         """S.append(value) -- append value to the end of the sequence"""
@@ -1311,6 +1241,7 @@ class Mapping(Collection[_KT], Generic[_KT, _VT_co]):
     # see discussion in https://github.com/python/typing/pull/273.
     @abstractmethod
     def __getitem__(self, key: _KT, /) -> _VT_co: ...
+
     # Mixin methods
     @overload
     def get(self, key: _KT, /) -> _VT_co | None:
@@ -1321,18 +1252,11 @@ class Mapping(Collection[_KT], Generic[_KT, _VT_co]):
         """D.get(k[,d]) -> D[k] if k in D, else d.  d defaults to None."""
         ...
     @overload
-    def get(self, key: _KT, default: _T, /) -> _VT_co | _T:
-        """D.get(k[,d]) -> D[k] if k in D, else d.  d defaults to None."""
-        ...
-    def items(self) -> ItemsView[_KT, _VT_co]:
-        """D.items() -> a set-like object providing a view on D's items"""
-        ...
-    def keys(self) -> KeysView[_KT]:
-        """D.keys() -> a set-like object providing a view on D's keys"""
-        ...
-    def values(self) -> ValuesView[_VT_co]:
-        """D.values() -> an object providing a view on D's values"""
-        ...
+    def get(self, key: _KT, default: _T, /) -> _VT_co | _T: ...
+
+    def items(self) -> ItemsView[_KT, _VT_co]: ...
+    def keys(self) -> KeysView[_KT]: ...
+    def values(self) -> ValuesView[_VT_co]: ...
     def __contains__(self, key: object, /) -> bool: ...
     def __eq__(self, other: object, /) -> bool:
         """Return self==value."""
@@ -1344,9 +1268,8 @@ class MutableMapping(Mapping[_KT, _VT]):
     def __setitem__(self, key: _KT, value: _VT, /) -> None: ...
     @abstractmethod
     def __delitem__(self, key: _KT, /) -> None: ...
-    def clear(self) -> None:
-        """D.clear() -> None.  Remove all items from D."""
-        ...
+    def clear(self) -> None: ...
+
     @overload
     def pop(self, key: _KT, /) -> _VT:
         """
@@ -1362,18 +1285,10 @@ class MutableMapping(Mapping[_KT, _VT]):
         """
         ...
     @overload
-    def pop(self, key: _KT, default: _T, /) -> _VT | _T:
-        """
-        D.pop(k[,d]) -> v, remove specified key and return the corresponding value.
-        If key is not found, d is returned if given, otherwise KeyError is raised.
-        """
-        ...
-    def popitem(self) -> tuple[_KT, _VT]:
-        """
-        D.popitem() -> (k, v), remove and return some (key, value) pair
-        as a 2-tuple; but raise KeyError if D is empty.
-        """
-        ...
+    def pop(self, key: _KT, default: _T, /) -> _VT | _T: ...
+
+    def popitem(self) -> tuple[_KT, _VT]: ...
+
     # This overload should be allowed only if the value type is compatible with None.
     #
     # Keep the following methods in line with MutableMapping.setdefault, modulo positional-only differences:
@@ -1385,9 +1300,8 @@ class MutableMapping(Mapping[_KT, _VT]):
         """D.setdefault(k[,d]) -> D.get(k,d), also set D[k]=d if k not in D"""
         ...
     @overload
-    def setdefault(self, key: _KT, default: _VT, /) -> _VT:
-        """D.setdefault(k[,d]) -> D.get(k,d), also set D[k]=d if k not in D"""
-        ...
+    def setdefault(self, key: _KT, default: _VT, /) -> _VT: ...
+
     # 'update' used to take a Union, but using overloading is better.
     # The second overloaded type here is a bit too general, because
     # Mapping[tuple[_KT, _VT], W] is a subclass of Iterable[tuple[_KT, _VT]],
@@ -1512,18 +1426,21 @@ class IO(Generic[AnyStr]):
     def truncate(self, size: int | None = None, /) -> int: ...
     @abstractmethod
     def writable(self) -> bool: ...
+
     @abstractmethod
     @overload
     def write(self: IO[bytes], s: ReadableBuffer, /) -> int: ...
     @abstractmethod
     @overload
     def write(self, s: AnyStr, /) -> int: ...
+
     @abstractmethod
     @overload
     def writelines(self: IO[bytes], lines: Iterable[ReadableBuffer], /) -> None: ...
     @abstractmethod
     @overload
     def writelines(self, lines: Iterable[AnyStr], /) -> None: ...
+
     @abstractmethod
     def __next__(self) -> AnyStr: ...
     @abstractmethod
@@ -1626,52 +1543,8 @@ else:
         """
         Return type hints for an object.
 
-        This is often the same as obj.__annotations__, but it handles
-        forward references encoded as string literals and recursively replaces all
-        'Annotated[T, ...]' with 'T' (unless 'include_extras=True').
+def get_args(tp: Any) -> tuple[Any, ...]: ...  # AnnotationForm
 
-        The argument may be a module, class, method, or function. The annotations
-        are returned as a dictionary. For classes, annotations include also
-        inherited members.
-
-        TypeError is raised if the argument is not of a type that can contain
-        annotations, and an empty dictionary is returned if no annotations are
-        present.
-
-        BEWARE -- the behavior of globalns and localns is counterintuitive
-        (unless you are familiar with how eval() and exec() work).  The
-        search order is locals first, then globals.
-
-        - If no dict arguments are passed, an attempt is made to use the
-          globals from obj (or the respective module's globals for classes),
-          and these are also used as the locals.  If the object does not appear
-          to have globals, an empty dictionary is used.  For classes, the search
-          order is globals first then locals.
-
-        - If one dict argument is passed, it is used for both globals and
-          locals.
-
-        - If two dict arguments are passed, they specify globals and
-          locals, respectively.
-        """
-        ...
-
-def get_args(tp: Any) -> tuple[Any, ...]:
-    """
-    Get type arguments with all substitutions performed.
-
-    For unions, basic simplifications used by Union constructor are performed.
-
-    Examples::
-
-        >>> T = TypeVar('T')
-        >>> assert get_args(Dict[str, int]) == (str, int)
-        >>> assert get_args(int) == ()
-        >>> assert get_args(Union[int, Union[T, int], str][int]) == (int, str)
-        >>> assert get_args(Union[int, Tuple[T, int]][str]) == (int, Tuple[str, int])
-        >>> assert get_args(Callable[[], T][int]) == ([], int)
-    """
-    ...
 @overload
 def get_origin(tp: ParamSpecArgs | ParamSpecKwargs) -> ParamSpec:
     """
@@ -1736,26 +1609,8 @@ def get_origin(tp: GenericAlias) -> type:
     """
     ...
 @overload
-def get_origin(tp: Any) -> Any | None:
-    """
-    Get the unsubscripted version of a type.
+def get_origin(tp: Any) -> Any | None: ...  # AnnotationForm
 
-    This supports generic types, Callable, Tuple, Union, Literal, Final, ClassVar,
-    Annotated, and others. Return None for unsupported types.
-
-    Examples::
-
-        >>> P = ParamSpec('P')
-        >>> assert get_origin(Literal[42]) is Literal
-        >>> assert get_origin(int) is None
-        >>> assert get_origin(ClassVar[int]) is ClassVar
-        >>> assert get_origin(Generic) is Generic
-        >>> assert get_origin(Generic[T]) is Generic
-        >>> assert get_origin(Union[T, int]) is Union
-        >>> assert get_origin(List[Tuple[T, T]][int]) is list
-        >>> assert get_origin(P.args) is P
-    """
-    ...
 @overload
 def cast(typ: type[_T], val: Any) -> _T:
     """
@@ -1961,9 +1816,8 @@ class NamedTuple(tuple[Any, ...]):
         ...
     @overload
     @deprecated("Creating a typing.NamedTuple using keyword arguments is deprecated and support will be removed in Python 3.15")
-    def __init__(self, typename: str, fields: None = None, /, **kwargs: Any) -> None:
-        """Initialize self.  See help(type(self)) for accurate signature."""
-        ...
+    def __init__(self, typename: str, fields: None = None, /, **kwargs: Any) -> None: ...
+
     @classmethod
     def _make(cls, iterable: Iterable[Any]) -> typing_extensions.Self: ...
     def _asdict(self) -> dict[str, Any]: ...
@@ -1998,22 +1852,21 @@ class _TypedDict(Mapping[str, object], metaclass=ABCMeta):
     def items(self) -> dict_items[str, object]: ...
     def keys(self) -> dict_keys[str, object]: ...
     def values(self) -> dict_values[str, object]: ...
+
     @overload
     def __or__(self, value: typing_extensions.Self, /) -> typing_extensions.Self:
         """Return self|value."""
         ...
     @overload
-    def __or__(self, value: dict[str, Any], /) -> dict[str, object]:
-        """Return self|value."""
-        ...
+    def __or__(self, value: dict[str, Any], /) -> dict[str, object]: ...
+
     @overload
     def __ror__(self, value: typing_extensions.Self, /) -> typing_extensions.Self:
         """Return value|self."""
         ...
     @overload
-    def __ror__(self, value: dict[str, Any], /) -> dict[str, object]:
-        """Return value|self."""
-        ...
+    def __ror__(self, value: dict[str, Any], /) -> dict[str, object]: ...
+
     # supposedly incompatible definitions of __or__ and __ior__
     def __ior__(self, value: typing_extensions.Self, /) -> typing_extensions.Self: ...  # type: ignore[misc]
 
@@ -2150,33 +2003,8 @@ if sys.version_info >= (3, 12):
         | typing_extensions.TypeVarTuple
     )
 
-    def override(method: _F, /) -> _F:
-        """
-        Indicate that a method is intended to override a method in a base class.
+    def override(method: _F, /) -> _F: ...
 
-        Usage::
-
-            class Base:
-                def method(self) -> None:
-                    pass
-
-            class Child(Base):
-                @override
-                def method(self) -> None:
-                    super().method()
-
-        When this decorator is applied to a method, the type checker will
-        validate that it overrides a method or attribute with the same name on a
-        base class.  This helps prevent bugs that may occur when a base class is
-        changed without an equivalent change to a child class.
-
-        There is no runtime checking of this property. The decorator attempts to
-        set the ``__override__`` attribute to ``True`` on the decorated object to
-        allow runtime introspection.
-
-        See PEP 698 for details.
-        """
-        ...
     @final
     class TypeAliasType:
         """
@@ -2235,38 +2063,9 @@ if sys.version_info >= (3, 12):
             def evaluate_value(self) -> EvaluateFunc: ...
 
 if sys.version_info >= (3, 13):
-    def is_protocol(tp: type, /) -> bool:
-        """
-        Return True if the given type is a Protocol.
+    def is_protocol(tp: type, /) -> bool: ...
+    def get_protocol_members(tp: type, /) -> frozenset[str]: ...
 
-        Example::
-
-            >>> from typing import Protocol, is_protocol
-            >>> class P(Protocol):
-            ...     def a(self) -> str: ...
-            ...     b: int
-            >>> is_protocol(P)
-            True
-            >>> is_protocol(int)
-            False
-        """
-        ...
-    def get_protocol_members(tp: type, /) -> frozenset[str]:
-        """
-        Return the set of members defined in a Protocol.
-
-        Example::
-
-            >>> from typing import Protocol, get_protocol_members
-            >>> class P(Protocol):
-            ...     def a(self) -> str: ...
-            ...     b: int
-            >>> get_protocol_members(P) == frozenset({'a', 'b'})
-            True
-
-        Raise a TypeError for arguments that are not Protocols.
-        """
-        ...
     @final
     @type_check_only
     class _NoDefaultType: ...

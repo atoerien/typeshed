@@ -108,15 +108,8 @@ def _quote(str: None) -> None:
     """
     ...
 @overload
-def _quote(str: str) -> str:
-    r"""
-    Quote a string for use in a cookie header.
+def _quote(str: str) -> str: ...
 
-    If the string does not need to be double-quoted, then just return the
-    string.  Otherwise, surround the string in doublequotes and quote
-    (with a \) special characters.
-    """
-    ...
 @overload
 def _unquote(str: None) -> None: ...
 @overload

@@ -20,63 +20,10 @@ class ExecApiMixin:
         environment: dict[str, str] | list[str] | None = None,
         workdir: str | None = None,
         detach_keys: str | None = None,
-    ) -> dict[str, Incomplete]:
-        """
-        Sets up an exec instance in a running container.
+    ) -> dict[str, Incomplete]: ...
+    def exec_inspect(self, exec_id: str) -> dict[str, Incomplete]: ...
+    def exec_resize(self, exec_id: str, height: int | None = None, width: int | None = None) -> None: ...
 
-        Args:
-            container (str): Target container where exec instance will be
-                created
-            cmd (str or list): Command to be executed
-            stdout (bool): Attach to stdout. Default: ``True``
-            stderr (bool): Attach to stderr. Default: ``True``
-            stdin (bool): Attach to stdin. Default: ``False``
-            tty (bool): Allocate a pseudo-TTY. Default: False
-            privileged (bool): Run as privileged.
-            user (str): User to execute command as. Default: root
-            environment (dict or list): A dictionary or a list of strings in
-                the following format ``["PASSWORD=xxx"]`` or
-                ``{"PASSWORD": "xxx"}``.
-            workdir (str): Path to working directory for this exec session
-            detach_keys (str): Override the key sequence for detaching
-                a container. Format is a single character `[a-Z]`
-                or `ctrl-<value>` where `<value>` is one of:
-                `a-z`, `@`, `^`, `[`, `,` or `_`.
-                ~/.docker/config.json is used by default.
-
-        Returns:
-            (dict): A dictionary with an exec ``Id`` key.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def exec_inspect(self, exec_id: str) -> dict[str, Incomplete]:
-        """
-        Return low-level information about an exec command.
-
-        Args:
-            exec_id (str): ID of the exec instance
-
-        Returns:
-            (dict): Dictionary of values returned by the endpoint.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def exec_resize(self, exec_id: str, height: int | None = None, width: int | None = None) -> None:
-        """
-        Resize the tty session used by the specified exec command.
-
-        Args:
-            exec_id (str): ID of the exec instance
-            height (int): Height of tty session
-            width (int): Width of tty session
-        """
-        ...
     @overload
     def exec_start(
         self,

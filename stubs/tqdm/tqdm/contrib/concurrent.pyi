@@ -163,21 +163,8 @@ def thread_map(
     iter6: Iterable[Any],
     *iterables: Iterable[Any],
     **tqdm_kwargs: Unpack[_TqdmKwargs],
-) -> list[_R]:
-    """
-    Equivalent of `list(map(fn, *iterables))`
-    driven by `concurrent.futures.ThreadPoolExecutor`.
+) -> list[_R]: ...
 
-    Parameters
-    ----------
-    tqdm_class  : optional
-        `tqdm` class to use for bars [default: tqdm.auto.tqdm].
-    max_workers  : int, optional
-        Maximum number of workers to spawn; passed to
-        `concurrent.futures.ThreadPoolExecutor.__init__`.
-        [default: max(32, cpu_count() + 4)].
-    """
-    ...
 @overload
 def process_map(fn: Callable[[_T1], _R], iter1: Iterable[_T1], **tqdm_kwargs: Unpack[_TqdmKwargs]) -> list[_R]:
     """

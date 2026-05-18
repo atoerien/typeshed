@@ -123,15 +123,8 @@ def rfc_6868_unescape(param_value: str) -> str:
 
 RFC_6868_ESCAPE_REGEX: Final[Pattern[str]]
 
-def rfc_6868_escape(param_value: str) -> str:
-    """
-    Take care of :rfc:`6868` escaping.
+def rfc_6868_escape(param_value: str) -> str: ...
 
-    - ^ -> ^^
-    - " -> ^'
-    - newline -> ^n
-    """
-    ...
 @overload
 def unescape_list_or_string(val: list[str]) -> list[str]: ...
 @overload

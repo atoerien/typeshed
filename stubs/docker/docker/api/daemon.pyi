@@ -4,19 +4,8 @@ from typing import Any, Literal, overload
 from docker.types.daemon import CancellableStream
 
 class DaemonApiMixin:
-    def df(self) -> dict[str, Any]:
-        """
-        Get data usage information.
+    def df(self) -> dict[str, Any]: ...
 
-        Returns:
-            (dict): A dictionary representing different resource categories
-            and their respective data usage.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
     @overload
     def events(
         self,
@@ -69,57 +58,9 @@ class DaemonApiMixin:
         until: datetime | int | None = None,
         filters: dict[str, Any] | None = None,
         decode: Literal[True] = ...,
-    ) -> CancellableStream[dict[str, Any]]:
-        """
-        Get real-time events from the server. Similar to the ``docker events``
-        command.
+    ) -> CancellableStream[dict[str, Any]]: ...
 
-        Args:
-            since (UTC datetime or int): Get events from this point
-            until (UTC datetime or int): Get events until this point
-            filters (dict): Filter the events by event time, container or image
-            decode (bool): If set to true, stream will be decoded into dicts on
-                the fly. False by default.
-
-        Returns:
-            A :py:class:`docker.types.daemon.CancellableStream` generator
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-
-        Example:
-
-            >>> for event in client.events(decode=True)
-            ...   print(event)
-            {u'from': u'image/with:tag',
-             u'id': u'container-id',
-             u'status': u'start',
-             u'time': 1423339459}
-            ...
-
-            or
-
-            >>> events = client.events()
-            >>> for event in events:
-            ...   print(event)
-            >>> # and cancel from another thread
-            >>> events.close()
-        """
-        ...
-    def info(self) -> dict[str, Any]:
-        """
-        Display system-wide information. Identical to the ``docker info``
-        command.
-
-        Returns:
-            (dict): The info as a dict
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
+    def info(self) -> dict[str, Any]: ...
     def login(
         self,
         username: str,

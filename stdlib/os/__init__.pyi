@@ -201,6 +201,8 @@ __all__ = [
 if sys.version_info >= (3, 14):
     # reload_environ was added to __all__ in Python 3.14.1
     __all__ += ["readinto", "reload_environ"]
+if sys.platform == "linux" and sys.version_info >= (3, 15):
+    __all__ += ["_clearenv"]
 if sys.platform == "darwin" and sys.version_info >= (3, 12):
     __all__ += ["PRIO_DARWIN_BG", "PRIO_DARWIN_NONUI", "PRIO_DARWIN_PROCESS", "PRIO_DARWIN_THREAD"]
 if sys.platform == "darwin":
@@ -251,6 +253,31 @@ if sys.platform == "linux":
     ]
 if sys.platform == "linux" and sys.version_info >= (3, 14):
     __all__ += ["SCHED_DEADLINE", "SCHED_NORMAL"]
+if sys.platform == "linux" and sys.version_info >= (3, 15):
+    __all__ += [
+        "AT_NO_AUTOMOUNT",
+        "AT_STATX_DONT_SYNC",
+        "AT_STATX_FORCE_SYNC",
+        "AT_STATX_SYNC_AS_STAT",
+        "STATX_ATIME",
+        "STATX_BASIC_STATS",
+        "STATX_BLOCKS",
+        "STATX_BTIME",
+        "STATX_CTIME",
+        "STATX_DIOALIGN",
+        "STATX_GID",
+        "STATX_INO",
+        "STATX_MNT_ID",
+        "STATX_MNT_ID_UNIQUE",
+        "STATX_MODE",
+        "STATX_MTIME",
+        "STATX_NLINK",
+        "STATX_SIZE",
+        "STATX_TYPE",
+        "STATX_UID",
+        "statx",
+        "statx_result",
+    ]
 if sys.platform == "linux" and sys.version_info >= (3, 13):
     __all__ += [
         "POSIX_SPAWN_CLOSEFROM",
@@ -696,6 +723,28 @@ if sys.platform == "darwin":
 if sys.platform != "win32" and sys.version_info >= (3, 15):
     NODEV: Final[int]
 
+if sys.platform == "linux" and sys.version_info >= (3, 15):
+    AT_NO_AUTOMOUNT: Final[int]
+    AT_STATX_DONT_SYNC: Final[int]
+    AT_STATX_FORCE_SYNC: Final[int]
+    AT_STATX_SYNC_AS_STAT: Final[int]
+    STATX_ATIME: Final[int]
+    STATX_BASIC_STATS: Final[int]
+    STATX_BLOCKS: Final[int]
+    STATX_BTIME: Final[int]
+    STATX_CTIME: Final[int]
+    STATX_DIOALIGN: Final[int]
+    STATX_GID: Final[int]
+    STATX_INO: Final[int]
+    STATX_MNT_ID: Final[int]
+    STATX_MNT_ID_UNIQUE: Final[int]
+    STATX_MODE: Final[int]
+    STATX_MTIME: Final[int]
+    STATX_NLINK: Final[int]
+    STATX_SIZE: Final[int]
+    STATX_TYPE: Final[int]
+    STATX_UID: Final[int]
+
 if sys.platform != "win32":
     O_FSYNC: Final[int]
 
@@ -743,6 +792,7 @@ class _Environ(MutableMapping[AnyStr, AnyStr], Generic[AnyStr]):
         encodevalue: _EnvironCodeFunc[AnyStr],
         decodevalue: _EnvironCodeFunc[AnyStr],
     ) -> None: ...
+
     @overload
     def get(self, key: AnyStr, default: None = None) -> AnyStr | None:
         """D.get(k[,d]) -> D[k] if k in D, else d.  d defaults to None."""
@@ -752,9 +802,8 @@ class _Environ(MutableMapping[AnyStr, AnyStr], Generic[AnyStr]):
         """D.get(k[,d]) -> D[k] if k in D, else d.  d defaults to None."""
         ...
     @overload
-    def get(self, key: AnyStr, default: _T) -> AnyStr | _T:
-        """D.get(k[,d]) -> D[k] if k in D, else d.  d defaults to None."""
-        ...
+    def get(self, key: AnyStr, default: _T) -> AnyStr | _T: ...
+
     @overload
     def pop(self, key: AnyStr) -> AnyStr:
         """
@@ -770,12 +819,8 @@ class _Environ(MutableMapping[AnyStr, AnyStr], Generic[AnyStr]):
         """
         ...
     @overload
-    def pop(self, key: AnyStr, default: _T) -> AnyStr | _T:
-        """
-        D.pop(k[,d]) -> v, remove specified key and return the corresponding value.
-        If key is not found, d is returned if given, otherwise KeyError is raised.
-        """
-        ...
+    def pop(self, key: AnyStr, default: _T) -> AnyStr | _T: ...
+
     def setdefault(self, key: AnyStr, value: AnyStr) -> AnyStr: ...
     def copy(self) -> dict[AnyStr, AnyStr]: ...
     def __delitem__(self, key: AnyStr) -> None: ...
@@ -785,6 +830,7 @@ class _Environ(MutableMapping[AnyStr, AnyStr], Generic[AnyStr]):
     def __len__(self) -> int: ...
     def __or__(self, other: Mapping[_T1, _T2]) -> dict[AnyStr | _T1, AnyStr | _T2]: ...
     def __ror__(self, other: Mapping[_T1, _T2]) -> dict[AnyStr | _T1, AnyStr | _T2]: ...
+
     # We use @overload instead of a Union for reasons similar to those given for
     # overloading MutableMapping.update in stdlib/typing.pyi
     # The type: ignore is needed due to incompatible __or__/__ior__ signatures
@@ -799,6 +845,9 @@ if sys.platform != "win32":
 
 if sys.version_info >= (3, 14):
     def reload_environ() -> None: ...
+
+if sys.platform == "linux" and sys.version_info >= (3, 15):
+    def _clearenv() -> None: ...
 
 if sys.version_info >= (3, 11) or sys.platform != "win32":
     EX_OK: Final[int]
@@ -1020,22 +1069,8 @@ def listdir(path: BytesPath) -> list[bytes]:
     """
     ...
 @overload
-def listdir(path: int) -> list[str]:
-    r"""
-    Return a list containing the names of the files in the directory.
+def listdir(path: int) -> list[str]: ...
 
-    path can be specified as either str, bytes, or a path-like object.  If path is bytes,
-      the filenames returned will also be bytes; in all other circumstances
-      the filenames returned will be str.
-    If path is None, uses the path='.'.
-    On some platforms, path may also be specified as an open file descriptor;\
-      the file descriptor must refer to a directory.
-      If this functionality is unavailable, using it raises NotImplementedError.
-
-    The list is in arbitrary order.  It does not include the special
-    entries '.' and '..' even if they are present in the directory.
-    """
-    ...
 @final
 class DirEntry(Generic[AnyStr]):
     # This is what the scandir iterator yields
@@ -1123,22 +1158,9 @@ class statvfs_result(structseq[int], tuple[int, int, int, int, int, int, int, in
     def f_fsid(self) -> int: ...
 
 # ----- os function stubs -----
-def fsencode(filename: StrOrBytesPath) -> bytes:
-    """
-    Encode filename (an os.PathLike, bytes, or str) to the filesystem
-    encoding with 'surrogateescape' error handler, return bytes unchanged.
-    On Windows, use 'strict' error handler if the file system encoding is
-    'mbcs' (which is the default encoding).
-    """
-    ...
-def fsdecode(filename: StrOrBytesPath) -> str:
-    """
-    Decode filename (an os.PathLike, bytes, or str) from the filesystem
-    encoding with 'surrogateescape' error handler, return str unchanged. On
-    Windows, use 'strict' error handler if the file system encoding is
-    'mbcs' (which is the default encoding).
-    """
-    ...
+def fsencode(filename: StrOrBytesPath) -> bytes: ...
+def fsdecode(filename: StrOrBytesPath) -> str: ...
+
 @overload
 def fspath(path: str) -> str:
     """
@@ -1160,44 +1182,15 @@ def fspath(path: bytes) -> bytes:
     """
     ...
 @overload
-def fspath(path: PathLike[AnyStr]) -> AnyStr:
-    """
-    Return the file system path representation of the object.
+def fspath(path: PathLike[AnyStr]) -> AnyStr: ...
 
-    If the object is str or bytes, then allow it to pass through as-is. If the
-    object defines __fspath__(), then return the result of that method. All other
-    types raise a TypeError.
-    """
-    ...
-def get_exec_path(env: Mapping[str, str] | None = None) -> list[str]:
-    """
-    Returns the sequence of directories that will be searched for the
-    named executable (similar to a shell) when launching a process.
+def get_exec_path(env: Mapping[str, str] | None = None) -> list[str]: ...
+def getlogin() -> str: ...
+def getpid() -> int: ...
+def getppid() -> int: ...
+def strerror(code: int, /) -> str: ...
+def umask(mask: int, /) -> int: ...
 
-    *env* must be an environment variable dict or None.  If *env* is None,
-    os.environ will be used.
-    """
-    ...
-def getlogin() -> str:
-    """Return the actual login name."""
-    ...
-def getpid() -> int:
-    """Return the current process id."""
-    ...
-def getppid() -> int:
-    """
-    Return the parent's process id.
-
-    If the parent process has already exited, Windows machines will still
-    return its id; others systems will return the id of the 'init' process (1).
-    """
-    ...
-def strerror(code: int, /) -> str:
-    """Translate an error code to a message string."""
-    ...
-def umask(mask: int, /) -> int:
-    """Set the current numeric umask and return the previous umask."""
-    ...
 @final
 class uname_result(structseq[str], tuple[str, str, str, str, str]):
     """
@@ -1367,19 +1360,10 @@ if sys.platform != "win32":
         """
         ...
     @overload
-    def getenvb(key: bytes, default: _T) -> bytes | _T:
-        """
-        Get an environment variable, return None if it doesn't exist.
-        The optional second argument can specify an alternate default.
-        key, default and the result are bytes.
-        """
-        ...
-    def putenv(name: StrOrBytesPath, value: StrOrBytesPath, /) -> None:
-        """Change or add an environment variable."""
-        ...
-    def unsetenv(name: StrOrBytesPath, /) -> None:
-        """Delete an environment variable."""
-        ...
+    def getenvb(key: bytes, default: _T) -> bytes | _T: ...
+
+    def putenv(name: StrOrBytesPath, value: StrOrBytesPath, /) -> None: ...
+    def unsetenv(name: StrOrBytesPath, /) -> None: ...
 
 else:
     def putenv(name: str, value: str, /) -> None: ...
@@ -1464,48 +1448,16 @@ def fdopen(
     closefd: bool = True,
     opener: _Opener | None = None,
 ) -> IO[Any]: ...
-def close(fd: int) -> None:
-    """Close a file descriptor."""
-    ...
-def closerange(fd_low: int, fd_high: int, /) -> None:
-    """Closes all file descriptors in [fd_low, fd_high), ignoring errors."""
-    ...
-def device_encoding(fd: int) -> str | None:
-    """
-    Return a string describing the encoding of a terminal's file descriptor.
 
-    The file descriptor must be attached to a terminal.
-    If the device is not a terminal, return None.
-    """
-    ...
-def dup(fd: int, /) -> int:
-    """Return a duplicate of a file descriptor."""
-    ...
-def dup2(fd: int, fd2: int, inheritable: bool = True) -> int:
-    """Duplicate file descriptor."""
-    ...
-def fstat(fd: int) -> stat_result:
-    """
-    Perform a stat system call on the given file descriptor.
-
-    Like stat(), but for an open file descriptor.
-    Equivalent to os.stat(fd).
-    """
-    ...
-def ftruncate(fd: int, length: int, /) -> None:
-    """Truncate a file, specified by file descriptor, to a specific length."""
-    ...
-def fsync(fd: FileDescriptorLike) -> None:
-    """Force write of fd to disk."""
-    ...
-def isatty(fd: int, /) -> bool:
-    """
-    Return True if the fd is connected to a terminal.
-
-    Return True if the file descriptor is an open file descriptor
-    connected to the slave end of a terminal.
-    """
-    ...
+def close(fd: int) -> None: ...
+def closerange(fd_low: int, fd_high: int, /) -> None: ...
+def device_encoding(fd: int) -> str | None: ...
+def dup(fd: int, /) -> int: ...
+def dup2(fd: int, fd2: int, inheritable: bool = True) -> int: ...
+def fstat(fd: int) -> stat_result: ...
+def ftruncate(fd: int, length: int, /) -> None: ...
+def fsync(fd: FileDescriptorLike) -> None: ...
+def isatty(fd: int, /) -> bool: ...
 
 if sys.platform != "win32" and sys.version_info >= (3, 11):
     def login_tty(fd: int, /) -> None:
@@ -2164,27 +2116,9 @@ def renames(old: StrOrBytesPath, new: StrOrBytesPath) -> None:
     ...
 def replace(
     src: StrOrBytesPath, dst: StrOrBytesPath, *, src_dir_fd: int | None = None, dst_dir_fd: int | None = None
-) -> None:
-    """
-    Rename a file or directory, overwriting the destination.
+) -> None: ...
+def rmdir(path: StrOrBytesPath, *, dir_fd: int | None = None) -> None: ...
 
-    If either src_dir_fd or dst_dir_fd is not None, it should be a file
-      descriptor open to a directory, and the respective path string (src or dst)
-      should be relative; the path will then be relative to that directory.
-    src_dir_fd and dst_dir_fd, may not be implemented on your platform.
-      If they are unavailable, using them will raise a NotImplementedError.
-    """
-    ...
-def rmdir(path: StrOrBytesPath, *, dir_fd: int | None = None) -> None:
-    """
-    Remove a directory.
-
-    If dir_fd is not None, it should be a file descriptor open to a directory,
-      and path should be relative; path will then be relative to that directory.
-    dir_fd may not be implemented on your platform.
-      If it is unavailable, using it will raise a NotImplementedError.
-    """
-    ...
 @final
 @type_check_only
 class _ScandirIterator(Generic[AnyStr]):
@@ -2220,41 +2154,9 @@ def scandir(path: int) -> _ScandirIterator[str]:
     """
     ...
 @overload
-def scandir(path: GenericPath[AnyStr]) -> _ScandirIterator[AnyStr]:
-    """
-    Return an iterator of DirEntry objects for given path.
+def scandir(path: GenericPath[AnyStr]) -> _ScandirIterator[AnyStr]: ...
 
-    path can be specified as either str, bytes, or a path-like object.  If path
-    is bytes, the names of yielded DirEntry objects will also be bytes; in
-    all other circumstances they will be str.
-
-    If path is None, uses the path='.'.
-    """
-    ...
-def stat(path: FileDescriptorOrPath, *, dir_fd: int | None = None, follow_symlinks: bool = True) -> stat_result:
-    """
-    Perform a stat system call on the given path.
-
-      path
-        Path to be examined; can be string, bytes, a path-like object or
-        open-file-descriptor int.
-      dir_fd
-        If not None, it should be a file descriptor open to a directory,
-        and path should be a relative string; path will then be relative to
-        that directory.
-      follow_symlinks
-        If False, and the last element of the path is a symbolic link,
-        stat will examine the symbolic link itself instead of the file
-        the link points to.
-
-    dir_fd and follow_symlinks may not be implemented
-      on your platform.  If they are unavailable, using them will raise a
-      NotImplementedError.
-
-    It's an error to use dir_fd or follow_symlinks when specifying path as
-      an open file descriptor.
-    """
-    ...
+def stat(path: FileDescriptorOrPath, *, dir_fd: int | None = None, follow_symlinks: bool = True) -> stat_result: ...
 
 if sys.platform != "win32":
     def statvfs(path: FileDescriptorOrPath) -> statvfs_result:
@@ -2266,6 +2168,70 @@ if sys.platform != "win32":
           If this functionality is unavailable, using it raises an exception.
         """
         ...
+
+if sys.platform == "linux" and sys.version_info >= (3, 15):
+    @final
+    class statx_result:
+        @property
+        def stx_mask(self) -> int: ...
+        @property
+        def stx_blksize(self) -> int: ...
+        @property
+        def stx_attributes(self) -> int: ...
+        @property
+        def stx_attributes_mask(self) -> int: ...
+        @property
+        def stx_rdev_major(self) -> int: ...
+        @property
+        def stx_rdev_minor(self) -> int: ...
+        @property
+        def stx_rdev(self) -> int: ...
+        @property
+        def stx_dev_major(self) -> int: ...
+        @property
+        def stx_dev_minor(self) -> int: ...
+        @property
+        def stx_dev(self) -> int: ...
+        @property
+        def stx_mode(self) -> int | None: ...
+        @property
+        def stx_nlink(self) -> int | None: ...
+        @property
+        def stx_uid(self) -> int | None: ...
+        @property
+        def stx_gid(self) -> int | None: ...
+        @property
+        def stx_ino(self) -> int | None: ...
+        @property
+        def stx_size(self) -> int | None: ...
+        @property
+        def stx_blocks(self) -> int | None: ...
+        @property
+        def stx_atime(self) -> float | None: ...
+        @property
+        def stx_atime_ns(self) -> int | None: ...
+        @property
+        def stx_btime(self) -> float | None: ...
+        @property
+        def stx_btime_ns(self) -> int | None: ...
+        @property
+        def stx_ctime(self) -> float | None: ...
+        @property
+        def stx_ctime_ns(self) -> int | None: ...
+        @property
+        def stx_mtime(self) -> float | None: ...
+        @property
+        def stx_mtime_ns(self) -> int | None: ...
+        @property
+        def stx_mnt_id(self) -> int | None: ...
+        @property
+        def stx_dio_mem_align(self) -> int | None: ...
+        @property
+        def stx_dio_offset_align(self) -> int | None: ...
+
+    def statx(
+        path: FileDescriptorOrPath, mask: int, *, flags: int = 0, dir_fd: int | None = None, follow_symlinks: bool = True
+    ) -> statx_result: ...
 
 def symlink(
     src: StrOrBytesPath, dst: StrOrBytesPath, target_is_directory: bool = False, *, dir_fd: int | None = None
@@ -2461,41 +2427,8 @@ if sys.platform != "win32":
         *,
         follow_symlinks: bool = False,
         dir_fd: int | None = None,
-    ) -> Iterator[tuple[bytes, list[bytes], list[bytes], int]]:
-        """
-        Directory tree generator.
+    ) -> Iterator[tuple[bytes, list[bytes], list[bytes], int]]: ...
 
-        This behaves exactly like walk(), except that it yields a 4-tuple
-
-            dirpath, dirnames, filenames, dirfd
-
-        `dirpath`, `dirnames` and `filenames` are identical to walk() output,
-        and `dirfd` is a file descriptor referring to the directory `dirpath`.
-
-        The advantage of fwalk() over walk() is that it's safe against symlink
-        races (when follow_symlinks is False).
-
-        If dir_fd is not None, it should be a file descriptor open to a directory,
-          and top should be relative; top will then be relative to that directory.
-          (dir_fd is always supported for fwalk.)
-
-        Caution:
-        Since fwalk() yields file descriptors, those are only valid until the
-        next iteration step, so you should dup() them if you want to keep them
-        for a longer period.
-
-        Example:
-
-        import os
-        for root, dirs, files, rootfd in os.fwalk('python/Lib/xml'):
-            print(root, "consumes", end="")
-            print(sum(os.stat(name, dir_fd=rootfd).st_size for name in files),
-                  end="")
-            print("bytes in", len(files), "non-directory files")
-            if '__pycache__' in dirs:
-                dirs.remove('__pycache__')  # don't visit __pycache__ directories
-        """
-        ...
     if sys.platform == "linux":
         def getxattr(path: FileDescriptorOrPath, attribute: StrOrBytesPath, *, follow_symlinks: bool = True) -> bytes: ...
         def listxattr(path: FileDescriptorOrPath | None = None, *, follow_symlinks: bool = True) -> list[str]: ...
@@ -2715,18 +2648,7 @@ if sys.platform != "win32":
         """
         ...
     @deprecated("Soft deprecated. Use the subprocess module instead.")
-    def spawnve(mode: int, file: StrOrBytesPath, args: _ExecVArgs, env: _ExecEnv) -> int:
-        """
-        spawnve(mode, file, args, env) -> integer
-
-        Execute file with arguments from args in a subprocess with the
-        specified environment.
-        If mode == P_NOWAIT return the pid of the process.
-        If mode == P_WAIT return the process's exit code if it exits normally;
-        otherwise return -SIG, where SIG is the signal that killed it. 
-        """
-        ...
-
+    def spawnve(mode: int, file: StrOrBytesPath, args: _ExecVArgs, env: _ExecEnv) -> int: ...
 else:
     @deprecated("Soft deprecated. Use the subprocess module instead.")
     def spawnv(mode: int, path: StrOrBytesPath, argv: _ExecVArgs, /) -> int: ...
@@ -2734,9 +2656,8 @@ else:
     def spawnve(mode: int, path: StrOrBytesPath, argv: _ExecVArgs, env: _ExecEnv, /) -> int: ...
 
 @deprecated("Soft deprecated. Use the subprocess module instead.")
-def system(command: StrOrBytesPath) -> int:
-    """Execute the command in a subshell."""
-    ...
+def system(command: StrOrBytesPath) -> int: ...
+
 @final
 class times_result(structseq[float], tuple[float, float, float, float, float]):
     """

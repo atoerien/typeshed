@@ -133,9 +133,8 @@ class FunctionType:
             closure: tuple[CellType, ...] | None = None,
         ) -> Self: ...
 
-    def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        """Call self as a function."""
-        ...
+    def __call__(self, *args: Any, **kwargs: Any) -> Any: ...
+
     @overload
     def __get__(self, instance: None, owner: type, /) -> FunctionType:
         """Return an attribute of instance, which is of type owner."""
@@ -304,30 +303,15 @@ class MappingProxyType(Mapping[_KT_co, _VT_co]):  # type: ignore[type-var]  # py
     """Read-only proxy of a mapping."""
     __hash__: ClassVar[None]  # type: ignore[assignment]
     def __new__(cls, mapping: SupportsKeysAndGetItem[_KT_co, _VT_co]) -> Self: ...
-    def __getitem__(self, key: _KT_co, /) -> _VT_co:
-        """Return self[key]."""
-        ...
-    def __iter__(self) -> Iterator[_KT_co]:
-        """Implement iter(self)."""
-        ...
-    def __len__(self) -> int:
-        """Return len(self)."""
-        ...
-    def __eq__(self, value: object, /) -> bool:
-        """Return self==value."""
-        ...
-    def copy(self) -> dict[_KT_co, _VT_co]:
-        """D.copy() -> a shallow copy of D"""
-        ...
-    def keys(self) -> KeysView[_KT_co]:
-        """D.keys() -> a set-like object providing a view on D's keys"""
-        ...
-    def values(self) -> ValuesView[_VT_co]:
-        """D.values() -> an object providing a view on D's values"""
-        ...
-    def items(self) -> ItemsView[_KT_co, _VT_co]:
-        """D.items() -> a set-like object providing a view on D's items"""
-        ...
+    def __getitem__(self, key: _KT_co, /) -> _VT_co: ...  # type: ignore[misc]  # pyright: ignore[reportGeneralTypeIssues]
+    def __iter__(self) -> Iterator[_KT_co]: ...
+    def __len__(self) -> int: ...
+    def __eq__(self, value: object, /) -> bool: ...
+    def copy(self) -> dict[_KT_co, _VT_co]: ...
+    def keys(self) -> KeysView[_KT_co]: ...
+    def values(self) -> ValuesView[_VT_co]: ...
+    def items(self) -> ItemsView[_KT_co, _VT_co]: ...
+
     @overload
     def get(self, key: _KT_co, /) -> _VT_co | None:
         """Return the value for key if key is in the mapping, else default."""
@@ -337,21 +321,12 @@ class MappingProxyType(Mapping[_KT_co, _VT_co]):  # type: ignore[type-var]  # py
         """Return the value for key if key is in the mapping, else default."""
         ...
     @overload
-    def get(self, key: _KT_co, default: _T2, /) -> _VT_co | _T2:
-        """Return the value for key if key is in the mapping, else default."""
-        ...
-    def __class_getitem__(cls, item: Any, /) -> GenericAlias:
-        """See PEP 585"""
-        ...
-    def __reversed__(self) -> Iterator[_KT_co]:
-        """D.__reversed__() -> reverse iterator"""
-        ...
-    def __or__(self, value: Mapping[_T1, _T2], /) -> dict[_KT_co | _T1, _VT_co | _T2]:
-        """Return self|value."""
-        ...
-    def __ror__(self, value: Mapping[_T1, _T2], /) -> dict[_KT_co | _T1, _VT_co | _T2]:
-        """Return value|self."""
-        ...
+    def get(self, key: _KT_co, default: _T2, /) -> _VT_co | _T2: ...  # type: ignore[misc]  # pyright: ignore[reportGeneralTypeIssues] # Covariant type as parameter
+
+    def __class_getitem__(cls, item: Any, /) -> GenericAlias: ...
+    def __reversed__(self) -> Iterator[_KT_co]: ...
+    def __or__(self, value: Mapping[_T1, _T2], /) -> dict[_KT_co | _T1, _VT_co | _T2]: ...
+    def __ror__(self, value: Mapping[_T1, _T2], /) -> dict[_KT_co | _T1, _VT_co | _T2]: ...
 
 if sys.version_info >= (3, 12):
     @disjoint_base
@@ -475,18 +450,10 @@ class GeneratorType(Generator[_YieldT_co, _SendT_contra, _ReturnT_co]):
         def gi_state(self) -> Literal["GEN_CREATED", "GEN_SUSPENDED", "GEN_RUNNING", "GEN_CLOSED"]: ...
     __name__: str
     __qualname__: str
-    def __iter__(self) -> Self:
-        """Implement iter(self)."""
-        ...
-    def __next__(self) -> _YieldT_co:
-        """Implement next(self)."""
-        ...
-    def send(self, arg: _SendT_contra, /) -> _YieldT_co:
-        """
-        send(value) -> send 'value' into generator,
-        return next yielded value or raise StopIteration.
-        """
-        ...
+    def __iter__(self) -> Self: ...
+    def __next__(self) -> _YieldT_co: ...
+    def send(self, arg: _SendT_contra, /) -> _YieldT_co: ...
+
     @overload
     def throw(
         self, typ: type[BaseException], val: BaseException | object = ..., tb: TracebackType | None = ..., /
@@ -502,17 +469,8 @@ class GeneratorType(Generator[_YieldT_co, _SendT_contra, _ReturnT_co]):
         """
         ...
     @overload
-    def throw(self, typ: BaseException, val: None = None, tb: TracebackType | None = ..., /) -> _YieldT_co:
-        """
-        throw(value)
-        throw(type[,value[,tb]])
+    def throw(self, typ: BaseException, val: None = None, tb: TracebackType | None = ..., /) -> _YieldT_co: ...
 
-        Raise exception in generator, return next yielded value or raise
-        StopIteration.
-        the (type, val, tb) signature is deprecated, 
-        and may be removed in a future version of Python.
-        """
-        ...
     if sys.version_info >= (3, 13):
         def __class_getitem__(cls, item: Any, /) -> Any:
             """See PEP 585"""
@@ -539,15 +497,10 @@ class AsyncGeneratorType(AsyncGenerator[_YieldT_co, _SendT_contra]):
         @property
         def ag_state(self) -> Literal["AGEN_CREATED", "AGEN_SUSPENDED", "AGEN_RUNNING", "AGEN_CLOSED"]: ...
 
-    def __aiter__(self) -> Self:
-        """Return an awaitable, that resolves in asynchronous iterator."""
-        ...
-    def __anext__(self) -> Coroutine[Any, Any, _YieldT_co]:
-        """Return a value or raise StopAsyncIteration."""
-        ...
-    def asend(self, val: _SendT_contra, /) -> Coroutine[Any, Any, _YieldT_co]:
-        """asend(v) -> send 'v' in generator."""
-        ...
+    def __aiter__(self) -> Self: ...
+    def __anext__(self) -> Coroutine[Any, Any, _YieldT_co]: ...
+    def asend(self, val: _SendT_contra, /) -> Coroutine[Any, Any, _YieldT_co]: ...
+
     @overload
     async def athrow(
         self, typ: type[BaseException], val: BaseException | object = ..., tb: TracebackType | None = ..., /
@@ -562,22 +515,10 @@ class AsyncGeneratorType(AsyncGenerator[_YieldT_co, _SendT_contra]):
         """
         ...
     @overload
-    async def athrow(self, typ: BaseException, val: None = None, tb: TracebackType | None = ..., /) -> _YieldT_co:
-        """
-        athrow(value)
-        athrow(type[,value[,tb]])
+    async def athrow(self, typ: BaseException, val: None = None, tb: TracebackType | None = ..., /) -> _YieldT_co: ...
 
-        raise exception in generator.
-        the (type, val, tb) signature is deprecated, 
-        and may be removed in a future version of Python.
-        """
-        ...
-    def aclose(self) -> Coroutine[Any, Any, None]:
-        """aclose() -> raise GeneratorExit inside generator."""
-        ...
-    def __class_getitem__(cls, item: Any, /) -> GenericAlias:
-        """See PEP 585"""
-        ...
+    def aclose(self) -> Coroutine[Any, Any, None]: ...
+    def __class_getitem__(cls, item: Any, /) -> GenericAlias: ...
 
 # Non-default variations to accommodate coroutines
 _SendT_nd_contra = TypeVar("_SendT_nd_contra", contravariant=True)
@@ -606,18 +547,10 @@ class CoroutineType(Coroutine[_YieldT_co, _SendT_nd_contra, _ReturnT_nd_co]):
         @property
         def cr_state(self) -> Literal["CORO_CREATED", "CORO_SUSPENDED", "CORO_RUNNING", "CORO_CLOSED"]: ...
 
-    def close(self) -> None:
-        """close() -> raise GeneratorExit inside coroutine."""
-        ...
-    def __await__(self) -> Generator[Any, None, _ReturnT_nd_co]:
-        """Return an iterator to be used in await expression."""
-        ...
-    def send(self, arg: _SendT_nd_contra, /) -> _YieldT_co:
-        """
-        send(arg) -> send 'arg' into coroutine,
-        return next iterated value or raise StopIteration.
-        """
-        ...
+    def close(self) -> None: ...
+    def __await__(self) -> Generator[Any, None, _ReturnT_nd_co]: ...
+    def send(self, arg: _SendT_nd_contra, /) -> _YieldT_co: ...
+
     @overload
     def throw(
         self, typ: type[BaseException], val: BaseException | object = ..., tb: TracebackType | None = ..., /
@@ -633,17 +566,8 @@ class CoroutineType(Coroutine[_YieldT_co, _SendT_nd_contra, _ReturnT_nd_co]):
         """
         ...
     @overload
-    def throw(self, typ: BaseException, val: None = None, tb: TracebackType | None = ..., /) -> _YieldT_co:
-        """
-        throw(value)
-        throw(type[,value[,traceback]])
+    def throw(self, typ: BaseException, val: None = None, tb: TracebackType | None = ..., /) -> _YieldT_co: ...
 
-        Raise exception in coroutine, return next iterated value or raise
-        StopIteration.
-        the (type, val, tb) signature is deprecated, 
-        and may be removed in a future version of Python.
-        """
-        ...
     if sys.version_info >= (3, 13):
         def __class_getitem__(cls, item: Any, /) -> Any:
             """See PEP 585"""
@@ -812,17 +736,15 @@ class FrameType:
     # but you should probably file a bug report with CPython if you encounter it being None in the wild.
     # An `int | None` annotation here causes too many false-positive errors, so applying `int | Any`.
     @property
-    def f_lineno(self) -> int | MaybeNone:
-        """Return the current line number in the frame."""
-        ...
+    def f_lineno(self) -> int | MaybeNone: ...
+
     if sys.version_info >= (3, 15):
         @property
         def f_locals(self) -> FrameLocalsProxyType | dict[str, Any]: ...
     else:
         @property
-        def f_locals(self) -> dict[str, Any]:
-            """Return the mapping used by the frame to look up local variables."""
-            ...
+        def f_locals(self) -> dict[str, Any]: ...
+
     f_trace: Callable[[FrameType, str, Any], Any] | None
     f_trace_lines: bool
     f_trace_opcodes: bool
@@ -992,9 +914,8 @@ def coroutine(func: Callable[_P, Generator[Any, Any, _R]]) -> Callable[_P, Await
     """Convert regular generator function to a coroutine."""
     ...
 @overload
-def coroutine(func: _Fn) -> _Fn:
-    """Convert regular generator function to a coroutine."""
-    ...
+def coroutine(func: _Fn) -> _Fn: ...
+
 @disjoint_base
 class GenericAlias:
     """

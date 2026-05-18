@@ -65,6 +65,7 @@ class Parameters:
     def __init__(self) -> None: ...
     def __eq__(self, other: object) -> bool: ...
     def __ne__(self, other: object) -> bool: ...
+
     @property
     def blocked_connection_timeout(self) -> float | None:
         """
@@ -74,13 +75,8 @@ class Parameters:
         """
         ...
     @blocked_connection_timeout.setter
-    def blocked_connection_timeout(self, value: float | None) -> None:
-        """
-        :returns: blocked connection timeout. Defaults to
-            `DEFAULT_BLOCKED_CONNECTION_TIMEOUT`.
-        :rtype: float|None
-        """
-        ...
+    def blocked_connection_timeout(self, value: float | None) -> None: ...
+
     @property
     def channel_max(self) -> int:
         """
@@ -90,13 +86,8 @@ class Parameters:
         """
         ...
     @channel_max.setter
-    def channel_max(self, value: int) -> None:
-        """
-        :returns: max preferred number of channels. Defaults to
-            `DEFAULT_CHANNEL_MAX`.
-        :rtype: int
-        """
-        ...
+    def channel_max(self, value: int) -> None: ...
+
     @property
     def client_properties(self) -> dict[Incomplete, Incomplete] | None:
         """
@@ -107,14 +98,8 @@ class Parameters:
         """
         ...
     @client_properties.setter
-    def client_properties(self, value: dict[Incomplete, Incomplete] | None) -> None:
-        """
-        :returns: client properties used to override the fields in the default
-            client properties reported  to RabbitMQ via `Connection.StartOk`
-            method. Defaults to `DEFAULT_CLIENT_PROPERTIES`.
-        :rtype: dict|None
-        """
-        ...
+    def client_properties(self, value: dict[Incomplete, Incomplete] | None) -> None: ...
+
     @property
     def connection_attempts(self) -> int:
         """
@@ -124,13 +109,8 @@ class Parameters:
         """
         ...
     @connection_attempts.setter
-    def connection_attempts(self, value: int) -> None:
-        """
-        :returns: number of socket connection attempts. Defaults to
-            `DEFAULT_CONNECTION_ATTEMPTS`. See also `retry_delay`.
-        :rtype: int
-        """
-        ...
+    def connection_attempts(self, value: int) -> None: ...
+
     @property
     def credentials(self) -> _Credentials:
         """
@@ -139,12 +119,8 @@ class Parameters:
         """
         ...
     @credentials.setter
-    def credentials(self, value: _Credentials) -> None:
-        """
-        :rtype: one of the classes from `pika.credentials.VALID_TYPES`. Defaults
-            to `DEFAULT_CREDENTIALS`.
-        """
-        ...
+    def credentials(self, value: _Credentials) -> None: ...
+
     @property
     def frame_max(self) -> int:
         """
@@ -154,13 +130,8 @@ class Parameters:
         """
         ...
     @frame_max.setter
-    def frame_max(self, value: int) -> None:
-        """
-        :returns: desired maximum AMQP frame size to use. Defaults to
-            `DEFAULT_FRAME_MAX`.
-        :rtype: int
-        """
-        ...
+    def frame_max(self, value: int) -> None: ...
+
     @property
     def heartbeat(self) -> int | Callable[[Connection, int], int] | None:
         """
@@ -172,15 +143,8 @@ class Parameters:
         """
         ...
     @heartbeat.setter
-    def heartbeat(self, value: int | Callable[[Connection, int], int] | None) -> None:
-        """
-        :returns: AMQP connection heartbeat timeout value for negotiation during
-            connection tuning or callable which is invoked during connection tuning.
-            None to accept broker's value. 0 turns heartbeat off. Defaults to
-            `DEFAULT_HEARTBEAT_TIMEOUT`.
-        :rtype: int|callable|None
-        """
-        ...
+    def heartbeat(self, value: int | Callable[[Connection, int], int] | None) -> None: ...
+
     @property
     def host(self) -> str:
         """
@@ -189,12 +153,8 @@ class Parameters:
         """
         ...
     @host.setter
-    def host(self, value: str) -> None:
-        """
-        :returns: hostname or ip address of broker. Defaults to `DEFAULT_HOST`.
-        :rtype: str
-        """
-        ...
+    def host(self, value: str) -> None: ...
+
     @property
     def locale(self) -> str:
         """
@@ -204,13 +164,8 @@ class Parameters:
         """
         ...
     @locale.setter
-    def locale(self, value: str) -> None:
-        """
-        :returns: locale value to pass to broker; e.g., 'en_US'. Defaults to
-            `DEFAULT_LOCALE`.
-        :rtype: str
-        """
-        ...
+    def locale(self, value: str) -> None: ...
+
     @property
     def port(self) -> int:
         """
@@ -220,13 +175,8 @@ class Parameters:
         """
         ...
     @port.setter
-    def port(self, value: int | str) -> None:
-        """
-        :returns: port number of broker's listening socket. Defaults to
-            `DEFAULT_PORT`.
-        :rtype: int
-        """
-        ...
+    def port(self, value: int | str) -> None: ...
+
     @property
     def retry_delay(self) -> int | float:
         """
@@ -236,13 +186,8 @@ class Parameters:
         """
         ...
     @retry_delay.setter
-    def retry_delay(self, value: float) -> None:
-        """
-        :returns: interval between socket connection attempts; see also
-            `connection_attempts`. Defaults to `DEFAULT_RETRY_DELAY`.
-        :rtype: float
-        """
-        ...
+    def retry_delay(self, value: float) -> None: ...
+
     @property
     def socket_timeout(self) -> float | None:
         """
@@ -252,13 +197,8 @@ class Parameters:
         """
         ...
     @socket_timeout.setter
-    def socket_timeout(self, value: float | None) -> None:
-        """
-        :returns: socket connect timeout in seconds. Defaults to
-            `DEFAULT_SOCKET_TIMEOUT`. The value None disables this timeout.
-        :rtype: float|None
-        """
-        ...
+    def socket_timeout(self, value: float | None) -> None: ...
+
     @property
     def stack_timeout(self) -> float | None:
         """
@@ -269,14 +209,8 @@ class Parameters:
         """
         ...
     @stack_timeout.setter
-    def stack_timeout(self, value: float | None) -> None:
-        """
-        :returns: full protocol stack TCP/[SSL]/AMQP bring-up timeout in
-            seconds. Defaults to `DEFAULT_STACK_TIMEOUT`. The value None
-            disables this timeout.
-        :rtype: float
-        """
-        ...
+    def stack_timeout(self, value: float | None) -> None: ...
+
     @property
     def ssl_options(self) -> SSLOptions | None:
         """
@@ -285,12 +219,8 @@ class Parameters:
         """
         ...
     @ssl_options.setter
-    def ssl_options(self, value: SSLOptions | None) -> None:
-        """
-        :returns: None for plaintext or `pika.SSLOptions` instance for SSL/TLS.
-        :rtype: `pika.SSLOptions`|None
-        """
-        ...
+    def ssl_options(self, value: SSLOptions | None) -> None: ...
+
     @property
     def virtual_host(self) -> str:
         """
@@ -300,13 +230,8 @@ class Parameters:
         """
         ...
     @virtual_host.setter
-    def virtual_host(self, value: str) -> None:
-        """
-        :returns: rabbitmq virtual host name. Defaults to
-            `DEFAULT_VIRTUAL_HOST`.
-        :rtype: str
-        """
-        ...
+    def virtual_host(self, value: str) -> None: ...
+
     @property
     def tcp_options(self) -> dict[Incomplete, Incomplete] | None:
         """

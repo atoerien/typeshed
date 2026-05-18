@@ -196,23 +196,14 @@ class Pickler:
         fix_imports: bool = True,
         buffer_callback: _BufferCallback = None,
     ) -> None: ...
+
     @property
     def memo(self) -> PicklerMemoProxy: ...
     @memo.setter
     def memo(self, value: PicklerMemoProxy | dict[int, tuple[int, Any]]) -> None: ...
-    def dump(self, obj: Any, /) -> None:
-        """Write a pickled representation of the given object to the open file."""
-        ...
-    def clear_memo(self) -> None:
-        """
-        Clears the pickler's "memo".
 
-        The memo is the data structure that remembers which objects the
-        pickler has already seen, so that shared or recursive objects are
-        pickled by reference and not by value.  This method is useful when
-        re-using picklers.
-        """
-        ...
+    def dump(self, obj: Any, /) -> None: ...
+    def clear_memo(self) -> None: ...
 
     # this method has no default implementation for Python < 3.13
     def persistent_id(self, obj: Any, /) -> Any: ...
@@ -259,31 +250,14 @@ class Unpickler:
         errors: str = "strict",
         buffers: Iterable[Any] | None = (),
     ) -> None: ...
+
     @property
     def memo(self) -> UnpicklerMemoProxy: ...
     @memo.setter
     def memo(self, value: UnpicklerMemoProxy | dict[int, tuple[int, Any]]) -> None: ...
-    def load(self) -> Any:
-        """
-        Load a pickle.
 
-        Read a pickled object representation from the open file object given
-        in the constructor, and return the reconstituted object hierarchy
-        specified therein.
-        """
-        ...
-    def find_class(self, module_name: str, global_name: str, /) -> Any:
-        """
-        Return an object from a specified module.
-
-        If necessary, the module will be imported. Subclasses may override
-        this method (e.g. to restrict unpickling of arbitrary classes and
-        functions).
-
-        This method is called whenever a class or a function object is
-        needed.  Both arguments passed are str objects.
-        """
-        ...
+    def load(self) -> Any: ...
+    def find_class(self, module_name: str, global_name: str, /) -> Any: ...
 
     # this method has no default implementation for Python < 3.13
     def persistent_load(self, pid: Any, /) -> Any: ...

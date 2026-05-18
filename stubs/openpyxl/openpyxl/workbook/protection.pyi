@@ -46,6 +46,7 @@ class WorkbookProtection(Serialisable):
         workbookSaltValue=None,
         workbookSpinCount: ConvertibleToInt | None = None,
     ) -> None: ...
+
     @overload
     def set_workbook_password(self, value: str = "", already_hashed: Literal[False] = False) -> None:
         """Set a password on this workbook."""
@@ -55,17 +56,15 @@ class WorkbookProtection(Serialisable):
         """Set a password on this workbook."""
         ...
     @overload
-    def set_workbook_password(self, value: str | None = "", *, already_hashed: Literal[True]) -> None:
-        """Set a password on this workbook."""
-        ...
+    def set_workbook_password(self, value: str | None = "", *, already_hashed: Literal[True]) -> None: ...
+
     @property
     def workbookPassword(self) -> str | None:
         """Return the workbook password value, regardless of hash."""
         ...
     @workbookPassword.setter
-    def workbookPassword(self, value: str) -> None:
-        """Return the workbook password value, regardless of hash."""
-        ...
+    def workbookPassword(self, value: str) -> None: ...
+
     @overload
     def set_revisions_password(self, value: str = "", already_hashed: Literal[False] = False) -> None:
         """Set a revision password on this workbook."""
@@ -75,17 +74,15 @@ class WorkbookProtection(Serialisable):
         """Set a revision password on this workbook."""
         ...
     @overload
-    def set_revisions_password(self, value: str | None = "", *, already_hashed: Literal[True]) -> None:
-        """Set a revision password on this workbook."""
-        ...
+    def set_revisions_password(self, value: str | None = "", *, already_hashed: Literal[True]) -> None: ...
+
     @property
     def revisionsPassword(self) -> str | None:
         """Return the revisions password value, regardless of hash."""
         ...
     @revisionsPassword.setter
-    def revisionsPassword(self, value: str) -> None:
-        """Return the revisions password value, regardless of hash."""
-        ...
+    def revisionsPassword(self, value: str) -> None: ...
+
     @classmethod
     def from_tree(cls, node: _SupportsIterAndAttribAndTextAndGet) -> Self:
         """Don't hash passwords when deserialising from XML"""

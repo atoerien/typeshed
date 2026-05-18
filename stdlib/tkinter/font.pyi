@@ -80,6 +80,7 @@ class Font:
     ) -> None: ...
     __hash__: ClassVar[None]  # type: ignore[assignment]
     def __setitem__(self, key: str, value: Any) -> None: ...
+
     @overload
     def cget(self, option: Literal["family"]) -> str:
         """Get font attribute"""
@@ -101,10 +102,10 @@ class Font:
         """Get font attribute"""
         ...
     @overload
-    def cget(self, option: str) -> Any:
-        """Get font attribute"""
-        ...
+    def cget(self, option: str) -> Any: ...
+
     __getitem__ = cget
+
     @overload
     def actual(self, option: Literal["family"], displayof: tkinter.Misc | None = None) -> str:
         """Return actual font attributes"""
@@ -130,9 +131,8 @@ class Font:
         """Return actual font attributes"""
         ...
     @overload
-    def actual(self, *, displayof: tkinter.Misc | None = None) -> _FontDict:
-        """Return actual font attributes"""
-        ...
+    def actual(self, *, displayof: tkinter.Misc | None = None) -> _FontDict: ...
+
     def config(
         self,
         *,
@@ -146,9 +146,8 @@ class Font:
         """Modify font attributes"""
         ...
     configure = config
-    def copy(self) -> Font:
-        """Return a distinct copy of the current font"""
-        ...
+    def copy(self) -> Font: ...
+
     @overload
     def metrics(self, option: Literal["ascent", "descent", "linespace"], /, *, displayof: tkinter.Misc | None = ...) -> int:
         """
@@ -168,17 +167,9 @@ class Font:
         """
         ...
     @overload
-    def metrics(self, *, displayof: tkinter.Misc | None = ...) -> _MetricsDict:
-        """
-        Return font metrics.
+    def metrics(self, *, displayof: tkinter.Misc | None = ...) -> _MetricsDict: ...
 
-        For best performance, create a dummy widget
-        using this font before calling this method.
-        """
-        ...
-    def measure(self, text: str, displayof: tkinter.Misc | None = None) -> int:
-        """Return text width"""
-        ...
+    def measure(self, text: str, displayof: tkinter.Misc | None = None) -> int: ...
     def __eq__(self, other: object) -> bool: ...
     def __del__(self) -> None: ...
 

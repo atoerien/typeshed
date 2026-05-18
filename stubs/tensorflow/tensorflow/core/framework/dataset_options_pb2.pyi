@@ -171,9 +171,8 @@ class AutotuneOptions(google.protobuf.message.Message):
             "ram_budget",
             b"ram_budget",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
+
     @typing.overload
     def WhichOneof(
         self, oneof_group: typing.Literal["optional_autotune_algorithm", b"optional_autotune_algorithm"]
@@ -451,9 +450,8 @@ class OptimizationOptions(google.protobuf.message.Message):
             "shuffle_and_repeat_fusion",
             b"shuffle_and_repeat_fusion",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
+
     @typing.overload
     def WhichOneof(
         self, oneof_group: typing.Literal["optional_apply_default_optimizations", b"optional_apply_default_optimizations"]
@@ -594,9 +592,8 @@ class ThreadingOptions(google.protobuf.message.Message):
             "private_threadpool_size",
             b"private_threadpool_size",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
+
     @typing.overload
     def WhichOneof(
         self, oneof_group: typing.Literal["optional_max_intra_op_parallelism", b"optional_max_intra_op_parallelism"]
@@ -761,9 +758,8 @@ class Options(google.protobuf.message.Message):
             "warm_start",
             b"warm_start",
         ],
-    ) -> None:
-        """Clears a message field."""
-        ...
+    ) -> None: ...
+
     @typing.overload
     def WhichOneof(
         self, oneof_group: typing.Literal["optional_dataset_name", b"optional_dataset_name"]

@@ -36,6 +36,7 @@ class CollectionOperator:
     def shapeup(self, ob: dict[str, Any] | SupportsGeoInterface) -> BaseGeometry: ...  # type: ignore[overload-overlap]
     @overload
     def shapeup(self, ob: _ConvertibleToLineString) -> LineString: ...
+
     def polygonize(
         self, lines: OptGeoArrayLike | Iterable[_ConvertibleToLineString | None]
     ) -> GeometrySequence[GeometryCollection[Polygon]]:
@@ -147,22 +148,8 @@ def triangulate(geom: Geometry, tolerance: float, edges: Literal[True]) -> list[
     """
     ...
 @overload  # fallback
-def triangulate(geom: Geometry, tolerance: float = 0.0, edges: bool = False) -> list[Polygon] | list[LineString]:
-    """
-    Create the Delaunay triangulation and return a list of geometries.
+def triangulate(geom: Geometry, tolerance: float = 0.0, edges: bool = False) -> list[Polygon] | list[LineString]: ...
 
-    The source may be any geometry type. All vertices of the geometry will be
-    used as the points of the triangulation.
-
-    From the GEOS documentation:
-    tolerance is the snapping tolerance used to improve the robustness of
-    the triangulation computation. A tolerance of 0.0 specifies that no
-    snapping will take place.
-
-    If edges is False, a list of Polygons (triangles) will be returned.
-    Otherwise the list of LineString edges is returned.
-    """
-    ...
 @overload
 def voronoi_diagram(
     geom: Geometry, envelope: Geometry | None = None, tolerance: float = 0.0, edges: Literal[False] = False
@@ -307,50 +294,8 @@ def voronoi_diagram(
 @overload
 def voronoi_diagram(
     geom: Geometry, envelope: Geometry | None = None, tolerance: float = 0.0, edges: bool = False
-) -> GeometryCollection[Polygon | LineString | MultiLineString]:
-    """
-    Construct a Voronoi Diagram [1] from the given geometry.
+) -> GeometryCollection[Polygon | LineString | MultiLineString]: ...
 
-    Returns a list of geometries.
-
-    Parameters
-    ----------
-    geom: geometry
-        the input geometry whose vertices will be used to calculate
-        the final diagram.
-    envelope: geometry, None
-        clipping envelope for the returned diagram, automatically
-        determined if None. The diagram will be clipped to the larger
-        of this envelope or an envelope surrounding the sites.
-    tolerance: float, 0.0
-        sets the snapping tolerance used to improve the robustness
-        of the computation. A tolerance of 0.0 specifies that no
-        snapping will take place.
-    edges: bool, False
-        If False, return regions as polygons. Else, return only
-        edges e.g. LineStrings.
-
-    GEOS documentation can be found at [2]
-
-    Returns
-    -------
-    GeometryCollection
-        geometries representing the Voronoi regions.
-
-    Notes
-    -----
-    The tolerance `argument` can be finicky and is known to cause the
-    algorithm to fail in several cases. If you're using `tolerance`
-    and getting a failure, try removing it. The test cases in
-    tests/test_voronoi_diagram.py show more details.
-
-
-    References
-    ----------
-    [1] https://en.wikipedia.org/wiki/Voronoi_diagram
-    [2] https://geos.osgeo.org/doxygen/geos__c_8h_source.html  (line 730)
-    """
-    ...
 @overload
 def validate(geom: None) -> None:
     """Return True if the geometry is valid."""
@@ -360,90 +305,12 @@ def validate(geom: Geometry) -> str:
     """Return True if the geometry is valid."""
     ...
 @overload
-def validate(geom: Geometry | None) -> str | None:
-    """Return True if the geometry is valid."""
-    ...
-def transform(func: Callable[[float, float, float | None], tuple[float, ...]], geom: GeoT) -> GeoT:
-    """
-    Apply `func` to all coordinates of `geom`.
+def validate(geom: Geometry | None) -> str | None: ...
 
-    Returns a new geometry of the same type from the transformed coordinates.
-
-    `func` maps x, y, and optionally z to output xp, yp, zp. The input
-    parameters may iterable types like lists or arrays or single values.
-    The output shall be of the same type. Scalars in, scalars out.
-    Lists in, lists out.
-
-    For example, here is an identity function applicable to both types
-    of input.
-
-      def id_func(x, y, z=None):
-          return tuple(filter(None, [x, y, z]))
-
-      g2 = transform(id_func, g1)
-
-    Using pyproj >= 2.1, this example will accurately project Shapely geometries:
-
-      import pyproj
-
-      wgs84 = pyproj.CRS('EPSG:4326')
-      utm = pyproj.CRS('EPSG:32618')
-
-      project = pyproj.Transformer.from_crs(wgs84, utm, always_xy=True).transform
-
-      g2 = transform(project, g1)
-
-    Note that the always_xy kwarg is required here as Shapely geometries only support
-    X,Y coordinate ordering.
-
-    Lambda expressions such as the one in
-
-      g2 = transform(lambda x, y, z=None: (x+1.0, y+1.0), g1)
-
-    also satisfy the requirements for `func`.
-    """
-    ...
-def nearest_points(g1: Geometry, g2: Geometry) -> tuple[Point, Point]:
-    """
-    Return the calculated nearest points in the input geometries.
-
-    The points are returned in the same order as the input geometries.
-    """
-    ...
-def snap(g1: GeoT, g2: Geometry, tolerance: float) -> GeoT:
-    """
-    Snaps an input geometry (g1) to reference (g2) geometry's vertices.
-
-    Parameters
-    ----------
-    g1 : geometry
-        The first geometry
-    g2 : geometry
-        The second geometry
-    tolerance : float
-        The snapping tolerance
-
-    Refer to :func:`shapely.snap` for full documentation.
-    """
-    ...
-def shared_paths(g1: LineString, g2: LineString) -> GeometryCollection[MultiLineString]:
-    """
-    Find paths shared between the two given lineal geometries.
-
-    Returns a GeometryCollection with two elements:
-     - First element is a MultiLineString containing shared paths with the
-       same direction for both inputs.
-     - Second element is a MultiLineString containing shared paths with the
-       opposite direction for the two inputs.
-
-    Parameters
-    ----------
-    g1 : geometry
-        The first geometry
-    g2 : geometry
-        The second geometry
-    """
-    ...
+def transform(func: Callable[[float, float, float | None], tuple[float, ...]], geom: GeoT) -> GeoT: ...
+def nearest_points(g1: Geometry, g2: Geometry) -> tuple[Point, Point]: ...
+def snap(g1: GeoT, g2: Geometry, tolerance: float) -> GeoT: ...
+def shared_paths(g1: LineString, g2: LineString) -> GeometryCollection[MultiLineString]: ...
 
 class SplitOp:
     @staticmethod

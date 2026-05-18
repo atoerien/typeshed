@@ -195,10 +195,12 @@ class MenuItemsSection(MenuComponent):
         items: list[MenuItem] | None = None,
         items_align: str = "left",
     ) -> None: ...
+
     @property
     def items(self) -> list[MenuItem]: ...
     @items.setter
     def items(self, items: list[MenuItem]) -> None: ...
+
     @property
     def items_with_bottom_border(self) -> list[str]:
         """
@@ -239,8 +241,10 @@ class MenuFooter(MenuComponent):
 class MenuPrompt(MenuComponent):
     """A string representing the menu prompt for user input."""
     def __init__(self, menu_style: MenuStyle, max_dimension: Dimension | None = None, prompt_string: str = ">>") -> None: ...
+
     @property
     def prompt(self) -> str: ...
     @prompt.setter
     def prompt(self, prompt: str) -> None: ...
+
     def generate(self) -> Generator[str]: ...

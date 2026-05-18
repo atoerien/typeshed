@@ -194,178 +194,27 @@ class spawn(SpawnBase[AnyStr]):
         ...
     child_fd: int
     closed: bool
-    def close(self, force: bool = True) -> None:
-        """
-        This closes the connection with the child application. Note that
-        calling close() more than once is valid. This emulates standard Python
-        behavior with files. Set force to True if you want to make sure that
-        the child is terminated (SIGKILL is sent if the child ignores SIGHUP
-        and SIGINT). 
-        """
-        ...
-    def isatty(self) -> bool:
-        """
-        This returns True if the file descriptor is open and connected to a
-        tty(-like) device, else False.
+    def close(self, force: bool = True) -> None: ...
+    def isatty(self) -> bool: ...
+    def waitnoecho(self, timeout: float | None = -1) -> None: ...
+    def getecho(self) -> bool: ...
+    def setecho(self, state: bool) -> None: ...
+    def read_nonblocking(self, size: int = 1, timeout: float | None = -1) -> AnyStr: ...
+    def write(self, s: str | bytes) -> None: ...
+    def writelines(self, sequence: list[str | bytes]) -> None: ...
+    def send(self, s: str | bytes) -> int: ...
+    def sendline(self, s: str | bytes = "") -> int: ...
+    def sendcontrol(self, char: str) -> int: ...
+    def sendeof(self) -> None: ...
+    def sendintr(self) -> None: ...
 
-        On SVR4-style platforms implementing streams, such as SunOS and HP-UX,
-        the child pty may not appear as a terminal device.  This means
-        methods such as setecho(), setwinsize(), getwinsize() may raise an
-        IOError. 
-        """
-        ...
-    def waitnoecho(self, timeout: float | None = -1) -> None:
-        """
-        This waits until the terminal ECHO flag is set False. This returns
-        True if the echo mode is off. This returns False if the ECHO flag was
-        not set False before the timeout. This can be used to detect when the
-        child is waiting for a password. Usually a child application will turn
-        off echo mode when it is waiting for the user to enter a password. For
-        example, instead of expecting the "password:" prompt you can wait for
-        the child to set ECHO off::
-
-            p = pexpect.spawn('ssh user@example.com')
-            p.waitnoecho()
-            p.sendline(mypassword)
-
-        If timeout==-1 then this method will use the value in self.timeout.
-        If timeout==None then this method to block until ECHO flag is False.
-        """
-        ...
-    def getecho(self) -> bool:
-        """
-        This returns the terminal echo mode. This returns True if echo is
-        on or False if echo is off. Child applications that are expecting you
-        to enter a password often set ECHO False. See waitnoecho().
-
-        Not supported on platforms where ``isatty()`` returns False.  
-        """
-        ...
-    def setecho(self, state: bool) -> None:
-        """
-        This sets the terminal echo mode on or off. Note that anything the
-        child sent before the echo will be lost, so you should be sure that
-        your input buffer is empty before you call setecho(). For example, the
-        following will work as expected::
-
-            p = pexpect.spawn('cat') # Echo is on by default.
-            p.sendline('1234') # We expect see this twice from the child...
-            p.expect(['1234']) # ... once from the tty echo...
-            p.expect(['1234']) # ... and again from cat itself.
-            p.setecho(False) # Turn off tty echo
-            p.sendline('abcd') # We will set this only once (echoed by cat).
-            p.sendline('wxyz') # We will set this only once (echoed by cat)
-            p.expect(['abcd'])
-            p.expect(['wxyz'])
-
-        The following WILL NOT WORK because the lines sent before the setecho
-        will be lost::
-
-            p = pexpect.spawn('cat')
-            p.sendline('1234')
-            p.setecho(False) # Turn off tty echo
-            p.sendline('abcd') # We will set this only once (echoed by cat).
-            p.sendline('wxyz') # We will set this only once (echoed by cat)
-            p.expect(['1234'])
-            p.expect(['1234'])
-            p.expect(['abcd'])
-            p.expect(['wxyz'])
-
-
-        Not supported on platforms where ``isatty()`` returns False.
-        """
-        ...
-    def read_nonblocking(self, size: int = 1, timeout: float | None = -1) -> AnyStr:
-        """
-        This reads at most size characters from the child application. It
-        includes a timeout. If the read does not complete within the timeout
-        period then a TIMEOUT exception is raised. If the end of file is read
-        then an EOF exception will be raised.  If a logfile is specified, a
-        copy is written to that log.
-
-        If timeout is None then the read may block indefinitely.
-        If timeout is -1 then the self.timeout value is used. If timeout is 0
-        then the child is polled and if there is no data immediately ready
-        then this will raise a TIMEOUT exception.
-
-        The timeout refers only to the amount of time to read at least one
-        character. This is not affected by the 'size' parameter, so if you call
-        read_nonblocking(size=100, timeout=30) and only one character is
-        available right away then one character will be returned immediately.
-        It will not wait for 30 seconds for another 99 characters to come in.
-
-        On the other hand, if there are bytes available to read immediately,
-        all those bytes will be read (up to the buffer size). So, if the
-        buffer size is 1 megabyte and there is 1 megabyte of data available
-        to read, the buffer will be filled, regardless of timeout.
-
-        This is a wrapper around os.read(). It uses select.select() or
-        select.poll() to implement the timeout. 
-        """
-        ...
-    def write(self, s: str | bytes) -> None:
-        """
-        This is similar to send() except that there is no return value.
-        
-        """
-        ...
-    def writelines(self, sequence: list[str | bytes]) -> None:
-        """
-        This calls write() for each element in the sequence. The sequence
-        can be any iterable object producing strings, typically a list of
-        strings. This does not add line separators. There is no return value.
-        """
-        ...
-    def send(self, s: str | bytes) -> int:
-        "Sends string ``s`` to the child process, returning the number of\nbytes written. If a logfile is specified, a copy is written to that\nlog.\n\nThe default terminal input mode is canonical processing unless set\notherwise by the child process. This allows backspace and other line\nprocessing to be performed prior to transmitting to the receiving\nprogram. As this is buffered, there is a limited size of such buffer.\n\nOn Linux systems, this is 4096 (defined by N_TTY_BUF_SIZE). All\nother systems honor the POSIX.1 definition PC_MAX_CANON -- 1024\non OSX, 256 on OpenSolaris, and 1920 on FreeBSD.\n\nThis value may be discovered using fpathconf(3)::\n\n    >>> from os import fpathconf\n    >>> print(fpathconf(0, 'PC_MAX_CANON'))\n    256\n\nOn such a system, only 256 bytes may be received per line. Any\nsubsequent bytes received will be discarded. BEL (``'\x07'``) is then\nsent to output if IMAXBEL (termios.h) is set by the tty driver.\nThis is usually enabled by default.  Linux does not honor this as\nan option -- it behaves as though it is always set on.\n\nCanonical input processing may be disabled altogether by executing\na shell, then stty(1), before executing the final program::\n\n    >>> bash = pexpect.spawn('/bin/bash', echo=False)\n    >>> bash.sendline('stty -icanon')\n    >>> bash.sendline('base64')\n    >>> bash.sendline('x' * 5000)"
-        ...
-    def sendline(self, s: str | bytes = "") -> int:
-        """
-        Wraps send(), sending string ``s`` to child process, with
-        ``os.linesep`` automatically appended. Returns number of bytes
-        written.  Only a limited number of bytes may be sent for each
-        line in the default terminal mode, see docstring of :meth:`send`.
-        """
-        ...
-    def sendcontrol(self, char: str) -> int:
-        "Helper method that wraps send() with mnemonic access for sending control\ncharacter to the child (such as Ctrl-C or Ctrl-D).  For example, to send\nCtrl-G (ASCII 7, bell, '\x07')::\n\n    child.sendcontrol('g')\n\nSee also, sendintr() and sendeof()."
-        ...
-    def sendeof(self) -> None:
-        """
-        This sends an EOF to the child. This sends a character which causes
-        the pending parent output buffer to be sent to the waiting child
-        program without waiting for end-of-line. If it is the first character
-        of the line, the read() in the user program returns 0, which signifies
-        end-of-file. This means to work as expected a sendeof() has to be
-        called at the beginning of a line. This method does not send a newline.
-        It is the responsibility of the caller to ensure the eof is sent at the
-        beginning of a line. 
-        """
-        ...
-    def sendintr(self) -> None:
-        """
-        This sends a SIGINT to the child. It does not require
-        the SIGINT to be the first character on a line. 
-        """
-        ...
     @property
     def flag_eof(self) -> bool: ...
     @flag_eof.setter
     def flag_eof(self, value: bool) -> None: ...
-    def eof(self) -> bool:
-        """
-        This returns True if the EOF exception was ever raised.
-        
-        """
-        ...
-    def terminate(self, force: bool = False) -> bool:
-        """
-        This forces a child process to terminate. It starts nicely with
-        SIGHUP and SIGINT. If "force" is True then moves onto SIGKILL. This
-        returns True if the child was terminated. This returns False if the
-        child could not be terminated. 
-        """
-        ...
+
+    def eof(self) -> bool: ...
+    def terminate(self, force: bool = False) -> bool: ...
     status: int | None
     exitstatus: int | None
     signalstatus: int | None

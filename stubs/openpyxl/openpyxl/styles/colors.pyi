@@ -22,10 +22,12 @@ class RGB(Typed[str, _N]):
     If not supplied alpha is 00
     """
     expected_type: type[str]
+
     @overload
     def __init__(self: RGB[Literal[True]], name: str | None = None, *, allow_none: Literal[True]) -> None: ...
     @overload
     def __init__(self: RGB[Literal[False]], name: str | None = None, *, allow_none: Literal[False] = False) -> None: ...
+
     @overload
     def __set__(self: RGB[Literal[True]], instance: Serialisable | Strict, value: str | None) -> None: ...
     @overload
@@ -50,13 +52,16 @@ class Color(Serialisable):
         index: ConvertibleToInt | None = None,
         type: Unused = "rgb",
     ) -> None: ...
+
     @property
     def value(self) -> str | int | bool: ...
     @value.setter
     def value(self, value: str | ConvertibleToInt | _ConvertibleToBool) -> None: ...
+
     def __iter__(self) -> Iterator[tuple[str, str]]: ...
     @property
     def index(self) -> str | int | bool: ...
+
     @overload
     def __add__(self, other: Color) -> Self:
         """Adding colours is undefined behaviour best do nothing"""
@@ -68,12 +73,14 @@ class Color(Serialisable):
 
 class ColorDescriptor(Typed[Color, _N]):
     expected_type: type[Color]
+
     @overload
     def __init__(self: ColorDescriptor[Literal[True]], name: str | None = None, *, allow_none: Literal[True]) -> None: ...
     @overload
     def __init__(
         self: ColorDescriptor[Literal[False]], name: str | None = None, *, allow_none: Literal[False] = False
     ) -> None: ...
+
     @overload
     def __set__(self: ColorDescriptor[Literal[True]], instance: Serialisable | Strict, value: str | Color | None) -> None: ...
     @overload

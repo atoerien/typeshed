@@ -291,137 +291,20 @@ class Resource(Generic[_ModelT], metaclass=DeclarativeMetaclass):
         ...
     def skip_row(
         self, instance: _ModelT, original: _ModelT, row: dict[str, Any], import_validation_errors: dict[str, Any] | None = None
-    ) -> bool:
-        """
-        Returns ``True`` if ``row`` importing should be skipped.
+    ) -> bool: ...
+    def get_diff_headers(self) -> list[str]: ...
+    def before_import(self, dataset: Dataset, **kwargs: Any) -> None: ...
+    def after_import(self, dataset: Dataset, result: Result, **kwargs: Any) -> None: ...
+    def before_import_row(self, row: dict[str, Any], **kwargs: Any) -> None: ...
+    def after_import_row(self, row: dict[str, Any], row_result: RowResult, **kwargs: Any) -> None: ...
+    def after_init_instance(self, instance: _ModelT, new: bool, row: dict[str, Any], **kwargs: Any) -> None: ...
 
-        Default implementation returns ``False`` unless skip_unchanged == True
-        and skip_diff == False.
-
-        If skip_diff is True, then no comparisons can be made because ``original``
-        will be None.
-
-        When left unspecified, skip_diff and skip_unchanged both default to ``False``,
-        and rows are never skipped.
-
-        By default, rows are not skipped if validation errors have been detected
-        during import.  You can change this behavior and choose to ignore validation
-        errors by overriding this method.
-
-        Override this method to handle skipping rows meeting certain
-        conditions.
-
-        Use ``super`` if you want to preserve default handling while overriding
-        ::
-
-            class YourResource(ModelResource):
-                def skip_row(self, instance, original,
-                             row, import_validation_errors=None):
-                    # Add code here
-                    return super().skip_row(instance, original, row,
-                                            import_validation_errors=import_validation_errors)
-
-        :param instance: A new or updated model instance.
-
-        :param original: The original persisted model instance.
-
-        :param row: A ``dict`` containing key / value data for the row to be imported.
-
-        :param import_validation_errors: A ``dict`` containing key / value data for any
-          identified validation errors.
-        """
-        ...
-    def get_diff_headers(self) -> list[str]:
-        """Diff representation headers."""
-        ...
-    def before_import(self, dataset: Dataset, **kwargs: Any) -> None:
-        r"""
-        Override to add additional logic. Does nothing by default.
-
-        :param dataset: A ``tablib.Dataset``.
-
-        :param \**kwargs:
-            See :meth:`import_row`
-        """
-        ...
-    def after_import(self, dataset: Dataset, result: Result, **kwargs: Any) -> None:
-        r"""
-        Override to add additional logic. Does nothing by default.
-
-        :param dataset: A ``tablib.Dataset``.
-
-        :param result: A :class:`import_export.results.Result` implementation
-          containing a summary of the import.
-
-        :param \**kwargs:
-            See :meth:`import_row`
-        """
-        ...
-    def before_import_row(self, row: dict[str, Any], **kwargs: Any) -> None:
-        r"""
-        Override to add additional logic. Does nothing by default.
-
-        :param row: A ``dict`` containing key / value data for the row to be imported.
-
-        :param \**kwargs:
-            See :meth:`import_row`
-        """
-        ...
-    def after_import_row(self, row: dict[str, Any], row_result: RowResult, **kwargs: Any) -> None:
-        r"""
-        Override to add additional logic. Does nothing by default.
-
-        :param row: A ``dict`` containing key / value data for the row to be imported.
-
-        :param row_result: A ``RowResult`` instance.
-          References the persisted ``instance`` as an attribute.
-
-        :param \**kwargs:
-            See :meth:`import_row`
-        """
-        ...
-    def after_init_instance(self, instance: _ModelT, new: bool, row: dict[str, Any], **kwargs: Any) -> None:
-        r"""
-        Override to add additional logic. Does nothing by default.
-
-        :param instance: A new or existing model instance.
-
-        :param new: a boolean flag indicating whether instance is new or existing.
-
-        :param row: A ``dict`` containing key / value data for the row to be imported.
-
-        :param \**kwargs:
-            See :meth:`import_row`
-        """
-        ...
     @overload
     def handle_import_error(self, result: Result, error: Exception, raise_errors: Literal[True]) -> NoReturn: ...
     @overload
     def handle_import_error(self, result: Result, error: Exception, raise_errors: Literal[False] = False) -> None: ...
-    def import_row(self, row: dict[str, Any], instance_loader: BaseInstanceLoader, **kwargs: Any) -> RowResult:
-        r"""
-        Imports data from ``tablib.Dataset``. Refer to :doc:`import_workflow`
-        for a more complete description of the whole import process.
 
-        :param row: A ``dict`` of the 'row' to import.
-          A row is a dict of data fields so can be a csv line, a JSON object,
-          a YAML object etc.
-
-        :param instance_loader: The instance loader to be used to load the model
-          instance associated with the row (if there is one).
-
-        :param \**kwargs:
-            See below.
-
-        :Keyword Arguments:
-            * dry_run (``boolean``) --
-              A True value means that no data should be persisted.
-            * use_transactions (``boolean``) --
-              A True value means that transactions will be rolled back.
-            * row_number  (``int``) --
-              The index of the row being imported.
-        """
-        ...
+    def import_row(self, row: dict[str, Any], instance_loader: BaseInstanceLoader, **kwargs: Any) -> RowResult: ...
     def import_data(
         self,
         dataset: Dataset,

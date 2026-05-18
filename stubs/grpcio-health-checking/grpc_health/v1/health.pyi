@@ -26,6 +26,7 @@ class HealthServicer(health_pb2_grpc.HealthServicer):
         self, experimental_non_blocking: bool = True, experimental_thread_pool: futures.ThreadPoolExecutor | None = None
     ) -> None: ...
     def Check(self, request: health_pb2.HealthCheckRequest, context: ServicerContext) -> health_pb2.HealthCheckResponse: ...
+
     @overload
     def Watch(
         self, request: health_pb2.HealthCheckRequest, context: ServicerContext, send_response_callback: None = None
@@ -34,24 +35,6 @@ class HealthServicer(health_pb2_grpc.HealthServicer):
     def Watch(
         self, request: health_pb2.HealthCheckRequest, context: ServicerContext, send_response_callback: Callable[..., Incomplete]
     ) -> None: ...
-    def set(self, service: str, status: health_pb2.HealthCheckResponse.ServingStatus) -> None:
-        """
-        Sets the status of a service.
 
-        Args:
-          service: string, the name of the service.
-          status: HealthCheckResponse.status enum value indicating the status of
-            the service
-        """
-        ...
-    def enter_graceful_shutdown(self) -> None:
-        """
-        Permanently sets the status of all services to NOT_SERVING.
-
-        This should be invoked when the server is entering a graceful shutdown
-        period. After this method is invoked, future attempts to set the status
-        of a service will be ignored.
-
-        This is an EXPERIMENTAL API.
-        """
-        ...
+    def set(self, service: str, status: health_pb2.HealthCheckResponse.ServingStatus) -> None: ...
+    def enter_graceful_shutdown(self) -> None: ...

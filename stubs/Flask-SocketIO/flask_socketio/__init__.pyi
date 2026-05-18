@@ -211,82 +211,11 @@ class SocketIO:
         resource: str = "socket.io",
         **kwargs: Unpack[_SocketIOKwargs],
     ) -> None: ...
-    def on(self, message: str, namespace: str | None = None) -> _HandlerDecorator:
-        """
-        Decorator to register a SocketIO event handler.
+    def on(self, message: str, namespace: str | None = None) -> _HandlerDecorator: ...
+    def on_error(self, namespace: str | None = None) -> _ExceptionHandlerDecorator: ...
+    def on_error_default(self, exception_handler: _ExceptionHandler[_R_co]) -> _ExceptionHandler[_R_co]: ...
+    def on_event(self, message: str, handler: _Handler[[Incomplete], object], namespace: str | None = None) -> None: ...
 
-        This decorator must be applied to SocketIO event handlers. Example::
-
-            @socketio.on('my event', namespace='/chat')
-            def handle_my_custom_event(json):
-                print('received json: ' + str(json))
-
-        :param message: The name of the event. This is normally a user defined
-                        string, but a few event names are already defined. Use
-                        ``'message'`` to define a handler that takes a string
-                        payload, ``'json'`` to define a handler that takes a
-                        JSON blob payload, ``'connect'`` or ``'disconnect'``
-                        to create handlers for connection and disconnection
-                        events.
-        :param namespace: The namespace on which the handler is to be
-                          registered. Defaults to the global namespace.
-        """
-        ...
-    def on_error(self, namespace: str | None = None) -> _ExceptionHandlerDecorator:
-        """
-        Decorator to define a custom error handler for SocketIO events.
-
-        This decorator can be applied to a function that acts as an error
-        handler for a namespace. This handler will be invoked when a SocketIO
-        event handler raises an exception. The handler function must accept one
-        argument, which is the exception raised. Example::
-
-            @socketio.on_error(namespace='/chat')
-            def chat_error_handler(e):
-                print('An error has occurred: ' + str(e))
-
-        :param namespace: The namespace for which to register the error
-                          handler. Defaults to the global namespace.
-        """
-        ...
-    def on_error_default(self, exception_handler: _ExceptionHandler[_R_co]) -> _ExceptionHandler[_R_co]:
-        """
-        Decorator to define a default error handler for SocketIO events.
-
-        This decorator can be applied to a function that acts as a default
-        error handler for any namespaces that do not have a specific handler.
-        Example::
-
-            @socketio.on_error_default
-            def error_handler(e):
-                print('An error has occurred: ' + str(e))
-        """
-        ...
-    def on_event(self, message: str, handler: _Handler[[Incomplete], object], namespace: str | None = None) -> None:
-        """
-        Register a SocketIO event handler.
-
-        ``on_event`` is the non-decorator version of ``'on'``.
-
-        Example::
-
-            def on_foo_event(json):
-                print('received json: ' + str(json))
-
-            socketio.on_event('my event', on_foo_event, namespace='/chat')
-
-        :param message: The name of the event. This is normally a user defined
-                        string, but a few event names are already defined. Use
-                        ``'message'`` to define a handler that takes a string
-                        payload, ``'json'`` to define a handler that takes a
-                        JSON blob payload, ``'connect'`` or ``'disconnect'``
-                        to create handlers for connection and disconnection
-                        events.
-        :param handler: The function that handles the event.
-        :param namespace: The namespace on which the handler is to be
-                          registered. Defaults to the global namespace.
-        """
-        ...
     @overload
     def event(self, event_handler: _Handler[_P, _R_co], /) -> _Handler[_P, _R_co]:
         """
@@ -315,32 +244,8 @@ class SocketIO:
         """
         ...
     @overload
-    def event(self, namespace: str | None = None, *args, **kwargs) -> _HandlerDecorator:
-        """
-        Decorator to register an event handler.
+    def event(self, namespace: str | None = None, *args, **kwargs) -> _HandlerDecorator: ...
 
-        This is a simplified version of the ``on()`` method that takes the
-        event name from the decorated function.
-
-        Example usage::
-
-            @socketio.event
-            def my_event(data):
-                print('Received data: ', data)
-
-        The above example is equivalent to::
-
-            @socketio.on('my_event')
-            def my_event(data):
-                print('Received data: ', data)
-
-        A custom namespace can be given as an argument to the decorator::
-
-            @socketio.event(namespace='/test')
-            def my_event(data):
-                print('Received data: ', data)
-        """
-        ...
     def on_namespace(self, namespace_handler: Namespace) -> None: ...
     def emit(
         self,

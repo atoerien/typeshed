@@ -35,6 +35,7 @@ def add_params_to_uri(uri: str, params: _ExplodedQueryString, fragment: bool = F
 def quote(s: str, safe: bytes = b"/") -> str: ...
 def unquote(s: str | bytes) -> str: ...
 def quote_url(s: str) -> str: ...
+
 @overload
 def extract_params(raw: None) -> None:
     """
@@ -58,14 +59,6 @@ def extract_params(raw: dict[str, str]) -> _ExplodedQueryString:
     """
     ...
 @overload
-def extract_params(raw: _ExplodedQueryString | tuple[tuple[str, str], ...] | str) -> _ExplodedQueryString | None:
-    """
-    Extract parameters and return them as a list of 2-tuples.
+def extract_params(raw: _ExplodedQueryString | tuple[tuple[str, str], ...] | str) -> _ExplodedQueryString | None: ...
 
-    Will successfully extract parameters from urlencoded query strings,
-    dicts, or lists of 2-tuples. Empty strings/dicts/lists will return an
-    empty list of parameters. Any other input will result in a return
-    value of None.
-    """
-    ...
 def is_valid_url(url: str, fragments_allowed: bool = True) -> bool: ...

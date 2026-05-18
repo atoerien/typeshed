@@ -15,25 +15,8 @@ from matplotlib.typing import ColorType  # type: ignore[import-not-found]
 from .geometry import LinearRing, LineString, MultiLineString, MultiPolygon, Polygon
 from .lib import Geometry
 
-def patch_from_polygon(polygon: Polygon | MultiPolygon, **kwargs: Any) -> PathPatch:
-    """
-    Get a Matplotlib patch from a (Multi)Polygon.
+def patch_from_polygon(polygon: Polygon | MultiPolygon, **kwargs: Any) -> PathPatch: ...
 
-    Note: this function is experimental, and mainly targeting (interactive)
-    exploration, debugging and illustration purposes.
-
-    Parameters
-    ----------
-    polygon : shapely.Polygon or shapely.MultiPolygon
-        The polygon to convert to a Matplotlib Patch.
-    **kwargs
-        Additional keyword arguments passed to the matplotlib Patch.
-
-    Returns
-    -------
-    Matplotlib artist (PathPatch)
-    """
-    ...
 @overload
 def plot_polygon(
     polygon: Polygon | MultiPolygon,
@@ -135,41 +118,8 @@ def plot_polygon(
     edgecolor: ColorType | None = None,
     linewidth: float | None = None,
     **kwargs: Any,
-) -> PathPatch:
-    """
-    Plot a (Multi)Polygon.
+) -> PathPatch: ...
 
-    Note: this function is experimental, and mainly targeting (interactive)
-    exploration, debugging and illustration purposes.
-
-    Parameters
-    ----------
-    polygon : shapely.Polygon or shapely.MultiPolygon
-        The polygon to plot.
-    ax : matplotlib Axes, default None
-        The axes on which to draw the plot. If not specified, will get the
-        current active axes or create a new figure.
-    add_points : bool, default True
-        If True, also plot the coordinates (vertices) as points.
-    color : matplotlib color specification
-        Color for both the polygon fill (face) and boundary (edge). By default,
-        the fill is using an alpha of 0.3. You can specify `facecolor` and
-        `edgecolor` separately for greater control.
-    facecolor : matplotlib color specification
-        Color for the polygon fill.
-    edgecolor : matplotlib color specification
-        Color for the polygon boundary.
-    linewidth : float
-        The line width for the polygon boundary.
-    **kwargs
-        Additional keyword arguments passed to the matplotlib Patch.
-
-    Returns
-    -------
-    Matplotlib artist (PathPatch), if `add_points` is false.
-    A tuple of Matplotlib artists (PathPatch, Line2D), if `add_points` is true.
-    """
-    ...
 @overload
 def plot_line(
     line: LineString | LinearRing | MultiLineString,
@@ -251,34 +201,8 @@ def plot_line(
     color: ColorType | None = None,
     linewidth: float = 2,
     **kwargs: Any,
-) -> PathPatch:
-    """
-    Plot a (Multi)LineString/LinearRing.
+) -> PathPatch: ...
 
-    Note: this function is experimental, and mainly targeting (interactive)
-    exploration, debugging and illustration purposes.
-
-    Parameters
-    ----------
-    line : shapely.LineString or shapely.LinearRing
-        The line to plot.
-    ax : matplotlib Axes, default None
-        The axes on which to draw the plot. If not specified, will get the
-        current active axes or create a new figure.
-    add_points : bool, default True
-        If True, also plot the coordinates (vertices) as points.
-    color : matplotlib color specification
-        Color for the line (edgecolor under the hood) and points.
-    linewidth : float, default 2
-        The line width for the polygon boundary.
-    **kwargs
-        Additional keyword arguments passed to the matplotlib Patch.
-
-    Returns
-    -------
-    Matplotlib artist (PathPatch)
-    """
-    ...
 def plot_points(
     geom: Geometry, ax: Axes | None = None, color: ColorType | None = None, marker: str = "o", **kwargs: Any
 ) -> Line2D:

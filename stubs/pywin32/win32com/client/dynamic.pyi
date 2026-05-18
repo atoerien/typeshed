@@ -64,6 +64,7 @@ def Dispatch(
     typeinfo: _win32typing.PyITypeInfo | None = None,
     clsctx: int = ...,
 ) -> CDispatch: ...
+
 def MakeOleRepr(IDispatch, typeinfo, typecomp) -> build.DispatchItem | build.LazyDispatchItem: ...
 def DumbDispatch(IDispatch, userName=None, createClass=None, clsctx=...):
     """Dispatch with no type info"""

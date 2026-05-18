@@ -25,10 +25,12 @@ class Cache(MutableMapping[_KT, _VT]):
     def __missing__(self, key: _KT) -> _VT: ...
     def __iter__(self) -> Iterator[_KT]: ...
     def __len__(self) -> int: ...
+
     @overload
     def pop(self, key: _KT) -> _VT: ...
     @overload
     def pop(self, key: _KT, default: _VT | _T) -> _VT | _T: ...
+
     def setdefault(self, key: _KT, default: _VT | None = None) -> _VT: ...
     @property
     def maxsize(self) -> float:
@@ -96,6 +98,7 @@ class TTLCache(_TimedCache[_KT, _VT, _TT]):
         timer: Callable[[], _TT],
         getsizeof: Callable[[_VT], float] | None = None,
     ) -> None: ...
+
     @property
     def ttl(self) -> Any:
         """The time-to-live value of the cache's items."""
@@ -125,6 +128,7 @@ class TLRUCache(_TimedCache[_KT, _VT, _TT]):
         timer: Callable[[], _TT],
         getsizeof: Callable[[_VT], float] | None = None,
     ) -> None: ...
+
     @property
     def ttu(self) -> Callable[[_KT, _VT, _TT], _TT]:
         """The local time-to-use function used by the cache."""
@@ -186,12 +190,8 @@ def cached(
     lock: AbstractContextManager[Any] | None = None,
     condition: _AbstractCondition | None = None,
     info: Literal[False] = ...,
-) -> Callable[[Callable[..., _R]], _cached_wrapper[_R]]:
-    """
-    Decorator to wrap a function with a memoizing callable that saves
-    results in a cache.
-    """
-    ...
+) -> Callable[[Callable[..., _R]], _cached_wrapper[_R]]: ...
+
 @type_check_only
 class _cachedmethod_wrapper(Generic[_R]):
     __wrapped__: Callable[..., _R]

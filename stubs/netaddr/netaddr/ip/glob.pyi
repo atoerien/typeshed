@@ -108,6 +108,7 @@ class IPGlob(IPRange):
     """
     __slots__ = ("_glob",)
     def __init__(self, ipglob: str) -> None: ...
+
     @property
     def glob(self) -> str:
         """an arbitrary IP address range in glob format."""

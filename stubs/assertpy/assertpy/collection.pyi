@@ -8,74 +8,10 @@ __tracebackhide__: bool
 _V = TypeVar("_V", default=Any)
 
 class CollectionMixin(Generic[_V]):
-    """Collection assertions mixin."""
-    def is_iterable(self) -> Self:
-        """
-        Asserts that val is iterable collection.
+    def is_iterable(self) -> Self: ...
+    def is_not_iterable(self) -> Self: ...
+    def is_subset_of(self, *supersets: _V) -> Self: ...
 
-        Examples:
-            Usage::
-
-                assert_that('foo').is_iterable()
-                assert_that(['a', 'b']).is_iterable()
-                assert_that((1, 2, 3)).is_iterable()
-
-        Returns:
-            AssertionBuilder: returns this instance to chain to the next assertion
-
-        Raises:
-            AssertionError: if val is **not** iterable
-        """
-        ...
-    def is_not_iterable(self) -> Self:
-        """
-        Asserts that val is not iterable collection.
-
-        Examples:
-            Usage::
-
-                assert_that(1).is_not_iterable()
-                assert_that(123.4).is_not_iterable()
-                assert_that(True).is_not_iterable()
-                assert_that(None).is_not_iterable()
-
-        Returns:
-            AssertionBuilder: returns this instance to chain to the next assertion
-
-        Raises:
-            AssertionError: if val **is** iterable
-        """
-        ...
-    def is_subset_of(self, *supersets: _V) -> Self:
-        """
-        Asserts that val is iterable and a subset of the given superset (or supersets).
-
-        Args:
-            *supersets: the expected superset (or supersets)
-
-        Examples:
-            Usage::
-
-                assert_that('foo').is_subset_of('abcdefghijklmnopqrstuvwxyz')
-                assert_that(['a', 'b']).is_subset_of(['a', 'b', 'c'])
-                assert_that((1, 2, 3)).is_subset_of([1, 2, 3, 4])
-                assert_that({'a': 1, 'b': 2}).is_subset_of({'a': 1, 'b': 2, 'c': 3})
-                assert_that({'a', 'b'}).is_subset_of({'a', 'b', 'c'})
-
-                # or multiple supersets (as comma-separated args)
-                assert_that('aBc').is_subset_of('abc', 'ABC')
-                assert_that((1, 2, 3)).is_subset_of([1, 3, 5], [2, 4, 6])
-
-                assert_that({'a': 1, 'b': 2}).is_subset_of({'a': 1, 'c': 3})  # fails
-                # Expected <{'a': 1, 'b': 2}> to be subset of <{'a': 1, 'c': 3}>, but <{'b': 2}> was missing.
-
-        Returns:
-            AssertionBuilder: returns this instance to chain to the next assertion
-
-        Raises:
-            AssertionError: if val is **not** subset of given superset (or supersets)
-        """
-        ...
     @overload
     def is_sorted(self, key: Callable[[_V], SupportsRichComparison] = ..., reverse: Literal[False] = False) -> Self:
         """

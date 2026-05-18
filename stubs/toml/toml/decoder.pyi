@@ -57,9 +57,12 @@ def load(
     f: _PathLike | list[Any] | SupportsRead[str],  # list[_PathLike] is invariance
     _dict: type[dict[str, Any]] = ...,
     decoder: TomlDecoder[dict[str, Any]] | None = None,
-) -> dict[str, Any]:
-    """
-    Parses named file or files as toml and returns a dictionary
+) -> dict[str, Any]: ...
+
+@overload
+def loads(s: str, _dict: type[_MutableMappingT], decoder: TomlDecoder[_MutableMappingT] | None = None) -> _MutableMappingT: ...
+@overload
+def loads(s: str, _dict: type[dict[str, Any]] = ..., decoder: TomlDecoder[dict[str, Any]] | None = None) -> dict[str, Any]: ...
 
     Args:
         f: Path to the file to open, array of files to read into single dict
@@ -118,10 +121,12 @@ class InlineTableDict:
 
 class TomlDecoder(Generic[_MutableMappingT]):
     _dict: type[_MutableMappingT]
+
     @overload
     def __init__(self, _dict: type[_MutableMappingT]) -> None: ...
     @overload
     def __init__(self: TomlDecoder[dict[str, Any]], _dict: type[dict[str, Any]] = ...) -> None: ...
+
     def get_empty_table(self) -> _MutableMappingT: ...
     def get_empty_inline_table(self) -> InlineTableDict: ...  # incomplete python/typing#213
     def load_inline_object(

@@ -66,43 +66,9 @@ class GraphicsStateDictRegistry(OrderedDict[Raw, Name]):
     """A container providing deduplication of graphics state dictionaries across a PDF."""
     def register_style(self, style: GraphicsStyle) -> Name | None: ...
 
-def number_to_str(number: Number) -> str:
-    """
-    Convert a decimal number to a minimal string representation (no trailing 0 or .).
+def number_to_str(number: Number) -> str: ...
+def render_pdf_primitive(primitive: _Primitive) -> Raw: ...
 
-    Args:
-        number (Number): the number to be converted to a string.
-
-    Returns:
-        The number's string representation.
-    """
-    ...
-def render_pdf_primitive(primitive: _Primitive) -> Raw:
-    """
-    Render a Python value as a PDF primitive type.
-
-    Container types (tuples/lists and dicts) are rendered recursively. This supports
-    values of the type Name, str, bytes, numbers, booleans, list/tuple, and dict.
-
-    Any custom type can be passed in as long as it provides a `serialize` method that
-    takes no arguments and returns a string. The primitive object is returned directly
-    if it is an instance of the `Raw` class. Otherwise, The existence of the `serialize`
-    method is checked before any other type checking is performed, so, for example, a
-    `dict` subclass with a `serialize` method would be converted using its `pdf_repr`
-    method rather than the built-in `dict` conversion process.
-
-    Args:
-        primitive: the primitive value to convert to its PDF representation.
-
-    Returns:
-        Raw-wrapped str of the PDF representation.
-
-    Raises:
-        ValueError: if a dictionary key is not a Name.
-        TypeError: if `primitive` does not have a known conversion to a PDF
-            representation.
-    """
-    ...
 @type_check_only
 class _DeviceRGBBase(NamedTuple):
     r: Number
@@ -161,41 +127,9 @@ class DeviceCMYK(_DeviceCMYKBase):
         ...
     def serialize(self) -> str: ...
 
-def rgb8(r: Number, g: Number, b: Number, a: Number | None = None) -> DeviceRGB:
-    """
-    Produce a DeviceRGB color from the given 8-bit RGB values.
+def rgb8(r: Number, g: Number, b: Number, a: Number | None = None) -> DeviceRGB: ...
+def gray8(g: Number, a: Number | None = None) -> DeviceGray: ...
 
-    Args:
-        r (Number): red color component. Must be in the interval [0, 255].
-        g (Number): green color component. Must be in the interval [0, 255].
-        b (Number): blue color component. Must be in the interval [0, 255].
-        a (Optional[Number]): alpha component. Must be `None` or in the interval
-            [0, 255]. 0 is fully transparent, 255 is fully opaque
-
-    Returns:
-        DeviceRGB color representation.
-
-    Raises:
-        ValueError: if any components are not in their valid interval.
-    """
-    ...
-def gray8(g: Number, a: Number | None = None) -> DeviceGray:
-    """
-    Produce a DeviceGray color from the given 8-bit gray value.
-
-    Args:
-        g (Number): gray color component. Must be in the interval [0, 255]. 0 is black,
-            255 is white.
-        a (Optional[Number]): alpha component. Must be `None` or in the interval
-            [0, 255]. 0 is fully transparent, 255 is fully opaque
-
-    Returns:
-        DeviceGray color representation.
-
-    Raises:
-        ValueError: if any components are not in their valid interval.
-    """
-    ...
 @overload
 def convert_to_device_color(r: DeviceCMYK) -> DeviceCMYK: ...
 @overload
@@ -208,52 +142,10 @@ def convert_to_device_color(r: str) -> DeviceRGB: ...
 def convert_to_device_color(r: int, g: Literal[-1] = -1, b: Literal[-1] = -1) -> DeviceGray: ...
 @overload
 def convert_to_device_color(r: Sequence[int] | int, g: int, b: int) -> DeviceGray | DeviceRGB: ...
-def cmyk8(c, m, y, k, a=None) -> DeviceCMYK:
-    """
-    Produce a DeviceCMYK color from the given 8-bit CMYK values.
 
-    Args:
-        c (Number): red color component. Must be in the interval [0, 255].
-        m (Number): green color component. Must be in the interval [0, 255].
-        y (Number): blue color component. Must be in the interval [0, 255].
-        k (Number): blue color component. Must be in the interval [0, 255].
-        a (Optional[Number]): alpha component. Must be `None` or in the interval
-            [0, 255]. 0 is fully transparent, 255 is fully opaque
-
-    Returns:
-        DeviceCMYK color representation.
-
-    Raises:
-        ValueError: if any components are not in their valid interval.
-    """
-    ...
-def color_from_hex_string(hexstr: str) -> DeviceRGB:
-    """
-    Parse an RGB color from a css-style 8-bit hexadecimal color string.
-
-    Args:
-        hexstr (str): of the form `#RGB`, `#RGBA`, `#RRGGBB`, or `#RRGGBBAA` (case
-            insensitive). Must include the leading octothorp. Forms omitting the alpha
-            field are interpreted as not specifying the opacity, so it will not be
-            explicitly set.
-
-            An alpha value of `00` is fully transparent and `FF` is fully opaque.
-
-    Returns:
-        DeviceRGB representation of the color.
-    """
-    ...
-def color_from_rgb_string(rgbstr: str) -> DeviceRGB:
-    """
-    Parse an RGB color from a css-style rgb(R, G, B, A) color string.
-
-    Args:
-        rgbstr (str): of the form `rgb(R, G, B)` or `rgb(R, G, B, A)`.
-
-    Returns:
-        DeviceRGB representation of the color.
-    """
-    ...
+def cmyk8(c, m, y, k, a=None) -> DeviceCMYK: ...
+def color_from_hex_string(hexstr: str) -> DeviceRGB: ...
+def color_from_rgb_string(rgbstr: str) -> DeviceRGB: ...
 
 class Point(NamedTuple):
     """An x-y coordinate pair within the two-dimensional coordinate frame."""
@@ -734,34 +626,33 @@ class GraphicsStyle:
         ...
     def __init__(self) -> None: ...
     def __deepcopy__(self, memo) -> Self: ...
+
     @property
     def allow_transparency(self): ...
     @allow_transparency.setter
     def allow_transparency(self, new): ...
+
     @property
     def paint_rule(self) -> PathPaintRule | EllipsisType:
         """The paint rule to use for this path/group."""
         ...
     @paint_rule.setter
-    def paint_rule(self, new: PathPaintRule | str | EllipsisType | None) -> None:
-        """The paint rule to use for this path/group."""
-        ...
+    def paint_rule(self, new: PathPaintRule | str | EllipsisType | None) -> None: ...
+
     @property
     def auto_close(self) -> bool | EllipsisType:
         """If True, unclosed paths will be automatically closed before stroking."""
         ...
     @auto_close.setter
-    def auto_close(self, new: bool | EllipsisType) -> None:
-        """If True, unclosed paths will be automatically closed before stroking."""
-        ...
+    def auto_close(self, new: bool | EllipsisType) -> None: ...
+
     @property
     def intersection_rule(self):
         """The desired intersection rule for this path/group."""
         ...
     @intersection_rule.setter
-    def intersection_rule(self, new) -> None:
-        """The desired intersection rule for this path/group."""
-        ...
+    def intersection_rule(self, new) -> None: ...
+
     @property
     def fill_color(self):
         """
@@ -772,22 +663,15 @@ class GraphicsStyle:
         """
         ...
     @fill_color.setter
-    def fill_color(self, color) -> None:
-        """
-        The desired fill color for this path/group.
+    def fill_color(self, color) -> None: ...
 
-        When setting this property, if the color specifies an opacity value, that will
-        be used to set the fill_opacity property as well.
-        """
-        ...
     @property
     def fill_opacity(self):
         """The desired fill opacity for this path/group."""
         ...
     @fill_opacity.setter
-    def fill_opacity(self, new) -> None:
-        """The desired fill opacity for this path/group."""
-        ...
+    def fill_opacity(self, new) -> None: ...
+
     @property
     def stroke_color(self):
         """
@@ -798,93 +682,66 @@ class GraphicsStyle:
         """
         ...
     @stroke_color.setter
-    def stroke_color(self, color: str | DeviceRGB | DeviceGray | DeviceCMYK | EllipsisType | None) -> None:
-        """
-        The desired stroke color for this path/group.
+    def stroke_color(self, color: str | DeviceRGB | DeviceGray | DeviceCMYK | EllipsisType | None) -> None: ...
 
-        When setting this property, if the color specifies an opacity value, that will
-        be used to set the fill_opacity property as well.
-        """
-        ...
     @property
     def stroke_opacity(self):
         """The desired stroke opacity for this path/group."""
         ...
     @stroke_opacity.setter
-    def stroke_opacity(self, new) -> None:
-        """The desired stroke opacity for this path/group."""
-        ...
+    def stroke_opacity(self, new) -> None: ...
+
     @property
     def blend_mode(self):
         """The desired blend mode for this path/group."""
         ...
     @blend_mode.setter
-    def blend_mode(self, value) -> None:
-        """The desired blend mode for this path/group."""
-        ...
+    def blend_mode(self, value) -> None: ...
+
     @property
     def stroke_width(self):
         """The desired stroke width for this path/group."""
         ...
     @stroke_width.setter
-    def stroke_width(self, width: Number | EllipsisType | None) -> None:
-        """The desired stroke width for this path/group."""
-        ...
+    def stroke_width(self, width: Number | EllipsisType | None) -> None: ...
+
     @property
     def stroke_cap_style(self):
         """The desired stroke cap style for this path/group."""
         ...
     @stroke_cap_style.setter
-    def stroke_cap_style(self, value) -> None:
-        """The desired stroke cap style for this path/group."""
-        ...
+    def stroke_cap_style(self, value) -> None: ...
+
     @property
     def stroke_join_style(self):
         """The desired stroke join style for this path/group."""
         ...
     @stroke_join_style.setter
-    def stroke_join_style(self, value) -> None:
-        """The desired stroke join style for this path/group."""
-        ...
+    def stroke_join_style(self, value) -> None: ...
+
     @property
     def stroke_miter_limit(self):
         """The desired stroke miter limit for this path/group."""
         ...
     @stroke_miter_limit.setter
-    def stroke_miter_limit(self, value: Number | EllipsisType) -> None:
-        """The desired stroke miter limit for this path/group."""
-        ...
+    def stroke_miter_limit(self, value: Number | EllipsisType) -> None: ...
+
     @property
     def stroke_dash_pattern(self):
         """The desired stroke dash pattern for this path/group."""
         ...
     @stroke_dash_pattern.setter
-    def stroke_dash_pattern(self, value: Number | Iterable[Number] | EllipsisType | None) -> None:
-        """The desired stroke dash pattern for this path/group."""
-        ...
+    def stroke_dash_pattern(self, value: Number | Iterable[Number] | EllipsisType | None) -> None: ...
+
     @property
     def stroke_dash_phase(self):
         """The desired stroke dash pattern phase offset for this path/group."""
         ...
     @stroke_dash_phase.setter
-    def stroke_dash_phase(self, value: Number | EllipsisType):
-        """The desired stroke dash pattern phase offset for this path/group."""
-        ...
-    def serialize(self) -> Raw | None:
-        """
-        Convert this style object to a PDF dictionary with appropriate style keys.
+    def stroke_dash_phase(self, value: Number | EllipsisType): ...
 
-        Only explicitly specified values are emitted.
-        """
-        ...
-    def resolve_paint_rule(self) -> PathPaintRule:
-        """
-        Resolve `PathPaintRule.AUTO` to a real paint rule based on this style.
-
-        Returns:
-            the resolved `PathPaintRule`.
-        """
-        ...
+    def serialize(self) -> Raw | None: ...
+    def resolve_paint_rule(self) -> PathPaintRule: ...
 
 class Move(NamedTuple):
     """
@@ -1930,41 +1787,36 @@ class PaintedPath:
     def __init__(self, x: Number = 0, y: Number = 0) -> None: ...
     def __deepcopy__(self, memo) -> Self: ...
     @property
-    def style(self) -> GraphicsStyle:
-        """The `GraphicsStyle` applied to all elements of this path."""
-        ...
+    def style(self) -> GraphicsStyle: ...
+
     @property
     def transform(self):
         """The `Transform` that applies to all of the elements of this path."""
         ...
     @transform.setter
-    def transform(self, tf) -> None:
-        """The `Transform` that applies to all of the elements of this path."""
-        ...
+    def transform(self, tf) -> None: ...
+
     @property
     def auto_close(self):
         """If true, the path should automatically close itself before painting."""
         ...
     @auto_close.setter
-    def auto_close(self, should) -> None:
-        """If true, the path should automatically close itself before painting."""
-        ...
+    def auto_close(self, should) -> None: ...
+
     @property
     def paint_rule(self):
         """Manually specify the `PathPaintRule` to use for rendering the path."""
         ...
     @paint_rule.setter
-    def paint_rule(self, style) -> None:
-        """Manually specify the `PathPaintRule` to use for rendering the path."""
-        ...
+    def paint_rule(self, style) -> None: ...
+
     @property
     def clipping_path(self):
         """Set the clipping path for this path."""
         ...
     @clipping_path.setter
-    def clipping_path(self, new_clipath) -> None:
-        """Set the clipping path for this path."""
-        ...
+    def clipping_path(self, new_clipath) -> None: ...
+
     @contextmanager
     def transform_group(self, transform) -> Generator[Self]:
         """Apply the provided `Transform` to all points added within this context."""
@@ -2366,31 +2218,20 @@ class GraphicsContext:
     path_items: list[Incomplete]
     def __init__(self) -> None: ...
     def __deepcopy__(self, memo) -> Self: ...
+
     @property
     def transform(self) -> Transform | None: ...
     @transform.setter
     def transform(self, tf) -> None: ...
+
     @property
     def clipping_path(self) -> ClippingPath | None:
         """The `ClippingPath` for this graphics context."""
         ...
     @clipping_path.setter
-    def clipping_path(self, new_clipath) -> None:
-        """The `ClippingPath` for this graphics context."""
-        ...
-    def add_item(self, item, _copy: bool = True) -> None:
-        """
-        Add a path element to this graphics context.
+    def clipping_path(self, new_clipath) -> None: ...
 
-        Args:
-            item: the path element to add. May be a primitive element or another
-                `GraphicsContext` or a `PaintedPath`.
-            _copy (bool): if true (the default), the item will be copied before being
-                appended. This prevents modifications to a referenced object from
-                "retroactively" altering its style/shape and should be disabled with
-                caution.
-        """
-        ...
+    def add_item(self, item, _copy: bool = True) -> None: ...
     def remove_last_item(self) -> None: ...
     def merge(self, other_context) -> None:
         """Copy another `GraphicsContext`'s path items into this one."""

@@ -333,22 +333,21 @@ class _TypedDict(Mapping[str, object], metaclass=abc.ABCMeta):
     def keys(self) -> dict_keys[str, object]: ...
     def values(self) -> dict_values[str, object]: ...
     def __delitem__(self, k: Never) -> None: ...
+
     @overload
     def __or__(self, value: Self, /) -> Self:
         """Return self|value."""
         ...
     @overload
-    def __or__(self, value: dict[str, Any], /) -> dict[str, object]:
-        """Return self|value."""
-        ...
+    def __or__(self, value: dict[str, Any], /) -> dict[str, object]: ...
+
     @overload
     def __ror__(self, value: Self, /) -> Self:
         """Return value|self."""
         ...
     @overload
-    def __ror__(self, value: dict[str, Any], /) -> dict[str, object]:
-        """Return value|self."""
-        ...
+    def __ror__(self, value: dict[str, Any], /) -> dict[str, object]: ...
+
     # supposedly incompatible definitions of `__ior__` and `__or__`:
     # Since this module defines "Self" it is not recognized by Ruff as typing_extensions.Self
     def __ior__(self, value: Self, /) -> Self: ...  # type: ignore[misc]
@@ -364,53 +363,8 @@ else:
         """
         Return type hints for an object.
 
-        This is often the same as obj.__annotations__, but it handles
-        forward references encoded as string literals, adds Optional[t] if a
-        default value equal to None is set and recursively replaces all
-        'Annotated[T, ...]', 'Required[T]' or 'NotRequired[T]' with 'T'
-        (unless 'include_extras=True').
+def get_args(tp: AnnotationForm) -> tuple[AnnotationForm, ...]: ...
 
-        The argument may be a module, class, method, or function. The annotations
-        are returned as a dictionary. For classes, annotations include also
-        inherited members.
-
-        TypeError is raised if the argument is not of a type that can contain
-        annotations, and an empty dictionary is returned if no annotations are
-        present.
-
-        BEWARE -- the behavior of globalns and localns is counterintuitive
-        (unless you are familiar with how eval() and exec() work).  The
-        search order is locals first, then globals.
-
-        - If no dict arguments are passed, an attempt is made to use the
-          globals from obj (or the respective module's globals for classes),
-          and these are also used as the locals.  If the object does not appear
-          to have globals, an empty dictionary is used.
-
-        - If one dict argument is passed, it is used for both globals and
-          locals.
-
-        - If two dict arguments are passed, they specify globals and
-          locals, respectively.
-        """
-        ...
-
-def get_args(tp: AnnotationForm) -> tuple[AnnotationForm, ...]:
-    """
-    Get type arguments with all substitutions performed.
-
-    For unions, basic simplifications used by Union constructor are performed.
-
-    Examples::
-
-        >>> T = TypeVar('T')
-        >>> assert get_args(Dict[str, int]) == (str, int)
-        >>> assert get_args(int) == ()
-        >>> assert get_args(Union[int, Union[T, int], str][int]) == (int, str)
-        >>> assert get_args(Union[int, Tuple[T, int]][str]) == (int, Tuple[str, int])
-        >>> assert get_args(Callable[[], T][int]) == ([], int)
-    """
-    ...
 @overload
 def get_origin(tp: UnionType) -> type[UnionType]:
     """
@@ -681,14 +635,14 @@ else:
         _field_defaults: ClassVar[dict[str, Any]]
         _fields: ClassVar[tuple[str, ...]]
         __orig_bases__: ClassVar[tuple[Any, ...]]
+
         @overload
         def __init__(self, typename: str, fields: Iterable[tuple[str, Any]] = ...) -> None:
             """Initialize self.  See help(type(self)) for accurate signature."""
             ...
         @overload
-        def __init__(self, typename: str, fields: None = None, **kwargs: Any) -> None:
-            """Initialize self.  See help(type(self)) for accurate signature."""
-            ...
+        def __init__(self, typename: str, fields: None = None, **kwargs: Any) -> None: ...
+
         @classmethod
         def _make(cls, iterable: Iterable[Any]) -> Self: ...
         def _asdict(self) -> dict[str, Any]: ...
@@ -852,6 +806,7 @@ else:
     class SupportsRound(Protocol[_T_co]):
         """An ABC with one abstract method __round__ that is covariant in its return type."""
         __slots__ = ()
+
         @overload
         @abc.abstractmethod
         def __round__(self) -> int: ...
@@ -907,38 +862,9 @@ if sys.version_info >= (3, 13):
     )
     from warnings import deprecated as deprecated
 else:
-    def is_protocol(tp: type, /) -> bool:
-        """
-        Return True if the given type is a Protocol.
+    def is_protocol(tp: type, /) -> bool: ...
+    def get_protocol_members(tp: type, /) -> frozenset[str]: ...
 
-        Example::
-
-            >>> from typing_extensions import Protocol, is_protocol
-            >>> class P(Protocol):
-            ...     def a(self) -> str: ...
-            ...     b: int
-            >>> is_protocol(P)
-            True
-            >>> is_protocol(int)
-            False
-        """
-        ...
-    def get_protocol_members(tp: type, /) -> frozenset[str]:
-        """
-        Return the set of members defined in a Protocol.
-
-        Example::
-
-            >>> from typing_extensions import Protocol, get_protocol_members
-            >>> class P(Protocol):
-            ...     def a(self) -> str: ...
-            ...     b: int
-            >>> get_protocol_members(P)
-            frozenset({'a', 'b'})
-
-        Raise a TypeError for arguments that are not Protocols.
-        """
-        ...
     @final
     @type_check_only
     class _NoDefaultType: ...
@@ -1294,43 +1220,8 @@ else:
         locals: Mapping[str, Any] | None = None,  # value types depend on the key
         eval_str: bool = False,
         format: Format = Format.VALUE,  # noqa: Y011
-    ) -> dict[str, AnnotationForm]:
-        """
-        Compute the annotations dict for an object.
+    ) -> dict[str, AnnotationForm]: ...
 
-        obj may be a callable, class, or module.
-        Passing in an object of any other type raises TypeError.
-
-        Returns a dict.  get_annotations() returns a new dict every time
-        it's called; calling it twice on the same object will return two
-        different but equivalent dicts.
-
-        This is a backport of `inspect.get_annotations`, which has been
-        in the standard library since Python 3.10. See the standard library
-        documentation for more:
-
-            https://docs.python.org/3/library/inspect.html#inspect.get_annotations
-
-        This backport adds the *format* argument introduced by PEP 649. The
-        three formats supported are:
-        * VALUE: the annotations are returned as-is. This is the default and
-          it is compatible with the behavior on previous Python versions.
-        * FORWARDREF: return annotations as-is if possible, but replace any
-          undefined names with ForwardRef objects. The implementation proposed by
-          PEP 649 relies on language changes that cannot be backported; the
-          typing-extensions implementation simply returns the same result as VALUE.
-        * STRING: return annotations as strings, in a format close to the original
-          source. Again, this behavior cannot be replicated directly in a backport.
-          As an approximation, typing-extensions retrieves the annotations under
-          VALUE semantics and then stringifies them.
-
-        The purpose of this backport is to allow users who would like to use
-        FORWARDREF or STRING semantics once PEP 649 is implemented, but who also
-        want to support earlier Python versions, to simply write:
-
-            typing_extensions.get_annotations(obj, format=Format.FORWARDREF)
-        """
-        ...
     @overload
     def evaluate_forward_ref(
         forward_ref: ForwardRef,
@@ -1409,39 +1300,9 @@ else:
         type_params: Iterable[TypeVar | ParamSpec | TypeVarTuple] | None = None,
         format: Format | None = None,
         _recursive_guard: Container[str] = ...,
-    ) -> AnnotationForm:
-        """
-        Evaluate a forward reference as a type hint.
+    ) -> AnnotationForm: ...
 
-        This is similar to calling the ForwardRef.evaluate() method,
-        but unlike that method, evaluate_forward_ref() also:
-
-        * Recursively evaluates forward references nested within the type hint.
-        * Rejects certain objects that are not valid type hints.
-        * Replaces type hints that evaluate to None with types.NoneType.
-        * Supports the *FORWARDREF* and *STRING* formats.
-
-        *forward_ref* must be an instance of ForwardRef. *owner*, if given,
-        should be the object that holds the annotations that the forward reference
-        derived from, such as a module, class object, or function. It is used to
-        infer the namespaces to use for looking up names. *globals* and *locals*
-        can also be explicitly given to provide the global and local namespaces.
-        *type_params* is a tuple of type parameters that are in scope when
-        evaluating the forward reference. This parameter must be provided (though
-        it may be an empty tuple) if *owner* is not given and the forward reference
-        does not already have an owner set. *format* specifies the format of the
-        annotation and is a member of the annotationlib.Format enum.
-        """
-        ...
-    def type_repr(value: object) -> str:
-        """
-        Convert a Python value to a format suitable for use with the STRING format.
-
-        This is intended as a helper for tools that support the STRING format but do
-        not have access to the code that originally produced the annotations. It uses
-        repr() for most objects.
-        """
-        ...
+    def type_repr(value: object) -> str: ...
 
 # PEP 661
 class Sentinel:

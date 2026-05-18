@@ -451,6 +451,7 @@ class ServerProxy:
         context: Any | None = None,
     ) -> None: ...
     def __getattr__(self, name: str) -> _Method: ...
+
     @overload
     def __call__(self, attr: Literal["close"]) -> Callable[[], None]:
         """
@@ -466,12 +467,8 @@ class ServerProxy:
         """
         ...
     @overload
-    def __call__(self, attr: str) -> Callable[[], None] | Transport:
-        """
-        A workaround to get special attributes on the ServerProxy
-        without interfering with the magic __getattr__
-        """
-        ...
+    def __call__(self, attr: str) -> Callable[[], None] | Transport: ...
+
     def __enter__(self) -> Self: ...
     def __exit__(
         self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None
