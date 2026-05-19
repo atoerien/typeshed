@@ -35,36 +35,11 @@ from typing import Final
 
 __about__: Final[str]
 
-def heapify(heap: list[_T], /) -> None:
-    """Transform list into a heap, in-place, in O(len(heap)) time."""
-    ...
-def heappop(heap: list[_T], /) -> _T:
-    """Pop the smallest item off the heap, maintaining the heap invariant."""
-    ...
-def heappush(heap: list[_T], item: _T, /) -> None:
-    """Push item onto heap, maintaining the heap invariant."""
-    ...
-def heappushpop(heap: list[_T], item: _T, /) -> _T:
-    """
-    Push item on the heap, then pop and return the smallest item from the heap.
-
-    The combined action runs more efficiently than heappush() followed by
-    a separate call to heappop().
-    """
-    ...
-def heapreplace(heap: list[_T], item: _T, /) -> _T:
-    """
-    Pop and return the current smallest value, and add the new item.
-
-    This is more efficient than heappop() followed by heappush(), and can be
-    more appropriate when using a fixed-size heap.  Note that the value
-    returned may be larger than item!  That constrains reasonable uses of
-    this routine unless written as part of a conditional replacement:
-
-        if item > heap[0]:
-            item = heapreplace(heap, item)
-    """
-    ...
+def heapify(heap: list[_T], /) -> None: ...  # To work around the fact that list is invariant
+def heappop(heap: list[_T], /) -> _T: ...
+def heappush(heap: list[_T], item: _T, /) -> None: ...
+def heappushpop(heap: list[_T], item: _T, /) -> _T: ...
+def heapreplace(heap: list[_T], item: _T, /) -> _T: ...
 
 if sys.version_info >= (3, 14):
     def heapify_max(heap: list[_T], /) -> None:

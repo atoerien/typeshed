@@ -59,7 +59,12 @@ if sys.version_info >= (3, 11):
                 """Run a coroutine inside the embedded event loop."""
                 ...
 
-if sys.version_info >= (3, 12):
+if sys.version_info >= (3, 14):
+    def run(
+        main: Awaitable[_T], *, debug: bool | None = None, loop_factory: Callable[[], AbstractEventLoop] | None = None
+    ) -> _T: ...
+
+elif sys.version_info >= (3, 12):
     def run(
         main: Coroutine[Any, Any, _T], *, debug: bool | None = None, loop_factory: Callable[[], AbstractEventLoop] | None = None
     ) -> _T:
