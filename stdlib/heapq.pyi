@@ -48,18 +48,78 @@ _S = TypeVar("_S")
 __about__: Final[str]
 
 @overload
-def merge(*iterables: Iterable[_S], key: Callable[[_S], SupportsRichComparison], reverse: bool = False) -> Generator[_S]: ...
+def merge(*iterables: Iterable[_S], key: Callable[[_S], SupportsRichComparison], reverse: bool = False) -> Generator[_S]:
+    """
+    Merge multiple sorted inputs into a single sorted output.
+
+    Similar to sorted(itertools.chain(*iterables)) but returns a generator,
+    does not pull the data into memory all at once, and assumes that each of
+    the input streams is already sorted (smallest to largest).
+
+    >>> list(merge([1,3,5,7], [0,2,4,8], [5,10,15,20], [], [25]))
+    [0, 1, 2, 3, 4, 5, 5, 7, 8, 10, 15, 20, 25]
+
+    If *key* is not None, applies a key function to each element to determine
+    its sort order.
+
+    >>> list(merge(['dog', 'horse'], ['cat', 'fish', 'kangaroo'], key=len))
+    ['dog', 'cat', 'fish', 'horse', 'kangaroo']
+    """
+    ...
 @overload
-def merge(*iterables: Iterable[_T], key: None = None, reverse: bool = False) -> Generator[_T]: ...
+def merge(*iterables: Iterable[_T], key: None = None, reverse: bool = False) -> Generator[_T]:
+    """
+    Merge multiple sorted inputs into a single sorted output.
+
+    Similar to sorted(itertools.chain(*iterables)) but returns a generator,
+    does not pull the data into memory all at once, and assumes that each of
+    the input streams is already sorted (smallest to largest).
+
+    >>> list(merge([1,3,5,7], [0,2,4,8], [5,10,15,20], [], [25]))
+    [0, 1, 2, 3, 4, 5, 5, 7, 8, 10, 15, 20, 25]
+
+    If *key* is not None, applies a key function to each element to determine
+    its sort order.
+
+    >>> list(merge(['dog', 'horse'], ['cat', 'fish', 'kangaroo'], key=len))
+    ['dog', 'cat', 'fish', 'horse', 'kangaroo']
+    """
+    ...
 
 @overload
-def nlargest(n: int, iterable: Iterable[_S], key: Callable[[_S], SupportsRichComparison]) -> list[_S]: ...
+def nlargest(n: int, iterable: Iterable[_S], key: Callable[[_S], SupportsRichComparison]) -> list[_S]:
+    """
+    Find the n largest elements in a dataset.
+
+    Equivalent to:  sorted(iterable, key=key, reverse=True)[:n]
+    """
+    ...
 @overload
-def nlargest(n: int, iterable: Iterable[_T], key: None = None) -> list[_T]: ...
+def nlargest(n: int, iterable: Iterable[_T], key: None = None) -> list[_T]:
+    """
+    Find the n largest elements in a dataset.
+
+    Equivalent to:  sorted(iterable, key=key, reverse=True)[:n]
+    """
+    ...
 
 @overload
-def nsmallest(n: int, iterable: Iterable[_S], key: Callable[[_S], SupportsRichComparison]) -> list[_S]: ...
-@overload
-def nsmallest(n: int, iterable: Iterable[_T], key: None = None) -> list[_T]: ...
+def nsmallest(n: int, iterable: Iterable[_S], key: Callable[[_S], SupportsRichComparison]) -> list[_S]:
+    """
+    Find the n smallest elements in a dataset.
 
-def _heapify_max(heap: list[SupportsRichComparison], /) -> None: ...  # undocumented
+    Equivalent to:  sorted(iterable, key=key)[:n]
+    """
+    ...
+@overload
+def nsmallest(n: int, iterable: Iterable[_T], key: None = None) -> list[_T]:
+    """
+    Find the n smallest elements in a dataset.
+
+    Equivalent to:  sorted(iterable, key=key)[:n]
+    """
+    ...
+
+def _heapify_max(heap: list[SupportsRichComparison], /) -> None:
+    """Maxheap variant of heapify."""
+    ...
