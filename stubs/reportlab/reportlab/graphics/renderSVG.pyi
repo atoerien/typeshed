@@ -90,6 +90,7 @@ class SVGCanvas:
         extraXmlDecl = ''   use to add extra xml declarations
         scaleGroupId = ''   id of an extra group to add around the drawing to allow easy scaling
         svgAttrs = {}       dictionary of attributes to be applied to the svg tag itself
+        fontSizer = 'px'    a string unit or acallable that returns a string fontSize value
         """
         ...
     def save(self, fn=None) -> None: ...

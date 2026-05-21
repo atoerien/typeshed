@@ -1,3 +1,5 @@
+"""A module encapsulating the Windows printing API."""
+
 from typing import Final, Literal, overload
 
 import _win32typing
