@@ -22,7 +22,7 @@ pika==1.4.*
 objgraph==3.6.*
 PyYAML==6.0.*
 Flask-Cors==6.0.*
-reportlab[pycairo]==4.5.0
+reportlab[pycairo]==4.5.1
 watchpoints==0.2.5
 click-shell==2.1
 dirhash==0.5.*
