@@ -90,7 +90,7 @@ pynput~=1.8.1
 pyxdg==0.28.*
 PyScreeze==1.0.1
 yt-dlp==2026.3.17
-ibm-db==3.2.8
+ibm-db==3.2.9
 croniter==6.2.2
 python-jenkins~=1.8.3
 gunicorn==26.0.0
