@@ -139,6 +139,7 @@ docutils==0.22.3
 pyflakes==3.4.*
 wurlitzer==3.1.*
 html5lib[all]==1.1.*
+kafka-python==2.3.*
 click-spinner==0.1.*
 nanoid==2.0.0
 simplejson==3.20.*
