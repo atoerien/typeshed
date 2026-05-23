@@ -33,16 +33,22 @@ class MetadataResponse_v5(Response):
     SCHEMA: Incomplete
 
 class MetadataResponse_v6(Response):
+    """
+    Metadata Request/Response v6 is the same as v5,
+    but on quota violation, brokers send out responses before throttling.
+    """
     API_KEY: int
     API_VERSION: int
     SCHEMA: Incomplete
 
 class MetadataResponse_v7(Response):
+    """v7 adds per-partition leader_epoch field"""
     API_KEY: int
     API_VERSION: int
     SCHEMA: Incomplete
 
 class MetadataResponse_v8(Response):
+    """v8 adds authorized_operations fields"""
     API_KEY: int
     API_VERSION: int
     SCHEMA: Incomplete
@@ -88,6 +94,10 @@ class MetadataRequest_v4(Request):
     NO_TOPICS: Incomplete
 
 class MetadataRequest_v5(Request):
+    """
+    The v5 metadata request is the same as v4.
+    An additional field for offline_replicas has been added to the v5 metadata response
+    """
     API_KEY: int
     API_VERSION: int
     RESPONSE_TYPE = MetadataResponse_v5

@@ -79,13 +79,33 @@ class DefaultRecord(ABCRecord):
     @property
     def offset(self): ...
     @property
-    def timestamp(self): ...
+    def timestamp(self):
+        """
+        Epoch milliseconds
+        
+        """
+        ...
     @property
-    def timestamp_type(self): ...
+    def timestamp_type(self):
+        """
+        CREATE_TIME(0) or APPEND_TIME(1)
+        
+        """
+        ...
     @property
-    def key(self): ...
+    def key(self):
+        """
+        Bytes key or None
+        
+        """
+        ...
     @property
-    def value(self): ...
+    def value(self):
+        """
+        Bytes value or None
+        
+        """
+        ...
     @property
     def headers(self): ...
     @property
@@ -130,10 +150,20 @@ class DefaultRecordBatchBuilder(DefaultRecordBase, ABCRecordBatchBuilder):
         bytearray_type=...,
         len_func=...,
         zero_len_varint: int = 1,
-    ): ...
+    ):
+        """
+        Write message to messageset buffer with MsgVersion 2
+        
+        """
+        ...
     def write_header(self, use_compression_type: bool = True) -> None: ...
     def build(self): ...
-    def size(self): ...
+    def size(self):
+        """
+        Return current size of data written to buffer
+        
+        """
+        ...
     @classmethod
     def header_size_in_bytes(cls): ...
     @classmethod
@@ -141,7 +171,12 @@ class DefaultRecordBatchBuilder(DefaultRecordBase, ABCRecordBatchBuilder):
     @classmethod
     def size_of(cls, key, value, headers): ...
     @classmethod
-    def estimate_size_in_bytes(cls, key, value, headers): ...
+    def estimate_size_in_bytes(cls, key, value, headers):
+        """
+        Get the upper bound estimate on the size of record
+        
+        """
+        ...
 
 class DefaultRecordMetadata:
     def __init__(self, offset, size, timestamp) -> None: ...

@@ -31,7 +31,14 @@ class LegacyRecordBatch(ABCRecordBatch, LegacyRecordBase):
     @property
     def size_in_bytes(self): ...
     @property
-    def timestamp_type(self): ...
+    def timestamp_type(self):
+        """
+        0 for CreateTime; 1 for LogAppendTime; None if unsupported.
+
+        Value is determined by broker; produced messages should always set to 0
+        Requires Kafka >= 0.10 / message version >= 1
+        """
+        ...
     @property
     def compression_type(self): ...
     @property
@@ -46,13 +53,33 @@ class LegacyRecord(ABCRecord):
     @property
     def offset(self): ...
     @property
-    def timestamp(self): ...
+    def timestamp(self):
+        """
+        Epoch milliseconds
+        
+        """
+        ...
     @property
-    def timestamp_type(self): ...
+    def timestamp_type(self):
+        """
+        CREATE_TIME(0) or APPEND_TIME(1)
+        
+        """
+        ...
     @property
-    def key(self): ...
+    def key(self):
+        """
+        Bytes key or None
+        
+        """
+        ...
     @property
-    def value(self): ...
+    def value(self):
+        """
+        Bytes value or None
+        
+        """
+        ...
     @property
     def headers(self): ...
     @property
@@ -63,16 +90,38 @@ class LegacyRecord(ABCRecord):
 
 class LegacyRecordBatchBuilder(ABCRecordBatchBuilder, LegacyRecordBase):
     def __init__(self, magic, compression_type, batch_size) -> None: ...
-    def append(self, offset, timestamp, key, value, headers=None): ...
-    def build(self): ...
-    def size(self): ...
-    def size_in_bytes(self, offset, timestamp, key, value, headers=None): ...
+    def append(self, offset, timestamp, key, value, headers=None):
+        """
+        Append message to batch.
+        
+        """
+        ...
+    def build(self):
+        """Compress batch to be ready for send"""
+        ...
+    def size(self):
+        """
+        Return current size of data written to buffer
+        
+        """
+        ...
+    def size_in_bytes(self, offset, timestamp, key, value, headers=None):
+        """
+        Actual size of message to add
+        
+        """
+        ...
     @classmethod
     def record_size(cls, magic, key, value): ...
     @classmethod
     def record_overhead(cls, magic): ...
     @classmethod
-    def estimate_size_in_bytes(cls, magic, compression_type, key, value): ...
+    def estimate_size_in_bytes(cls, magic, compression_type, key, value):
+        """
+        Upper bound estimate of record size.
+        
+        """
+        ...
 
 class LegacyRecordMetadata:
     def __init__(self, offset, crc, size, timestamp) -> None: ...

@@ -25,16 +25,19 @@ class ListOffsetsResponse_v2(Response):
     SCHEMA: Incomplete
 
 class ListOffsetsResponse_v3(Response):
+    """on quota violation, brokers send out responses before throttling"""
     API_KEY: int
     API_VERSION: int
     SCHEMA: Incomplete
 
 class ListOffsetsResponse_v4(Response):
+    """Add leader_epoch to response"""
     API_KEY: int
     API_VERSION: int
     SCHEMA: Incomplete
 
 class ListOffsetsResponse_v5(Response):
+    """adds a new error code, OFFSET_NOT_AVAILABLE"""
     API_KEY: int
     API_VERSION: int
     SCHEMA: Incomplete
@@ -68,6 +71,7 @@ class ListOffsetsRequest_v3(Request):
     DEFAULTS: Incomplete
 
 class ListOffsetsRequest_v4(Request):
+    """Add current_leader_epoch to request"""
     API_KEY: int
     API_VERSION: int
     RESPONSE_TYPE = ListOffsetsResponse_v4

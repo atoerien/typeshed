@@ -1,5 +1,31 @@
 class DefaultPartitioner:
-    @classmethod
-    def __call__(cls, key, all_partitions, available): ...
+    """
+    Default partitioner.
 
-def murmur2(data): ...
+    Hashes key to partition using murmur2 hashing (from java client)
+    If key is None, selects partition randomly from available,
+    or from all partitions if none are currently available
+    """
+    @classmethod
+    def __call__(cls, key, all_partitions, available):
+        """
+        Get the partition corresponding to key
+        :param key: partitioning key
+        :param all_partitions: list of all partitions sorted by partition ID
+        :param available: list of available partitions in no particular order
+        :return: one of the values from all_partitions or available
+        """
+        ...
+
+def murmur2(data):
+    """
+    Pure-python Murmur2 implementation.
+
+    Based on java client, see org.apache.kafka.common.utils.Utils.murmur2
+
+    Args:
+        data (bytes): opaque bytes
+
+    Returns: MurmurHash2 of data
+    """
+    ...

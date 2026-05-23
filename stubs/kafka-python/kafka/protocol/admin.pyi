@@ -222,6 +222,7 @@ class DescribeAclsRequest_v1(Request):
     SCHEMA: Incomplete
 
 class DescribeAclsRequest_v2(Request):
+    """Enable flexible version"""
     API_KEY: int
     API_VERSION: int
     RESPONSE_TYPE = DescribeAclsResponse_v2
@@ -499,6 +500,10 @@ class ElectLeadersRequest_v1(Request):
     SCHEMA: Incomplete
 
 class ElectionType(IntEnum):
+    """
+    Leader election type
+    
+    """
     PREFERRED = 0
     UNCLEAN = 1
 

@@ -26,6 +26,7 @@ class FutureRecordMetadata(Future):
     def get(self, timeout=None): ...
 
 class RecordMetadata(NamedTuple):
+    """RecordMetadata(topic, partition, topic_partition, offset, timestamp, checksum, serialized_key_size, serialized_value_size, serialized_header_size)"""
     topic: str
     partition: int
     topic_partition: TopicPartition

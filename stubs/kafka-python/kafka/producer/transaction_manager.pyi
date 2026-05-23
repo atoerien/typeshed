@@ -17,6 +17,7 @@ class ProducerIdAndEpoch:
     def __eq__(self, other): ...
 
 class TransactionState(IntEnum):
+    """An enumeration."""
     UNINITIALIZED = 0
     INITIALIZING = 1
     READY = 2
@@ -29,12 +30,14 @@ class TransactionState(IntEnum):
     def is_transition_valid(cls, source, target): ...
 
 class Priority(IntEnum):
+    """An enumeration."""
     FIND_COORDINATOR = 0
     INIT_PRODUCER_ID = 1
     ADD_PARTITIONS_OR_OFFSETS = 2
     END_TXN = 3
 
 class TransactionManager:
+    """A class which maintains state for transactions. Also keeps the state necessary to ensure idempotent production."""
     NO_INFLIGHT_REQUEST_CORRELATION_ID: int
     ADD_PARTITIONS_RETRY_BACKOFF_MS: int
     transactional_id: Incomplete
@@ -70,7 +73,25 @@ class TransactionManager:
     def is_partition_pending_add(self, partition): ...
     def has_producer_id_and_epoch(self, producer_id, producer_epoch): ...
     def set_producer_id_and_epoch(self, producer_id_and_epoch) -> None: ...
-    def reset_producer_id(self) -> None: ...
+    def reset_producer_id(self) -> None:
+        """
+        This method is used when the producer needs to reset its internal state because of an irrecoverable exception
+        from the broker.
+
+        We need to reset the producer id and associated state when we have sent a batch to the broker, but we either get
+        a non-retriable exception or we run out of retries, or the batch expired in the producer queue after it was already
+        sent to the broker.
+
+        In all of these cases, we don't know whether batch was actually committed on the broker, and hence whether the
+        sequence number was actually updated. If we don't reset the producer state, we risk the chance that all future
+        messages will return an OutOfOrderSequenceNumberError.
+
+        Note that we can't reset the producer state for the transactional producer as this would mean bumping the epoch
+        for the same producer id. This might involve aborting the ongoing transaction during the initProducerIdRequest,
+        and the user would not have any way of knowing this happened. So for the transactional producer,
+        it's best to return the produce error to the user and let them abort the transaction and close the producer explicitly.
+        """
+        ...
     def sequence_number(self, tp): ...
     def increment_sequence_number(self, tp, increment) -> None: ...
     def reset_sequence_for_partition(self, tp) -> None: ...

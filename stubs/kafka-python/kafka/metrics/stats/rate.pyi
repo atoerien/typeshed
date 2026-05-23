@@ -15,6 +15,14 @@ class TimeUnit:
     def get_name(time_unit): ...
 
 class Rate(AbstractMeasurableStat):
+    """
+    The rate of the given quantity. By default this is the total observed
+    over a set of samples from a sampled statistic divided by the elapsed
+    time over the sample windows. Alternative AbstractSampledStat
+    implementations can be provided, however, to record the rate of
+    occurrences (e.g. the count of values measured over the time interval)
+    or other such values.
+    """
     def __init__(self, time_unit=3, sampled_stat=None) -> None: ...
     def unit_name(self): ...
     def record(self, config, value, time_ms) -> None: ...
