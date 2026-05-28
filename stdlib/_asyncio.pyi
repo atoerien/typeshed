@@ -224,14 +224,84 @@ class Task(Future[_T_co]):  # type: ignore[type-var]  # pyright: ignore[reportIn
             """
             Decrement the task's count of cancellation requests.
 
-def get_event_loop() -> AbstractEventLoop: ...
-def get_running_loop() -> AbstractEventLoop: ...
-def _set_running_loop(loop: AbstractEventLoop | None, /) -> None: ...
-def _get_running_loop() -> AbstractEventLoop | None: ...
-def _register_task(task: Task[Any]) -> None: ...
-def _unregister_task(task: Task[Any]) -> None: ...
-def _enter_task(loop: AbstractEventLoop, task: Task[Any]) -> None: ...
-def _leave_task(loop: AbstractEventLoop, task: Task[Any]) -> None: ...
+            This should be used by tasks that catch CancelledError
+            and wish to continue indefinitely until they are cancelled again.
+
+            Returns the remaining number of cancellation requests.
+            """
+            ...
+
+    def __class_getitem__(cls, item: Any, /) -> GenericAlias:
+        """See PEP 585"""
+        ...
+
+def get_event_loop() -> AbstractEventLoop:
+    """
+    Return an asyncio event loop.
+
+    When called from a coroutine or a callback (e.g. scheduled with
+    call_soon or similar API), this function will always return the
+    running event loop.
+
+    If there is no running event loop set, the function will return
+    the result of `get_event_loop_policy().get_event_loop()` call.
+    """
+    ...
+def get_running_loop() -> AbstractEventLoop:
+    """
+    Return the running event loop.  Raise a RuntimeError if there is none.
+
+    This function is thread-specific.
+    """
+    ...
+def _set_running_loop(loop: AbstractEventLoop | None, /) -> None:
+    """
+    Set the running event loop.
+
+    This is a low-level function intended to be used by event loops.
+    This function is thread-specific.
+    """
+    ...
+def _get_running_loop() -> AbstractEventLoop | None:
+    """
+    Return the running event loop or None.
+
+    This is a low-level function intended to be used by event loops.
+    This function is thread-specific.
+    """
+    ...
+def _register_task(task: Task[Any]) -> None:
+    """
+    Register a new task in asyncio as executed by loop.
+
+    Returns None.
+    """
+    ...
+def _unregister_task(task: Task[Any]) -> None:
+    """
+    Unregister a task.
+
+    Returns None.
+    """
+    ...
+def _enter_task(loop: AbstractEventLoop, task: Task[Any]) -> None:
+    """
+    Enter into task execution or resume suspended task.
+
+    Task belongs to loop.
+
+    Returns None.
+    """
+    ...
+def _leave_task(loop: AbstractEventLoop, task: Task[Any]) -> None:
+    """
+    Leave task execution or suspend a task.
+
+    Task belongs to loop.
+
+    Returns None.
+    """
+    ...
 
 if sys.version_info >= (3, 12):
     def current_task(loop: AbstractEventLoop | None = None) -> Task[Any] | None:
