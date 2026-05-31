@@ -2001,6 +2001,8 @@ class Wm:
         ...
 
     aspect = wm_aspect
+
+    # wm_attributes: Get all attributes
     if sys.version_info >= (3, 13):
         @overload
         def wm_attributes(self, *, return_python_dict: Literal[False] = False) -> tuple[Any, ...]:
@@ -2057,6 +2059,7 @@ class Wm:
             """
             ...
 
+    # wm_attributes: Get one attribute (old variant using string that starts with "-")
     @overload
     def wm_attributes(self, option: Literal["-alpha"], /) -> float:
         """
@@ -2158,6 +2161,7 @@ class Wm:
             """
             ...
     if sys.version_info >= (3, 13):
+        # wm_attributes: Get one attribute (new variant without "-")
         @overload
         def wm_attributes(self, option: Literal["alpha"], /) -> float:
             """
@@ -2259,6 +2263,7 @@ class Wm:
                 """
                 ...
 
+    # wm_attributes: Set an attribute (old variant using string that starts with "-")
     @overload
     def wm_attributes(self, option: str, /):
         """
@@ -2374,6 +2379,7 @@ class Wm:
             """
             ...
 
+    # wm_attributes: Set multiple attributes (old variant using strings that start with "-")
     @overload
     def wm_attributes(self, option: str, value, /, *__other_option_value_pairs: Any) -> Literal[""]:
         """
@@ -2391,6 +2397,7 @@ class Wm:
         """
         ...
 
+    # wm_attributes: Set an attribute (new variant with kwarg instead of string)
     if sys.version_info >= (3, 13):
         if sys.platform == "darwin":
             @overload
@@ -3805,40 +3812,9 @@ class Canvas(Widget, XView, YView):
         """
         Bind to all items with TAGORID at event SEQUENCE a call to function FUNC.
 
-        An additional boolean parameter ADD specifies whether FUNC will be
-        called additionally to the other bound function or whether it will
-        replace the previous function. See bind for the return value.
-        """
-        ...
-    @overload
-    def tag_bind(self, tagOrId: str | int, *, func: str, add: Literal["", "+"] | bool | None = None) -> None:
-        """
-        Bind to all items with TAGORID at event SEQUENCE a call to function FUNC.
-
-        An additional boolean parameter ADD specifies whether FUNC will be
-        called additionally to the other bound function or whether it will
-        replace the previous function. See bind for the return value.
-        """
-        ...
-
-    def tag_unbind(self, tagOrId: str | int, sequence: str, funcid: str | None = None) -> None:
-        """
-        Unbind for all items with TAGORID for event SEQUENCE  the
-        function identified with FUNCID.
-        """
-        ...
-    def canvasx(self, screenx, gridspacing=None):
-        """
-        Return the canvas x coordinate of pixel position SCREENX rounded
-        to nearest multiple of GRIDSPACING units.
-        """
-        ...
-    def canvasy(self, screeny, gridspacing=None):
-        """
-        Return the canvas y coordinate of pixel position SCREENY rounded
-        to nearest multiple of GRIDSPACING units.
-        """
-        ...
+    def tag_unbind(self, tagOrId: str | int, sequence: str, funcid: str | None = None) -> None: ...
+    def canvasx(self, screenx: float | str, gridspacing: float | str | None = None) -> float: ...
+    def canvasy(self, screeny: float | str, gridspacing: float | str | None = None) -> float: ...
 
     @overload
     def coords(self, tagOrId: str | int, /) -> list[float]:
