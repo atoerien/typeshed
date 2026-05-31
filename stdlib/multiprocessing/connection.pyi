@@ -83,11 +83,19 @@ class Listener:
         self, address: _Address | None = None, family: str | None = None, backlog: int = 1, authkey: bytes | None = None
     ) -> None: ...
     if sys.platform != "win32":
-        def accept(self) -> Connection[Incomplete, Incomplete]: ...
+        def accept(self) -> Connection[Incomplete, Incomplete]:
+            """
+            Accept a connection on the bound socket or named pipe of `self`.
+
+            Returns a `Connection` object.
+            """
+            ...
     else:
         def accept(self) -> Connection[Incomplete, Incomplete] | PipeConnection[Incomplete, Incomplete]: ...
 
-    def close(self) -> None: ...
+    def close(self) -> None:
+        """Close the bound socket or named pipe of `self`."""
+        ...
     @property
     def address(self) -> _Address: ...
     @property
@@ -107,10 +115,18 @@ else:
 def answer_challenge(connection: _ConnectionBase[Any, Any], authkey: bytes) -> None: ...
 def wait(
     object_list: Iterable[_ConnectionBase[_SendT_contra, _RecvT_co] | socket.socket | int], timeout: float | None = None
-) -> list[_ConnectionBase[_SendT_contra, _RecvT_co] | socket.socket | int]: ...
+) -> list[_ConnectionBase[_SendT_contra, _RecvT_co] | socket.socket | int]:
+    """
+    Wait till an object in object_list is ready/readable.
+
+    Returns list of those objects in object_list which are ready/readable.
+    """
+    ...
 
 if sys.platform != "win32":
-    def Client(address: _Address, family: str | None = None, authkey: bytes | None = None) -> Connection[Any, Any]: ...
+    def Client(address: _Address, family: str | None = None, authkey: bytes | None = None) -> Connection[Any, Any]:
+        """Returns a connection to the address of a `Listener`"""
+        ...
 
 else:
     def Client(

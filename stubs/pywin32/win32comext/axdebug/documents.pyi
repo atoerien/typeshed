@@ -1,5 +1,3 @@
-"""Management of documents for AXDebugging."""
-
 from _typeshed import Incomplete
 
 from win32comext.axdebug import gateways
@@ -26,15 +24,6 @@ class DebugDocumentText(gateways.DebugDocumentText):
     def GetContextOfPosition(self, charPos, maxChars): ...
 
 class CodeContainerProvider:
-    """
-    An abstract Python class which provides code containers!
-
-    Given a Python file name (as the debugger knows it by) this will
-    return a CodeContainer interface suitable for use.
-
-    This provides a simple base implementation that simply supports
-    a dictionary of nodes and providers.
-    """
     ccsAndNodes: Incomplete
     def AddCodeContainer(self, cc, node: Incomplete | None = ...) -> None: ...
     def FromFileName(self, fname): ...

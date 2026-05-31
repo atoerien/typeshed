@@ -3812,9 +3812,40 @@ class Canvas(Widget, XView, YView):
         """
         Bind to all items with TAGORID at event SEQUENCE a call to function FUNC.
 
-    def tag_unbind(self, tagOrId: str | int, sequence: str, funcid: str | None = None) -> None: ...
-    def canvasx(self, screenx: float | str, gridspacing: float | str | None = None) -> float: ...
-    def canvasy(self, screeny: float | str, gridspacing: float | str | None = None) -> float: ...
+        An additional boolean parameter ADD specifies whether FUNC will be
+        called additionally to the other bound function or whether it will
+        replace the previous function. See bind for the return value.
+        """
+        ...
+    @overload
+    def tag_bind(self, tagOrId: str | int, *, func: str, add: Literal["", "+"] | bool | None = None) -> None:
+        """
+        Bind to all items with TAGORID at event SEQUENCE a call to function FUNC.
+
+        An additional boolean parameter ADD specifies whether FUNC will be
+        called additionally to the other bound function or whether it will
+        replace the previous function. See bind for the return value.
+        """
+        ...
+
+    def tag_unbind(self, tagOrId: str | int, sequence: str, funcid: str | None = None) -> None:
+        """
+        Unbind for all items with TAGORID for event SEQUENCE  the
+        function identified with FUNCID.
+        """
+        ...
+    def canvasx(self, screenx: float | str, gridspacing: float | str | None = None) -> float:
+        """
+        Return the canvas x coordinate of pixel position SCREENX rounded
+        to nearest multiple of GRIDSPACING units.
+        """
+        ...
+    def canvasy(self, screeny: float | str, gridspacing: float | str | None = None) -> float:
+        """
+        Return the canvas y coordinate of pixel position SCREENY rounded
+        to nearest multiple of GRIDSPACING units.
+        """
+        ...
 
     @overload
     def coords(self, tagOrId: str | int, /) -> list[float]:
