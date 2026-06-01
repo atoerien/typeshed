@@ -1,5 +1,8 @@
 # Can't generate with stubgen because:
 # "ImportError: DLL load failed while importing axdebug: The specified module could not be found."
+
+"""A module, encapsulating the ActiveX Debugging interfaces"""
+
 import _win32typing
 
 def GetStackAddress() -> int: ...

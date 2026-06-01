@@ -5,6 +5,7 @@ from win32comext.axdebug import documents
 currentDebugger: Incomplete
 
 class ModuleTreeNode:
+    """Helper class for building a module tree"""
     moduleName: Incomplete
     module: Incomplete
     realNode: Incomplete

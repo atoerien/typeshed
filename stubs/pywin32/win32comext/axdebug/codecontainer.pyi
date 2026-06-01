@@ -1,3 +1,10 @@
+"""
+A utility class for a code container.
+
+A code container is a class which holds source code for a debugger.  It knows how
+to color the text, and also how to translate lines into offsets, and back.
+"""
+
 from _typeshed import Incomplete
 
 name: str

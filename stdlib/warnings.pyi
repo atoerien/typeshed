@@ -50,11 +50,9 @@ def formatwarning(
     ...
 def filterwarnings(
     action: _ActionKind, message: str = "", category: type[Warning] = ..., module: str = "", lineno: int = 0, append: bool = False
-) -> None: ...
-def simplefilter(
-    action: _ActionKind, category: type[Warning] | tuple[type[Warning], ...] = ..., lineno: int = 0, append: bool = False
-) -> None: ...
-def resetwarnings() -> None: ...
+) -> None:
+    """
+    Insert an entry into the list of warnings filters (at the front).
 
     'action' -- one of "error", "ignore", "always", "all", "default", "module",
                 or "once"
@@ -65,7 +63,9 @@ def resetwarnings() -> None: ...
     'append' -- if true, append to the list of filters
     """
     ...
-def simplefilter(action: _ActionKind, category: type[Warning] = ..., lineno: int = 0, append: bool = False) -> None:
+def simplefilter(
+    action: _ActionKind, category: type[Warning] | tuple[type[Warning], ...] = ..., lineno: int = 0, append: bool = False
+) -> None:
     """
     Insert a simple entry into the list of warnings filters (at the front).
 
