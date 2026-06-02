@@ -127,7 +127,7 @@ bleach[css]==6.3.*
 str2bool==1.1
 PyMeeus==0.5.*
 tinycss2==1.5.1
-braintree==4.43.*
+braintree==4.44.*
 unidiff==0.7.*
 cffi==2.0.*
 keyboard==0.13.*
