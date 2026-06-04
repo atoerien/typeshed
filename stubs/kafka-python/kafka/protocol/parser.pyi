@@ -14,6 +14,8 @@ class KafkaProtocol:
         api_version (tuple): Optional tuple to specify api_version to use.
             Currently only used to check for 0.8.2 protocol quirks, but
             may be used for more in the future.
+        max_frame_size (int): Maximum allowed message frame size.
+            Default: 100000000 (100MB).
     """
     in_flight_requests: Incomplete
     bytes_to_send: Incomplete

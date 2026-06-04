@@ -311,6 +311,9 @@ class KafkaProducer:
             errors. Default: 100.
         request_timeout_ms (int): Client request timeout in milliseconds.
             Default: 30000.
+        receive_message_max_bytes (int): Maximum allowed network frame size.
+            Used to avoid OOM when decoding malformed network message header.
+            Default: 1000000.
         receive_buffer_bytes (int): The size of the TCP receive buffer
             (SO_RCVBUF) to use when reading data. Default: None (relies on
             system defaults). Java client defaults to 32768.

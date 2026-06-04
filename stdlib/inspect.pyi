@@ -1055,7 +1055,17 @@ class BoundArguments:
     @property
     def signature(self) -> Signature: ...
     def __init__(self, signature: Signature, arguments: dict[str, Any]) -> None: ...
-    def apply_defaults(self) -> None: ...
+    def apply_defaults(self) -> None:
+        """
+        Set default values for missing arguments.
+
+        For variable-positional arguments (*args) the default is an
+        empty tuple.
+
+        For variable-keyword arguments (**kwargs) the default is an
+        empty dict.
+        """
+        ...
     def __eq__(self, other: object) -> bool: ...
     __hash__: ClassVar[None]  # type: ignore[assignment]
 
