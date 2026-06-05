@@ -107,10 +107,35 @@ if sys.version_info >= (3, 15):
         def addsitepackages(self, prefixes: Iterable[str] | None = None) -> None: ...
         def process(self) -> None: ...
 
-def addsitedir(sitedir: str, known_paths: set[str] | None = None) -> None: ...
-def addsitepackages(known_paths: set[str] | None, prefixes: Iterable[str] | None = None) -> set[str] | None: ...  # undocumented
-def addusersitepackages(known_paths: set[str] | None) -> set[str] | None: ...  # undocumented
-def check_enableusersite() -> bool | None: ...  # undocumented
+def addsitedir(sitedir: str, known_paths: set[str] | None = None) -> None:
+    """
+    Add 'sitedir' argument to sys.path if missing and handle .pth files in
+    'sitedir'
+    """
+    ...
+def addsitepackages(known_paths: set[str] | None, prefixes: Iterable[str] | None = None) -> set[str] | None:
+    """Add site-packages to sys.path"""
+    ...
+def addusersitepackages(known_paths: set[str] | None) -> set[str] | None:
+    """
+    Add a per user site-package to sys.path
+
+    Each user has its own python directory with site-packages in the
+    home directory.
+    """
+    ...
+def check_enableusersite() -> bool | None:
+    """
+    Check if user site directory is safe for inclusion
+
+    The function tests for the command line flag (including environment var),
+    process uid/gid equal to effective uid/gid.
+
+    None: Disabled for security reasons
+    False: Disabled by user (command line option)
+    True: Safe and enabled
+    """
+    ...
 
 if sys.version_info >= (3, 13):
     def gethistoryfile() -> str:

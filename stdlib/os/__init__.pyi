@@ -2108,11 +2108,28 @@ if sys.platform != "win32":
         """
         Create a "fifo" (a POSIX named pipe).
 
+        If dir_fd is not None, it should be a file descriptor open to a directory,
+          and path should be relative; path will then be relative to that directory.
+        dir_fd may not be implemented on your platform.
+          If it is unavailable, using it will raise a NotImplementedError.
+        """
+        ...
+
 if sys.version_info >= (3, 15):
     def makedirs(name: StrOrBytesPath, mode: int = 0o777, exist_ok: bool = False, *, parent_mode: int | None = None) -> None: ...
 
 else:
-    def makedirs(name: StrOrBytesPath, mode: int = 0o777, exist_ok: bool = False) -> None: ...
+    def makedirs(name: StrOrBytesPath, mode: int = 0o777, exist_ok: bool = False) -> None:
+        """
+        makedirs(name [, mode=0o777][, exist_ok=False])
+
+        Super-mkdir; create a leaf directory and all intermediate ones.  Works like
+        mkdir, except that any intermediate path segment (not just the rightmost)
+        will be created if it does not exist. If the target directory already
+        exists, raise an OSError if exist_ok is False. Otherwise no exception is
+        raised.  This is recursive.
+        """
+        ...
 
 if sys.platform != "win32":
     def mknod(path: StrOrBytesPath, mode: int = 0o600, device: int = 0, *, dir_fd: int | None = None) -> None:

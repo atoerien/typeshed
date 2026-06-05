@@ -483,15 +483,34 @@ class Path(PurePath):
             """Whether this path is a junction."""
             ...
 
-    def iterdir(self) -> Generator[Self]: ...
-    def lchmod(self, mode: int) -> None: ...
-    def lstat(self) -> stat_result: ...
+    def iterdir(self) -> Generator[Self]:
+        """
+        Yield path objects of the directory contents.
+
+        The children are yielded in arbitrary order, and the
+        special entries '.' and '..' are not included.
+        """
+        ...
+    def lchmod(self, mode: int) -> None:
+        """
+        Like chmod(), except if the path points to a symlink, the symlink's
+        permissions are changed, rather than its target's.
+        """
+        ...
+    def lstat(self) -> stat_result:
+        """
+        Like stat(), except if the path points to a symlink, the symlink's
+        status information is returned, rather than its target's.
+        """
+        ...
     if sys.version_info >= (3, 15):
         def mkdir(
             self, mode: int = 0o777, parents: bool = False, exist_ok: bool = False, *, parent_mode: int | None = None
         ) -> None: ...
     else:
-        def mkdir(self, mode: int = 0o777, parents: bool = False, exist_ok: bool = False) -> None: ...
+        def mkdir(self, mode: int = 0o777, parents: bool = False, exist_ok: bool = False) -> None:
+            """Create a new directory at this given path."""
+            ...
 
     if sys.version_info >= (3, 14):
         @property
