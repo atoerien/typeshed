@@ -7779,9 +7779,45 @@ class PhotoImage(Image, _PhotoImageLike):
             from_coords: Iterable[int] | None = None,
             zoom: int | tuple[int, int] | list[int] | None = None,
             subsample: int | tuple[int, int] | list[int] | None = None,
-        ) -> PhotoImage: ...
-        def subsample(self, x: int, y: int | Literal[""] = "", *, from_coords: Iterable[int] | None = None) -> PhotoImage: ...
-        def zoom(self, x: int, y: int | Literal[""] = "", *, from_coords: Iterable[int] | None = None) -> PhotoImage: ...
+        ) -> PhotoImage:
+            """
+            Return a new PhotoImage with the same image as this widget.
+
+            The FROM_COORDS option specifies a rectangular sub-region of the
+            source image to be copied. It must be a tuple or a list of 1 to 4
+            integers (x1, y1, x2, y2).  (x1, y1) and (x2, y2) specify diagonally
+            opposite corners of the rectangle.  If x2 and y2 are not specified,
+            the default value is the bottom-right corner of the source image.
+            The pixels copied will include the left and top edges of the
+            specified rectangle but not the bottom or right edges.  If the
+            FROM_COORDS option is not given, the default is the whole source
+            image.
+
+            If SUBSAMPLE or ZOOM are specified, the image is transformed as in
+            the subsample() or zoom() methods.  The value must be a single
+            integer or a pair of integers.
+            """
+            ...
+        def subsample(self, x: int, y: int | Literal[""] = "", *, from_coords: Iterable[int] | None = None) -> PhotoImage:
+            """
+            Return a new PhotoImage based on the same image as this widget
+            but use only every Xth or Yth pixel.  If Y is not given, the
+            default value is the same as X.
+
+            The FROM_COORDS option specifies a rectangular sub-region of the
+            source image to be copied, as in the copy() method.
+            """
+            ...
+        def zoom(self, x: int, y: int | Literal[""] = "", *, from_coords: Iterable[int] | None = None) -> PhotoImage:
+            """
+            Return a new PhotoImage with the same image as this widget
+            but zoom it with a factor of X in the X direction and Y in the Y
+            direction.  If Y is not given, the default value is the same as X.
+
+            The FROM_COORDS option specifies a rectangular sub-region of the
+            source image to be copied, as in the copy() method.
+            """
+            ...
         def copy_replace(
             self,
             sourceImage: PhotoImage | str,
