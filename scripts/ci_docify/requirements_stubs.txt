@@ -123,7 +123,7 @@ vobject~=0.9.9
 whatthepatch==1.0.*
 antlr4-python3-runtime==4.13.*
 openpyxl==3.1.5
-bleach[css]==6.3.*
+bleach[css]==6.4.*
 str2bool==1.1
 PyMeeus==0.5.*
 tinycss2==1.5.1
