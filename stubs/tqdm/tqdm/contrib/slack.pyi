@@ -79,20 +79,7 @@ class tqdm_slack(tqdm_auto[_T]):
         token: str | None = None,
         channel: int | None = None,
         **kwargs,
-    ) -> None:
-        """
-        Parameters
-        ----------
-        token  : str, required. Slack token
-            [default: ${TQDM_SLACK_TOKEN}].
-        channel  : int, required. Slack channel
-            [default: ${TQDM_SLACK_CHANNEL}].
-        mininterval  : float, optional.
-          Minimum of [default: 1.5] to avoid rate limit.
-
-        See `tqdm.auto.tqdm.__init__` for other parameters.
-        """
-        ...
+    ) -> None: ...
     @overload
     def __init__(
         self: tqdm_slack[NoReturn],
@@ -126,20 +113,7 @@ class tqdm_slack(tqdm_auto[_T]):
         token: str | None = None,
         channel: int | None = None,
         **kwargs,
-    ) -> None:
-        """
-        Parameters
-        ----------
-        token  : str, required. Slack token
-            [default: ${TQDM_SLACK_TOKEN}].
-        channel  : int, required. Slack channel
-            [default: ${TQDM_SLACK_CHANNEL}].
-        mininterval  : float, optional.
-          Minimum of [default: 1.5] to avoid rate limit.
-
-        See `tqdm.auto.tqdm.__init__` for other parameters.
-        """
-        ...
+    ) -> None: ...
 
     def display(  # type: ignore[override]
         self, *, msg: str | None = ..., pos: int | None = ..., close: bool = ..., bar_style=..., check_delay: bool = ...

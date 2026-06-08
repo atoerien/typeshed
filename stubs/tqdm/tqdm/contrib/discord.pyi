@@ -93,18 +93,7 @@ class tqdm_discord(tqdm_auto[_T]):
         token: str | None = None,
         channel_id: str | None = None,
         **kwargs,
-    ) -> None:
-        """
-        Parameters
-        ----------
-        token  : str, required. Discord bot token
-            [default: ${TQDM_DISCORD_TOKEN}].
-        channel_id  : int, required. Discord channel ID
-            [default: ${TQDM_DISCORD_CHANNEL_ID}].
-
-        See `tqdm.auto.tqdm.__init__` for other parameters.
-        """
-        ...
+    ) -> None: ...
     @overload
     def __init__(
         self: tqdm_discord[NoReturn],
@@ -138,18 +127,7 @@ class tqdm_discord(tqdm_auto[_T]):
         token: str | None = None,
         channel_id: str | None = None,
         **kwargs,
-    ) -> None:
-        """
-        Parameters
-        ----------
-        token  : str, required. Discord bot token
-            [default: ${TQDM_DISCORD_TOKEN}].
-        channel_id  : int, required. Discord channel ID
-            [default: ${TQDM_DISCORD_CHANNEL_ID}].
-
-        See `tqdm.auto.tqdm.__init__` for other parameters.
-        """
-        ...
+    ) -> None: ...
 
     def display(  # type: ignore[override]
         self, *, msg: str | None = ..., pos: int | None = ..., close: bool = ..., bar_style=..., check_delay: bool = ...

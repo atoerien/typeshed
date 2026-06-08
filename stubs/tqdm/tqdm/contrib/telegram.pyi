@@ -90,18 +90,7 @@ class tqdm_telegram(tqdm_auto[_T]):
         token: str | None = None,
         chat_id: str | None = None,
         **kwargs,
-    ) -> None:
-        """
-        Parameters
-        ----------
-        token  : str, required. Telegram token
-            [default: ${TQDM_TELEGRAM_TOKEN}].
-        chat_id  : str, required. Telegram chat ID
-            [default: ${TQDM_TELEGRAM_CHAT_ID}].
-
-        See `tqdm.auto.tqdm.__init__` for other parameters.
-        """
-        ...
+    ) -> None: ...
     @overload
     def __init__(
         self: tqdm_telegram[NoReturn],
@@ -135,18 +124,7 @@ class tqdm_telegram(tqdm_auto[_T]):
         token: str | None = None,
         chat_id: str | None = None,
         **kwargs,
-    ) -> None:
-        """
-        Parameters
-        ----------
-        token  : str, required. Telegram token
-            [default: ${TQDM_TELEGRAM_TOKEN}].
-        chat_id  : str, required. Telegram chat ID
-            [default: ${TQDM_TELEGRAM_CHAT_ID}].
-
-        See `tqdm.auto.tqdm.__init__` for other parameters.
-        """
-        ...
+    ) -> None: ...
 
     def display(  # type: ignore[override]
         self, *, msg: str | None = ..., pos: int | None = ..., close: bool = ..., bar_style=..., check_delay: bool = ...

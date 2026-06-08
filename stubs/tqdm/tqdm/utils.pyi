@@ -90,4 +90,45 @@ def disp_trim(data: str, length: int) -> str:
     ...
 def envwrap(
     name: str, app: str = "", types: Mapping[str, Callable[[Incomplete], Incomplete]] | None = None, is_method: bool = False
-) -> Callable[[Callable[_P, _R]], Callable[_P, _R]]: ...
+) -> Callable[[Callable[_P, _R]], Callable[_P, _R]]:
+    """
+    Function decorator overriding default arguments.
+
+    Precedence (descending):
+    - call (`func(a=3)`)
+    - environment (`NAME_APP_FUNC_A=2`, `NAME_FUNC_A=2`, `NAME_APP_A=2`, `NAME_A=2`)
+        - `UPPER_CASE` env vars -> `lower_case` param names
+        - other cases aren't supported because Windows ignores case
+    - config file:
+        - ./`{name}.{toml,yaml,yml,json,ini,cfg}::{app.func.a,func.a,app.a,a}`
+        - platformdirs.{user,site}_config_path(name, False)/
+            - `{app}.{toml,yaml,yml,json,ini,cfg}::{func.a,a}`
+            - `{name}.{toml,yaml,yml,json,ini,cfg}::{app.func.a,func.a,app.a,a}`
+        - ./`pyproject.toml::tool.name.{app.func.a,func.a,app.a,a}`
+    - signature (`def foo(a=1)`)
+
+    Parameters
+    ----------
+    name:
+        Configuration name.
+    app:
+        Application name.
+    types:
+        Fallback mappings `{'param_name': type, ...}` if types cannot be
+        inferred from function signature.
+        Consider using `types=collections.defaultdict(lambda: ast.literal_eval)`.
+    is_method:
+        Whether to use `functools.partialmethod`. If (default: False) use `functools.partial`.
+
+    Examples
+    --------
+    >>> os.environ.update(dict(FOO_A="7", FOO_TEST_A="42", FOO_C="1337"))
+    >>> from envwrap import envwrap
+    >>> @envwrap("FOO")
+    >>> def test(a=1, b=2, c=3):
+    ...     print(f"received: a={a}, b={b}, c={c}")
+    ...
+    >>> test(c=99)
+    received: a=42, b=2, c=99
+    """
+    ...
