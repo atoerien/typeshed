@@ -8,7 +8,7 @@ dockerfile-parse==2.0.*
 docker==7.1.*
 grpcio-reflection==1.*
 mock==5.2.*
-tqdm[slack,telegram]==4.67.3
+tqdm[slack,telegram]==4.68.*
 click-web==0.8.*
 Authlib==1.6.11
 xlrd==2.0.*
@@ -149,7 +149,7 @@ PyAutoGUI==0.9.*
 inifile==0.4.*
 cachetools==7.0.*
 grpcio==1.*
-Flask-Cors==6.0.*
+Flask-Cors~=6.0.3
 pyperclip==1.11.*
 django-filter==25.2.*
 click-log==0.4.*
