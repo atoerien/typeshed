@@ -89,6 +89,9 @@ class tqdm_discord(tqdm_auto[_T]):
         colour: str | None = ...,
         delay: float | None = ...,
         gui: bool = ...,
+        *,
+        token: str | None = None,
+        channel_id: str | None = None,
         **kwargs,
     ) -> None:
         """
@@ -131,6 +134,9 @@ class tqdm_discord(tqdm_auto[_T]):
         colour: str | None = ...,
         delay: float | None = ...,
         gui: bool = ...,
+        *,
+        token: str | None = None,
+        channel_id: str | None = None,
         **kwargs,
     ) -> None:
         """

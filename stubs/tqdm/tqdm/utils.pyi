@@ -89,41 +89,5 @@ def disp_trim(data: str, length: int) -> str:
     """Trim a string which may contain ANSI control characters."""
     ...
 def envwrap(
-    prefix: str, types: Mapping[str, Callable[[Incomplete], Incomplete]] | None = None, is_method: bool = False
-) -> Callable[[Callable[_P, _R]], Callable[_P, _R]]:
-    """
-    Override parameter defaults via `os.environ[prefix + param_name]`.
-    Maps UPPER_CASE env vars map to lower_case param names.
-    camelCase isn't supported (because Windows ignores case).
-
-    Precedence (highest first):
-
-    - call (`foo(a=3)`)
-    - environ (`FOO_A=2`)
-    - signature (`def foo(a=1)`)
-
-    Parameters
-    ----------
-    prefix  : str
-        Env var prefix, e.g. "FOO_"
-    types  : dict, optional
-        Fallback mappings `{'param_name': type, ...}` if types cannot be
-        inferred from function signature.
-        Consider using `types=collections.defaultdict(lambda: ast.literal_eval)`.
-    is_method  : bool, optional
-        Whether to use `functools.partialmethod`. If (default: False) use `functools.partial`.
-
-    Examples
-    --------
-    ```
-    $ cat foo.py
-    from tqdm.utils import envwrap
-    @envwrap("FOO_")
-    def test(a=1, b=2, c=3):
-        print(f"received: a={a}, b={b}, c={c}")
-
-    $ FOO_A=42 FOO_C=1337 python -c 'import foo; foo.test(c=99)'
-    received: a=42, b=2, c=99
-    ```
-    """
-    ...
+    name: str, app: str = "", types: Mapping[str, Callable[[Incomplete], Incomplete]] | None = None, is_method: bool = False
+) -> Callable[[Callable[_P, _R]], Callable[_P, _R]]: ...

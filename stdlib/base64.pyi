@@ -1,8 +1,7 @@
 """Base16, Base32, Base64 (RFC 3548), Base85 and Ascii85 data encodings"""
 
 import sys
-from _typeshed import ReadableBuffer
-from typing import IO
+from _typeshed import ReadableBuffer, SupportsNoArgReadline, SupportsRead, SupportsWrite
 
 __all__ = [
     "encode",
@@ -243,51 +242,10 @@ else:
         """
         Decode the Ascii85 encoded bytes-like object or ASCII string b.
 
-        foldspaces is a flag that specifies whether the 'y' short sequence should be
-        accepted as shorthand for 4 consecutive spaces (ASCII 0x20). This feature is
-        not supported by the "standard" Adobe encoding.
-
-        adobe controls whether the input sequence is in Adobe Ascii85 format (i.e.
-        is framed with <~ and ~>).
-
-        ignorechars should be a byte string containing characters to ignore from the
-        input. This should only contain whitespace characters, and by default
-        contains all whitespace characters in ASCII.
-
-        The result is returned as a bytes object.
-        """
-        ...
-    def b85encode(b: ReadableBuffer, pad: bool = False) -> bytes:
-        r"""
-        Encode bytes-like object b in base85 format and return a bytes object.
-
-        If pad is true, the input is padded with b'\0' so its length is a multiple of
-        4 bytes before encoding.
-        """
-        ...
-    def b85decode(b: str | ReadableBuffer) -> bytes:
-        """
-        Decode the base85-encoded bytes-like object or ASCII string b
-
-        The result is returned as a bytes object.
-        """
-        ...
-
-def decode(input: IO[bytes], output: IO[bytes]) -> None:
-    """Decode a file; input and output are binary files."""
-    ...
-def encode(input: IO[bytes], output: IO[bytes]) -> None:
-    """Encode a file; input and output are binary files."""
-    ...
-def encodebytes(s: ReadableBuffer) -> bytes:
-    """
-    Encode a bytestring into a bytes object containing multiple lines
-    of base-64 data.
-    """
-    ...
-def decodebytes(s: ReadableBuffer) -> bytes:
-    """Decode a bytestring of base-64 data into a bytes object."""
-    ...
+def decode(input: SupportsNoArgReadline[bytes], output: SupportsWrite[bytes]) -> None: ...
+def encode(input: SupportsRead[bytes], output: SupportsWrite[bytes]) -> None: ...
+def encodebytes(s: ReadableBuffer) -> bytes: ...
+def decodebytes(s: ReadableBuffer) -> bytes: ...
 
 if sys.version_info >= (3, 13):
     if sys.version_info >= (3, 15):

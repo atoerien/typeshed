@@ -107,86 +107,18 @@ class Calendar:
     def __init__(self, firstweekday: int = 0) -> None: ...
     def getfirstweekday(self) -> int: ...
     def setfirstweekday(self, firstweekday: int) -> None: ...
-    def iterweekdays(self) -> Iterable[int]:
-        """
-        Return an iterator for one week of weekday numbers starting with the
-        configured first one.
-        """
-        ...
-    def itermonthdates(self, year: int, month: int) -> Iterable[datetime.date]:
-        """
-        Return an iterator for one month. The iterator will yield datetime.date
-        values and will always iterate through complete weeks, so it will yield
-        dates outside the specified month.
-        """
-        ...
-    def itermonthdays2(self, year: int, month: int) -> Iterable[tuple[int, int]]:
-        """
-        Like itermonthdates(), but will yield (day number, weekday number)
-        tuples. For days outside the specified month the day number is 0.
-        """
-        ...
-    def itermonthdays(self, year: int, month: int) -> Iterable[int]:
-        """
-        Like itermonthdates(), but will yield day numbers. For days outside
-        the specified month the day number is 0.
-        """
-        ...
-    def monthdatescalendar(self, year: int, month: int) -> list[list[datetime.date]]:
-        """
-        Return a matrix (list of lists) representing a month's calendar.
-        Each row represents a week; week entries are datetime.date values.
-        """
-        ...
-    def monthdays2calendar(self, year: int, month: int) -> list[list[tuple[int, int]]]:
-        """
-        Return a matrix representing a month's calendar.
-        Each row represents a week; week entries are
-        (day number, weekday number) tuples. Day numbers outside this month
-        are zero.
-        """
-        ...
-    def monthdayscalendar(self, year: int, month: int) -> list[list[int]]:
-        """
-        Return a matrix representing a month's calendar.
-        Each row represents a week; days outside this month are zero.
-        """
-        ...
-    def yeardatescalendar(self, year: int, width: int = 3) -> list[list[list[list[datetime.date]]]]:
-        """
-        Return the data for the specified year ready for formatting. The return
-        value is a list of month rows. Each month row contains up to width months.
-        Each month contains between 4 and 6 weeks and each week contains 1-7
-        days. Days are datetime.date objects.
-        """
-        ...
-    def yeardays2calendar(self, year: int, width: int = 3) -> list[list[list[list[tuple[int, int]]]]]:
-        """
-        Return the data for the specified year ready for formatting (similar to
-        yeardatescalendar()). Entries in the week lists are
-        (day number, weekday number) tuples. Day numbers outside this month are
-        zero.
-        """
-        ...
-    def yeardayscalendar(self, year: int, width: int = 3) -> list[list[list[list[int]]]]:
-        """
-        Return the data for the specified year ready for formatting (similar to
-        yeardatescalendar()). Entries in the week lists are day numbers.
-        Day numbers outside this month are zero.
-        """
-        ...
-    def itermonthdays3(self, year: int, month: int) -> Iterable[tuple[int, int, int]]:
-        """
-        Like itermonthdates(), but will yield (year, month, day) tuples.  Can be
-        used for dates outside of datetime.date range.
-        """
-        ...
-    def itermonthdays4(self, year: int, month: int) -> Iterable[tuple[int, int, int, int]]:
-        """
-        Like itermonthdates(), but will yield (year, month, day, day_of_week) tuples.
-        Can be used for dates outside of datetime.date range.
-        """
-        ...
+    def iterweekdays(self) -> Iterator[int]: ...
+    def itermonthdates(self, year: int, month: int) -> Iterator[datetime.date]: ...
+    def itermonthdays2(self, year: int, month: int) -> Iterator[tuple[int, int]]: ...
+    def itermonthdays(self, year: int, month: int) -> Iterator[int]: ...
+    def monthdatescalendar(self, year: int, month: int) -> list[list[datetime.date]]: ...
+    def monthdays2calendar(self, year: int, month: int) -> list[list[tuple[int, int]]]: ...
+    def monthdayscalendar(self, year: int, month: int) -> list[list[int]]: ...
+    def yeardatescalendar(self, year: int, width: int = 3) -> list[list[list[list[datetime.date]]]]: ...
+    def yeardays2calendar(self, year: int, width: int = 3) -> list[list[list[list[tuple[int, int]]]]]: ...
+    def yeardayscalendar(self, year: int, width: int = 3) -> list[list[list[list[int]]]]: ...
+    def itermonthdays3(self, year: int, month: int) -> Iterator[tuple[int, int, int]]: ...
+    def itermonthdays4(self, year: int, month: int) -> Iterator[tuple[int, int, int, int]]: ...
 
 class TextCalendar(Calendar):
     """

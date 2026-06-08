@@ -86,8 +86,9 @@ class tqdm_telegram(tqdm_auto[_T]):
         colour: str | None = ...,
         delay: float | None = ...,
         gui: bool = ...,
-        token: str = ...,
-        chat_id: str = ...,
+        *,
+        token: str | None = None,
+        chat_id: str | None = None,
         **kwargs,
     ) -> None:
         """
@@ -130,8 +131,9 @@ class tqdm_telegram(tqdm_auto[_T]):
         colour: str | None = ...,
         delay: float | None = ...,
         gui: bool = ...,
-        token: str = ...,
-        chat_id: str = ...,
+        *,
+        token: str | None = None,
+        chat_id: str | None = None,
         **kwargs,
     ) -> None:
         """
