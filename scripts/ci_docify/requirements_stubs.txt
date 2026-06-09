@@ -60,7 +60,7 @@ tzdata==2026.*
 www-authenticate==0.9.*
 defusedxml==0.7.*
 requests[socks]~=2.33.0
-pywin32==311.*
+pywin32==312.*
 pyinstaller==6.20.*
 PyMySQL==1.1.*
 flake8-simplify==0.30.*
@@ -149,7 +149,7 @@ PyAutoGUI==0.9.*
 inifile==0.4.*
 cachetools==7.0.*
 grpcio==1.*
-Flask-Cors~=6.0.3
+Flask-Cors==6.0.3
 pyperclip==1.11.*
 django-filter==25.2.*
 click-log==0.4.*
