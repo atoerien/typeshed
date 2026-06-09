@@ -7,8 +7,6 @@ to color the text, and also how to translate lines into offsets, and back.
 
 from _typeshed import Incomplete
 
-name: str
-
 class SourceCodeContainer:
     sourceContext: Incomplete
     text: Incomplete

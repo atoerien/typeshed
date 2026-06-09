@@ -48,4 +48,3 @@ CF_TEXT: Final[int]
 CF_TIFF: Final[int]
 CF_UNICODETEXT: Final[int]
 CF_WAVE: Final[int]
-UNICODE: bool

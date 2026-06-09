@@ -498,4 +498,5 @@ fdexPropCannotPutRef: int
 fdexPropCannotSourceEvents: int
 fdexPropDynamicType: int
 fdexPropNoSideEffects: int
+# Deprecated: Use `getattr(sys, "frozen", False)` directly instead.
 frozen: int
