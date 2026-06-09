@@ -49,7 +49,7 @@ def get_regexp_pattern(regexp: str | Pattern[str]) -> str:
     Helper that returns regexp pattern from given value.
 
     :param regexp: regular expression to stringify
-    :type regexp: re.Pattern or str
+    :type regexp: _sre.SRE_Pattern or str
     :returns: string representation of given regexp pattern
     :rtype: str
     """
@@ -81,15 +81,19 @@ def re_fix(reg: str) -> str:
 def try_match_any_pattern(inst: str, patterns: Iterable[str | Pattern[str]], caseSensitive: bool = True) -> bool: ...
 def try_match_pattern(value: str, pattern: str | Pattern[str], caseSensitive: bool = True) -> bool | Match[str]:
     """
-    Match a value against a *resolved* pattern: a compiled ``re.Pattern``
-    (whose case-sensitivity is already baked in) or a literal string. Used to
-    match request origins, headers, or paths; ``caseSensitive`` only affects
-    the literal comparison (origins and headers are case insensitive, paths are
-    case sensitive).
+    Safely attempts to match a pattern or string to a value. This
+    function can be used to match request origins, headers, or paths.
+    The value of caseSensitive should be set in accordance to the
+    data being compared e.g. origins and headers are case insensitive
+    whereas paths are case-sensitive
     """
     ...
 def get_cors_options(appInstance: flask.Flask | None, *dicts: _Options) -> _Options:
-    """Compute the resolved CORS options for an application (see merge_options)."""
+    """
+    Compute CORS options for an application by combining the DEFAULT_OPTIONS,
+    the app's configuration-specified options and any dictionaries passed. The
+    last specified option wins.
+    """
     ...
 def get_app_kwarg_dict(appInstance: flask.Flask | None = None) -> _Options:
     """Returns the dictionary of CORS specific app configurations."""
@@ -119,11 +123,5 @@ def ensure_iterable(inst: _T) -> list[_T]:
 
 def sanitize_regex_param(param: str | list[str]) -> list[str]: ...
 def serialize_options(opts: _Options) -> _Options:
-    """
-    Normalize a raw options mapping into a strongly-typed :class:`_ComputedCorsOptions`.
-
-    This is the single boundary where loosely-typed user input (arbitrary
-    keyword arguments, app config, resource dictionaries) is parsed into the
-    concrete, per-field types the rest of the package relies on.
-    """
+    """A helper method to serialize and processes the options dictionary."""
     ...
