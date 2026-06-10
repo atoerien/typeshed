@@ -1,5 +1,5 @@
 """
-Customisable progressbar decorator for iterators.
+Customisable progress bar decorator for iterators.
 Includes a default `range` iterator printing to `stderr`.
 
 Usage:
@@ -57,25 +57,25 @@ class tqdm(Comparable, Generic[_T]):
     """
     Decorate an iterable object, returning an iterator which acts exactly
     like the original iterable, but prints a dynamically updating
-    progressbar every time a value is requested.
+    progress bar every time a value is requested.
 
     Parameters
     ----------
     iterable  : iterable, optional
-        Iterable to decorate with a progressbar.
+        Iterable to decorate with a progress bar.
         Leave blank to manually manage the updates.
     desc  : str, optional
-        Prefix for the progressbar.
+        Prefix for the progress bar.
     total  : int or float, optional
         The number of expected iterations. If unspecified,
         len(iterable) is used if possible. If float("inf") or as a last
         resort, only basic progress statistics are displayed
-        (no ETA, no progressbar).
+        (no ETA, no progress bar).
         If `gui` is True and this parameter needs subsequent updating,
         specify an initial arbitrary large positive number,
         e.g. 9e9.
     leave  : bool, optional
-        If [default: True], keeps all traces of the progressbar
+        If [default: True], keeps all traces of the progress bar
         upon termination of iteration.
         If `None`, will leave only if `position` is `0`.
     file  : `io.TextIOWrapper` or `io.StringIO`, optional
@@ -84,7 +84,7 @@ class tqdm(Comparable, Generic[_T]):
         methods.  For encoding, see `write_bytes`.
     ncols  : int, optional
         The width of the entire output message. If specified,
-        dynamically resizes the progressbar to stay within this bound.
+        dynamically resizes the progress bar to stay within this bound.
         If unspecified, attempts to use environment width. The
         fallback is a meter width of 10 and no limit for the counter and
         statistics. If 0, will not print any meter (only stats).
@@ -107,7 +107,7 @@ class tqdm(Comparable, Generic[_T]):
         If unspecified or False, use unicode (smooth blocks) to fill
         the meter. The fallback is to use ASCII characters " 123456789#".
     disable  : bool, optional
-        Whether to disable the entire progressbar wrapper
+        Whether to disable the entire progress bar wrapper
         [default: False]. If set to None, disable on non-TTY.
     unit  : str, optional
         String that will be used to define the unit of each iteration
@@ -541,7 +541,7 @@ class tqdm(Comparable, Generic[_T]):
         """
         ...
     def close(self) -> None:
-        """Cleanup and (if leave=False) close the progressbar."""
+        """Cleanup and (if leave=False) close the progress bar."""
         ...
     def clear(self, nolock: bool = False) -> None:
         """Clear current bar display."""

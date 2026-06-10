@@ -1,5 +1,5 @@
 """
-Matplotlib GUI progressbar decorator for iterators.
+Matplotlib GUI progress bar decorator for iterators.
 
 Usage:
 >>> from tqdm.gui import trange, tqdm
