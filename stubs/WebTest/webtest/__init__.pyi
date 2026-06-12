@@ -1,3 +1,5 @@
+"""Routines for testing WSGI applications."""
+
 from webtest.app import AppError as AppError, TestApp as TestApp, TestRequest as TestRequest
 from webtest.forms import (
     Checkbox as Checkbox,

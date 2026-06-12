@@ -12,6 +12,7 @@ class _DebugAppParams(TypedDict, total=False):
 __all__ = ["DebugApp", "make_debug_app"]
 
 class DebugApp:
+    """The WSGI application used for testing"""
     form: bytes | None
     show_form: bool
     def __init__(self, form: StrOrBytesPath | bytes | None = None, show_form: bool = False) -> None: ...
@@ -19,4 +20,9 @@ class DebugApp:
 
 debug_app: DebugApp
 
-def make_debug_app(global_conf: object, **local_conf: Unpack[_DebugAppParams]) -> DebugApp: ...
+def make_debug_app(global_conf: object, **local_conf: Unpack[_DebugAppParams]) -> DebugApp:
+    """
+    An application that displays the request environment, and does
+    nothing else (useful for debugging and test purposes).
+    """
+    ...

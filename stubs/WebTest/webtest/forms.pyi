@@ -1,3 +1,5 @@
+"""Helpers to fill and submit forms."""
+
 from collections.abc import Collection, Generator, Iterable, Sequence
 from typing import Any, TypeAlias, TypedDict, TypeVar, overload, type_check_only
 
@@ -32,6 +34,20 @@ _AnyField: TypeAlias = Any
 class NoValue: ...
 
 class Upload:
+    """
+    A file to upload::
+
+        >>> Upload('filename.txt', 'data', 'application/octet-stream')
+        <Upload "filename.txt">
+        >>> Upload('filename.txt', 'data')
+        <Upload "filename.txt">
+        >>> Upload("README.txt")
+        <Upload "README.txt">
+
+    :param filename: Name of the file to upload.
+    :param content: Contents of the file.
+    :param content_type: MIME type of the file.
+    """
     filename: str
     content: bytes | None
     content_type: str | None
@@ -39,6 +55,17 @@ class Upload:
     def __iter__(self) -> Generator[str | bytes]: ...
 
 class Field:
+    """
+    Base class for all Field objects.
+
+    .. attribute:: classes
+
+        Dictionary of field types (select, radio, etc)
+
+    .. attribute:: value
+
+        Set/get value of the field.
+    """
     classes: _Classes
     form: Form
     tag: str
@@ -57,9 +84,15 @@ class Field:
     @value.setter
     def value(self, value: str | None) -> None: ...
 
-    def force_value(self, value: str | None) -> None: ...
+    def force_value(self, value: str | None) -> None:
+        """
+        Like setting a value, except forces it (even for, say, hidden
+        fields).
+        """
+        ...
 
 class Select(Field):
+    """Field representing ``<select />`` form element."""
     options: list[tuple[str, bool, str]]
     optionPositions: list[int]
     selectedIndex: int | None
@@ -84,6 +117,7 @@ class Select(Field):
     def value(self, value: object | None) -> None: ...
 
 class MultipleSelect(Field):
+    """Field representing ``<select multiple="multiple">``"""
     options: list[tuple[str, bool, str]]
     selectedIndices: list[int]
 
@@ -105,11 +139,25 @@ class MultipleSelect(Field):
     # NOTE: Since unlike setting the value normally this doesn't perform
     #       any kind of type conversion, we're better off only allowing
     #       what `value__get` is supposed to be able to return.
-    def force_value(self, values: list[str] | None) -> None: ...  # type: ignore[override]
+    def force_value(self, values: list[str] | None) -> None:
+        """
+        Like setting a value, except forces it (even for, say, hidden
+        fields).
+        """
+        ...
 
-class Radio(Select): ...
+class Radio(Select):
+    """Field representing ``<input type="radio">``"""
+    ...
 
 class Checkbox(Field):
+    """
+    Field representing ``<input type="checkbox">``
+
+    .. attribute:: checked
+
+        Returns True if checkbox is checked.
+    """
     def value__get(self) -> str | None: ...  # type: ignore[override]
     def value__set(self, value: object) -> None: ...
 
@@ -126,19 +174,66 @@ class Checkbox(Field):
     @checked.setter
     def checked(self, value: object) -> None: ...
 
-class Text(Field): ...
-class Email(Field): ...
-class File(Field): ...
-class Textarea(Text): ...
-class Hidden(Text): ...
+class Text(Field):
+    """Field representing ``<input type="text">``"""
+    ...
+class Email(Field):
+    """Field representing ``<input type="email">``"""
+    ...
+class File(Field):
+    """Field representing ``<input type="file">``"""
+    ...
+class Textarea(Text):
+    """Field representing ``<textarea>``"""
+    ...
+class Hidden(Text):
+    """Field representing ``<input type="hidden">``"""
+    ...
 
 class Submit(Field):
+    """Field representing ``<input type="submit">`` and ``<button>``"""
     def value__get(self) -> None: ...  # type: ignore[override]
     @property  # type: ignore[misc]
     def value(self) -> None: ...  # type: ignore[override]
     def value_if_submitted(self) -> str: ...
 
 class Form:
+    """
+    This object represents a form that has been found in a page.
+
+    :param response: `webob.response.TestResponse` instance
+    :param text: Unparsed html of the form
+
+    .. attribute:: text
+
+        the full HTML of the form.
+
+    .. attribute:: action
+
+        the relative URI of the action.
+
+    .. attribute:: method
+
+        the HTTP method (e.g., ``'GET'``).
+
+    .. attribute:: id
+
+        the id, or None if not given.
+
+    .. attribute:: enctype
+
+        encoding of the form submission
+
+    .. attribute:: fields
+
+        a dictionary of fields, each value is a list of fields by
+        that name.  ``<input type="radio">`` and ``<select>`` are
+        both represented as single fields with multiple options.
+
+    .. attribute:: field_order
+
+        Ordered list of field names as found in the html.
+    """
     FieldClass: type[Field]
     response: TestResponse
     text: str
@@ -154,38 +249,141 @@ class Form:
     #       but this method is not really usable if we don't lift this
     #       restriction, we just have to assume people know what they
     #       are doing
-    def __setitem__(self, name: str, value: Any | None) -> None: ...
-    def set(self, name: str, value: Any | None, index: int | None = None) -> None: ...
-    def __getitem__(self, name: str) -> _AnyField: ...
+    def __setitem__(self, name: str, value: Any | None) -> None:
+        """
+        Set the value of the named field. If there is 0 or multiple fields
+        by that name, it is an error.
+
+        Multiple checkboxes of the same name are special-cased; a list may be
+        assigned to them to check the checkboxes whose value is present in the
+        list (and uncheck all others).
+
+        Setting the value of a ``<select>`` selects the given option (and
+        confirms it is an option). Setting radio fields does the same.
+        Checkboxes get boolean values. You cannot set hidden fields or buttons.
+
+        Use ``.set()`` if there is any ambiguity and you must provide an index.
+        """
+        ...
+    def set(self, name: str, value: Any | None, index: int | None = None) -> None:
+        """Set the given name, using ``index`` to disambiguate."""
+        ...
+    def __getitem__(self, name: str) -> _AnyField:
+        """Get the named field object (ambiguity is an error)."""
+        ...
 
     @overload
-    def get(self, name: str, index: int | None = None) -> _AnyField: ...
+    def get(self, name: str, index: int | None = None) -> _AnyField:
+        """
+        Get the named/indexed field object, or ``default`` if no field is
+        found. Throws an AssertionError if no field is found and no ``default``
+        was given.
+        """
+        ...
     @overload
-    def get(self, name: str, index: int | None, default: _T) -> _AnyField | _T: ...
+    def get(self, name: str, index: int | None, default: _T) -> _AnyField | _T:
+        """
+        Get the named/indexed field object, or ``default`` if no field is
+        found. Throws an AssertionError if no field is found and no ``default``
+        was given.
+        """
+        ...
     @overload
-    def get(self, name: str, index: int | None = None, *, default: _T) -> _AnyField | _T: ...
+    def get(self, name: str, index: int | None = None, *, default: _T) -> _AnyField | _T:
+        """
+        Get the named/indexed field object, or ``default`` if no field is
+        found. Throws an AssertionError if no field is found and no ``default``
+        was given.
+        """
+        ...
 
     @overload
-    def select(self, name: str, value: None, text: str | bytes, index: int | None = None) -> None: ...
+    def select(self, name: str, value: None, text: str | bytes, index: int | None = None) -> None:
+        """
+        Like ``.set()``, except also confirms the target is a ``<select>``
+        and allows selecting options by text.
+        """
+        ...
     @overload
-    def select(self, name: str, value: None = None, *, text: str | bytes, index: int | None = None) -> None: ...
+    def select(self, name: str, value: None = None, *, text: str | bytes, index: int | None = None) -> None:
+        """
+        Like ``.set()``, except also confirms the target is a ``<select>``
+        and allows selecting options by text.
+        """
+        ...
     @overload
-    def select(self, name: str, value: object, text: None = None, index: int | None = None) -> None: ...
+    def select(self, name: str, value: object, text: None = None, index: int | None = None) -> None:
+        """
+        Like ``.set()``, except also confirms the target is a ``<select>``
+        and allows selecting options by text.
+        """
+        ...
 
     @overload
-    def select_multiple(self, name: str, value: None, texts: Iterable[str | bytes], index: int | None = None) -> None: ...
+    def select_multiple(self, name: str, value: None, texts: Iterable[str | bytes], index: int | None = None) -> None:
+        """
+        Like ``.set()``, except also confirms the target is a
+        ``<select multiple>`` and allows selecting options by text.
+        """
+        ...
     @overload
     def select_multiple(
         self, name: str, value: None = None, *, texts: Iterable[str | bytes], index: int | None = None
-    ) -> None: ...
+    ) -> None:
+        """
+        Like ``.set()``, except also confirms the target is a
+        ``<select multiple>`` and allows selecting options by text.
+        """
+        ...
     @overload
-    def select_multiple(self, name: str, value: Iterable[object], texts: None = None, index: int | None = None) -> None: ...
+    def select_multiple(self, name: str, value: Iterable[object], texts: None = None, index: int | None = None) -> None:
+        """
+        Like ``.set()``, except also confirms the target is a
+        ``<select multiple>`` and allows selecting options by text.
+        """
+        ...
 
     def submit(
         self, name: str | None = None, index: int | None = None, value: str | None = None, **args: Any
-    ) -> TestResponse: ...
-    def lint(self) -> None: ...
-    def upload_fields(self) -> list[tuple[str, str] | tuple[str, str, bytes]]: ...
+    ) -> TestResponse:
+        """
+        Submits the form.  If ``name`` is given, then also select that
+        button (using ``index`` or ``value`` to disambiguate)``.
+
+        Any extra keyword arguments are passed to the
+        :meth:`webtest.TestResponse.get` or
+        :meth:`webtest.TestResponse.post` method.
+
+        Returns a :class:`webtest.TestResponse` object.
+        """
+        ...
+    def lint(self) -> None:
+        """
+        Check that the html is valid:
+
+        - each field must have an id
+        - each field must have a label
+        """
+        ...
+    def upload_fields(self) -> list[tuple[str, str] | tuple[str, str, bytes]]:
+        """
+        Return a list of file field tuples of the form::
+
+            (field name, file name)
+
+        or::
+
+            (field name, file name, file contents).
+        """
+        ...
     def submit_fields(
         self, name: str | None = None, index: int | None = None, submit_value: str | None = None
-    ) -> list[tuple[str, str]]: ...
+    ) -> list[tuple[str, str]]:
+        """
+        Return a list of ``[(name, value), ...]`` for the current state of
+        the form.
+
+        :param name: Same as for :meth:`submit`
+        :param index: Same as for :meth:`submit`
+        """
+        ...
