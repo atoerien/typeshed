@@ -7,8 +7,19 @@ created. AsyncIO doesn't provide thread safety for most of its APIs.
 
 import abc
 import asyncio
-from _typeshed import Incomplete
-from collections.abc import AsyncIterable, AsyncIterator, Awaitable, Callable, Generator, Iterable, Iterator, Mapping, Sequence
+from _typeshed import Incomplete, MaybeNone
+from collections.abc import (
+    AsyncIterable,
+    AsyncIterator,
+    Awaitable,
+    Callable,
+    Collection,
+    Generator,
+    Iterable,
+    Iterator,
+    Mapping,
+    Sequence,
+)
 from concurrent import futures
 from types import TracebackType
 from typing import Any, Generic, NoReturn, TypeAlias, TypeVar, overload, type_check_only
@@ -71,35 +82,12 @@ class AioRpcError(RpcError):
         trailing_metadata: Metadata,
         details: str | None = None,
         debug_error_string: str | None = None,
-    ) -> None:
-        """
-        Constructor.
-
-        Args:
-          code: The status code with which the RPC has been finalized.
-          initial_metadata: Optional initial metadata that could be sent by the
-            Server.
-          trailing_metadata: Optional metadata that could be sent by the Server.
-          details: Optional details explaining the reason of the error.
-          debug_error_string: Optional string
-        """
-        ...
-    def debug_error_string(self) -> str:
-        """
-        Accesses the debug error string sent by the server.
-
-        Returns:
-          The debug error string received.
-        """
-        ...
-    def initial_metadata(self) -> Metadata:
-        """
-        Accesses the initial metadata sent by the server.
-
-        Returns:
-          The initial metadata received.
-        """
-        ...
+    ) -> None: ...
+    def debug_error_string(self) -> str: ...
+    def initial_metadata(self) -> Metadata | MaybeNone: ...
+    # AioRpcError returns the async Metadata, overriding the synchronous
+    # grpc.RpcError.trailing_metadata() -> tuple[_Metadatum, ...].
+    def trailing_metadata(self) -> Metadata | MaybeNone: ...  # type: ignore[override]
 
 # Create Client:
 
@@ -1467,48 +1455,17 @@ _MetadatumType: TypeAlias = tuple[_MetadataKey, _MetadataValue]
 _MetadataType: TypeAlias = Metadata | Sequence[_MetadatumType]
 _T = TypeVar("_T")
 
-class Metadata(Mapping[_MetadataKey, _MetadataValue]):
-    """
-    Metadata abstraction for the asynchronous calls and interceptors.
-
-    The metadata is a mapping from str -> List[str]
-
-    Traits
-        * Multiple entries are allowed for the same key
-        * The order of the values by key is preserved
-        * Getting by an element by key, retrieves the first mapped value
-        * Supports an immutable view of the data
-        * Allows partial mutation on the data without recreating the new object from scratch.
-    """
+class Metadata(Collection[_MetadatumType]):
     def __init__(self, *args: tuple[_MetadataKey, _MetadataValue]) -> None: ...
     @classmethod
     def from_tuple(cls, raw_metadata: tuple[_MetadataKey, _MetadataValue]) -> Metadata: ...
     def add(self, key: _MetadataKey, value: _MetadataValue) -> None: ...
-    def __len__(self) -> int:
-        """
-        Return the total number of elements that there are in the metadata,
-        including multiple values for the same key.
-        """
-        ...
-    def __getitem__(self, key: _MetadataKey) -> _MetadataValue:
-        """
-        When calling <metadata>[<key>], the first element of all those
-        mapped for <key> is returned.
-        """
-        ...
-    def __setitem__(self, key: _MetadataKey, value: _MetadataValue) -> None:
-        """
-        Calling metadata[<key>] = <value>
-        Maps <value> to the first instance of <key>.
-        """
-        ...
-    def __delitem__(self, key: _MetadataKey) -> None:
-        """``del metadata[<key>]`` deletes the first mapping for <key>."""
-        ...
-    def delete_all(self, key: _MetadataKey) -> None:
-        """Delete all mappings for <key>."""
-        ...
-    def __iter__(self) -> Iterator[_MetadataKey]: ...
+    def __len__(self) -> int: ...
+    def __getitem__(self, key: _MetadataKey) -> _MetadataValue: ...
+    def __setitem__(self, key: _MetadataKey, value: _MetadataValue) -> None: ...
+    def __delitem__(self, key: _MetadataKey) -> None: ...
+    def delete_all(self, key: _MetadataKey) -> None: ...
+    def __iter__(self) -> Iterator[_MetadatumType]: ...
 
     @overload
     def get(self, key: _MetadataKey, default: None = None) -> _MetadataValue | None: ...
