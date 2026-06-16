@@ -46,6 +46,7 @@ jmespath==1.1.*
 mypy-extensions==1.1.*
 flake8==7.3.*
 click-spinner==0.1.*
+scp==0.15.*
 click-shell==2.1
 www-authenticate==0.9.*
 polib==1.2.*
@@ -97,7 +98,7 @@ cachetools==7.0.*
 flake8-bugbear==25.11.29
 oauthlib==3.3.*
 zstd~=1.5.7.3
-pyinstaller==6.20.*
+pyinstaller==6.21.*
 m3u8==6.0.*
 grpcio-channelz==1.*
 str2bool==1.1
