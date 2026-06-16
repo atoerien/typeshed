@@ -115,10 +115,29 @@ class Splash(Target):
             applications) can cover the splash screen by user bringing them to front. This might be useful for
             frozen applications with long startup times. Default: ``True``
         :type always_on_top: bool
+        :keyword center:
+            Splash screen centering mode: ``'default'``, ``'primary'``, ``'virtual'``, or ``'active'``. In the default
+            mode, the splash screen script computes the position using screen dimensions obtained via Tk's ``winfo``
+            command, which has platform-specific behavior in multi-monitor setups; on Windows, it seems to return the
+            size of the primary monitor, while on other platforms, it seems to return the size of the whole virtual
+            screen. In other modes, the bootloader attempts to query the target screen size (and position) using
+            platform-specific low-level API, and supply the information to splash screen script; in ``primary`` mode,
+            the size of primary screen is queried, and in ``virtual`` mode, the size of whole virtual screen is queried.
+            The ``active`` mode is supported only on Windows; the bootloader attempts to obtain position of mouse cursor
+            at the time when application is launched, and queries the size (and position) of the corresponding screen.
+            If the required information cannot be obtained and exposed by the bootloader, the splash screen script
+            falls back to the information provided by the ``winfo`` command. Default: ``'default'``
+        :type center: str
         """
         ...
     def assemble(self) -> None: ...
     # This private method is the only way to match Splash Screen support validation without triggering an actual build
     @staticmethod
     def _check_tcl_tk_compatibility(tcltk_info: TclTkInfo) -> None: ...
-    def generate_script(self) -> str: ...
+    def generate_script(self) -> str:
+        """
+        Generate the script for the splash screen.
+
+        If minify_script is True, all unnecessary parts will be removed.
+        """
+        ...

@@ -152,7 +152,9 @@ class DateDataParser:
 
     :param use_given_order:
         If True, locales are tried for translation of date string
-        in the order in which they are given.
+        in the order in which they are given. This is equivalent to the
+        ``USE_GIVEN_LANGUAGE_ORDER`` setting; the given order is preserved if
+        either is enabled.
     :type use_given_order: bool
 
     :param settings:
