@@ -207,17 +207,6 @@ class SSHClient(ClosingContextManager):
         :param socket sock:
             an open socket or socket-like object (such as a `.Channel`) to use
             for communication to the target host
-        :param bool gss_auth:
-            ``True`` if you want to use GSS-API authentication
-        :param bool gss_kex:
-            Perform GSS-API Key Exchange and user authentication
-        :param bool gss_deleg_creds: Delegate GSS-API client credentials or not
-        :param str gss_host:
-            The targets name in the kerberos database. default: hostname
-        :param bool gss_trust_dns:
-            Indicates whether or not the DNS is trusted to securely
-            canonicalize the name of the host being connected to (default
-            ``True``).
         :param float banner_timeout: an optional timeout (in seconds) to wait
             for the SSH banner to be presented.
         :param float auth_timeout: an optional timeout (in seconds) to wait for
@@ -229,10 +218,9 @@ class SSHClient(ClosingContextManager):
             argument of the same name.
         :param transport_factory:
             an optional callable which is handed a subset of the constructor
-            arguments (primarily those related to the socket, GSS
-            functionality, and algorithm selection) and generates a
-            `.Transport` instance to be used by this client. Defaults to
-            `.Transport.__init__`.
+            arguments (primarily those related to the socket and algorithm
+            selection) and generates a `.Transport` instance to be used by this
+            client. Defaults to `.Transport.__init__`.
         :param auth_strategy:
             an optional instance of `.AuthStrategy`, triggering use of this
             newer authentication mechanism instead of SSHClient's legacy auth
@@ -267,10 +255,7 @@ class SSHClient(ClosingContextManager):
             session.
 
         .. versionchanged:: 1.15
-            Added the ``banner_timeout``, ``gss_auth``, ``gss_kex``,
-            ``gss_deleg_creds`` and ``gss_host`` arguments.
-        .. versionchanged:: 2.3
-            Added the ``gss_trust_dns`` argument.
+            Added the ``banner_timeout`` argument.
         .. versionchanged:: 2.4
             Added the ``passphrase`` argument.
         .. versionchanged:: 2.6

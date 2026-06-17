@@ -1,3 +1,9 @@
+"""
+Variant on the (now deprecated/removed) ``KexGroup1`` where the prime "p" and
+generator "g" are provided by the server.  A bit more work is required on the
+client side, and a **lot** more on the server side.
+"""
+
 from _hashlib import HASH
 from _typeshed import ReadableBuffer
 from collections.abc import Callable

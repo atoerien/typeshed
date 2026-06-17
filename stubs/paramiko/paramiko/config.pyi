@@ -59,11 +59,81 @@ class SSHConfig:
         """
         ...
     @classmethod
-    def from_file(cls, flo: Iterable[str]) -> Self: ...
-    def parse(self, file_obj: Iterable[str]) -> None: ...
-    def lookup(self, hostname: str) -> SSHConfigDict: ...
-    def canonicalize(self, hostname: str, options: SSHConfigDict, domains: Iterable[str]) -> str: ...
-    def get_hostnames(self) -> set[str]: ...
+    def from_file(cls, flo: Iterable[str]) -> Self:
+        """
+        Create a new, parsed `SSHConfig` from file-like object ``flo``.
+
+        .. versionadded:: 2.7
+        """
+        ...
+    def parse(self, file_obj: Iterable[str]) -> None:
+        """
+        Read an OpenSSH config from the given file object.
+
+        :param file_obj: a file-like object to read the config file from
+        """
+        ...
+    def lookup(self, hostname: str) -> SSHConfigDict:
+        """
+        Return a dict (`SSHConfigDict`) of config options for a given hostname.
+
+        The host-matching rules of OpenSSH's ``ssh_config`` man page are used:
+        For each parameter, the first obtained value will be used.  The
+        configuration files contain sections separated by ``Host`` and/or
+        ``Match`` specifications, and that section is only applied for hosts
+        which match the given patterns or keywords
+
+        Since the first obtained value for each parameter is used, more host-
+        specific declarations should be given near the beginning of the file,
+        and general defaults at the end.
+
+        The keys in the returned dict are all normalized to lowercase (look for
+        ``"port"``, not ``"Port"``. The values are processed according to the
+        rules for substitution variable expansion in ``ssh_config``.
+
+        Finally, please see the docs for `SSHConfigDict` for deeper info on
+        features such as optional type conversion methods, e.g.::
+
+            conf = my_config.lookup('myhost')
+            assert conf['passwordauthentication'] == 'yes'
+            assert conf.as_bool('passwordauthentication') is True
+
+        .. note::
+            If there is no explicitly configured ``HostName`` value, it will be
+            set to the being-looked-up hostname, which is as close as we can
+            get to OpenSSH's behavior around that particular option.
+
+        :param str hostname: the hostname to lookup
+
+        .. versionchanged:: 2.5
+            Returns `SSHConfigDict` objects instead of dict literals.
+        .. versionchanged:: 2.7
+            Added canonicalization support.
+        .. versionchanged:: 2.7
+            Added ``Match`` support.
+        .. versionchanged:: 3.3
+            Added ``Match final`` support.
+        """
+        ...
+    def canonicalize(self, hostname: str, options: SSHConfigDict, domains: Iterable[str]) -> str:
+        """
+        Return canonicalized version of ``hostname``.
+
+        :param str hostname: Target hostname.
+        :param options: An `SSHConfigDict` from a previous lookup pass.
+        :param domains: List of domains (e.g. ``["paramiko.org"]``).
+
+        :returns: A canonicalized hostname if one was found, else ``None``.
+
+        .. versionadded:: 2.7
+        """
+        ...
+    def get_hostnames(self) -> set[str]:
+        """
+        Return the set of literal hostnames defined in the SSH config (both
+        explicit hostnames and wildcard entries).
+        """
+        ...
 
 class LazyFqdn:
     """Returns the host's fqdn on request as string."""

@@ -10,6 +10,10 @@ from paramiko.message import Message
 from paramiko.pkey import PKey, _HasReadlines
 
 class RSAKey(PKey):
+    """
+    Representation of an RSA key which can be used to sign and verify SSH2
+    data.
+    """
     name: Final = "ssh-rsa"
     HASHES: Final[dict[str, type[HashAlgorithm]]]
 

@@ -26,6 +26,15 @@ class _KexEngine(Protocol):
     def parse_next(self, ptype: int, m: Message) -> None: ...
 
 class Transport(Thread, ClosingContextManager):
+    """
+    An SSH Transport attaches to a stream (usually a socket), negotiates an
+    encrypted session, authenticates, and then creates stream tunnels, called
+    `channels <.Channel>`, across the session.  Multiple channels can be
+    multiplexed across a single session (and often are, in the case of port
+    forwardings).
+
+    Instances of this class may be used as context managers.
+    """
     daemon: bool
     sock: socket | Channel
 
@@ -126,12 +135,6 @@ class Transport(Thread, ClosingContextManager):
         :param int default_max_packet_size:
             sets the default max packet size on the transport. (defaults to
             32768)
-        :param bool gss_kex:
-            Whether to enable GSSAPI key exchange when GSSAPI is in play.
-            Default: ``False``.
-        :param bool gss_deleg_creds:
-            Whether to enable GSSAPI credential delegation when GSSAPI is in
-            play. Default: ``True``.
         :param dict disabled_algorithms:
             If given, must be a dictionary mapping algorithm type to an
             iterable of algorithm identifiers, which will be disabled for the
@@ -163,8 +166,6 @@ class Transport(Thread, ClosingContextManager):
         .. versionchanged:: 1.15
             Added the ``default_window_size`` and ``default_max_packet_size``
             arguments.
-        .. versionchanged:: 1.15
-            Added the ``gss_kex`` and ``gss_deleg_creds`` kwargs.
         .. versionchanged:: 2.6
             Added the ``disabled_algorithms`` kwarg.
         .. versionchanged:: 2.9
@@ -187,12 +188,132 @@ class Transport(Thread, ClosingContextManager):
     def preferred_kex(self) -> Sequence[str]: ...
     @property
     def preferred_compression(self) -> Sequence[str]: ...
-    def atfork(self) -> None: ...
-    def get_security_options(self) -> SecurityOptions: ...
-    def start_client(self, event: Event | None = None, timeout: float | None = None) -> None: ...
-    def start_server(self, event: Event | None = None, server: ServerInterface | None = None) -> None: ...
-    def add_server_key(self, key: PKey) -> None: ...
-    def get_server_key(self) -> PKey | None: ...
+    def atfork(self) -> None:
+        """
+        Terminate this Transport without closing the session.  On posix
+        systems, if a Transport is open during process forking, both parent
+        and child will share the underlying socket, but only one process can
+        use the connection (without corrupting the session).  Use this method
+        to clean up a Transport object without disrupting the other process.
+
+        .. versionadded:: 1.5.3
+        """
+        ...
+    def get_security_options(self) -> SecurityOptions:
+        """
+        Return a `.SecurityOptions` object which can be used to tweak the
+        encryption algorithms this transport will permit (for encryption,
+        digest/hash operations, public keys, and key exchanges) and the order
+        of preference for them.
+        """
+        ...
+    def start_client(self, event: Event | None = None, timeout: float | None = None) -> None:
+        """
+        Negotiate a new SSH2 session as a client.  This is the first step after
+        creating a new `.Transport`.  A separate thread is created for protocol
+        negotiation.
+
+        If an event is passed in, this method returns immediately.  When
+        negotiation is done (successful or not), the given ``Event`` will
+        be triggered.  On failure, `is_active` will return ``False``.
+
+        (Since 1.4) If ``event`` is ``None``, this method will not return until
+        negotiation is done.  On success, the method returns normally.
+        Otherwise an SSHException is raised.
+
+        After a successful negotiation, you will usually want to authenticate,
+        calling `auth_password <Transport.auth_password>` or
+        `auth_publickey <Transport.auth_publickey>`.
+
+        .. note:: `connect` is a simpler method for connecting as a client.
+
+        .. note::
+            After calling this method (or `start_server` or `connect`), you
+            should no longer directly read from or write to the original socket
+            object.
+
+        :param .threading.Event event:
+            an event to trigger when negotiation is complete (optional)
+
+        :param float timeout:
+            a timeout, in seconds, for SSH2 session negotiation (optional)
+
+        :raises:
+            `.SSHException` -- if negotiation fails (and no ``event`` was
+            passed in)
+        """
+        ...
+    def start_server(self, event: Event | None = None, server: ServerInterface | None = None) -> None:
+        """
+        Negotiate a new SSH2 session as a server.  This is the first step after
+        creating a new `.Transport` and setting up your server host key(s).  A
+        separate thread is created for protocol negotiation.
+
+        If an event is passed in, this method returns immediately.  When
+        negotiation is done (successful or not), the given ``Event`` will
+        be triggered.  On failure, `is_active` will return ``False``.
+
+        (Since 1.4) If ``event`` is ``None``, this method will not return until
+        negotiation is done.  On success, the method returns normally.
+        Otherwise an SSHException is raised.
+
+        After a successful negotiation, the client will need to authenticate.
+        Override the methods `get_allowed_auths
+        <.ServerInterface.get_allowed_auths>`, `check_auth_none
+        <.ServerInterface.check_auth_none>`, `check_auth_password
+        <.ServerInterface.check_auth_password>`, and `check_auth_publickey
+        <.ServerInterface.check_auth_publickey>` in the given ``server`` object
+        to control the authentication process.
+
+        After a successful authentication, the client should request to open a
+        channel.  Override `check_channel_request
+        <.ServerInterface.check_channel_request>` in the given ``server``
+        object to allow channels to be opened.
+
+        .. note::
+            After calling this method (or `start_client` or `connect`), you
+            should no longer directly read from or write to the original socket
+            object.
+
+        :param .threading.Event event:
+            an event to trigger when negotiation is complete.
+        :param .ServerInterface server:
+            an object used to perform authentication and create `channels
+            <.Channel>`
+
+        :raises:
+            `.SSHException` -- if negotiation fails (and no ``event`` was
+            passed in)
+        """
+        ...
+    def add_server_key(self, key: PKey) -> None:
+        """
+        Add a host key to the list of keys used for server mode.  When behaving
+        as a server, the host key is used to sign certain packets during the
+        SSH2 negotiation, so that the client can trust that we are who we say
+        we are.  Because this is used for signing, the key must contain private
+        key info, not just the public half.  Only one key of each type is kept.
+
+        :param .PKey key:
+            the host key (instance of some subclass) to add
+        """
+        ...
+    def get_server_key(self) -> PKey | None:
+        """
+        Return the active host key, in server mode.  After negotiating with the
+        client, this method will return the negotiated host key.  If only one
+        type of host key was set with `add_server_key`, that's the only key
+        that will ever be returned.  But in cases where you have set more than
+        one type of host key, the key type will be negotiated by the client,
+        and this method will return the key of the type agreed on.  If the host
+        key has not been negotiated yet, ``None`` is returned.  In client mode,
+        the behavior is undefined.
+
+        :return:
+            host key (`.PKey`) of the type negotiated by the client, or
+            ``None``.
+        """
+        ...
     @staticmethod
     def load_server_moduli(filename: FileDescriptorOrPath | None = None) -> bool:
         """
@@ -485,25 +606,326 @@ class Transport(Thread, ClosingContextManager):
         ...
     def connect(
         self, hostkey: PKey | None = None, username: str = "", password: str | None = None, pkey: PKey | None = None
-    ) -> None: ...
-    def get_exception(self) -> Exception | None: ...
-    def set_subsystem_handler(self, name: str, handler: type[SubsystemHandler], *larg: Any, **kwarg: Any) -> None: ...
-    def is_authenticated(self) -> bool: ...
-    def get_username(self) -> str | None: ...
-    def get_banner(self) -> bytes | None: ...
-    def auth_none(self, username: str) -> list[str]: ...
-    def auth_password(self, username: str, password: str, event: Event | None = None, fallback: bool = True) -> list[str]: ...
-    def auth_publickey(self, username: str, key: PKey, event: Event | None = None) -> list[str]: ...
-    def auth_interactive(self, username: str, handler: _InteractiveCallback, submethods: str = "") -> list[str]: ...
+    ) -> None:
+        """
+        Negotiate an SSH2 session, and optionally verify the server's host key
+        and authenticate using a password or private key.  This is a shortcut
+        for `start_client`, `get_remote_server_key`, and
+        `Transport.auth_password` or `Transport.auth_publickey`.  Use those
+        methods if you want more control.
+
+        You can use this method immediately after creating a Transport to
+        negotiate encryption with a server.  If it fails, an exception will be
+        thrown.  On success, the method will return cleanly, and an encrypted
+        session exists.  You may immediately call `open_channel` or
+        `open_session` to get a `.Channel` object, which is used for data
+        transfer.
+
+        .. note::
+            If you fail to supply a password or private key, this method may
+            succeed, but a subsequent `open_channel` or `open_session` call may
+            fail because you haven't authenticated yet.
+
+        :param .PKey hostkey:
+            the host key expected from the server, or ``None`` if you don't
+            want to do host key verification.
+        :param str username: the username to authenticate as.
+        :param str password:
+            a password to use for authentication, if you want to use password
+            authentication; otherwise ``None``.
+        :param .PKey pkey:
+            a private key to use for authentication, if you want to use private
+            key authentication; otherwise ``None``.
+
+        :raises: `.SSHException` -- if the SSH2 negotiation fails, the host key
+            supplied by the server is incorrect, or authentication fails.
+        """
+        ...
+    def get_exception(self) -> Exception | None:
+        """
+        Return any exception that happened during the last server request.
+        This can be used to fetch more specific error information after using
+        calls like `start_client`.  The exception (if any) is cleared after
+        this call.
+
+        :return:
+            an exception, or ``None`` if there is no stored exception.
+
+        .. versionadded:: 1.1
+        """
+        ...
+    def set_subsystem_handler(self, name: str, handler: type[SubsystemHandler], *larg: Any, **kwarg: Any) -> None:
+        """
+        Set the handler class for a subsystem in server mode.  If a request
+        for this subsystem is made on an open ssh channel later, this handler
+        will be constructed and called -- see `.SubsystemHandler` for more
+        detailed documentation.
+
+        Any extra parameters (including keyword arguments) are saved and
+        passed to the `.SubsystemHandler` constructor later.
+
+        :param str name: name of the subsystem.
+        :param handler:
+            subclass of `.SubsystemHandler` that handles this subsystem.
+        """
+        ...
+    def is_authenticated(self) -> bool:
+        """
+        Return true if this session is active and authenticated.
+
+        :return:
+            True if the session is still open and has been authenticated
+            successfully; False if authentication failed and/or the session is
+            closed.
+        """
+        ...
+    def get_username(self) -> str | None:
+        """
+        Return the username this connection is authenticated for.  If the
+        session is not authenticated (or authentication failed), this method
+        returns ``None``.
+
+        :return: username that was authenticated (a `str`), or ``None``.
+        """
+        ...
+    def get_banner(self) -> bytes | None:
+        """
+        Return the banner supplied by the server upon connect. If no banner is
+        supplied, this method returns ``None``.
+
+        :returns: server supplied banner (`str`), or ``None``.
+
+        .. versionadded:: 1.13
+        """
+        ...
+    def auth_none(self, username: str) -> list[str]:
+        """
+        Try to authenticate to the server using no authentication at all.
+        This will almost always fail.  It may be useful for determining the
+        list of authentication types supported by the server, by catching the
+        `.BadAuthenticationType` exception raised.
+
+        :param str username: the username to authenticate as
+        :return:
+            list of auth types permissible for the next stage of
+            authentication (normally empty)
+
+        :raises:
+            `.BadAuthenticationType` -- if "none" authentication isn't allowed
+            by the server for this user
+        :raises:
+            `.SSHException` -- if the authentication failed due to a network
+            error
+
+        .. versionadded:: 1.5
+        """
+        ...
+    def auth_password(self, username: str, password: str, event: Event | None = None, fallback: bool = True) -> list[str]:
+        """
+        Authenticate to the server using a password.  The username and password
+        are sent over an encrypted link.
+
+        If an ``event`` is passed in, this method will return immediately, and
+        the event will be triggered once authentication succeeds or fails.  On
+        success, `is_authenticated` will return ``True``.  On failure, you may
+        use `get_exception` to get more detailed error information.
+
+        Since 1.1, if no event is passed, this method will block until the
+        authentication succeeds or fails.  On failure, an exception is raised.
+        Otherwise, the method simply returns.
+
+        Since 1.5, if no event is passed and ``fallback`` is ``True`` (the
+        default), if the server doesn't support plain password authentication
+        but does support so-called "keyboard-interactive" mode, an attempt
+        will be made to authenticate using this interactive mode.  If it fails,
+        the normal exception will be thrown as if the attempt had never been
+        made.  This is useful for some recent Gentoo and Debian distributions,
+        which turn off plain password authentication in a misguided belief
+        that interactive authentication is "more secure".  (It's not.)
+
+        If the server requires multi-step authentication (which is very rare),
+        this method will return a list of auth types permissible for the next
+        step.  Otherwise, in the normal case, an empty list is returned.
+
+        :param str username: the username to authenticate as
+        :param basestring password: the password to authenticate with
+        :param .threading.Event event:
+            an event to trigger when the authentication attempt is complete
+            (whether it was successful or not)
+        :param bool fallback:
+            ``True`` if an attempt at an automated "interactive" password auth
+            should be made if the server doesn't support normal password auth
+        :return:
+            list of auth types permissible for the next stage of
+            authentication (normally empty)
+
+        :raises:
+            `.BadAuthenticationType` -- if password authentication isn't
+            allowed by the server for this user (and no event was passed in)
+        :raises:
+            `.AuthenticationException` -- if the authentication failed (and no
+            event was passed in)
+        :raises: `.SSHException` -- if there was a network error
+        """
+        ...
+    def auth_publickey(self, username: str, key: PKey, event: Event | None = None) -> list[str]:
+        """
+        Authenticate to the server using a private key.  The key is used to
+        sign data from the server, so it must include the private part.
+
+        If an ``event`` is passed in, this method will return immediately, and
+        the event will be triggered once authentication succeeds or fails.  On
+        success, `is_authenticated` will return ``True``.  On failure, you may
+        use `get_exception` to get more detailed error information.
+
+        Since 1.1, if no event is passed, this method will block until the
+        authentication succeeds or fails.  On failure, an exception is raised.
+        Otherwise, the method simply returns.
+
+        If the server requires multi-step authentication (which is very rare),
+        this method will return a list of auth types permissible for the next
+        step.  Otherwise, in the normal case, an empty list is returned.
+
+        :param str username: the username to authenticate as
+        :param .PKey key: the private key to authenticate with
+        :param .threading.Event event:
+            an event to trigger when the authentication attempt is complete
+            (whether it was successful or not)
+        :return:
+            list of auth types permissible for the next stage of
+            authentication (normally empty)
+
+        :raises:
+            `.BadAuthenticationType` -- if public-key authentication isn't
+            allowed by the server for this user (and no event was passed in)
+        :raises:
+            `.AuthenticationException` -- if the authentication failed (and no
+            event was passed in)
+        :raises: `.SSHException` -- if there was a network error
+        """
+        ...
+    def auth_interactive(self, username: str, handler: _InteractiveCallback, submethods: str = "") -> list[str]:
+        """
+        Authenticate to the server interactively.  A handler is used to answer
+        arbitrary questions from the server.  On many servers, this is just a
+        dumb wrapper around PAM.
+
+        This method will block until the authentication succeeds or fails,
+        periodically calling the handler asynchronously to get answers to
+        authentication questions.  The handler may be called more than once
+        if the server continues to ask questions.
+
+        The handler is expected to be a callable that will handle calls of the
+        form: ``handler(title, instructions, prompt_list)``.  The ``title`` is
+        meant to be a dialog-window title, and the ``instructions`` are user
+        instructions (both are strings).  ``prompt_list`` will be a list of
+        prompts, each prompt being a tuple of ``(str, bool)``.  The string is
+        the prompt and the boolean indicates whether the user text should be
+        echoed.
+
+        A sample call would thus be:
+        ``handler('title', 'instructions', [('Password:', False)])``.
+
+        The handler should return a list or tuple of answers to the server's
+        questions.
+
+        If the server requires multi-step authentication (which is very rare),
+        this method will return a list of auth types permissible for the next
+        step.  Otherwise, in the normal case, an empty list is returned.
+
+        :param str username: the username to authenticate as
+        :param callable handler: a handler for responding to server questions
+        :param str submethods: a string list of desired submethods (optional)
+        :return:
+            list of auth types permissible for the next stage of
+            authentication (normally empty).
+
+        :raises: `.BadAuthenticationType` -- if public-key authentication isn't
+            allowed by the server for this user
+        :raises: `.AuthenticationException` -- if the authentication failed
+        :raises: `.SSHException` -- if there was a network error
+
+        .. versionadded:: 1.5
+        """
+        ...
     def auth_interactive_dumb(
         self, username: str, handler: _InteractiveCallback | None = None, submethods: str = ""
-    ) -> list[str]: ...
-    def set_log_channel(self, name: str) -> None: ...
-    def get_log_channel(self) -> str: ...
-    def set_hexdump(self, hexdump: bool) -> None: ...
-    def get_hexdump(self) -> bool: ...
-    def use_compression(self, compress: bool = True) -> None: ...
-    def getpeername(self) -> tuple[str, int]: ...
+    ) -> list[str]:
+        """
+        Authenticate to the server interactively but dumber.
+        Just print the prompt and / or instructions to stdout and send back
+        the response. This is good for situations where partial auth is
+        achieved by key and then the user has to enter a 2fac token.
+        """
+        ...
+    def set_log_channel(self, name: str) -> None:
+        """
+        Set the channel for this transport's logging.  The default is
+        ``"paramiko.transport"`` but it can be set to anything you want. (See
+        the `.logging` module for more info.)  SSH Channels will log to a
+        sub-channel of the one specified.
+
+        :param str name: new channel name for logging
+
+        .. versionadded:: 1.1
+        """
+        ...
+    def get_log_channel(self) -> str:
+        """
+        Return the channel name used for this transport's logging.
+
+        :return: channel name as a `str`
+
+        .. versionadded:: 1.2
+        """
+        ...
+    def set_hexdump(self, hexdump: bool) -> None:
+        """
+        Turn on/off logging a hex dump of protocol traffic at DEBUG level in
+        the logs.  Normally you would want this off (which is the default),
+        but if you are debugging something, it may be useful.
+
+        :param bool hexdump:
+            ``True`` to log protocol traffix (in hex) to the log; ``False``
+            otherwise.
+        """
+        ...
+    def get_hexdump(self) -> bool:
+        """
+        Return ``True`` if the transport is currently logging hex dumps of
+        protocol traffic.
+
+        :return: ``True`` if hex dumps are being logged, else ``False``.
+
+        .. versionadded:: 1.4
+        """
+        ...
+    def use_compression(self, compress: bool = True) -> None:
+        """
+        Turn on/off compression.  This will only have an affect before starting
+        the transport (ie before calling `connect`, etc).  By default,
+        compression is off since it negatively affects interactive sessions.
+
+        :param bool compress:
+            ``True`` to ask the remote client/server to compress traffic;
+            ``False`` to refuse compression
+
+        .. versionadded:: 1.5.2
+        """
+        ...
+    def getpeername(self) -> tuple[str, int]:
+        """
+        Return the address of the remote side of this Transport, if possible.
+
+        This is effectively a wrapper around ``getpeername`` on the underlying
+        socket.  If the socket-like object has no ``getpeername`` method, then
+        ``("unknown", 0)`` is returned.
+
+        :return:
+            the address of the remote host, if known, as a ``(str, int)``
+            tuple.
+        """
+        ...
     def stop_thread(self) -> None: ...
     def run(self) -> None: ...
 
