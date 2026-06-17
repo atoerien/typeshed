@@ -5,7 +5,7 @@ from collections.abc import Iterable
 from hashlib import _Hash
 from logging import Logger, LogRecord
 from types import TracebackType
-from typing import IO, AnyStr
+from typing import AnyStr
 from typing_extensions import Self
 
 from paramiko.config import SSHConfig, SSHConfigDict
@@ -28,48 +28,10 @@ def format_binary_line(data: bytes | bytearray) -> str: ...
 def safe_string(s: Iterable[int | str]) -> bytes: ...
 def bit_length(n: int) -> int: ...
 def tb_strings() -> list[str]: ...
-def generate_key_bytes(hash_alg: type[_Hash], salt: ReadableBuffer, key: bytes | str, nbytes: int) -> bytes:
-    """
-    Given a password, passphrase, or other human-source key, scramble it
-    through a secure hash into some keyworthy bytes.  This specific algorithm
-    is used for encrypting/decrypting private key files.
-
-    :param function hash_alg: A function which creates a new hash object, such
-        as ``hashlib.sha256``.
-    :param salt: data to salt the hash with.
-    :type bytes salt: Hash salt bytes.
-    :param str key: human-entered password or passphrase.
-    :param int nbytes: number of bytes to generate.
-    :return: Key data, as `bytes`.
-    """
-    ...
-def load_host_keys(filename: FileDescriptorOrPath) -> HostKeys:
-    """
-    Read a file of known SSH host keys, in the format used by openssh, and
-    return a compound dict of ``hostname -> keytype ->`` `PKey
-    <paramiko.pkey.PKey>`. The hostname may be an IP address or DNS name.
-
-    This type of file unfortunately doesn't exist on Windows, but on posix,
-    it will usually be stored in ``os.path.expanduser("~/.ssh/known_hosts")``.
-
-    Since 1.5.3, this is just a wrapper around `.HostKeys`.
-
-    :param str filename: name of the file to read host keys from
-    :return:
-        nested dict of `.PKey` objects, indexed by hostname and then keytype
-    """
-    ...
-def parse_ssh_config(file_obj: IO[str]) -> SSHConfig:
-    """
-    Provided only as a backward-compatible wrapper around `.SSHConfig`.
-
-    .. deprecated:: 2.7
-        Use `SSHConfig.from_file` instead.
-    """
-    ...
-def lookup_ssh_host_config(hostname: str, config: SSHConfig) -> SSHConfigDict:
-    """Provided only as a backward-compatible wrapper around `.SSHConfig`."""
-    ...
+def generate_key_bytes(hash_alg: type[_Hash], salt: ReadableBuffer, key: bytes | str, nbytes: int) -> bytes: ...
+def load_host_keys(filename: FileDescriptorOrPath) -> HostKeys: ...
+def parse_ssh_config(file_obj: Iterable[str]) -> SSHConfig: ...
+def lookup_ssh_host_config(hostname: str, config: SSHConfig) -> SSHConfigDict: ...
 def mod_inverse(x: int, m: int) -> int: ...
 def get_thread_id() -> int: ...
 def log_to_file(filename: FileDescriptorOrPath, level: int = 10) -> None:

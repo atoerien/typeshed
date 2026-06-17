@@ -1,12 +1,18 @@
-"""Common API for all public keys."""
-
-from _typeshed import FileDescriptorOrPath
+from _typeshed import StrOrBytesPath, SupportsWrite
 from pathlib import Path
 from re import Pattern
-from typing import IO, TypeVar
+from typing import Final, NamedTuple, Protocol, TypeAlias, TypeVar, type_check_only
 from typing_extensions import Self
 
+from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
+from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat
 from paramiko.message import Message
+
+@type_check_only
+class _HasReadlines(Protocol):
+    def readlines(self) -> list[str]: ...
 
 OPENSSH_AUTH_MAGIC: bytes
 
@@ -20,57 +26,23 @@ class UnknownKeyType(Exception):
     key_bytes: bytes | None
     def __init__(self, key_type: str | type | None = None, key_bytes: bytes | None = None) -> None: ...
 
-class PKey:
-    """
-    Base class for public keys.
+class FileFormat(NamedTuple):
+    format: PrivateFormat
+    encoding: Encoding
 
-    Also includes some "meta" level convenience constructors such as
-    `.from_type_string`.
-    """
-    name: str
-    HASHES: dict[str, type]
+PrivateKey: TypeAlias = RSAPrivateKey | EllipticCurvePrivateKey | Ed25519PrivateKey
+
+PEM: Final[FileFormat]
+OPENSSH: Final[FileFormat]
+
+class PKey:
     public_blob: PublicBlob | None
     BEGIN_TAG: Pattern[str]
     END_TAG: Pattern[str]
     @staticmethod
-    def from_path(path: Path | str, passphrase: bytes | None = None) -> PKey:
-        """
-        Attempt to instantiate appropriate key subclass from given file path.
-
-        :param Path path: The path to load (may also be a `str`).
-
-        :returns:
-            A `PKey` subclass instance.
-
-        :raises:
-            `UnknownKeyType`, if our crypto backend doesn't know this key type.
-
-        .. versionadded:: 3.2
-        """
-        ...
+    def from_path(path: Path | str, password: str | None = None) -> PKey: ...
     @staticmethod
-    def from_type_string(key_type: str, key_bytes: bytes) -> PKey:
-        """
-        Given type `str` & raw `bytes`, return a `PKey` subclass instance.
-
-        For example, ``PKey.from_type_string("ssh-ed25519", <public bytes>)``
-        will (if successful) return a new `.Ed25519Key`.
-
-        :param str key_type:
-            The key type, eg ``"ssh-ed25519"``.
-        :param bytes key_bytes:
-            The raw byte data forming the key material, as expected by
-            subclasses' ``data`` parameter.
-
-        :returns:
-            A `PKey` subclass instance.
-
-        :raises:
-            `UnknownKeyType`, if no registered classes knew about this type.
-
-        .. versionadded:: 3.2
-        """
-        ...
+    def from_type_string(key_type: str, key_bytes: bytes, password: str | None = None) -> PKey: ...
     @classmethod
     def identifiers(cls) -> list[str]:
         """
@@ -197,91 +169,16 @@ class PKey:
         """
         ...
     @classmethod
-    def from_private_key_file(cls, filename: FileDescriptorOrPath, password: str | None = None) -> Self:
-        """
-        Create a key object by reading a private key file.  If the private
-        key is encrypted and ``password`` is not ``None``, the given password
-        will be used to decrypt the key (otherwise `.PasswordRequiredException`
-        is thrown).  Through the magic of Python, this factory method will
-        exist in all subclasses of PKey (such as `.RSAKey`), but
-        is useless on the abstract PKey class.
-
-        :param str filename: name of the file to read
-        :param str password:
-            an optional password to use to decrypt the key file, if it's
-            encrypted
-        :return: a new `.PKey` based on the given private key
-
-        :raises: ``IOError`` -- if there was an error reading the file
-        :raises: `.PasswordRequiredException` -- if the private key file is
-            encrypted, and ``password`` is ``None``
-        :raises: `.SSHException` -- if the key file is invalid
-        """
-        ...
+    def from_private_key_file(cls, filename: StrOrBytesPath, password: str | None = None) -> Self: ...
     @classmethod
-    def from_private_key(cls, file_obj: IO[str], password: str | None = None) -> Self:
-        """
-        Create a key object by reading a private key from a file (or file-like)
-        object.  If the private key is encrypted and ``password`` is not
-        ``None``, the given password will be used to decrypt the key (otherwise
-        `.PasswordRequiredException` is thrown).
-
-        :param file_obj: the file-like object to read from
-        :param str password:
-            an optional password to use to decrypt the key, if it's encrypted
-        :return: a new `.PKey` based on the given private key
-
-        :raises: ``IOError`` -- if there was an error reading the key
-        :raises: `.PasswordRequiredException` --
-            if the private key file is encrypted, and ``password`` is ``None``
-        :raises: `.SSHException` -- if the key file is invalid
-        """
-        ...
-    def write_private_key_file(self, filename: FileDescriptorOrPath, password: str | None = None) -> None:
-        """
-        Write private key contents into a file.  If the password is not
-        ``None``, the key is encrypted before writing.
-
-        :param str filename: name of the file to write
-        :param str password:
-            an optional password to use to encrypt the key file
-
-        :raises: ``IOError`` -- if there was an error writing the file
-        :raises: `.SSHException` -- if the key is invalid
-        """
-        ...
-    def write_private_key(self, file_obj: IO[str], password: str | None = None) -> None:
-        """
-        Write private key contents into a file (or file-like) object.  If the
-        password is not ``None``, the key is encrypted before writing.
-
-        :param file_obj: the file-like object to write into
-        :param str password: an optional password to use to encrypt the key
-
-        :raises: ``IOError`` -- if there was an error writing to the file
-        :raises: `.SSHException` -- if the key is invalid
-        """
-        ...
-    def load_certificate(self, value: Message | str) -> None:
-        """
-        Supplement the private key contents with data loaded from an OpenSSH
-        public key (``.pub``) or certificate (``-cert.pub``) file, a string
-        containing such a file, or a `.Message` object.
-
-        The .pub contents adds no real value, since the private key
-        file includes sufficient information to derive the public
-        key info. For certificates, however, this can be used on
-        the client side to offer authentication requests to the server
-        based on certificate instead of raw public key.
-
-        See:
-        https://github.com/openssh/openssh-portable/blob/master/PROTOCOL.certkeys
-
-        Note: very little effort is made to validate the certificate contents,
-        that is for the server to decide if it is good enough to authenticate
-        successfully.
-        """
-        ...
+    def from_private_key(cls, file_obj: _HasReadlines, password: str | None = None) -> Self: ...
+    def write_private_key_file(
+        self, filename: StrOrBytesPath, password: str | None = None, file_format: FileFormat = PEM  # noqa: Y011
+    ) -> None: ...
+    def write_private_key(
+        self, file_obj: SupportsWrite[str], password: str | None = None, file_format: FileFormat = PEM  # noqa: Y011
+    ) -> None: ...
+    def load_certificate(self, value: Message | str) -> None: ...
 
 class PublicBlob:
     """
@@ -309,9 +206,7 @@ class PublicBlob:
         """
         ...
     @classmethod
-    def from_file(cls, filename: FileDescriptorOrPath) -> Self:
-        """Create a public blob from a ``-cert.pub``-style file on disk."""
-        ...
+    def from_file(cls, filename: StrOrBytesPath) -> Self: ...
     @classmethod
     def from_string(cls, string: str) -> Self:
         """Create a public blob from a ``-cert.pub``-style string."""
