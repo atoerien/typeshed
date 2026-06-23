@@ -42,6 +42,13 @@ def GetPropertyInfo(
 ): ...
 
 class EnumDebugPropertyInfo(ListEnumeratorGateway):
+    """
+    A class to expose a Python sequence as an EnumDebugCodeContexts
+
+    Create an instance of this class passing a sequence (list, tuple, or
+    any sequence protocol supporting object) and it will automatically
+    support the EnumDebugCodeContexts interface for the object.
+    """
     def GetCount(self): ...
 
 class DebugProperty:
