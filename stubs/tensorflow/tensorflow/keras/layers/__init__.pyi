@@ -1457,8 +1457,8 @@ class ReLU(Layer[tf.Tensor, tf.Tensor]):
     ```
 
     Args:
-        max_value: Float >= 0. Maximum activation value. None means unlimited.
-            Defaults to `None`.
+        max_value: Float >= 0. Maximum activation value. `None` means
+            unlimited. Defaults to `None`.
         negative_slope: Float >= 0. Negative slope coefficient.
             Defaults to `0.0`.
         threshold: Float >= 0. Threshold value for thresholded activation.
@@ -1902,6 +1902,12 @@ class MultiHeadAttention(Layer[Any, tf.Tensor]):
             feature dim (the query input's last dimension).
         attention_axes: axes over which the attention is applied. `None` means
             attention over all axes, but batch, heads, and features.
+        sliding_window: Optional positive integer. If set, restricts each
+            query position to attend only to key positions within
+            `sliding_window - 1` of itself (a symmetric band). Composes
+            naturally with `use_causal_mask=True` to give the causal
+            sliding window used by Mistral, Llama-3 long-context, and
+            Phi-3. Defaults to `None` (full attention).
         flash_attention: If `None`, the layer attempts to use flash
             attention for faster and more memory-efficient attention
             computations when possible. This behavior can be configured using

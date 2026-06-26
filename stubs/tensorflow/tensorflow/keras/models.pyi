@@ -252,6 +252,17 @@ class Model(Layer[_InputT_contra, _OutputT_co]):
                 For `torch` backend, `"auto"` will default to eager
                 execution and `jit_compile=True` will run with `torch.compile`
                 with the `"inductor"` backend.
+                On the JAX backend, compilation happens on the first step and
+                can take several seconds. JAX can persist the compiled result
+                to disk and reuse it across runs and processes, so the same
+                model only pays that cost once. Enable it before the first
+                step with:
+                ```python
+                import jax
+                jax.config.update("jax_compilation_cache_dir", "/path/to/cache")
+                ```
+                See the JAX persistent compilation cache docs for the
+                available thresholds.
             auto_scale_loss: Bool. If `True` and the model dtype policy is
                 `"mixed_float16"`, the passed optimizer will be automatically
                 wrapped in a `LossScaleOptimizer`, which will dynamically
@@ -750,8 +761,8 @@ class Model(Layer[_InputT_contra, _OutputT_co]):
             filepath: `str` or `pathlib.Path` object. The path to save the
                 artifact.
             format: `str`. The export format. Supported values:
-                `"tf_saved_model"`, `"onnx"`, `"openvino"`, and `"litert"`.
-                Defaults to `"tf_saved_model"`.
+                `"tf_saved_model"`, `"onnx"`, `"openvino"`, `"litert"`,
+                and `"torch"`. Defaults to `"tf_saved_model"`.
             verbose: `bool`. Whether to print a message during export. Defaults
                 to `None`, which uses the default value set by different
                 backends and formats.
@@ -760,6 +771,12 @@ class Model(Layer[_InputT_contra, _OutputT_co]):
                 `tf.TensorSpec`, `backend.KerasTensor`, or backend tensor. If
                 not provided, it will be automatically computed. Defaults to
                 `None`.
+                Note: With `format="litert"` and the PyTorch backend, dynamic
+                input shapes are not supported. Any dynamic dimensions (i.e.,
+                `None` in input shapes) will be automatically replaced with `1`
+                during export, which may cause runtime failures for other
+                shapes. You must explicitly pass a fixed static
+                `input_signature` matching your maximum runtime shape.
             **kwargs: Additional keyword arguments.
                 - `is_static`: Optional `bool`. Specific to the JAX backend and
                     `format="tf_saved_model"`. Indicates whether `fn` is static.
@@ -776,11 +793,31 @@ class Model(Layer[_InputT_contra, _OutputT_co]):
                     An integer value that specifies the ONNX opset version.
                 - LiteRT-specific options: Optional keyword arguments specific
                     to `format="litert"`. These are passed directly to the
-                    TensorFlow Lite converter and include options like
-                    `optimizations`, `representative_dataset`,
-                    `experimental_new_quantizer`, `allow_custom_ops`,
-                    `enable_select_tf_ops`, etc. See TensorFlow Lite
-                    documentation for all available options.
+                    TensorFlow Lite converter on the TensorFlow backend and
+                    include options like `optimizations`,
+                    `representative_dataset`, `experimental_new_quantizer`,
+                    `allow_custom_ops`, `enable_select_tf_ops`, etc. On the
+                    PyTorch backend, LiteRT export accepts `optimizations`
+                    plus the installed `litert_torch.convert()` keyword
+                    arguments such as `strict_export`, `dynamic_shapes` (note
+                    that standard ops do not support dynamic shapes, as noted
+                    below), `lightweight_conversion`, `enable_x64`,
+                    `runtime_constant_folding`, and `quant_config`.
+                - PyTorch export options: Optional keyword arguments specific
+                    to `format="torch"`. These are passed directly to
+                    `torch.export.export` and include `strict`,
+                    `dynamic_shapes`,
+                    `prefer_deferred_runtime_asserts_over_guards`, and
+                    `preserve_module_call_signature`.
+
+        **Note on LiteRT (TFLite) Export with PyTorch Backend:**
+        With the PyTorch backend, LiteRT export (`format="litert"`) does not
+        support dynamic input shapes. If no static signature is provided,
+        any dynamic dimensions (represented as `None`) are automatically
+        replaced with `1` during export. This can lead to runtime failures
+        for other shapes. You must explicitly specify a fixed static
+        `input_signature` (matching your maximum runtime dimensions) and pad
+        your inputs to this static shape at runtime.
 
         **Note:** This feature is currently supported only with TensorFlow, JAX
         and Torch backends.
@@ -832,6 +869,18 @@ class Model(Layer[_InputT_contra, _OutputT_co]):
         output_data = interpreter.get_tensor(
             interpreter.get_output_details()[0]['index']
         )
+        ```
+
+        Here's how to export a PyTorch ExportedProgram for inference.
+
+        ```python
+        # Export the model as a PyTorch ExportedProgram artifact
+        model.export("path/to/model.pt2", format="torch")
+
+        # Load the artifact in a different process/environment
+        import torch
+        loaded_program = torch.export.load("path/to/model.pt2")
+        predictions = loaded_program.module()(input_tensor)
         ```
         """
         ...

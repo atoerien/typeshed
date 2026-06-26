@@ -261,10 +261,56 @@ if sys.version_info >= (3, 11):
         __getattr__ or __getattribute__. Optionally, only return members that
         satisfy a given predicate.
 
-def getmodulename(path: StrPath) -> str | None: ...
-def ismodule(object: object) -> TypeIs[ModuleType]: ...
-def isclass(object: object) -> TypeIs[type[object]]: ...
-def ismethod(object: object) -> TypeIs[MethodType]: ...
+        Note: this function may not be able to retrieve all members
+           that getmembers can fetch (like dynamically created attributes)
+           and may find members that getmembers can't (like descriptors
+           that raise AttributeError). It can also return descriptor objects
+           instead of instance members in some cases.
+        """
+        ...
+    @overload
+    def getmembers_static(object: object, predicate: _GetMembersPredicateTypeIs[_T]) -> _GetMembersReturn[_T]:
+        """
+        Return all members of an object as (name, value) pairs sorted by name
+        without triggering dynamic lookup via the descriptor protocol,
+        __getattr__ or __getattribute__. Optionally, only return members that
+        satisfy a given predicate.
+
+        Note: this function may not be able to retrieve all members
+           that getmembers can fetch (like dynamically created attributes)
+           and may find members that getmembers can't (like descriptors
+           that raise AttributeError). It can also return descriptor objects
+           instead of instance members in some cases.
+        """
+        ...
+    @overload
+    def getmembers_static(object: object, predicate: _GetMembersPredicate | None = None) -> _GetMembersReturn[Any]:
+        """
+        Return all members of an object as (name, value) pairs sorted by name
+        without triggering dynamic lookup via the descriptor protocol,
+        __getattr__ or __getattribute__. Optionally, only return members that
+        satisfy a given predicate.
+
+        Note: this function may not be able to retrieve all members
+           that getmembers can fetch (like dynamically created attributes)
+           and may find members that getmembers can't (like descriptors
+           that raise AttributeError). It can also return descriptor objects
+           instead of instance members in some cases.
+        """
+        ...
+
+def getmodulename(path: StrPath) -> str | None:
+    """Return the module name for a given file, or None."""
+    ...
+def ismodule(object: object) -> TypeIs[ModuleType]:
+    """Return true if the object is a module."""
+    ...
+def isclass(object: object) -> TypeIs[type[object]]:
+    """Return true if the object is a class."""
+    ...
+def ismethod(object: object) -> TypeIs[MethodType]:
+    """Return true if the object is an instance method."""
+    ...
 
 if sys.version_info >= (3, 14):
     # Not TypeIs because it does not return True for all modules
@@ -330,9 +376,64 @@ def iscoroutinefunction(obj: Callable[..., Coroutine[Any, Any, Any]]) -> bool:
     """
     Return true if the object is a coroutine function.
 
-def isgenerator(object: object) -> TypeIs[GeneratorType[object, Never, object]]: ...
-def iscoroutine(object: object) -> TypeIs[CoroutineType[Any, Any, Any]]: ...
-def isawaitable(object: object) -> TypeIs[Awaitable[Any]]: ...
+    Coroutine functions are normally defined with "async def" syntax, but may
+    be marked via markcoroutinefunction.
+    """
+    ...
+@overload
+def iscoroutinefunction(obj: Callable[_P, Awaitable[_T]]) -> TypeGuard[Callable[_P, CoroutineType[Any, Any, _T]]]:
+    """
+    Return true if the object is a coroutine function.
+
+    Coroutine functions are normally defined with "async def" syntax, but may
+    be marked via markcoroutinefunction.
+    """
+    ...
+@overload
+def iscoroutinefunction(obj: Callable[_P, object]) -> TypeGuard[Callable[_P, CoroutineType[Any, Any, Any]]]:
+    """
+    Return true if the object is a coroutine function.
+
+    Coroutine functions are normally defined with "async def" syntax, but may
+    be marked via markcoroutinefunction.
+    """
+    ...
+@overload
+def iscoroutinefunction(obj: object) -> TypeGuard[Callable[..., CoroutineType[Any, Any, Any]]]:
+    """
+    Return true if the object is a coroutine function.
+
+    Coroutine functions are normally defined with "async def" syntax, but may
+    be marked via markcoroutinefunction.
+    """
+    ...
+
+def isgenerator(object: object) -> TypeIs[GeneratorType[object, Never, object]]:
+    """
+    Return true if the object is a generator.
+
+    Generator objects provide these attributes:
+        gi_code         code object
+        gi_frame        frame object or possibly None once the generator has
+                        been exhausted
+        gi_running      set to 1 when generator is executing, 0 otherwise
+        gi_suspended    set to 1 when the generator is suspended at a yield point, 0 otherwise
+        gi_yieldfrom    object being iterated by yield from or None
+
+        __iter__()      defined to support iteration over container
+        close()         raises a new GeneratorExit exception inside the
+                        generator to terminate the iteration
+        send()          resumes the generator and "sends" a value that becomes
+                        the result of the current yield-expression
+        throw()         used to raise an exception inside the generator
+    """
+    ...
+def iscoroutine(object: object) -> TypeIs[CoroutineType[Any, Any, Any]]:
+    """Return true if the object is a coroutine."""
+    ...
+def isawaitable(object: object) -> TypeIs[Awaitable[Any]]:
+    """Return true if object can be passed to an ``await`` expression."""
+    ...
 
 @overload
 def isasyncgenfunction(obj: Callable[..., AsyncGenerator[Any, Any]]) -> bool:
@@ -370,11 +471,81 @@ class _SupportsSet(Protocol[_T_contra, _V_contra]):
 class _SupportsDelete(Protocol[_T_contra]):
     def __delete__(self, instance: _T_contra, /) -> None: ...
 
-def isasyncgen(object: object) -> TypeIs[AsyncGeneratorType[object, Never]]: ...
-def istraceback(object: object) -> TypeIs[TracebackType]: ...
-def isframe(object: object) -> TypeIs[FrameType]: ...
-def iscode(object: object) -> TypeIs[CodeType]: ...
-def isbuiltin(object: object) -> TypeIs[BuiltinFunctionType]: ...
+def isasyncgen(object: object) -> TypeIs[AsyncGeneratorType[object, Never]]:
+    """Return true if the object is an asynchronous generator."""
+    ...
+def istraceback(object: object) -> TypeIs[TracebackType]:
+    """
+    Return true if the object is a traceback.
+
+    Traceback objects provide these attributes:
+        tb_frame        frame object at this level
+        tb_lasti        index of last attempted instruction in bytecode
+        tb_lineno       current line number in Python source code
+        tb_next         next inner traceback object (called by this level)
+    """
+    ...
+def isframe(object: object) -> TypeIs[FrameType]:
+    """
+    Return true if the object is a frame object.
+
+    Frame objects provide these attributes:
+        f_back          next outer frame object (this frame's caller)
+        f_builtins      built-in namespace seen by this frame
+        f_code          code object being executed in this frame
+        f_globals       global namespace seen by this frame
+        f_lasti         index of last attempted instruction in bytecode
+        f_lineno        current line number in Python source code
+        f_locals        local namespace seen by this frame
+        f_trace         tracing function for this frame, or None
+        f_trace_lines   is a tracing event triggered for each source line?
+        f_trace_opcodes are per-opcode events being requested?
+
+        clear()          used to clear all references to local variables
+    """
+    ...
+def iscode(object: object) -> TypeIs[CodeType]:
+    """
+    Return true if the object is a code object.
+
+    Code objects provide these attributes:
+        co_argcount         number of arguments (not including *, ** args
+                            or keyword only arguments)
+        co_code             string of raw compiled bytecode
+        co_cellvars         tuple of names of cell variables
+        co_consts           tuple of constants used in the bytecode
+        co_filename         name of file in which this code object was created
+        co_firstlineno      number of first line in Python source code
+        co_flags            bitmap: 1=optimized | 2=newlocals | 4=*arg | 8=**arg
+                            | 16=nested | 32=generator | 64=nofree | 128=coroutine
+                            | 256=iterable_coroutine | 512=async_generator
+                            | 0x4000000=has_docstring
+        co_freevars         tuple of names of free variables
+        co_posonlyargcount  number of positional only arguments
+        co_kwonlyargcount   number of keyword only arguments (not including ** arg)
+        co_lnotab           encoded mapping of line numbers to bytecode indices
+        co_name             name with which this code object was defined
+        co_names            tuple of names other than arguments and function locals
+        co_nlocals          number of local variables
+        co_stacksize        virtual machine stack space required
+        co_varnames         tuple of names of arguments and local variables
+        co_qualname         fully qualified function name
+
+        co_lines()          returns an iterator that yields successive bytecode ranges
+        co_positions()      returns an iterator of source code positions for each bytecode instruction
+        replace()           returns a copy of the code object with a new values
+    """
+    ...
+def isbuiltin(object: object) -> TypeIs[BuiltinFunctionType]:
+    """
+    Return true if the object is a built-in function or method.
+
+    Built-in functions and methods provide these attributes:
+        __doc__         documentation string
+        __name__        original name of this function or method
+        __self__        instance to which a method is bound, or None
+    """
+    ...
 
 if sys.version_info >= (3, 11):
     def ismethodwrapper(object: object) -> TypeIs[MethodWrapperType]:
@@ -392,12 +563,57 @@ def isroutine(
     | WrapperDescriptorType
     | MethodDescriptorType
     | ClassMethodDescriptorType
-]: ...
-def ismethoddescriptor(object: object) -> TypeIs[MethodDescriptorType]: ...
-def ismemberdescriptor(object: object) -> TypeIs[MemberDescriptorType]: ...
-def isabstract(object: object) -> bool: ...
-def isgetsetdescriptor(object: object) -> TypeIs[GetSetDescriptorType]: ...
-def isdatadescriptor(object: object) -> TypeIs[_SupportsSet[Never, Never] | _SupportsDelete[Never]]: ...
+]:
+    """Return true if the object is any kind of function or method."""
+    ...
+def ismethoddescriptor(object: object) -> TypeIs[MethodDescriptorType]:
+    """
+    Return true if the object is a method descriptor.
+
+    But not if ismethod() or isclass() or isfunction() are true.
+
+    This is new in Python 2.2, and, for example, is true of int.__add__.
+    An object passing this test has a __get__ attribute, but not a
+    __set__ attribute or a __delete__ attribute. Beyond that, the set
+    of attributes varies; __name__ is usually sensible, and __doc__
+    often is.
+
+    Methods implemented via descriptors that also pass one of the other
+    tests return false from the ismethoddescriptor() test, simply because
+    the other tests promise more -- you can, e.g., count on having the
+    __func__ attribute (etc) when an object passes ismethod().
+    """
+    ...
+def ismemberdescriptor(object: object) -> TypeIs[MemberDescriptorType]:
+    """
+    Return true if the object is a member descriptor.
+
+    Member descriptors are specialized descriptors defined in extension
+    modules.
+    """
+    ...
+def isabstract(object: object) -> bool:
+    """Return true if the object is an abstract base class (ABC)."""
+    ...
+def isgetsetdescriptor(object: object) -> TypeIs[GetSetDescriptorType]:
+    """
+    Return true if the object is a getset descriptor.
+
+    getset descriptors are specialized descriptors defined in extension
+    modules.
+    """
+    ...
+def isdatadescriptor(object: object) -> TypeIs[_SupportsSet[Never, Never] | _SupportsDelete[Never]]:
+    """
+    Return true if the object is a data descriptor.
+
+    Data descriptors have a __set__ or a __delete__ attribute.  Examples are
+    properties (defined in Python) and getsets and members (defined in C).
+    Typically, data descriptors will also have __name__ and __doc__ attributes
+    (properties, getsets, and members have both of these attributes), but this
+    is not guaranteed.
+    """
+    ...
 
 #
 # Retrieving source code
