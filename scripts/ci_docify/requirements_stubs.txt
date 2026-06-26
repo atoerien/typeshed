@@ -45,7 +45,7 @@ dateparser[fasttext,langdetect]~=1.4.1
 jmespath==1.1.*
 mypy-extensions==1.1.*
 flake8==7.3.*
-click-spinner==0.1.*
+click-spinner==0.1.11
 scp==0.15.*
 click-shell==2.1
 www-authenticate==0.9.*
