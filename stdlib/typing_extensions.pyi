@@ -1104,7 +1104,45 @@ if sys.version_info >= (3, 15):
 else:
     @final
     class TypeVarTuple:
-        """Type variable tuple."""
+        """
+        Type variable tuple. A specialized form of type variable that enables
+        variadic generics.
+
+        The preferred way to construct a type variable tuple is via the
+        dedicated syntax for generic functions, classes, and type aliases,
+        where a single '*' indicates a type variable tuple::
+
+            def move_first_element_to_last[T, *Ts](tup: tuple[T, *Ts]) -> tuple[*Ts, T]:
+                return (*tup[1:], tup[0])
+
+        Type variables tuples can have default values:
+
+            type AliasWithDefault[*Ts = (str, int)] = tuple[*Ts]
+
+        For compatibility with Python 3.11 and earlier, TypeVarTuple objects
+        can also be created as follows::
+
+            Ts = TypeVarTuple('Ts')  # Can be given any name
+            DefaultTs = TypeVarTuple('Ts', default=(str, int))
+
+        Just as a TypeVar (type variable) is a placeholder for a single type,
+        a TypeVarTuple is a placeholder for an *arbitrary* number of types. For
+        example, if we define a generic class using a TypeVarTuple::
+
+            class C[*Ts]: ...
+
+        Then we can parameterize that class with an arbitrary number of type
+        arguments::
+
+            C[int]       # Fine
+            C[int, str]  # Also fine
+            C[()]        # Even this is fine
+
+        For more details, see PEP 646.
+
+        Note that only TypeVarTuples defined in the global scope can be
+        pickled.
+        """
         @property
         def __name__(self) -> str: ...
         @property
@@ -1116,7 +1154,9 @@ else:
         @property
         def __infer_variance__(self) -> bool: ...
         @property
-        def __default__(self) -> AnnotationForm: ...
+        def __default__(self) -> AnnotationForm:
+            """The default value for this TypeVarTuple."""
+            ...
         if sys.version_info >= (3, 11):
             def __new__(
                 cls,
@@ -1140,7 +1180,9 @@ else:
                 default: AnnotationForm = ...,
             ) -> None: ...
 
-        def __iter__(self) -> Any: ...  # Unpack[Self]
+        def __iter__(self) -> Any:
+            """Implement iter(self)."""
+            ...
         def has_default(self) -> bool: ...
         if sys.version_info >= (3, 11):
             def __typing_subst__(self, arg: Never, /) -> Never: ...
