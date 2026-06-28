@@ -2932,6 +2932,12 @@ class GeoDataFrame(GeoPandasBase, pd.DataFrame):  # type: ignore[misc]
 
             caption : string
                 Custom caption of the legend. Defaults to the column name.
+            labels : list-like
+                A list of legend labels to override the auto-generated labels.
+                Needs to have the same number of elements as the number of unique
+                categories (for categorical or boolean columns) or the number of
+                classes ``k`` (for ``scheme``-based classification). For
+                ``scheme``-based classification it applies only if ``colorbar=False``.
 
             Additional accepted keywords when ``scheme`` is specified:
 
@@ -2945,10 +2951,6 @@ class GeoDataFrame(GeoPandasBase, pd.DataFrame):  # type: ignore[misc]
                 A formatting specification for the bin edges of the classes in the
                 legend. For example, to have no decimals: ``{"fmt": "{:.0f}"}``. Applies
                 if ``colorbar=False``.
-            labels : list-like
-                A list of legend labels to override the auto-generated labels.
-                Needs to have the same number of elements as the number of
-                classes (`k`). Applies if ``colorbar=False``.
             interval : boolean (default False)
                 An option to control brackets from mapclassify legend.
                 If True, open/closed interval brackets are shown in the legend.
