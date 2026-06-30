@@ -53,7 +53,7 @@ polib==1.2.*
 html5lib[all]==1.1.*
 python-http-client==3.3.7
 greenlet==3.5.*
-atheris==3.0.*
+atheris==3.1.*
 qrbill==1.2.*
 docutils==0.22.3
 webencodings==0.5.*
@@ -157,7 +157,7 @@ defusedxml==0.7.*
 channels==4.3.*
 pycocotools==2.0.*
 workalendar==17.0.*
-peewee==4.0.5
+peewee==4.0.8
 waitress~=3.0.1
 decorator==5.2.*
 PyYAML==6.0.*
@@ -189,7 +189,7 @@ PyAutoGUI==0.9.*
 nanoleafapi==2.1.*
 networkx==3.6.1
 vobject~=0.9.9
-regex==2026.5.9
+regex==2026.6.28
 usersettings==1.1.*
 keyboard==0.13.*
 django-import-export==4.4.*
