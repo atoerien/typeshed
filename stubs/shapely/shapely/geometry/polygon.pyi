@@ -1,7 +1,7 @@
 """Polygons and their linear ring components."""
 
 from collections.abc import Collection
-from typing import NoReturn, TypeAlias, overload
+from typing import Literal, NoReturn, TypeAlias, overload
 from typing_extensions import Self
 
 from .base import BaseGeometry
@@ -52,9 +52,9 @@ class LinearRing(LineString):
         """Create a new LinearRing geometry."""
         ...
     @property
-    def is_ccw(self) -> bool:
-        """True if the ring is oriented counter clock-wise."""
-        ...
+    def is_ccw(self) -> bool: ...
+    @property
+    def geom_type(self) -> Literal["LinearRing"]: ...
 
 class InteriorRingSequence:
     def __init__(self, parent: Polygon) -> None: ...
@@ -140,9 +140,9 @@ class Polygon(BaseGeometry):
         ...
     # more precise base overrides
     @property
-    def boundary(self) -> MultiLineString:
-        """
-        Return a lower dimension geometry that bounds the object.
+    def geom_type(self) -> Literal["Polygon"]: ...
+    @property
+    def boundary(self) -> MultiLineString: ...
 
         The boundary of a polygon is a line, the boundary of a line is a
         collection of points. The boundary of a point is an empty (null)

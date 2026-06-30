@@ -114,15 +114,9 @@ class LineString(BaseGeometry):
         ...
     # more precise base overrides
     @property
-    def boundary(self) -> MultiPoint:
-        """
-        Return a lower dimension geometry that bounds the object.
-
-        The boundary of a polygon is a line, the boundary of a line is a
-        collection of points. The boundary of a point is an empty (null)
-        collection.
-        """
-        ...
+    def geom_type(self) -> Literal["LineString", "LinearRing"]: ...  # LinearRing is a subclass of LineString
+    @property
+    def boundary(self) -> MultiPoint: ...
     @property
     def convex_hull(self) -> LineString:
         """

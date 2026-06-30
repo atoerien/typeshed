@@ -1,7 +1,7 @@
 """Points and related utilities."""
 
 from collections.abc import Iterable
-from typing import TypeAlias, overload
+from typing import Literal, TypeAlias, overload
 from typing_extensions import Self
 
 from .._typing import ArrayLikeSeq
@@ -108,15 +108,9 @@ class Point(BaseGeometry):
         ...
     # more precise base overrides
     @property
-    def boundary(self) -> GeometryCollection:
-        """
-        Return a lower dimension geometry that bounds the object.
-
-        The boundary of a polygon is a line, the boundary of a line is a
-        collection of points. The boundary of a point is an empty (null)
-        collection.
-        """
-        ...
+    def geom_type(self) -> Literal["Point"]: ...
+    @property
+    def boundary(self) -> GeometryCollection: ...  # empty geometry collection
     @property
     def convex_hull(self) -> Point:
         """

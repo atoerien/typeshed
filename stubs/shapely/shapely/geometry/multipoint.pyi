@@ -1,6 +1,7 @@
 """Collections of points and related utilities."""
 
 from collections.abc import Collection
+from typing import Literal
 from typing_extensions import Self
 
 from .base import BaseMultipartGeometry
@@ -63,12 +64,6 @@ class MultiPoint(BaseMultipartGeometry[Point]):
         ...
     # more precise base overrides
     @property
-    def boundary(self) -> GeometryCollection:
-        """
-        Return a lower dimension geometry that bounds the object.
-
-        The boundary of a polygon is a line, the boundary of a line is a
-        collection of points. The boundary of a point is an empty (null)
-        collection.
-        """
-        ...
+    def geom_type(self) -> Literal["MultiPoint"]: ...
+    @property
+    def boundary(self) -> GeometryCollection: ...  # empty geometry collection
