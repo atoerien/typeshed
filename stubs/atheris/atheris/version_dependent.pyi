@@ -11,6 +11,7 @@ Currently supported python versions are:
     - 3.11
     - 3.12
     - 3.13
+    - 3.14
 """
 
 import types
@@ -43,5 +44,21 @@ def generate_exceptiontable(original_code: types.CodeType, exception_table_entri
 
 CONST_PUSH_INSTRS: Final[set[str]]
 
-def is_func_start_resume(opname: str, arg: int | None) -> bool: ...
-def has_argument(op: int) -> bool: ...
+def is_func_start_resume(opname: str, arg: int | None) -> bool:
+    """
+    Returns True if this is the function-entry RESUME instruction.
+
+    From 3.13 onward RESUME's oparg may have RESUME_OPARG_DEPTH1_MASK (0x4)
+    set when the resume point is one try-block deep, so only the low two bits
+    encode the resume kind (RESUME_AT_FUNC_START == 0).
+    """
+    ...
+def has_argument(op: int) -> bool:
+    """
+    Returns whether `op` takes an argument.
+
+    HAVE_ARGUMENT is no longer a reliable boundary in 3.12+ (and is formally
+    meaningless in 3.14, where e.g. TO_BOOL < HAVE_ARGUMENT yet RESUME >
+    HAVE_ARGUMENT). dis.hasarg is the authoritative source.
+    """
+    ...

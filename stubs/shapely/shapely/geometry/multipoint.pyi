@@ -64,6 +64,16 @@ class MultiPoint(BaseMultipartGeometry[Point]):
         ...
     # more precise base overrides
     @property
-    def geom_type(self) -> Literal["MultiPoint"]: ...
+    def geom_type(self) -> Literal["MultiPoint"]:
+        """Name of the geometry's type, such as 'Point'."""
+        ...
     @property
-    def boundary(self) -> GeometryCollection: ...  # empty geometry collection
+    def boundary(self) -> GeometryCollection:
+        """
+        Return a lower dimension geometry that bounds the object.
+
+        The boundary of a polygon is a line, the boundary of a line is a
+        collection of points. The boundary of a point is an empty (null)
+        collection.
+        """
+        ...

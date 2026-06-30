@@ -13,5 +13,5 @@ def Fuzz() -> None:
     """Fuzz() -> None"""
     ...
 def Mutate(data: bytes, max_size: int) -> bytes:
-    """Mutate(arg0: bytes, arg1: typing.SupportsInt) -> bytes"""
+    """Mutate(arg0: bytes, arg1: typing.SupportsInt | typing.SupportsIndex) -> bytes"""
     ...

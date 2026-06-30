@@ -47,6 +47,16 @@ class GeometryCollection(BaseMultipartGeometry[_GeoT_co]):
 
     # more precise base overrides
     @property
-    def geom_type(self) -> Literal["GeometryCollection"]: ...
+    def geom_type(self) -> Literal["GeometryCollection"]:
+        """Name of the geometry's type, such as 'Point'."""
+        ...
     @property
-    def boundary(self) -> None: ...
+    def boundary(self) -> None:
+        """
+        Return a lower dimension geometry that bounds the object.
+
+        The boundary of a polygon is a line, the boundary of a line is a
+        collection of points. The boundary of a point is an empty (null)
+        collection.
+        """
+        ...
