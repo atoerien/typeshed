@@ -164,7 +164,7 @@ PyYAML==6.0.*
 netifaces==0.11.*
 portpicker==1.6.*
 WebTest==3.0.*
-pycurl==7.46.0
+pycurl==7.47.0
 python-jose==3.5.*
 dockerfile-parse==2.0.*
 unidiff==0.7.*
