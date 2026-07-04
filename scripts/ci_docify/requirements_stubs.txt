@@ -110,7 +110,7 @@ python-dateutil==2.9.*
 resampy==0.4.*
 jsonnet==0.22.*
 pyserial[cp2110]==3.5.*
-croniter==6.2.2
+croniter==6.2.3
 editdistance==0.8.*
 uWSGI==2.0.*
 geopandas==1.1.4
