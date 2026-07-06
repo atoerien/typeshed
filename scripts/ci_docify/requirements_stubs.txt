@@ -175,7 +175,7 @@ gunicorn==26.0.0
 ibm-db==3.2.9
 python-jenkins~=1.8.3
 Authlib==1.6.11
-setuptools==82.0.*
+setuptools==83.0.*
 jwcrypto==1.5.7
 colorama==0.4.*
 binaryornot==0.4.*
