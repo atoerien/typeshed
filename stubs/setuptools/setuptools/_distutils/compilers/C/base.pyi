@@ -216,54 +216,10 @@ class Compiler:
         a symbol on the current platform.  The optional arguments can
         be used to augment the compilation environment.
 
-        The libraries argument is a list of flags to be passed to the
-        linker to make additional symbol definitions available for
-        linking.
-
-        The includes and include_dirs arguments are deprecated.
-        Usually, supplying include files with function declarations
-        will cause function detection to fail even in cases where the
-        symbol is available for linking.
-        """
-        ...
-
-    def library_dir_option(self, dir: str) -> str:
-        """
-        Return the compiler option to add 'dir' to the list of
-        directories searched for libraries.
-        """
-        ...
-    def library_option(self, lib: str) -> str:
-        """
-        Return the compiler option to add 'lib' to the list of libraries
-        linked into the shared library or executable.
-        """
-        ...
-    def runtime_library_dir_option(self, dir: str) -> str:
-        """
-        Return the compiler option to add 'dir' to the list of
-        directories searched for runtime libraries.
-        """
-        ...
-    def set_executables(self, **kwargs: str) -> None:
-        """
-        Define the executables (and options for them) that will be run
-        to perform the various stages of compilation.  The exact set of
-        executables that may be specified here depends on the compiler
-        class (via the 'executables' class attribute), but most will have:
-          compiler      the C/C++ compiler
-          linker_so     linker used to create shared objects and libraries
-          linker_exe    linker used to create binary executables
-          archiver      static library creator
-
-        On platforms with a command-line (Unix, DOS/Windows), each of these
-        is a string that will be split into executable name and (optional)
-        list of arguments.  (Splitting the string is done similarly to how
-        Unix shells operate: words are delimited by spaces, but quotes and
-        backslashes can override this.  See
-        'distutils.util.split_quoted()'.)
-        """
-        ...
+    def library_dir_option(self, dir: str) -> str: ...
+    def library_option(self, lib: str) -> str: ...
+    def runtime_library_dir_option(self, dir: str) -> str | list[str]: ...
+    def set_executables(self, **kwargs: str) -> None: ...
     def set_executable(self, key: str, value) -> None: ...
     def compile(
         self,

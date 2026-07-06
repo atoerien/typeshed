@@ -122,45 +122,7 @@ def byte_compile(
     base_dir: str | None = None,
     verbose: bool = True,
     direct: bool | None = None,
-) -> None:
-    """
-    Byte-compile a collection of Python source files to .pyc
-    files in a __pycache__ subdirectory.  'py_files' is a list
-    of files to compile; any files that don't end in ".py" are silently
-    skipped.  'optimize' must be one of the following:
-      0 - don't optimize
-      1 - normal optimization (like "python -O")
-      2 - extra optimization (like "python -OO")
-    If 'force' is true, all files are recompiled regardless of
-    timestamps.
-
-    The source filename encoded in each bytecode file defaults to the
-    filenames listed in 'py_files'; you can modify these with 'prefix' and
-    'basedir'.  'prefix' is a string that will be stripped off of each
-    source filename, and 'base_dir' is a directory name that will be
-    prepended (after 'prefix' is stripped).  You can supply either or both
-    (or neither) of 'prefix' and 'base_dir', as you wish.
-
-    Byte-compilation is either done directly in this interpreter process
-    with the standard py_compile module, or indirectly by writing a
-    temporary script and executing it.  Normally, you should let
-    'byte_compile()' figure out to use direct compilation or not (see
-    the source for details).  The 'direct' flag is used by the script
-    generated in indirect mode; unless you know what you're doing, leave
-    it set to None.
-    """
-    ...
-def rfc822_escape(header: str) -> str:
-    """
-    Return a version of the string escaped for inclusion in an
-    RFC-822 header, by ensuring there are 8 spaces space after each newline.
-    """
-    ...
-def is_mingw() -> bool:
-    """
-    Returns True if the current platform is mingw.
-
-    Python compiled with Mingw-w64 has sys.platform == 'win32' and
-    get_platform() starts with 'mingw'.
-    """
-    ...
+) -> None: ...
+def rfc822_escape(header: str) -> str: ...
+def is_mingw() -> bool: ...
+def is_freethreaded() -> bool: ...
