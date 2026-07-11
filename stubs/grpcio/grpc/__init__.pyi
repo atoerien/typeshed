@@ -1763,6 +1763,13 @@ class RpcMethodHandler(abc.ABC, Generic[_TRequest, _TResponse]):
 
 @runtime_checkable
 class HandlerCallDetails(Protocol):
+    """
+    Describes an RPC that has just arrived for service.
+
+    Attributes:
+      method: The method name of the RPC.
+      invocation_metadata: The :term:`metadata` sent by the client.
+    """
     method: str
     invocation_metadata: _Metadata
 

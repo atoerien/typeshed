@@ -85,8 +85,22 @@ class _EOF:
 
 EOF: Final[_EOF]
 
-def init_grpc_aio() -> None: ...
-def shutdown_grpc_aio() -> None: ...
+def init_grpc_aio() -> None:
+    """
+    Initializes the gRPC AsyncIO module.
+
+    Expected to be invoked on critical class constructors.
+    E.g., AioChannel, AioServer.
+    """
+    ...
+def shutdown_grpc_aio() -> None:
+    """
+    Shuts down the gRPC AsyncIO module.
+
+    Expected to be invoked on critical class destructors.
+    E.g., AioChannel, AioServer.
+    """
+    ...
 
 # Exceptions:
 
@@ -128,14 +142,61 @@ class AioRpcError(RpcError):
         trailing_metadata: Metadata | None = None,
         details: str | None = None,
         debug_error_string: str | None = None,
-    ) -> None: ...
-    def code(self) -> StatusCode: ...
-    def details(self) -> str | None: ...
-    def initial_metadata(self) -> Metadata | MaybeNone: ...
+    ) -> None:
+        """
+        Constructor.
+
+        Args:
+          code: The status code with which the RPC has been finalized.
+          initial_metadata: Optional initial metadata that could be sent by the
+            Server.
+          trailing_metadata: Optional metadata that could be sent by the Server.
+          details: Optional details explaining the reason of the error.
+          debug_error_string: Optional string
+        """
+        ...
+    def code(self) -> StatusCode:
+        """
+        Accesses the status code sent by the server.
+
+        Returns:
+          The `grpc.StatusCode` status code.
+        """
+        ...
+    def details(self) -> str | None:
+        """
+        Accesses the details sent by the server.
+
+        Returns:
+          The description of the error.
+        """
+        ...
+    def initial_metadata(self) -> Metadata | MaybeNone:
+        """
+        Accesses the initial metadata sent by the server.
+
+        Returns:
+          The initial metadata received.
+        """
+        ...
     # AioRpcError returns the async Metadata, overriding the synchronous
     # grpc.RpcError.trailing_metadata() -> tuple[_Metadatum, ...].
-    def trailing_metadata(self) -> Metadata | MaybeNone: ...  # type: ignore[override]
-    def debug_error_string(self) -> str | None: ...
+    def trailing_metadata(self) -> Metadata | MaybeNone:
+        """
+        Accesses the trailing metadata sent by the server.
+
+        Returns:
+          The trailing metadata received.
+        """
+        ...
+    def debug_error_string(self) -> str | None:
+        """
+        Accesses the debug error string sent by the server.
+
+        Returns:
+          The debug error string received.
+        """
+        ...
 
 # Create Client:
 
