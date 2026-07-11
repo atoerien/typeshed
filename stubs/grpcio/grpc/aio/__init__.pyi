@@ -22,7 +22,7 @@ from collections.abc import (
 )
 from concurrent import futures
 from types import TracebackType
-from typing import Any, Generic, NoReturn, TypeAlias, TypeVar, overload, type_check_only
+from typing import Any, Final, Generic, Literal, NoReturn, TypeAlias, TypeVar, overload, type_check_only
 from typing_extensions import Self
 
 from grpc import (
@@ -39,8 +39,54 @@ from grpc import (
     _Options,
 )
 
+__all__ = (
+    "EOF",
+    "AbortError",
+    "AioRpcError",
+    "BaseError",
+    "Call",
+    "Channel",
+    "ClientCallDetails",
+    "ClientInterceptor",
+    "InterceptedUnaryUnaryCall",
+    "InternalError",
+    "Metadata",
+    "RpcContext",
+    "Server",
+    "ServerInterceptor",
+    "ServicerContext",
+    "StreamStreamCall",
+    "StreamStreamClientInterceptor",
+    "StreamStreamMultiCallable",
+    "StreamUnaryCall",
+    "StreamUnaryClientInterceptor",
+    "StreamUnaryMultiCallable",
+    "UnaryStreamCall",
+    "UnaryStreamClientInterceptor",
+    "UnaryStreamMultiCallable",
+    "UnaryUnaryCall",
+    "UnaryUnaryClientInterceptor",
+    "UnaryUnaryMultiCallable",
+    "UsageError",
+    "init_grpc_aio",
+    "insecure_channel",
+    "secure_channel",
+    "server",
+    "shutdown_grpc_aio",
+)
+
 _TRequest = TypeVar("_TRequest")
 _TResponse = TypeVar("_TResponse")
+
+@type_check_only
+class _EOF:
+    def __bool__(self) -> Literal[False]: ...
+    def __len__(self) -> Literal[0]: ...
+
+EOF: Final[_EOF]
+
+def init_grpc_aio() -> None: ...
+def shutdown_grpc_aio() -> None: ...
 
 # Exceptions:
 
@@ -78,49 +124,18 @@ class AioRpcError(RpcError):
     def __init__(
         self,
         code: StatusCode,
-        initial_metadata: Metadata,
-        trailing_metadata: Metadata,
+        initial_metadata: Metadata | None = None,
+        trailing_metadata: Metadata | None = None,
         details: str | None = None,
         debug_error_string: str | None = None,
-    ) -> None:
-        """
-        Constructor.
-
-        Args:
-          code: The status code with which the RPC has been finalized.
-          initial_metadata: Optional initial metadata that could be sent by the
-            Server.
-          trailing_metadata: Optional metadata that could be sent by the Server.
-          details: Optional details explaining the reason of the error.
-          debug_error_string: Optional string
-        """
-        ...
-    def debug_error_string(self) -> str:
-        """
-        Accesses the debug error string sent by the server.
-
-        Returns:
-          The debug error string received.
-        """
-        ...
-    def initial_metadata(self) -> Metadata | MaybeNone:
-        """
-        Accesses the initial metadata sent by the server.
-
-        Returns:
-          The initial metadata received.
-        """
-        ...
+    ) -> None: ...
+    def code(self) -> StatusCode: ...
+    def details(self) -> str | None: ...
+    def initial_metadata(self) -> Metadata | MaybeNone: ...
     # AioRpcError returns the async Metadata, overriding the synchronous
     # grpc.RpcError.trailing_metadata() -> tuple[_Metadatum, ...].
-    def trailing_metadata(self) -> Metadata | MaybeNone:
-        """
-        Accesses the trailing metadata sent by the server.
-
-        Returns:
-          The trailing metadata received.
-        """
-        ...
+    def trailing_metadata(self) -> Metadata | MaybeNone: ...  # type: ignore[override]
+    def debug_error_string(self) -> str | None: ...
 
 # Create Client:
 
