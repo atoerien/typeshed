@@ -110,7 +110,7 @@ python-dateutil==2.9.*
 resampy==0.4.*
 jsonnet==0.22.*
 pyserial[cp2110]==3.5.*
-croniter==6.2.3
+croniter==6.2.4
 editdistance==0.8.*
 uWSGI==2.0.*
 geopandas==1.1.4
@@ -134,7 +134,7 @@ psutil==7.2.2
 tqdm[slack,telegram]==4.68.*
 PyScreeze==1.0.1
 parsimonious==0.11.*
-grpcio==1.*
+grpcio~=1.82.1
 Send2Trash==2.1.*
 grpcio-status==1.*
 inifile==0.4.*
@@ -189,7 +189,7 @@ PyAutoGUI==0.9.*
 nanoleafapi==2.1.*
 networkx==3.6.1
 vobject~=0.9.9
-regex==2026.6.28
+regex==2026.7.10
 usersettings==1.1.*
 keyboard==0.13.*
 django-import-export==4.4.*
