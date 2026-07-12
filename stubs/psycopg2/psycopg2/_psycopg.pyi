@@ -904,6 +904,7 @@ class Xid:
         ...
 
 _T_cur = TypeVar("_T_cur", bound=cursor)
+_Lobject: TypeAlias = lobject
 
 @disjoint_base
 class connection:
@@ -935,10 +936,8 @@ class connection:
         """A set of typecasters to convert binary values."""
         ...
     @property
-    def closed(self) -> int:
-        """True if the connection is closed."""
-        ...
-    cursor_factory: Callable[[connection, str | bytes | None], cursor]
+    def closed(self) -> int: ...
+    cursor_factory: Callable[[connection, str | bytes | None], _Cursor]
     @property
     def dsn(self) -> str:
         """The current connection string."""
@@ -1018,20 +1017,7 @@ class connection:
     @overload
     def cursor(
         self, name: str | bytes | None = None, cursor_factory: None = None, withhold: bool = False, scrollable: bool | None = None
-    ) -> cursor:
-        """
-        cursor(name=None, cursor_factory=extensions.cursor, withhold=False) -- new cursor
-
-        Return a new cursor.
-
-        The ``cursor_factory`` argument can be used to
-        create non-standard cursors by passing a class different from the
-        default. Note that the new class *should* be a sub-class of
-        `extensions.cursor`.
-
-        :rtype: `extensions.cursor`
-        """
-        ...
+    ) -> _Cursor: ...
     @overload
     def cursor(
         self,
@@ -1113,37 +1099,13 @@ class connection:
         mode: str | None = ...,
         new_oid: int = ...,
         new_file: str | None = ...,
-        lobject_factory: type[lobject] = ...,
-    ) -> lobject:
-        """
-        lobject(oid=0, mode=0, new_oid=0, new_file=None,
-               lobject_factory=extensions.lobject) -- new lobject
-
-        Return a new lobject.
-
-        The ``lobject_factory`` argument can be used
-        to create non-standard lobjects by passing a class different from the
-        default. Note that the new class *should* be a sub-class of
-        `extensions.lobject`.
-
-        :rtype: `extensions.lobject`
-        """
-        ...
-    def poll(self) -> int:
-        """poll() -> int -- Advance the connection or query process without blocking."""
-        ...
-    def reset(self) -> None:
-        """reset() -- Reset current connection to defaults."""
-        ...
-    def rollback(self) -> None:
-        """rollback() -- Roll back all changes done to database."""
-        ...
-    def set_client_encoding(self, encoding: str) -> None:
-        """set_client_encoding(encoding) -- Set client encoding to ``encoding``."""
-        ...
-    def set_isolation_level(self, level: int | None) -> None:
-        """set_isolation_level(level) -- Switch isolation level to ``level``."""
-        ...
+        lobject_factory: type[_Lobject] = ...,
+    ) -> _Lobject: ...
+    def poll(self) -> int: ...
+    def reset(self) -> None: ...
+    def rollback(self) -> None: ...
+    def set_client_encoding(self, encoding: str) -> None: ...
+    def set_isolation_level(self, level: int | None) -> None: ...
     def set_session(
         self,
         isolation_level: str | bytes | int | None = ...,

@@ -20,7 +20,7 @@ from collections.abc import Callable, Generator, Iterable, Iterator, Sequence
 from contextlib import contextmanager
 from enum import Enum
 from types import TracebackType
-from typing import Any, Generic, Literal, ParamSpec, TypeVar, overload
+from typing import Any, Generic, Literal, ParamSpec, TypeAlias, TypeVar, overload
 from typing_extensions import Self
 
 from google.protobuf.message import Message
@@ -2088,6 +2088,7 @@ class name_scope(metaclass=abc.ABCMeta):
 
 _P = ParamSpec("_P")
 _R = TypeVar("_R")
+_NameScope: TypeAlias = name_scope
 
 class Module(AutoTrackable):
     """
@@ -2169,9 +2170,7 @@ class Module(AutoTrackable):
         """
         ...
     @property
-    def name_scope(self) -> name_scope:
-        """Returns a `tf.name_scope` instance for this class."""
-        ...
+    def name_scope(self) -> _NameScope: ...
     # Documentation only specifies these as returning Sequence. Actual
     # implementation does tuple.
     @property

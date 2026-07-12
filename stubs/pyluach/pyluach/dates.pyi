@@ -18,6 +18,7 @@ only. No attributes should be changed once they're created.
 """
 
 import abc
+import builtins
 import datetime
 from collections.abc import Generator
 from enum import Enum
@@ -275,48 +276,9 @@ class CalendarDateMixin:
     day: int
     def __init__(self, year: int, month: int, day: int, jd: float | None = None) -> None: ...
     def __iter__(self) -> Generator[int]: ...
-    def tuple(self) -> tuple[int, int, int]:
-        """
-        Return date as tuple.
-
-        Returns
-        -------
-        tuple of ints
-            A tuple of ints in the form ``(year, month, day)``.
-        """
-        ...
-    def dict(self) -> _DateDict:
-        """
-        Return the date as a dictionary.
-
-        Returns
-        -------
-        dict
-            A dictionary in the form
-            ``{'year': int, 'month': int, 'day': int}``.
-        """
-        ...
-    def replace(self, year: int | None = None, month: int | None = None, day: int | None = None) -> Self:
-        """
-        Return new date with new values for the specified field.
-
-        Parameters
-        ----------
-        year : int, optional
-        month: int, optional
-        day : int, optional
-
-        Returns
-        -------
-        CalendarDateMixin
-            Any date that inherits from CalendarDateMixin
-            (``GregorianDate``, ````HebrewDate``).
-
-        Raises
-        ValueError
-            Raises a ``ValueError`` if the new date does not exist.
-        """
-        ...
+    def tuple(self) -> builtins.tuple[int, int, int]: ...
+    def dict(self) -> _DateDict: ...
+    def replace(self, year: int | None = None, month: int | None = None, day: int | None = None) -> Self: ...
 
 class JulianDay(BaseDate):
     """

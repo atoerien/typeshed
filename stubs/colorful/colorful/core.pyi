@@ -168,9 +168,7 @@ class Colorful:
     def __init__(self, colormode: _ColorModeType | None = None, colorpalette: _str | _PaletteType | None = None) -> None: ...
 
     @property
-    def colorpalette(self) -> SupportsItems[str, str | tuple[int, int, int]] | None:
-        """Get the current used color palette"""
-        ...
+    def colorpalette(self) -> SupportsItems[_str, _str | tuple[int, int, int]] | None: ...
     @colorpalette.setter
     def colorpalette(self, colorpalette: _str | _PaletteType) -> None:
         """Get the current used color palette"""

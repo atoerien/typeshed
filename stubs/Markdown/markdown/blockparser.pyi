@@ -12,7 +12,7 @@ from collections.abc import Iterable
 from typing import Any, TypeVar
 from xml.etree.ElementTree import Element, ElementTree
 
-from markdown import blockprocessors, util
+from markdown import blockprocessors as _blockprocessors, util
 from markdown.core import Markdown
 
 _T = TypeVar("_T")
@@ -45,13 +45,7 @@ class State(list[_T]):
         ...
 
 class BlockParser:
-    """
-    Parse Markdown blocks into an `ElementTree` object.
-
-    A wrapper class that stitches the various `BlockProcessors` together,
-    looping through them and creating an `ElementTree` object.
-    """
-    blockprocessors: util.Registry[blockprocessors.BlockProcessor]
+    blockprocessors: util.Registry[_blockprocessors.BlockProcessor]
     state: State[Any]  # TODO: possible to get rid of Any?
     md: Markdown
     def __init__(self, md: Markdown) -> None:
