@@ -58,7 +58,12 @@ class Pool:
     ) -> None: ...
     @staticmethod
     def Process(ctx: DefaultContext, *args: Any, **kwds: Any) -> _Process: ...
-    def apply(self, func: Callable[..., _T], args: Iterable[Any] = (), kwds: Mapping[str, Any] = {}) -> _T: ...
+    def apply(self, func: Callable[..., _T], args: Iterable[Any] = (), kwds: Mapping[str, Any] = {}) -> _T:
+        """
+        Equivalent of `func(*args, **kwds)`.
+        Pool must be running.
+        """
+        ...
     def apply_async(
         self,
         func: Callable[..., _T],

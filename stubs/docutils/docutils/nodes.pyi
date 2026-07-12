@@ -59,9 +59,19 @@ class Node:
     line: int | None
 
     @property
-    def document(self) -> _Document | None: ...
+    def document(self) -> _Document | None:
+        """
+        Return the `document` root node of the tree containing this Node.
+        
+        """
+        ...
     @document.setter
-    def document(self, value: _Document) -> None: ...
+    def document(self, value: _Document) -> None:
+        """
+        Return the `document` root node of the tree containing this Node.
+        
+        """
+        ...
 
     def __bool__(self) -> Literal[True]:
         """

@@ -20,6 +20,34 @@ __all__ = ["Markdown", "markdown", "markdownFromFile"]
 logger: Logger
 
 class Markdown:
+    """
+    A parser which converts Markdown to HTML.
+
+    Attributes:
+        Markdown.tab_length (int): The number of spaces which correspond to a single tab. Default: `4`.
+        Markdown.ESCAPED_CHARS (list[str]): List of characters which get the backslash escape treatment.
+        Markdown.block_level_elements (list[str]): List of HTML tags which get treated as block-level elements.
+            See [`markdown.util.BLOCK_LEVEL_ELEMENTS`][] for the full list of elements.
+        Markdown.registeredExtensions (list[Extension]): List of extensions which have called
+            [`registerExtension`][markdown.Markdown.registerExtension] during setup.
+        Markdown.doc_tag (str): Element used to wrap document. Default: `div`.
+        Markdown.stripTopLevelTags (bool): Indicates whether the `doc_tag` should be removed. Default: 'True'.
+        Markdown.references (dict[str, tuple[str, str]]): A mapping of link references found in a parsed document
+             where the key is the reference name and the value is a tuple of the URL and title.
+        Markdown.htmlStash (util.HtmlStash): The instance of the `HtmlStash` used by an instance of this class.
+        Markdown.output_formats (dict[str, Callable[xml.etree.ElementTree.Element]]): A mapping of known output
+             formats by name and their respective serializers. Each serializer must be a callable which accepts an
+            [`Element`][xml.etree.ElementTree.Element] and returns a `str`.
+        Markdown.output_format (str): The output format set by
+            [`set_output_format`][markdown.Markdown.set_output_format].
+        Markdown.serializer (Callable[xml.etree.ElementTree.Element]): The serializer set by
+            [`set_output_format`][markdown.Markdown.set_output_format].
+        Markdown.preprocessors (util.Registry): A collection of [`preprocessors`][markdown.preprocessors].
+        Markdown.parser (blockparser.BlockParser): A collection of [`blockprocessors`][markdown.blockprocessors].
+        Markdown.inlinePatterns (util.Registry): A collection of [`inlinepatterns`][markdown.inlinepatterns].
+        Markdown.treeprocessors (util.Registry): A collection of [`treeprocessors`][markdown.treeprocessors].
+        Markdown.postprocessors (util.Registry): A collection of [`postprocessors`][markdown.postprocessors].
+    """
     preprocessors: Registry[_preprocessors.Preprocessor]
     inlinePatterns: Registry[inlinepatterns.Pattern]
     treeprocessors: Registry[_treeprocessors.Treeprocessor]

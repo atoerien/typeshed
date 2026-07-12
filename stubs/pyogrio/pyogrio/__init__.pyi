@@ -1,3 +1,5 @@
+"""Bulk-oriented vector I/O using OGR."""
+
 from .core import (
     __gdal_geos_version__ as __gdal_geos_version__,
     __gdal_version__ as __gdal_version__,

@@ -45,6 +45,12 @@ class State(list[_T]):
         ...
 
 class BlockParser:
+    """
+    Parse Markdown blocks into an `ElementTree` object.
+
+    A wrapper class that stitches the various `BlockProcessors` together,
+    looping through them and creating an `ElementTree` object.
+    """
     blockprocessors: util.Registry[_blockprocessors.BlockProcessor]
     state: State[Any]  # TODO: possible to get rid of Any?
     md: Markdown

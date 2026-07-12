@@ -1,3 +1,10 @@
+"""
+This module contains the base implementation.
+
+The actual interface to keyboard classes is defined here, but the
+implementation is located in a platform dependent module.
+"""
+
 import builtins
 import contextlib
 import enum
@@ -152,6 +159,7 @@ class Key(enum.Enum):
     scroll_lock = cast(KeyCode, ...)
 
 class Controller:
+    """A controller for sending virtual keyboard events to the system."""
     _KeyCode: ClassVar[builtins.type[KeyCode]]  # undocumented
     _Key: ClassVar[builtins.type[Key]]  # undocumented
 

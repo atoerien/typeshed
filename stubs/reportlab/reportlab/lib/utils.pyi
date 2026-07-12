@@ -1,3 +1,5 @@
+"""Gazillions of miscellaneous internal utility functions"""
+
 import datetime as _datetime
 import zipimport
 from _typeshed import Incomplete, SupportsItems
@@ -302,6 +304,7 @@ def makeFileName(s):
     ...
 
 class FixedOffsetTZ(_datetime.tzinfo):
+    """Fixed offset in minutes east from UTC."""
     def __init__(self, h: float, m: float, name: str | None) -> None: ...
     def utcoffset(self, dt: _datetime.datetime | None) -> _datetime.timedelta: ...
     def tzname(self, dt: _datetime.datetime | None) -> str | None: ...

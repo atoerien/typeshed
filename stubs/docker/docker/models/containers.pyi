@@ -1616,8 +1616,74 @@ class ContainerCollection(Collection[Container]):
         since: str | None = None,
         sparse: bool = False,
         ignore_removed: bool = False,
-    ) -> builtins.list[Container]: ...
-    def prune(self, filters: dict[str, Any] | None = None) -> dict[str, Any]: ...
+    ) -> builtins.list[Container]:
+        """
+        List containers. Similar to the ``docker ps`` command.
+
+        Args:
+            all (bool): Show all containers. Only running containers are shown
+                by default
+            since (str): Show only containers created since Id or Name, include
+                non-running ones
+            before (str): Show only container created before Id or Name,
+                include non-running ones
+            limit (int): Show `limit` last created containers, include
+                non-running ones
+            filters (dict): Filters to be processed on the image list.
+                Available filters:
+
+                - `exited` (int): Only containers with specified exit code
+                - `status` (str): One of ``restarting``, ``running``,
+                    ``paused``, ``exited``
+                - `label` (str|list): format either ``"key"``, ``"key=value"``
+                    or a list of such.
+                - `id` (str): The id of the container.
+                - `name` (str): The name of the container.
+                - `ancestor` (str): Filter by container ancestor. Format of
+                    ``<image-name>[:tag]``, ``<image-id>``, or
+                    ``<image@digest>``.
+                - `before` (str): Only containers created before a particular
+                    container. Give the container name or id.
+                - `since` (str): Only containers created after a particular
+                    container. Give container name or id.
+
+                A comprehensive list can be found in the documentation for
+                `docker ps
+                <https://docs.docker.com/engine/reference/commandline/ps>`_.
+
+            sparse (bool): Do not inspect containers. Returns partial
+                information, but guaranteed not to block. Use
+                :py:meth:`Container.reload` on resulting objects to retrieve
+                all attributes. Default: ``False``
+            ignore_removed (bool): Ignore failures due to missing containers
+                when attempting to inspect containers from the original list.
+                Set to ``True`` if race conditions are likely. Has no effect
+                if ``sparse=True``. Default: ``False``
+
+        Returns:
+            (list of :py:class:`Container`)
+
+        Raises:
+            :py:class:`docker.errors.APIError`
+                If the server returns an error.
+        """
+        ...
+    def prune(self, filters: dict[str, Any] | None = None) -> dict[str, Any]:
+        """
+        Delete stopped containers
+
+        Args:
+            filters (dict): Filters to process on the prune list.
+
+        Returns:
+            (dict): A dict containing a list of deleted container IDs and
+                the amount of disk space reclaimed in bytes.
+
+        Raises:
+            :py:class:`docker.errors.APIError`
+                If the server returns an error.
+        """
+        ...
 
 RUN_CREATE_KWARGS: list[str]
 RUN_HOST_CONFIG_KWARGS: list[str]

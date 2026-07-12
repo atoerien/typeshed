@@ -1,3 +1,5 @@
+"""Astronomical calculations for Python"""
+
 import builtins
 from _typeshed import Unused
 from datetime import datetime as _datetime
@@ -93,9 +95,15 @@ class Date(float):
     @overload
     def __new__(cls, date: _DateInitType, /) -> Date: ...
 
-    def triple(self) -> builtins.tuple[int, int, float]: ...
-    def tuple(self) -> builtins.tuple[int, int, int, int, int, float]: ...
-    def datetime(self) -> _datetime: ...
+    def triple(self) -> builtins.tuple[int, int, float]:
+        """Return the date as a (year, month, day_with_fraction) tuple"""
+        ...
+    def tuple(self) -> builtins.tuple[int, int, int, int, int, float]:
+        """Return the date as a (year, month, day, hour, minute, second) tuple"""
+        ...
+    def datetime(self) -> _datetime:
+        """Return the date as a (year, month, day, hour, minute, second) tuple"""
+        ...
 
 @disjoint_base
 class Observer:

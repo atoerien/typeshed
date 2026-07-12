@@ -1,3 +1,5 @@
+"""Represents the Cache-Control header"""
+
 import builtins
 from _typeshed import SupportsItems
 from collections.abc import Callable

@@ -2170,7 +2170,9 @@ class Module(AutoTrackable):
         """
         ...
     @property
-    def name_scope(self) -> _NameScope: ...
+    def name_scope(self) -> _NameScope:
+        """Returns a `tf.name_scope` instance for this class."""
+        ...
     # Documentation only specifies these as returning Sequence. Actual
     # implementation does tuple.
     @property

@@ -1,3 +1,5 @@
+"""Small, fast HTTP client library for Python."""
+
 import builtins
 import email.message
 import http.client

@@ -19,6 +19,38 @@ class LogConfigTypesEnum:
     NONE: Final = "none"
 
 class LogConfig(DictType[Any]):
+    """
+    Configure logging for a container, when provided as an argument to
+    :py:meth:`~docker.api.container.ContainerApiMixin.create_host_config`.
+    You may refer to the
+    `official logging driver documentation <https://docs.docker.com/config/containers/logging/configure/>`_
+    for more information.
+
+    Args:
+        type (str): Indicate which log driver to use. A set of valid drivers
+            is provided as part of the :py:attr:`LogConfig.types`
+            enum. Other values may be accepted depending on the engine version
+            and available logging plugins.
+        config (dict): A driver-dependent configuration dictionary. Please
+            refer to the driver's documentation for a list of valid config
+            keys.
+
+    Example:
+
+        >>> from docker.types import LogConfig
+        >>> lc = LogConfig(type=LogConfig.types.JSON, config={
+        ...   'max-size': '1g',
+        ...   'labels': 'production_status,geo'
+        ... })
+        >>> hc = client.create_host_config(log_config=lc)
+        >>> container = client.create_container('busybox', 'true',
+        ...    host_config=hc)
+        >>> client.inspect_container(container)['HostConfig']['LogConfig']
+        {
+            'Type': 'json-file',
+            'Config': {'labels': 'production_status,geo', 'max-size': '1g'}
+        }
+    """
     types: builtins.type[LogConfigTypesEnum]
     def __init__(
         self, *, type: str = ..., Type: str = ..., config: dict[str, str] = ..., Config: dict[str, str] = ...
