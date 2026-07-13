@@ -607,10 +607,177 @@ def emit(
     skip_sid: str | list[str] | None = None,
     callback: Callable[..., Incomplete] | None = None,
     broadcast: bool = False,
-) -> None: ...
-def send(message: str, **kwargs) -> None: ...
-def join_room(room: str, sid: str | None = None, namespace: str | None = None) -> None: ...
-def leave_room(room: str, sid: str | None = None, namespace: str | None = None) -> None: ...
-def close_room(room: str, namespace: str | None = None) -> None: ...
-def rooms(sid: str | None = None, namespace: str | None = None) -> list[str]: ...
-def disconnect(sid: str | None = None, namespace: str | None = None, silent: bool = False) -> None: ...
+) -> None:
+    """
+    Emit a SocketIO event.
+
+    This function emits a SocketIO event to one or more connected clients. A
+    JSON blob can be attached to the event as payload. This is a function that
+    can only be called from a SocketIO event handler, as in obtains some
+    information from the current client context. Example::
+
+        @socketio.on('my event')
+        def handle_my_custom_event(json):
+            emit('my response', {'data': 42})
+
+    :param event: The name of the user event to emit.
+    :param args: A dictionary with the JSON data to send as payload.
+    :param namespace: The namespace under which the message is to be sent.
+                      Defaults to the namespace used by the originating event.
+                      A ``'/'`` can be used to explicitly specify the global
+                      namespace.
+    :param callback: Callback function to invoke with the client's
+                     acknowledgement.
+    :param broadcast: ``True`` to send the message to all clients, or ``False``
+                      to only reply to the sender of the originating event.
+    :param to: Send the message to all the users in the given room, or to the
+               user with the given session ID. If this argument is not set and
+               ``broadcast`` is ``False``, then the message is sent only to the
+               originating user.
+    :param include_self: ``True`` to include the sender when broadcasting or
+                         addressing a room, or ``False`` to send to everyone
+                         but the sender.
+    :param skip_sid: The session id of a client to ignore when broadcasting
+                     or addressing a room. This is typically set to the
+                     originator of the message, so that everyone except
+                     that client receive the message. To skip multiple sids
+                     pass a list.
+    :param ignore_queue: Only used when a message queue is configured. If
+                         set to ``True``, the event is emitted to the
+                         clients directly, without going through the queue.
+                         This is more efficient, but only works when a
+                         single server process is used, or when there is a
+                         single addressee. It is recommended to always leave
+                         this parameter with its default value of ``False``.
+    """
+    ...
+def send(message: str, **kwargs) -> None:
+    """
+    Send a SocketIO message.
+
+    This function sends a simple SocketIO message to one or more connected
+    clients. The message can be a string or a JSON blob. This is a simpler
+    version of ``emit()``, which should be preferred. This is a function that
+    can only be called from a SocketIO event handler.
+
+    :param message: The message to send, either a string or a JSON blob.
+    :param json: ``True`` if ``message`` is a JSON blob, ``False``
+                     otherwise.
+    :param namespace: The namespace under which the message is to be sent.
+                      Defaults to the namespace used by the originating event.
+                      An empty string can be used to use the global namespace.
+    :param callback: Callback function to invoke with the client's
+                     acknowledgement.
+    :param broadcast: ``True`` to send the message to all connected clients, or
+                      ``False`` to only reply to the sender of the originating
+                      event.
+    :param to: Send the message to all the users in the given room, or to the
+               user with the given session ID. If this argument is not set and
+               ``broadcast`` is ``False``, then the message is sent only to the
+               originating user.
+    :param include_self: ``True`` to include the sender when broadcasting or
+                         addressing a room, or ``False`` to send to everyone
+                         but the sender.
+    :param skip_sid: The session id of a client to ignore when broadcasting
+                     or addressing a room. This is typically set to the
+                     originator of the message, so that everyone except
+                     that client receive the message. To skip multiple sids
+                     pass a list.
+    :param ignore_queue: Only used when a message queue is configured. If
+                         set to ``True``, the event is emitted to the
+                         clients directly, without going through the queue.
+                         This is more efficient, but only works when a
+                         single server process is used, or when there is a
+                         single addressee. It is recommended to always leave
+                         this parameter with its default value of ``False``.
+    """
+    ...
+def join_room(room: str, sid: str | None = None, namespace: str | None = None) -> None:
+    """
+    Join a room.
+
+    This function puts the user in a room, under the current namespace. The
+    user and the namespace are obtained from the event context. This is a
+    function that can only be called from a SocketIO event handler. Example::
+
+        @socketio.on('join')
+        def on_join(data):
+            username = session['username']
+            room = data['room']
+            join_room(room)
+            send(username + ' has entered the room.', to=room)
+
+    :param room: The name of the room to join.
+    :param sid: The session id of the client. If not provided, the client is
+                obtained from the request context.
+    :param namespace: The namespace for the room. If not provided, the
+                      namespace is obtained from the request context.
+    """
+    ...
+def leave_room(room: str, sid: str | None = None, namespace: str | None = None) -> None:
+    """
+    Leave a room.
+
+    This function removes the user from a room, under the current namespace.
+    The user and the namespace are obtained from the event context. Example::
+
+        @socketio.on('leave')
+        def on_leave(data):
+            username = session['username']
+            room = data['room']
+            leave_room(room)
+            send(username + ' has left the room.', to=room)
+
+    :param room: The name of the room to leave.
+    :param sid: The session id of the client. If not provided, the client is
+                obtained from the request context.
+    :param namespace: The namespace for the room. If not provided, the
+                      namespace is obtained from the request context.
+    """
+    ...
+def close_room(room: str, namespace: str | None = None) -> None:
+    """
+    Close a room.
+
+    This function removes any users that are in the given room and then deletes
+    the room from the server.
+
+    :param room: The name of the room to close.
+    :param namespace: The namespace for the room. If not provided, the
+                      namespace is obtained from the request context.
+    """
+    ...
+def rooms(sid: str | None = None, namespace: str | None = None) -> list[str]:
+    """
+    Return a list of the rooms the client is in.
+
+    This function returns all the rooms the client has entered, including its
+    own room, assigned by the Socket.IO server.
+
+    :param sid: The session id of the client. If not provided, the client is
+                obtained from the request context.
+    :param namespace: The namespace for the room. If not provided, the
+                      namespace is obtained from the request context.
+    """
+    ...
+def disconnect(sid: str | None = None, namespace: str | None = None, silent: bool = False) -> None:
+    """
+    Disconnect the client.
+
+    This function terminates the connection with the client. As a result of
+    this call the client will receive a disconnect event. Example::
+
+        @socketio.on('message')
+        def receive_message(msg):
+            if is_banned(session['username']):
+                disconnect()
+            else:
+                # ...
+
+    :param sid: The session id of the client. If not provided, the client is
+                obtained from the request context.
+    :param namespace: The namespace for the room. If not provided, the
+                      namespace is obtained from the request context.
+    :param silent: this option is deprecated.
+    """
+    ...
