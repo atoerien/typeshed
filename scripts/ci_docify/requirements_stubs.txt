@@ -202,5 +202,5 @@ lzstring==1.0.*
 paramiko==5.0.*
 pywin32==312.*
 xlrd==2.0.*
-django-filter==25.2.*
+django-filter==26.1.*
 opentracing==2.4.*
