@@ -84,7 +84,7 @@ class SCPClient:
         @param buff_size: size of the scp send buffer.
         @type buff_size: int
         @param socket_timeout: channel socket timeout in seconds
-        @type socket_timeout: float
+        @type socket_timeout: Optional[float]
         @param progress: callback - called with (filename, size, sent) during
             transfers
         @param progress4: callback - called with (filename, size, sent, peername)
