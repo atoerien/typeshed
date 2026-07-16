@@ -20,6 +20,80 @@ from .io._geoarrow import GeoArrowArray
 from .plotting import plot_series
 
 class GeoSeries(GeoPandasBase, pd.Series[BaseGeometry]):  # type: ignore[type-var,misc]  # pyright: ignore[reportInvalidTypeArguments]  # ty:ignore[invalid-type-arguments]
+    """
+    A Series object designed to store shapely geometry objects.
+
+    Parameters
+    ----------
+    data : array-like, dict, scalar value
+        The geometries to store in the GeoSeries.
+    index : array-like or Index
+        The index for the GeoSeries.
+    crs : value (optional)
+        Coordinate Reference System of the geometry objects. Can be anything accepted by
+        :meth:`pyproj.CRS.from_user_input() <pyproj.crs.CRS.from_user_input>`,
+        such as an authority string (eg "EPSG:4326") or a WKT string.
+
+    kwargs
+        Additional arguments passed to the Series constructor,
+         e.g. ``name``.
+
+    Examples
+    --------
+    >>> from shapely.geometry import Point
+    >>> s = geopandas.GeoSeries([Point(1, 1), Point(2, 2), Point(3, 3)])
+    >>> s
+    0    POINT (1 1)
+    1    POINT (2 2)
+    2    POINT (3 3)
+    dtype: geometry
+
+    >>> s = geopandas.GeoSeries(
+    ...     [Point(1, 1), Point(2, 2), Point(3, 3)], crs="EPSG:3857"
+    ... )
+    >>> s.crs  # doctest: +SKIP
+    <Projected CRS: EPSG:3857>
+    Name: WGS 84 / Pseudo-Mercator
+    Axis Info [cartesian]:
+    - X[east]: Easting (metre)
+    - Y[north]: Northing (metre)
+    Area of Use:
+    - name: World - 85°S to 85°N
+    - bounds: (-180.0, -85.06, 180.0, 85.06)
+    Coordinate Operation:
+    - name: Popular Visualisation Pseudo-Mercator
+    - method: Popular Visualisation Pseudo Mercator
+    Datum: World Geodetic System 1984
+    - Ellipsoid: WGS 84
+    - Prime Meridian: Greenwich
+
+    >>> s = geopandas.GeoSeries(
+    ...    [Point(1, 1), Point(2, 2), Point(3, 3)], index=["a", "b", "c"], crs=4326
+    ... )
+    >>> s
+    a    POINT (1 1)
+    b    POINT (2 2)
+    c    POINT (3 3)
+    dtype: geometry
+
+    >>> s.crs
+    <Geographic 2D CRS: EPSG:4326>
+    Name: WGS 84
+    Axis Info [ellipsoidal]:
+    - Lat[north]: Geodetic latitude (degree)
+    - Lon[east]: Geodetic longitude (degree)
+    Area of Use:
+    - name: World.
+    - bounds: (-180.0, -90.0, 180.0, 90.0)
+    Datum: World Geodetic System 1984 ensemble
+    - Ellipsoid: WGS 84
+    - Prime Meridian: Greenwich
+
+    See Also
+    --------
+    GeoDataFrame
+    pandas.Series
+    """
     # Override the weird annotation of Series.__new__ in pandas-stubs
     def __new__(
         self,

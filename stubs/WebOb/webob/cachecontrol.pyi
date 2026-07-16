@@ -45,6 +45,11 @@ class exists_property(Generic[_ScopeT]):
     def __delete__(self, obj: CacheControl[_ScopeT]) -> None: ...
 
 class value_property(Generic[_T, _DefaultT, _NoneLiteral, _ScopeT]):
+    """
+    Represents a property that has a value in the Cache-Control header.
+
+    When no value is actually given, the value of self.none is returned.
+    """
     def __init__(self, prop: str, default: _DefaultT = None, none: _NoneLiteral = None, type: _ScopeT = None) -> None: ...  # type: ignore[assignment]  # ty:ignore[invalid-parameter-default]
 
     @overload
