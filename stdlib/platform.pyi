@@ -123,7 +123,7 @@ if sys.version_info >= (3, 12):
             """Create new instance of uname_result_base(system, node, release, version, machine)"""
             ...
         @property
-        def processor(self) -> str: ...
+        def processor(self) -> str: ...  # ty:ignore[invalid-named-tuple-override]
 
 else:
     @disjoint_base
@@ -139,7 +139,7 @@ else:
             """Create new instance of uname_result_base(system, node, release, version, machine)"""
             ...
         @property
-        def processor(self) -> str: ...
+        def processor(self) -> str: ...  # ty:ignore[invalid-named-tuple-override]
 
 def uname() -> uname_result:
     """
