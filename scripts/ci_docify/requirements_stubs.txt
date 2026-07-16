@@ -19,7 +19,7 @@ aws-xray-sdk==2.15.*
 translationstring==1.4.*
 seaborn==0.13.2
 hnswlib==0.8.*
-hdbcli==2.25.*
+hdbcli==2.29.*
 pyaudio==0.2.*
 fanstatic==1.7.*
 psycopg2==2.9.12
