@@ -4,7 +4,7 @@ typing-extensions==4.15.0
 
 pyluach==2.3.*
 PySocks==1.7.1
-braintree==4.44.*
+braintree==4.45.*
 RPi.GPIO==0.7.*
 grpcio~=1.82.1
 datauri==1.1.*
@@ -20,7 +20,7 @@ tzdata==2026.*
 click-default-group==1.2.*
 simple-websocket==1.1.*
 zxcvbn==4.5.*
-docker==7.1.*
+docker==7.2.*
 cffi==2.0.*
 html5lib[all]==1.1.*
 bleach[css]==6.4.*
@@ -58,11 +58,11 @@ retry==0.9.*
 polib==1.2.*
 uWSGI==2.0.*
 ratelimit==2.2.*
-httplib2==0.31.2
+httplib2==0.32.0
 PyMySQL==1.1.*
 zstd~=1.5.7.3
 tabulate==0.10.*
-xmldiff==2.7.*
+xmldiff==3.0.*
 pexpect==4.9.*
 mysqlclient==2.2.*
 python-jose==3.5.*
@@ -79,11 +79,11 @@ aws-xray-sdk==2.15.*
 netifaces==0.11.*
 dockerfile-parse==2.0.*
 xdgenvpy==3.0.*
-regex==2026.7.10
+regex==2026.7.19
 grpcio-health-checking==1.*
 mypy-extensions==1.1.*
 Flask-SocketIO==5.6.*
-tqdm[slack,telegram]==4.68.*
+tqdm[slack,telegram]==4.69.*
 capturer==3.0.*
 python-crontab==3.3.*
 click-log==0.4.*
@@ -110,7 +110,7 @@ decorator==5.2.*
 pyasn1==0.6.*
 protobuf~=7.34.1
 fpdf2==2.8.4
-jwcrypto==1.5.7
+jwcrypto==1.5.8
 passpy==1.0.*
 pyfarmhash==0.4.*
 untangle==1.2.*
@@ -144,7 +144,7 @@ pika==1.4.*
 click-web==0.8.*
 usersettings==1.1.*
 networkx==3.6.1
-punq==0.7.*
+punq==0.8.*
 pytest-lazy-fixture==0.6.*
 hdbcli==2.29.*
 requests[socks]~=2.33.0
@@ -174,7 +174,7 @@ python-dateutil==2.9.*
 pytz==2026.2
 boltons==25.0.*
 jsonnet==0.22.*
-lunardate==0.2.*
+lunardate==0.3.*
 icalendar==6.3.2
 python-jenkins~=1.8.3
 nanoid==2.0.0
