@@ -1,7 +1,11 @@
 from typing import Final, Protocol
 
-class DecodeRatioError(Exception): ...
-class DecodeLimitError(Exception): ...
+class DecodeRatioError(Exception):
+    """Output-to-input amplification ratio exceeded the configured limit."""
+    ...
+class DecodeLimitError(Exception):
+    """Total output length exceeded the hard limit."""
+    ...
 
 class DecoderProtocol(Protocol):
     @property
@@ -11,6 +15,13 @@ class DecoderProtocol(Protocol):
     def consume_bytes(self, data: bytes, chunk_size: int = 65536) -> bytes: ...
 
 class ZlibDecoder(DecoderProtocol):
+    """
+    Thin wrapper around zlib.Decompressor conforming to the Decoder interface.
+
+    Note: zlib pushes all available decompressed data immediately upon receiving
+    input. It never holds back output requiring `decode(b"")` to extract it.
+    Thus, `needs_input` naturally remains True.
+    """
     __slots__ = ("_decoder",)
     WBITS_DEFLATE: Final = -15
     WBITS_ZLIB: Final = 15

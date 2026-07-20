@@ -150,6 +150,7 @@ class Mount(dict[str, Any]):
           for the ``volume`` type.
         driver_config (DriverConfig): Volume driver configuration. Only valid
           for the ``volume`` type.
+        subpath (str): Path inside a volume to mount instead of the volume root.
         tmpfs_size (int or string): The size for the tmpfs mount in bytes.
         tmpfs_mode (int): The permission mode for the tmpfs mount.
     """

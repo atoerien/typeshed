@@ -6,9 +6,9 @@ Chinese Calendar: http://en.wikipedia.org/wiki/Chinese_calendar
 
 Usage
 -----
-        >>> LunarDate.fromSolarDate(1976, 10, 1)
+        >>> LunarDate.from_solar_date(1976, 10, 1)
         LunarDate(1976, 8, 8, 1)
-        >>> LunarDate(1976, 8, 8, 1).toSolarDate()
+        >>> LunarDate(1976, 8, 8, 1).to_solar_date()
         datetime.date(1976, 10, 1)
         >>> LunarDate(1976, 8, 8, 1).year
         1976
@@ -16,7 +16,7 @@ Usage
         8
         >>> LunarDate(1976, 8, 8, 1).day
         8
-        >>> LunarDate(1976, 8, 8, 1).isLeapMonth
+        >>> LunarDate(1976, 8, 8, 1).is_leap_month
         True
 
         >>> today = LunarDate.today()
@@ -56,38 +56,37 @@ Usage
         True
         >>> LunarDate.today() == LunarDate.today()
         True
-        >>> before_leap_month = LunarDate.fromSolarDate(2088, 5, 17)
+        >>> before_leap_month = LunarDate.from_solar_date(2088, 5, 17)
         >>> before_leap_month.year
         2088
         >>> before_leap_month.month
         4
         >>> before_leap_month.day
         27
-        >>> before_leap_month.isLeapMonth
+        >>> before_leap_month.is_leap_month
         False
-        >>> leap_month = LunarDate.fromSolarDate(2088, 6, 17)
+        >>> leap_month = LunarDate.from_solar_date(2088, 6, 17)
         >>> leap_month.year
         2088
         >>> leap_month.month
         4
         >>> leap_month.day
         28
-        >>> leap_month.isLeapMonth
+        >>> leap_month.is_leap_month
         True
-        >>> after_leap_month = LunarDate.fromSolarDate(2088, 7, 17)
+        >>> after_leap_month = LunarDate.from_solar_date(2088, 7, 17)
         >>> after_leap_month.year
         2088
         >>> after_leap_month.month
         5
         >>> after_leap_month.day
         29
-        >>> after_leap_month.isLeapMonth
+        >>> after_leap_month.is_leap_month
         False
 
-        >>> LunarDate.leapMonthForYear(2023)
+        >>> LunarDate.leap_month_for_year(2023)
         2
-        >>> LunarDate.leapMonthForYear(2022)
-        None        
+        >>> LunarDate.leap_month_for_year(2022) # will return None
 
 Limits
 ------
@@ -123,15 +122,69 @@ class LunarDate:
     @deprecated("The `leapMonthForYear` is deprecated since v0.3.0. Use `leap_month_for_year` instead.")
     def leapMonthForYear(year: int) -> int | None: ...
     @staticmethod
-    def leap_month_for_year(year: int) -> int | None: ...
+    def leap_month_for_year(year: int) -> int | None:
+        """
+        return None if no leap month, otherwise return the leap month of the year.
+        return 1 for the first month, and return 12 for the last month.
+
+        >>> LunarDate.leap_month_for_year(1976)
+        8
+        >>> LunarDate.leap_month_for_year(2023)
+        2
+        >>> LunarDate.leap_month_for_year(2022)
+        """
+        ...
     @staticmethod
     @deprecated("The `fromSolarDate` is deprecated since v0.3.0. Use `from_solar_date` instead.")
     def fromSolarDate(year: SupportsIndex, month: SupportsIndex, day: SupportsIndex) -> LunarDate: ...
     @staticmethod
-    def from_solar_date(year: SupportsIndex, month: SupportsIndex, day: SupportsIndex) -> LunarDate: ...
+    def from_solar_date(year: SupportsIndex, month: SupportsIndex, day: SupportsIndex) -> LunarDate:
+        """
+        >>> LunarDate.from_solar_date(1900, 1, 31)
+        LunarDate(1900, 1, 1, 0)
+        >>> LunarDate.from_solar_date(2008, 10, 2)
+        LunarDate(2008, 9, 4, 0)
+        >>> LunarDate.from_solar_date(1976, 10, 1)
+        LunarDate(1976, 8, 8, 1)
+        >>> LunarDate.from_solar_date(2033, 10, 23)
+        LunarDate(2033, 10, 1, 0)
+        >>> LunarDate.from_solar_date(1956, 12, 2)
+        LunarDate(1956, 11, 1, 0)
+        """
+        ...
     @deprecated("The `toSolarDate` is deprecated since v0.3.0. Use `to_solar_date` instead.")
     def toSolarDate(self) -> datetime.date: ...
-    def to_solar_date(self) -> datetime.date: ...
+    def to_solar_date(self) -> datetime.date:
+        """
+        >>> LunarDate(1900, 1, 1).to_solar_date()
+        datetime.date(1900, 1, 31)
+        >>> LunarDate(2008, 9, 4).to_solar_date()
+        datetime.date(2008, 10, 2)
+        >>> LunarDate(1976, 8, 8, 1).to_solar_date()
+        datetime.date(1976, 10, 1)
+        >>> LunarDate(1976, 7, 8, 1).to_solar_date()
+        Traceback (most recent call last):
+        ...
+        ValueError: month out of range
+        >>> LunarDate(1899, 1, 1).to_solar_date()
+        Traceback (most recent call last):
+        ...
+        ValueError: year out of range [1900, 2100)
+        >>> LunarDate(2004, 1, 30).to_solar_date()
+        Traceback (most recent call last):
+        ...
+        ValueError: day out of range
+        >>> LunarDate(2004, 13, 1).to_solar_date()
+        Traceback (most recent call last):
+        ...
+        ValueError: month out of range
+        >>> LunarDate(2100, 1, 1).to_solar_date()
+        Traceback (most recent call last):
+        ...
+        ValueError: year out of range [1900, 2100)
+        >>>
+        """
+        ...
 
     @overload
     def __sub__(self, other: LunarDate | datetime.date) -> datetime.timedelta: ...
@@ -183,7 +236,23 @@ class LunarDate:
 
 YEAR_INFOS: Final[list[int]]
 
-def year_info_to_year_day(year_info: int) -> int: ...
+def year_info_to_year_day(year_info: int) -> int:
+    """
+    calculate the days in a lunar year from the lunar year's info
+
+    >>> year_info_to_year_day(0) # no leap month, and every month has 29 days.
+    348
+    >>> year_info_to_year_day(1) # 1 leap month, and every month has 29 days.
+    377
+    >>> year_info_to_year_day((2**12-1)*16) # no leap month, and every month has 30 days.
+    360
+    >>> year_info_to_year_day((2**13-1)*16+1) # 1 leap month, and every month has 30 days.
+    390
+    >>> # 1 leap month, and every normal month has 30 days, and leap month has 29 days.
+    >>> year_info_to_year_day((2**12-1)*16+1)
+    389
+    """
+    ...
 
 YEAR_DAYS: Final[list[int]]
 

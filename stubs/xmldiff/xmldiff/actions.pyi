@@ -23,13 +23,13 @@ class MoveNode(NamedTuple):
     position: int
 
 class UpdateTextIn(NamedTuple):
-    """UpdateTextIn(node, text)"""
+    """UpdateTextIn(node, text, oldtext)"""
     node: str
     text: Incomplete
     oldtext: Incomplete | None = None
 
 class UpdateTextAfter(NamedTuple):
-    """UpdateTextAfter(node, text)"""
+    """UpdateTextAfter(node, text, oldtext)"""
     node: str
     text: Incomplete
     oldtext: Incomplete | None = None
