@@ -26,11 +26,13 @@ class UpdateTextIn(NamedTuple):
     """UpdateTextIn(node, text)"""
     node: str
     text: Incomplete
+    oldtext: Incomplete | None = None
 
 class UpdateTextAfter(NamedTuple):
     """UpdateTextAfter(node, text)"""
     node: str
     text: Incomplete
+    oldtext: Incomplete | None = None
 
 class UpdateAttrib(NamedTuple):
     """UpdateAttrib(node, name, value)"""

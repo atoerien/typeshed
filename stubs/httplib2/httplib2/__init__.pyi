@@ -5,21 +5,36 @@ import email.message
 import http.client
 import re
 from _ssl import _PasswordType
-from _typeshed import Incomplete, MaybeNone, StrOrBytesPath
+from _typeshed import ConvertibleToFloat, ConvertibleToInt, Incomplete, MaybeNone, StrOrBytesPath
 from collections.abc import Generator
 from ssl import _SSLMethod
-from typing import ClassVar, Final, Literal, TypeVar
+from typing import Any, ClassVar, Final, Literal, TypeVar, overload
 from typing_extensions import Self
 
 from .error import *
 
 _T = TypeVar("_T", default=str)
+_R = TypeVar("_R")
+_D = TypeVar("_D")
 
 __author__: Final[str]
 __copyright__: Final[str]
 __contributors__: Final[list[str]]
 __license__: Final[str]
 __version__: Final[str]
+__all__ = [
+    "debuglevel",
+    "FailedToDecompressContent",
+    "Http",
+    "HttpLib2Error",
+    "ProxyInfo",
+    "RedirectLimit",
+    "RedirectMissingLocation",
+    "Response",
+    "RETRIES",
+    "UnimplementedDigestAuthOptionError",
+    "UnimplementedHmacDigestAuthOptionError",
+]
 
 def has_timeout(timeout: float | None) -> bool: ...
 
@@ -314,6 +329,7 @@ class Http:
     force_exception_to_status_code: bool
     timeout: float | None
     forward_authorization_headers: bool
+    limit_kwargs: dict[str, float]
     def __init__(
         self,
         cache: str | FileCache | None = None,
@@ -323,83 +339,16 @@ class Http:
         disable_ssl_certificate_validation: bool = False,
         tls_maximum_version=None,
         tls_minimum_version=None,
-    ) -> None:
-        """
-        If 'cache' is a string then it is used as a directory name for
-        a disk cache. Otherwise it must be an object that supports the
-        same interface as FileCache.
-
-        All timeouts are in seconds. If None is passed for timeout
-        then Python's default timeout for sockets will be used. See
-        for example the docs of socket.setdefaulttimeout():
-        http://docs.python.org/library/socket.html#socket.setdefaulttimeout
-
-        `proxy_info` may be:
-          - a callable that takes the http scheme ('http' or 'https') and
-            returns a ProxyInfo instance per request. By default, uses
-            proxy_info_from_environment.
-          - a ProxyInfo instance (static proxy config).
-          - None (proxy disabled).
-
-        ca_certs is the path of a file containing root CA certificates for SSL
-        server certificate validation.  By default, a CA cert file bundled with
-        httplib2 is used.
-
-        If disable_ssl_certificate_validation is true, SSL cert validation will
-        not be performed.
-
-        tls_maximum_version / tls_minimum_version require Python 3.7+ /
-        OpenSSL 1.1.0g+. A value of "TLSv1_3" requires OpenSSL 1.1.1+.
-        """
-        ...
-    def close(self) -> None:
-        """
-        Close persistent connections, clear sensitive data.
-        Not thread-safe, requires external synchronization against concurrent requests.
-        """
-        ...
-    def add_credentials(self, name, password, domain: str = "") -> None:
-        """
-        Add a name and password that will be used
-        any time a request requires authentication.
-        """
-        ...
-    def add_certificate(self, key, cert, domain, password=None) -> None:
-        """
-        Add a key and cert that will be used
-        any time a request requires authentication.
-        """
-        ...
-    def clear_credentials(self) -> None:
-        """
-        Remove all the names and passwords
-        that are used for authentication
-        """
-        ...
-    def request(self, uri, method: str = "GET", body=None, headers=None, redirections=5, connection_type=None):
-        """
-        Performs a single HTTP request.
-        The 'uri' is the URI of the HTTP resource and can begin
-        with either 'http' or 'https'. The value of 'uri' must be an absolute URI.
-
-        The 'method' is the HTTP method to perform, such as GET, POST, DELETE, etc.
-        There is no restriction on the methods allowed.
-
-        The 'body' is the entity body to be sent with the request. It is a string
-        object.
-
-        Any extra headers that are to be sent with the request should be provided in the
-        'headers' dictionary.
-
-        The maximum number of redirect to follow before raising an
-        exception is 'redirections. The default is 5.
-
-        The return value is a tuple of (response, content), the first
-        being and instance of the 'Response' class, the second being
-        a string that contains the response entity body.
-        
-        """
-        ...
+        decode_limit_hard: ConvertibleToInt | None = None,
+        decode_limit_safe: ConvertibleToInt | None = None,
+        decode_limit_ratio: ConvertibleToFloat | None = None,
+        decode_limit_chunk: ConvertibleToInt | None = None,
+    ) -> None: ...
+    def close(self) -> None: ...
+    def add_credentials(self, name, password, domain: str = "") -> None: ...
+    def add_certificate(self, key, cert, domain, password=None) -> None: ...
+    def clear_credentials(self) -> None: ...
+    def request(self, uri, method: str = "GET", body=None, headers=None, redirections=5, connection_type=None): ...
 
 class Response(dict[str, str | _T]):
     """An object more like email.message than httplib.HTTPResponse."""
@@ -412,16 +361,11 @@ class Response(dict[str, str | _T]):
     @property
     def dict(self) -> Self: ...
 
-__all__ = [
-    "debuglevel",
-    "FailedToDecompressContent",
-    "Http",
-    "HttpLib2Error",
-    "ProxyInfo",
-    "RedirectLimit",
-    "RedirectMissingLocation",
-    "Response",
-    "RETRIES",
-    "UnimplementedDigestAuthOptionError",
-    "UnimplementedHmacDigestAuthOptionError",
-]
+@overload
+def try_value_or_env(
+    to: type[_R], value: Any, env_key: str, default: None = None  # `value` type depends on what `to()` can convert
+) -> _R | None: ...
+@overload
+def try_value_or_env(
+    to: type[_R], value: Any, env_key: str, default: _D = ...  # `value` type depends on what `to()` can convert
+) -> _R | _D: ...
