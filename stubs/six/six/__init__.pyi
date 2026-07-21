@@ -1,3 +1,5 @@
+"""Utilities for writing code that runs on Python 2 and 3"""
+
 import operator
 import types
 import unittest
@@ -31,7 +33,9 @@ binary_type = bytes
 
 MAXSIZE: int
 
-def get_unbound_function(unbound: types.FunctionType) -> types.FunctionType: ...
+def get_unbound_function(unbound: types.FunctionType) -> types.FunctionType:
+    """Get the function out of a possibly unbound function"""
+    ...
 
 create_bound_method = types.MethodType
 
