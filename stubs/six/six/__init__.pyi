@@ -1,11 +1,8 @@
-"""Utilities for writing code that runs on Python 2 and 3"""
-
-import builtins
 import operator
 import types
 import unittest
 from _typeshed import IdentityFunction, SupportsGetItem, Unused
-from builtins import next as next
+from builtins import callable as callable, next as next
 from collections.abc import Callable, ItemsView, Iterable, Iterator as _Iterator, KeysView, Mapping, ValuesView
 from functools import wraps as wraps
 from importlib.util import spec_from_loader as spec_from_loader
@@ -34,11 +31,7 @@ binary_type = bytes
 
 MAXSIZE: int
 
-callable = builtins.callable
-
-def get_unbound_function(unbound: types.FunctionType) -> types.FunctionType:
-    """Get the function out of a possibly unbound function"""
-    ...
+def get_unbound_function(unbound: types.FunctionType) -> types.FunctionType: ...
 
 create_bound_method = types.MethodType
 
