@@ -115,7 +115,7 @@ passpy==1.0.*
 pyfarmhash==0.4.*
 untangle==1.2.*
 PyYAML==6.0.*
-gevent==26.4.*
+gevent==26.5.*
 toposort==1.10
 workalendar==17.0.*
 hnswlib==0.8.*
