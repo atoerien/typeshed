@@ -6,8 +6,12 @@ correcting Python's standard metaprogramming facilities.
 """
 
 import functools
-from _typeshed import Incomplete
+from _typeshed import Incomplete, Unused
+from collections.abc import Callable
 from functools import total_ordering as total_ordering
+from typing import TypeVar
+
+_R = TypeVar("_R")
 
 NO_DEFAULT: Incomplete
 
@@ -474,24 +478,5 @@ class FunctionBuilder:
 class MissingArgument(ValueError): ...
 class ExistingArgument(ValueError): ...
 
-def noop(*args, **kwargs) -> None:
-    """
-    Simple function that should be used when no effect is desired.
-    An alternative to checking for  an optional function type parameter.
-
-    e.g.
-    def decorate(func, pre_func=None, post_func=None):
-        if pre_func:
-            pre_func()
-        func()
-        if post_func:
-            post_func()
-
-    vs
-
-    def decorate(func, pre_func=noop, post_func=noop):
-        pre_func()
-        func()
-        post_func()
-    """
-    ...
+def noop(*args: Unused, **kwargs: Unused) -> None: ...
+def once(func: Callable[[], _R]) -> Callable[[], _R]: ...

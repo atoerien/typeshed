@@ -514,15 +514,10 @@ class YoutubeDL:
         """Escape any remaining strings like %s, %abc% etc. """
         ...
     @classmethod
-    def validate_outtmpl(cls, outtmpl: str) -> ValueError | None:
-        """@return None or Exception object """
-        ...
-    def prepare_outtmpl(self, outtmpl: str, info_dict: _InfoDict, sanitize: bool = False) -> tuple[str, dict[str, Any]]:
-        """
-        Make the outtmpl and info_dict suitable for substitution: ydl.escape_outtmpl(outtmpl) % info_dict
-        @param sanitize    Whether to sanitize the output as a filename
-        """
-        ...
+    def validate_outtmpl(cls, outtmpl: str) -> ValueError | None: ...
+    def prepare_outtmpl(
+        self, outtmpl: str, info_dict: _InfoDict, sanitize: bool = False, *, _exec: bool = False
+    ) -> tuple[str, dict[str, Any]]: ...
     def evaluate_outtmpl(self, outtmpl: str, info_dict: _InfoDict, sanitize: bool = False) -> str: ...
     def prepare_filename(
         self, info_dict: _InfoDict, dir_type: str = "", *, outtmpl: str | None = None, warn: bool = False

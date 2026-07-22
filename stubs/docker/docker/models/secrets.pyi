@@ -1,3 +1,8 @@
+from _typeshed import Incomplete
+from builtins import list as _list
+
+from docker.types import DriverConfig
+
 from .resource import Collection, Model
 
 class Secret(Model):
@@ -18,49 +23,10 @@ class Secret(Model):
 class SecretCollection(Collection[Secret]):
     """Secrets on the Docker server."""
     model: type[Secret]
-    def create(self, **kwargs):
-        """
-        Create a secret
-
-        Args:
-            name (string): Name of the secret
-            data (bytes): Secret data to be stored
-            labels (dict): A mapping of labels to assign to the secret
-            driver (DriverConfig): A custom driver configuration. If
-                unspecified, the default ``internal`` driver will be used
-
-        Returns (dict): ID of the newly created secret
-        """
-        ...
-    def get(self, secret_id):
-        """
-        Get a secret.
-
-        Args:
-            secret_id (str): Secret ID.
-
-        Returns:
-            (:py:class:`Secret`): The secret.
-
-        Raises:
-            :py:class:`docker.errors.NotFound`
-                If the secret does not exist.
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def list(self, **kwargs):
-        """
-        List secrets. Similar to the ``docker secret ls`` command.
-
-        Args:
-            filters (dict): Server-side list filtering options.
-
-        Returns:
-            (list of :py:class:`Secret`): The secrets.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
+    # Please keep in sync with docker.api.secret.SecretApiMixin.create_secret
+    def create(  # type: ignore[override]
+        self, *, name: str, data: bytes, labels: dict[str, Incomplete] | None = None, driver: DriverConfig | None = None
+    ): ...
+    def get(self, secret_id: str): ...
+    # Please keep in sync with docker.api.secret.SecretApiMixin.secrets
+    def list(self, *, filters: dict[str, Incomplete] | None = None) -> _list[Secret]: ...

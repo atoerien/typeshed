@@ -1,3 +1,6 @@
+from builtins import list as _list
+from typing import Any
+
 from .resource import Collection, Model
 
 class Node(Model):
@@ -58,39 +61,6 @@ class Node(Model):
 class NodeCollection(Collection[Node]):
     """Nodes on the Docker server."""
     model: type[Node]
-    def get(self, node_id):
-        """
-        Get a node.
-
-        Args:
-            node_id (string): ID of the node to be inspected.
-
-        Returns:
-            A :py:class:`Node` object.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def list(self, *args, **kwargs):
-        """
-        List swarm nodes.
-
-        Args:
-            filters (dict): Filters to process on the nodes list. Valid
-                filters: ``id``, ``name``, ``membership`` and ``role``.
-                Default: ``None``
-
-        Returns:
-            A list of :py:class:`Node` objects.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-
-        Example:
-
-            >>> client.nodes.list(filters={'role': 'manager'})
-        """
-        ...
+    def get(self, node_id): ...
+    # Please keep in sync with docker.api.swarm.SwarmApiMixin.nodes
+    def list(self, filters: dict[str, Any] | None = None) -> _list[Node]: ...  # Any: filter values + Node response

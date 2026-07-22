@@ -29,11 +29,11 @@ class UpdateInfo:
                             updated to. (default: None)
     """
     tag: str
-    version: str | None = ...
-    requested_version: str | None = ...
-    commit: str | None = ...
-    binary_name: str | None = ...
-    checksum: str | None = ...
+    version: str | None = None
+    requested_version: str | None = None
+    commit: str | None = None
+    binary_name: str | None = None
+    checksum: str | None = None
 
 class Updater:
     ydl: YoutubeDL

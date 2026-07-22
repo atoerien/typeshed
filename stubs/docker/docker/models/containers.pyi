@@ -1,12 +1,12 @@
-import builtins
 import datetime
 from _io import _BufferedReaderStream
+from builtins import list as _list
 from collections.abc import Iterable, Iterator, Mapping
 from socket import SocketIO
-from typing import Any, Literal, NamedTuple, TypedDict, overload, type_check_only
-from typing_extensions import NotRequired
+from typing import Any, Literal, NamedTuple, overload
 
 from docker._types import ContainerWeightDevice, WaitContainerResponse
+from docker.api.container import _RestartPolicy, _TopResult
 from docker.transport.sshconn import SSHSocket
 from docker.types import EndpointConfig
 from docker.types.containers import DeviceRequest, LogConfig, Ulimit
@@ -15,16 +15,6 @@ from docker.types.services import Mount
 
 from .images import Image
 from .resource import Collection, Model
-
-@type_check_only
-class _RestartPolicy(TypedDict):
-    MaximumRetryCount: NotRequired[int]
-    Name: NotRequired[Literal["always", "on-failure"]]
-
-@type_check_only
-class _TopResult(TypedDict):
-    Titles: list[str]
-    Processes: list[list[str]]
 
 class Container(Model):
     """
@@ -63,6 +53,7 @@ class Container(Model):
         """The ports that the container exposes as a dictionary."""
         ...
 
+    # Please keep in sync with docker.api.container.ContainerApiMixin.attach
     @overload
     def attach(
         self,
@@ -172,78 +163,21 @@ class Container(Model):
         """
         Attach to this container.
 
-        :py:meth:`logs` is a wrapper around this method, which you can
-        use instead if you want to fetch/stream container output without first
-        retrieving the entire backlog.
-
-        Args:
-            stdout (bool): Include stdout.
-            stderr (bool): Include stderr.
-            stream (bool): Return container output progressively as an iterator
-                of strings, rather than a single string.
-            logs (bool): Include the container's previous output.
-
-        Returns:
-            By default, the container's output as a single string.
-
-            If ``stream=True``, an iterator of output strings.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-
-    def attach_socket(self, **kwargs) -> SocketIO | _BufferedReaderStream | SSHSocket:
-        """
-        Like :py:meth:`attach`, but returns the underlying socket-like object
-        for the HTTP request.
-
-        Args:
-            params (dict): Dictionary of request parameters (e.g. ``stdout``,
-                ``stderr``, ``stream``).
-            ws (bool): Use websockets instead of raw HTTP.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def commit(self, repository: str | None = None, tag: str | None = None, **kwargs) -> Image:
-        """
-        Commit a container to an image. Similar to the ``docker commit``
-        command.
-
-        Args:
-            repository (str): The repository to push the image to
-            tag (str): The tag to push
-            message (str): A commit message
-            author (str): The name of the author
-            pause (bool): Whether to pause the container before committing
-            changes (str): Dockerfile instructions to apply while committing
-            conf (dict): The configuration for the container. See the
-                `Engine API documentation
-                <https://docs.docker.com/reference/api/docker_remote_api/>`_
-                for full details.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def diff(self) -> list[dict[str, int | str]]:
-        """
-        Inspect changes on a container's filesystem.
-
-        Returns:
-            (list) A list of dictionaries containing the attributes `Path`
-                and `Kind`.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
+    # Please keep in sync with docker.api.container.ContainerApiMixin.attach_socket
+    def attach_socket(self, *, params=None, ws: bool = False) -> SocketIO | _BufferedReaderStream | SSHSocket: ...
+    # Please keep in sync with docker.api.container.ContainerApiMixin.commit
+    def commit(
+        self,
+        repository: str | None = None,
+        tag: str | None = None,
+        *,
+        message=None,
+        author=None,
+        pause: bool = True,
+        changes=None,
+        conf=None,
+    ) -> Image: ...
+    def diff(self) -> list[dict[str, int | str]]: ...
     def exec_run(
         self,
         cmd: str | list[str],
@@ -365,6 +299,7 @@ class Container(Model):
         """
         ...
 
+    # Please keep in sync with docker.api.container.ContainerApiMixin.logs
     @overload
     def logs(
         self,
@@ -423,178 +358,26 @@ class Container(Model):
         """
         Get logs from this container. Similar to the ``docker logs`` command.
 
-        The ``stream`` parameter makes the ``logs`` function return a blocking
-        generator you can iterate over to retrieve log output as it happens.
-
-        Args:
-            stdout (bool): Get ``STDOUT``. Default ``True``
-            stderr (bool): Get ``STDERR``. Default ``True``
-            stream (bool): Stream the response. Default ``False``
-            timestamps (bool): Show timestamps. Default ``False``
-            tail (str or int): Output specified number of lines at the end of
-                logs. Either an integer of number of lines or the string
-                ``all``. Default ``all``
-            since (datetime, int, or float): Show logs since a given datetime,
-                integer epoch (in seconds) or float (in nanoseconds)
-            follow (bool): Follow log output. Default ``False``
-            until (datetime, int, or float): Show logs that occurred before
-                the given datetime, integer epoch (in seconds), or
-                float (in nanoseconds)
-
-        Returns:
-            (generator of bytes or bytes): Logs from the container.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-
-    def pause(self) -> None:
-        """
-        Pauses all processes within this container.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def put_archive(self, path: str, data) -> bool:
-        """
-        Insert a file or folder in this container using a tar archive as
-        source.
-
-        Args:
-            path (str): Path inside the container where the file(s) will be
-                extracted. Must exist.
-            data (bytes or stream): tar data to be extracted
-
-        Returns:
-            (bool): True if the call succeeds.
-
-        Raises:
-            :py:class:`~docker.errors.APIError` If an error occurs.
-        """
-        ...
-    def remove(self, *, v: bool = False, link: bool = False, force: bool = False) -> None:
-        """
-        Remove this container. Similar to the ``docker rm`` command.
-
-        Args:
-            v (bool): Remove the volumes associated with the container
-            link (bool): Remove the specified link and not the underlying
-                container
-            force (bool): Force the removal of a running container (uses
-                ``SIGKILL``)
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def rename(self, name: str) -> None:
-        """
-        Rename this container. Similar to the ``docker rename`` command.
-
-        Args:
-            name (str): New name for the container
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def resize(self, height: int, width: int) -> None:
-        """
-        Resize the tty session.
-
-        Args:
-            height (int): Height of tty session
-            width (int): Width of tty session
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def restart(self, *, timeout: float | None = 10) -> None:
-        """
-        Restart this container. Similar to the ``docker restart`` command.
-
-        Args:
-            timeout (int): Number of seconds to try to stop for before killing
-                the container. Once killed it will then be restarted. Default
-                is 10 seconds.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def start(self) -> None:
-        """
-        Start this container. Similar to the ``docker start`` command, but
-        doesn't support attach options.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def stats(self, **kwargs) -> Iterator[dict[str, Any]] | dict[str, Any]:
-        """
-        Stream statistics for this container. Similar to the
-        ``docker stats`` command.
-
-        Args:
-            decode (bool): If set to true, stream will be decoded into dicts
-                on the fly. Only applicable if ``stream`` is True.
-                False by default.
-            stream (bool): If set to false, only the current stats will be
-                returned instead of a stream. True by default.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def stop(self, *, timeout: float | None = None) -> None:
-        """
-        Stops a container. Similar to the ``docker stop`` command.
-
-        Args:
-            timeout (int): Timeout in seconds to wait for the container to
-                stop before sending a ``SIGKILL``. Default: 10
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def top(self, *, ps_args: str | None = None) -> _TopResult:
-        """
-        Display the running processes of the container.
-
-        Args:
-            ps_args (str): An optional arguments passed to ps (e.g. ``aux``)
-
-        Returns:
-            (str): The output of the top
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def unpause(self) -> None:
-        """
-        Unpause all processes within the container.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
+    def pause(self) -> None: ...
+    def put_archive(self, path: str, data) -> bool: ...
+    # Please keep in sync with docker.api.container.ContainerApiMixin.remove_container
+    def remove(self, *, v: bool = False, link: bool = False, force: bool = False) -> None: ...
+    def rename(self, name: str) -> None: ...
+    def resize(self, height: int, width: int) -> None: ...
+    # Please keep in sync with docker.api.container.ContainerApiMixin.restart
+    def restart(self, *, timeout: float | None = 10) -> None: ...
+    # Please keep in sync with docker.api.container.ContainerApiMixin.start
+    def start(self) -> None: ...
+    # Please keep in sync with docker.api.container.ContainerApiMixin.stats
+    def stats(
+        self, *, decode: bool | None = None, stream: bool = True, one_shot: bool | None = None
+    ) -> Iterator[dict[str, Any]] | dict[str, Any]: ...
+    # Please keep in sync with docker.api.container.ContainerApiMixin.stop
+    def stop(self, *, timeout: float | None = None) -> None: ...
+    # Please keep in sync with docker.api.container.ContainerApiMixin.top
+    def top(self, *, ps_args: str | None = None) -> _TopResult: ...
+    def unpause(self) -> None: ...
+    # Please keep in sync with docker.api.container.ContainerApiMixin.update_container
     def update(
         self,
         *,
@@ -609,32 +392,8 @@ class Container(Model):
         memswap_limit: int | str | None = None,
         kernel_memory: int | str | None = None,
         restart_policy: _RestartPolicy | None = None,
-    ):
-        """
-        Update resource configuration of the containers.
-
-        Args:
-            blkio_weight (int): Block IO (relative weight), between 10 and 1000
-            cpu_period (int): Limit CPU CFS (Completely Fair Scheduler) period
-            cpu_quota (int): Limit CPU CFS (Completely Fair Scheduler) quota
-            cpu_shares (int): CPU shares (relative weight)
-            cpuset_cpus (str): CPUs in which to allow execution
-            cpuset_mems (str): MEMs in which to allow execution
-            mem_limit (int or str): Memory limit
-            mem_reservation (int or str): Memory soft limit
-            memswap_limit (int or str): Total memory (memory + swap), -1 to
-                disable swap
-            kernel_memory (int or str): Kernel memory limit
-            restart_policy (dict): Restart policy dictionary
-
-        Returns:
-            (dict): Dictionary containing a ``Warnings`` key.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
+    ): ...
+    # Please keep in sync with docker.api.container.ContainerApiMixin.wait
     def wait(
         self, *, timeout: float | None = None, condition: Literal["not-running", "next-exit", "removed"] | None = None
     ) -> WaitContainerResponse:
@@ -667,16 +426,16 @@ class ContainerCollection(Collection[Container]):
     def run(
         self,
         image: str | Image,
-        command: str | builtins.list[str] | None = None,
+        command: str | _list[str] | None = None,
         stdout: bool = True,
         stderr: bool = False,
         remove: bool = False,
         *,
         auto_remove: bool = False,
-        blkio_weight_device: builtins.list[ContainerWeightDevice] | None = None,
+        blkio_weight_device: _list[ContainerWeightDevice] | None = None,
         blkio_weight: int | None = None,
-        cap_add: builtins.list[str] | None = None,
-        cap_drop: builtins.list[str] | None = None,
+        cap_add: _list[str] | None = None,
+        cap_drop: _list[str] | None = None,
         cgroup_parent: str | None = None,
         cgroupns: Literal["private", "host"] | None = None,
         cpu_count: int | None = None,
@@ -689,19 +448,19 @@ class ContainerCollection(Collection[Container]):
         cpuset_cpus: str | None = None,
         cpuset_mems: str | None = None,
         detach: Literal[False] = False,
-        device_cgroup_rules: builtins.list[str] | None = None,
-        device_read_bps: builtins.list[Mapping[str, str | int]] | None = None,
-        device_read_iops: builtins.list[Mapping[str, str | int]] | None = None,
-        device_write_bps: builtins.list[Mapping[str, str | int]] | None = None,
-        device_write_iops: builtins.list[Mapping[str, str | int]] | None = None,
-        devices: builtins.list[str] | None = None,
-        device_requests: builtins.list[DeviceRequest] | None = None,
-        dns: builtins.list[str] | None = None,
-        dns_opt: builtins.list[str] | None = None,
-        dns_search: builtins.list[str] | None = None,
-        domainname: str | builtins.list[str] | None = None,
-        entrypoint: str | builtins.list[str] | None = None,
-        environment: dict[str, str] | builtins.list[str] | None = None,
+        device_cgroup_rules: _list[str] | None = None,
+        device_read_bps: _list[Mapping[str, str | int]] | None = None,
+        device_read_iops: _list[Mapping[str, str | int]] | None = None,
+        device_write_bps: _list[Mapping[str, str | int]] | None = None,
+        device_write_iops: _list[Mapping[str, str | int]] | None = None,
+        devices: _list[str] | None = None,
+        device_requests: _list[DeviceRequest] | None = None,
+        dns: _list[str] | None = None,
+        dns_opt: _list[str] | None = None,
+        dns_search: _list[str] | None = None,
+        domainname: str | _list[str] | None = None,
+        entrypoint: str | _list[str] | None = None,
+        environment: dict[str, str] | _list[str] | None = None,
         extra_hosts: dict[str, str] | None = None,
         group_add: Iterable[str | int] | None = None,
         healthcheck: dict[str, Any] | None = None,
@@ -711,7 +470,7 @@ class ContainerCollection(Collection[Container]):
         ipc_mode: str | None = None,
         isolation: str | None = None,
         kernel_memory: str | int | None = None,
-        labels: dict[str, str] | builtins.list[str] | None = None,
+        labels: dict[str, str] | _list[str] | None = None,
         links: dict[str, str] | dict[str, None] | dict[str, str | None] | Iterable[tuple[str, str | None]] | None = None,
         log_config: LogConfig | None = None,
         lxc_conf: dict[str, str] | None = None,
@@ -720,7 +479,7 @@ class ContainerCollection(Collection[Container]):
         mem_reservation: str | int | None = None,
         mem_swappiness: int | None = None,
         memswap_limit: str | int | None = None,
-        mounts: builtins.list[Mount] | None = None,
+        mounts: _list[Mount] | None = None,
         name: str | None = None,
         nano_cpus: int | None = None,
         network: str | None = None,
@@ -732,13 +491,13 @@ class ContainerCollection(Collection[Container]):
         pid_mode: str | None = None,
         pids_limit: int | None = None,
         platform: str | None = None,
-        ports: Mapping[str, int | builtins.list[int] | tuple[str, int] | None] | None = None,
+        ports: Mapping[str, int | _list[int] | tuple[str, int] | None] | None = None,
         privileged: bool = False,
         publish_all_ports: bool = False,
         read_only: bool | None = None,
         restart_policy: _RestartPolicy | None = None,
         runtime: str | None = None,
-        security_opt: builtins.list[str] | None = None,
+        security_opt: _list[str] | None = None,
         shm_size: str | int | None = None,
         stdin_open: bool = False,
         stop_signal: str | None = None,
@@ -747,15 +506,15 @@ class ContainerCollection(Collection[Container]):
         sysctls: dict[str, str] | None = None,
         tmpfs: dict[str, str] | None = None,
         tty: bool = False,
-        ulimits: builtins.list[Ulimit] | None = None,
+        ulimits: _list[Ulimit] | None = None,
         use_config_proxy: bool | None = None,
         user: str | int | None = None,
         userns_mode: str | None = None,
         uts_mode: str | None = None,
         version: str | None = None,
         volume_driver: str | None = None,
-        volumes: dict[str, dict[str, str]] | builtins.list[str] | None = None,
-        volumes_from: builtins.list[str] | None = None,
+        volumes: dict[str, dict[str, str]] | _list[str] | None = None,
+        volumes_from: _list[str] | None = None,
         working_dir: str | None = None,
     ) -> bytes:
         r"""
@@ -1077,16 +836,16 @@ class ContainerCollection(Collection[Container]):
     def run(
         self,
         image: str | Image,
-        command: str | builtins.list[str] | None = None,
+        command: str | _list[str] | None = None,
         stdout: bool = True,
         stderr: bool = False,
         remove: bool = False,
         *,
         auto_remove: bool = False,
-        blkio_weight_device: builtins.list[ContainerWeightDevice] | None = None,
+        blkio_weight_device: _list[ContainerWeightDevice] | None = None,
         blkio_weight: int | None = None,
-        cap_add: builtins.list[str] | None = None,
-        cap_drop: builtins.list[str] | None = None,
+        cap_add: _list[str] | None = None,
+        cap_drop: _list[str] | None = None,
         cgroup_parent: str | None = None,
         cgroupns: Literal["private", "host"] | None = None,
         cpu_count: int | None = None,
@@ -1099,19 +858,19 @@ class ContainerCollection(Collection[Container]):
         cpuset_cpus: str | None = None,
         cpuset_mems: str | None = None,
         detach: Literal[True],
-        device_cgroup_rules: builtins.list[str] | None = None,
-        device_read_bps: builtins.list[Mapping[str, str | int]] | None = None,
-        device_read_iops: builtins.list[Mapping[str, str | int]] | None = None,
-        device_write_bps: builtins.list[Mapping[str, str | int]] | None = None,
-        device_write_iops: builtins.list[Mapping[str, str | int]] | None = None,
-        devices: builtins.list[str] | None = None,
-        device_requests: builtins.list[DeviceRequest] | None = None,
-        dns: builtins.list[str] | None = None,
-        dns_opt: builtins.list[str] | None = None,
-        dns_search: builtins.list[str] | None = None,
-        domainname: str | builtins.list[str] | None = None,
-        entrypoint: str | builtins.list[str] | None = None,
-        environment: dict[str, str] | builtins.list[str] | None = None,
+        device_cgroup_rules: _list[str] | None = None,
+        device_read_bps: _list[Mapping[str, str | int]] | None = None,
+        device_read_iops: _list[Mapping[str, str | int]] | None = None,
+        device_write_bps: _list[Mapping[str, str | int]] | None = None,
+        device_write_iops: _list[Mapping[str, str | int]] | None = None,
+        devices: _list[str] | None = None,
+        device_requests: _list[DeviceRequest] | None = None,
+        dns: _list[str] | None = None,
+        dns_opt: _list[str] | None = None,
+        dns_search: _list[str] | None = None,
+        domainname: str | _list[str] | None = None,
+        entrypoint: str | _list[str] | None = None,
+        environment: dict[str, str] | _list[str] | None = None,
         extra_hosts: dict[str, str] | None = None,
         group_add: Iterable[str | int] | None = None,
         healthcheck: dict[str, Any] | None = None,
@@ -1121,7 +880,7 @@ class ContainerCollection(Collection[Container]):
         ipc_mode: str | None = None,
         isolation: str | None = None,
         kernel_memory: str | int | None = None,
-        labels: dict[str, str] | builtins.list[str] | None = None,
+        labels: dict[str, str] | _list[str] | None = None,
         links: dict[str, str] | dict[str, None] | dict[str, str | None] | Iterable[tuple[str, str | None]] | None = None,
         log_config: LogConfig | None = None,
         lxc_conf: dict[str, str] | None = None,
@@ -1130,7 +889,7 @@ class ContainerCollection(Collection[Container]):
         mem_reservation: str | int | None = None,
         mem_swappiness: int | None = None,
         memswap_limit: str | int | None = None,
-        mounts: builtins.list[Mount] | None = None,
+        mounts: _list[Mount] | None = None,
         name: str | None = None,
         nano_cpus: int | None = None,
         network: str | None = None,
@@ -1142,13 +901,13 @@ class ContainerCollection(Collection[Container]):
         pid_mode: str | None = None,
         pids_limit: int | None = None,
         platform: str | None = None,
-        ports: Mapping[str, int | builtins.list[int] | tuple[str, int] | None] | None = None,
+        ports: Mapping[str, int | _list[int] | tuple[str, int] | None] | None = None,
         privileged: bool = False,
         publish_all_ports: bool = False,
         read_only: bool | None = None,
         restart_policy: _RestartPolicy | None = None,
         runtime: str | None = None,
-        security_opt: builtins.list[str] | None = None,
+        security_opt: _list[str] | None = None,
         shm_size: str | int | None = None,
         stdin_open: bool = False,
         stop_signal: str | None = None,
@@ -1157,15 +916,15 @@ class ContainerCollection(Collection[Container]):
         sysctls: dict[str, str] | None = None,
         tmpfs: dict[str, str] | None = None,
         tty: bool = False,
-        ulimits: builtins.list[Ulimit] | None = None,
+        ulimits: _list[Ulimit] | None = None,
         use_config_proxy: bool | None = None,
         user: str | int | None = None,
         userns_mode: str | None = None,
         uts_mode: str | None = None,
         version: str | None = None,
         volume_driver: str | None = None,
-        volumes: dict[str, dict[str, str]] | builtins.list[str] | None = None,
-        volumes_from: builtins.list[str] | None = None,
+        volumes: dict[str, dict[str, str]] | _list[str] | None = None,
+        volumes_from: _list[str] | None = None,
         working_dir: str | None = None,
     ) -> Container:
         r"""
@@ -1487,13 +1246,13 @@ class ContainerCollection(Collection[Container]):
     def create(  # type: ignore[override]
         self,
         image: str | Image,
-        command: str | builtins.list[str] | None = None,
+        command: str | _list[str] | None = None,
         *,
         auto_remove: bool = False,
-        blkio_weight_device: builtins.list[ContainerWeightDevice] | None = None,
+        blkio_weight_device: _list[ContainerWeightDevice] | None = None,
         blkio_weight: int | None = None,
-        cap_add: builtins.list[str] | None = None,
-        cap_drop: builtins.list[str] | None = None,
+        cap_add: _list[str] | None = None,
+        cap_drop: _list[str] | None = None,
         cgroup_parent: str | None = None,
         cgroupns: Literal["private", "host"] | None = None,
         cpu_count: int | None = None,
@@ -1506,19 +1265,19 @@ class ContainerCollection(Collection[Container]):
         cpuset_cpus: str | None = None,
         cpuset_mems: str | None = None,
         detach: bool = False,
-        device_cgroup_rules: builtins.list[str] | None = None,
-        device_read_bps: builtins.list[Mapping[str, str | int]] | None = None,
-        device_read_iops: builtins.list[Mapping[str, str | int]] | None = None,
-        device_write_bps: builtins.list[Mapping[str, str | int]] | None = None,
-        device_write_iops: builtins.list[Mapping[str, str | int]] | None = None,
-        devices: builtins.list[str] | None = None,
-        device_requests: builtins.list[DeviceRequest] | None = None,
-        dns: builtins.list[str] | None = None,
-        dns_opt: builtins.list[str] | None = None,
-        dns_search: builtins.list[str] | None = None,
-        domainname: str | builtins.list[str] | None = None,
-        entrypoint: str | builtins.list[str] | None = None,
-        environment: dict[str, str] | builtins.list[str] | None = None,
+        device_cgroup_rules: _list[str] | None = None,
+        device_read_bps: _list[Mapping[str, str | int]] | None = None,
+        device_read_iops: _list[Mapping[str, str | int]] | None = None,
+        device_write_bps: _list[Mapping[str, str | int]] | None = None,
+        device_write_iops: _list[Mapping[str, str | int]] | None = None,
+        devices: _list[str] | None = None,
+        device_requests: _list[DeviceRequest] | None = None,
+        dns: _list[str] | None = None,
+        dns_opt: _list[str] | None = None,
+        dns_search: _list[str] | None = None,
+        domainname: str | _list[str] | None = None,
+        entrypoint: str | _list[str] | None = None,
+        environment: dict[str, str] | _list[str] | None = None,
         extra_hosts: dict[str, str] | None = None,
         group_add: Iterable[str | int] | None = None,
         healthcheck: dict[str, Any] | None = None,
@@ -1528,7 +1287,7 @@ class ContainerCollection(Collection[Container]):
         ipc_mode: str | None = None,
         isolation: str | None = None,
         kernel_memory: str | int | None = None,
-        labels: dict[str, str] | builtins.list[str] | None = None,
+        labels: dict[str, str] | _list[str] | None = None,
         links: dict[str, str] | dict[str, None] | dict[str, str | None] | Iterable[tuple[str, str | None]] | None = None,
         log_config: LogConfig | None = None,
         lxc_conf: dict[str, str] | None = None,
@@ -1537,7 +1296,7 @@ class ContainerCollection(Collection[Container]):
         mem_reservation: str | int | None = None,
         mem_swappiness: int | None = None,
         memswap_limit: str | int | None = None,
-        mounts: builtins.list[Mount] | None = None,
+        mounts: _list[Mount] | None = None,
         name: str | None = None,
         nano_cpus: int | None = None,
         network: str | None = None,
@@ -1549,13 +1308,13 @@ class ContainerCollection(Collection[Container]):
         pid_mode: str | None = None,
         pids_limit: int | None = None,
         platform: str | None = None,
-        ports: Mapping[str, int | builtins.list[int] | tuple[str, int] | None] | None = None,
+        ports: Mapping[str, int | _list[int] | tuple[str, int] | None] | None = None,
         privileged: bool = False,
         publish_all_ports: bool = False,
         read_only: bool | None = None,
         restart_policy: _RestartPolicy | None = None,
         runtime: str | None = None,
-        security_opt: builtins.list[str] | None = None,
+        security_opt: _list[str] | None = None,
         shm_size: str | int | None = None,
         stdin_open: bool = False,
         stop_signal: str | None = None,
@@ -1564,15 +1323,15 @@ class ContainerCollection(Collection[Container]):
         sysctls: dict[str, str] | None = None,
         tmpfs: dict[str, str] | None = None,
         tty: bool = False,
-        ulimits: builtins.list[Ulimit] | None = None,
+        ulimits: _list[Ulimit] | None = None,
         use_config_proxy: bool | None = None,
         user: str | int | None = None,
         userns_mode: str | None = None,
         uts_mode: str | None = None,
         version: str | None = None,
         volume_driver: str | None = None,
-        volumes: dict[str, dict[str, str]] | builtins.list[str] | None = None,
-        volumes_from: builtins.list[str] | None = None,
+        volumes: dict[str, dict[str, str]] | _list[str] | None = None,
+        volumes_from: _list[str] | None = None,
         working_dir: str | None = None,
     ) -> Container:
         """
@@ -1612,79 +1371,13 @@ class ContainerCollection(Collection[Container]):
         self,
         all: bool = False,
         before: str | None = None,
-        filters: dict[str, str | builtins.list[str] | bool] | None = None,
+        filters: dict[str, str | _list[str] | bool] | None = None,
         limit: int = -1,
         since: str | None = None,
         sparse: bool = False,
         ignore_removed: bool = False,
-    ) -> builtins.list[Container]:
-        """
-        List containers. Similar to the ``docker ps`` command.
-
-        Args:
-            all (bool): Show all containers. Only running containers are shown
-                by default
-            since (str): Show only containers created since Id or Name, include
-                non-running ones
-            before (str): Show only container created before Id or Name,
-                include non-running ones
-            limit (int): Show `limit` last created containers, include
-                non-running ones
-            filters (dict): Filters to be processed on the image list.
-                Available filters:
-
-                - `exited` (int): Only containers with specified exit code
-                - `status` (str): One of ``restarting``, ``running``,
-                    ``paused``, ``exited``
-                - `label` (str|list): format either ``"key"``, ``"key=value"``
-                    or a list of such.
-                - `id` (str): The id of the container.
-                - `name` (str): The name of the container.
-                - `ancestor` (str): Filter by container ancestor. Format of
-                    ``<image-name>[:tag]``, ``<image-id>``, or
-                    ``<image@digest>``.
-                - `before` (str): Only containers created before a particular
-                    container. Give the container name or id.
-                - `since` (str): Only containers created after a particular
-                    container. Give container name or id.
-
-                A comprehensive list can be found in the documentation for
-                `docker ps
-                <https://docs.docker.com/engine/reference/commandline/ps>`_.
-
-            sparse (bool): Do not inspect containers. Returns partial
-                information, but guaranteed not to block. Use
-                :py:meth:`Container.reload` on resulting objects to retrieve
-                all attributes. Default: ``False``
-            ignore_removed (bool): Ignore failures due to missing containers
-                when attempting to inspect containers from the original list.
-                Set to ``True`` if race conditions are likely. Has no effect
-                if ``sparse=True``. Default: ``False``
-
-        Returns:
-            (list of :py:class:`Container`)
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
-    def prune(self, filters: dict[str, Any] | None = None) -> dict[str, Any]:
-        """
-        Delete stopped containers
-
-        Args:
-            filters (dict): Filters to process on the prune list.
-
-        Returns:
-            (dict): A dict containing a list of deleted container IDs and
-                the amount of disk space reclaimed in bytes.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
+    ) -> _list[Container]: ...
+    def prune(self, filters: dict[str, Any] | None = None) -> dict[str, Any]: ...
 
 RUN_CREATE_KWARGS: list[str]
 RUN_HOST_CONFIG_KWARGS: list[str]

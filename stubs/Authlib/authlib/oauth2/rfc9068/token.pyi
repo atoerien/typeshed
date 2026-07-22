@@ -112,4 +112,4 @@ class JWTBearerTokenGenerator(BearerTokenGenerator):
         """
         ...
     # Override seems safe, but mypy doesn't like that it's a callabe protocol in the base
-    def access_token_generator(self, client, grant_type, user, scope): ...  # type: ignore[override]
+    def access_token_generator(self, client, grant_type, user, scope) -> str: ...  # type: ignore[override]

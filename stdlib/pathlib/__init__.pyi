@@ -155,28 +155,11 @@ class PurePath(PathLike[str]):
     def __ge__(self, other: PurePath) -> bool: ...
     def __truediv__(self, key: StrPath) -> Self: ...
     def __rtruediv__(self, key: StrPath) -> Self: ...
-    def __bytes__(self) -> bytes:
-        """
-        Return the bytes representation of the path.  This is only
-        recommended to use under Unix.
-        """
-        ...
-    def as_posix(self) -> str:
-        """
-        Return the string representation of the path with forward (/)
-        slashes.
-        """
-        ...
-    @deprecated("Deprecated since Python 3.14; will be removed in Python 3.19. Use `Path.as_uri()` instead.")
-    def as_uri(self) -> str:
-        """Return the path as a URI."""
-        ...
-    def is_absolute(self) -> bool:
-        """
-        True if the path is absolute (has both a root and, if applicable,
-        a drive).
-        """
-        ...
+    def __bytes__(self) -> bytes: ...
+    def as_posix(self) -> str: ...
+    @deprecated("Deprecated; will be removed in Python 3.19. Use `Path.as_uri()` instead.")
+    def as_uri(self) -> str: ...
+    def is_absolute(self) -> bool: ...
     if sys.version_info < (3, 15):
         if sys.version_info >= (3, 13):
             @deprecated(
@@ -212,13 +195,8 @@ class PurePath(PathLike[str]):
             """
             ...
         @overload
-        @deprecated("Passing additional arguments is deprecated since Python 3.12; removed in Python 3.14.")
-        def is_relative_to(self, other: StrPath, /, *_deprecated: StrPath) -> bool:
-            """
-            Return True if the path is relative to another path or False.
-        
-            """
-            ...
+        @deprecated("Passing additional arguments is deprecated; removed in Python 3.14.")
+        def is_relative_to(self, other: StrPath, /, *_deprecated: StrPath) -> bool: ...
 
     if sys.version_info >= (3, 12):
         def match(self, path_pattern: str, *, case_sensitive: bool | None = None) -> bool:

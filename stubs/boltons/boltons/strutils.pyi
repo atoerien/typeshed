@@ -6,7 +6,7 @@ provided by ``strutils``.
 """
 
 from _typeshed import ReadableBuffer
-from collections.abc import Callable, Generator, Iterable, Sized
+from collections.abc import Callable, Generator, Iterable, Sequence, Sized
 from html.parser import HTMLParser
 from re import Pattern
 from typing import Literal, overload
@@ -254,8 +254,6 @@ def bytes2human(nbytes: int, ndigits: int = 0) -> str:
     ...
 
 class HTMLTextExtractor(HTMLParser):
-    strict: bool
-    convert_charrefs: bool
     result: list[str]
     def __init__(self) -> None: ...
     def handle_data(self, d: str) -> None: ...
@@ -607,51 +605,10 @@ class MultiReplace:
         """
         Run substitutions on the input text.
 
-        Given an input string, run all substitutions given in the
-        constructor.
-        """
-        ...
-
-def multi_replace(text: str, sub_map: dict[str, str], **kwargs) -> str:
-    """
-    Shortcut function to invoke MultiReplace in a single call.
-
-    Example Usage::
-
-        from boltons.strutils import multi_replace
-        new = multi_replace(
-            'The foo bar cat ate a bat',
-            {'foo': 'zoo', 'cat': 'hat', 'bat': 'kraken'}
-        )
-        new == 'The zoo bar hat ate a kraken'
-    """
-    ...
-def unwrap_text(text: str, ending: str | None = "\n\n") -> str:
-    r"""
-    Unwrap text, the natural complement to :func:`textwrap.wrap`.
-
-    >>> text = "Short \n lines  \nwrapped\nsmall.\n\nAnother\nparagraph."
-    >>> unwrap_text(text)
-    'Short lines wrapped small.\n\nAnother paragraph.'
-
-    Args:
-       text: A string to unwrap.
-       ending (str): The string to join all unwrapped paragraphs
-          by. Pass ``None`` to get the list. Defaults to '\n\n' for
-          compatibility with Markdown and RST.
-    """
-    ...
-def removeprefix(text: str, prefix: str) -> str:
-    """
-    Remove `prefix` from start of `text` if present.
-
-    Backport of `str.removeprefix` for Python versions less than 3.9.
-
-    Args:
-        text: A string to remove the prefix from.
-        prefix: The string to remove from the beginning of `text`.
-    """
-    ...
+def multi_replace(text: str, sub_map: dict[str, str], **kwargs) -> str: ...
+def unwrap_text(text: str, ending: str | None = "\n\n") -> str: ...
+def removeprefix(text: str, prefix: str) -> str: ...
+def human_readable_list(items: Sequence[str], delimiter: str = ",", conjunction: str = "and", *, oxford: bool = True) -> str: ...
 
 __all__ = [
     "camel2under",
@@ -686,4 +643,5 @@ __all__ = [
     "multi_replace",
     "unwrap_text",
     "removeprefix",
+    "human_readable_list",
 ]

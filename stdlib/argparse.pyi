@@ -186,7 +186,7 @@ class _ActionsContainer:
         conflict_handler: str = ...,
     ) -> _ArgumentGroup: ...
     @overload
-    @deprecated("The `prefix_chars` parameter deprecated since Python 3.14.")
+    @deprecated("The `prefix_chars` parameter is deprecated.")
     def add_argument_group(
         self,
         title: str | None = None,
@@ -740,7 +740,7 @@ class Namespace(_AttributeHolder):
     def __eq__(self, other: object) -> bool: ...
     __hash__: ClassVar[None]  # type: ignore[assignment]
 
-@deprecated("Deprecated since Python 3.14. Open files after parsing arguments instead.")
+@deprecated("Deprecated; may leave files open. Open files after parsing arguments instead.")
 class FileType:
     """
     Deprecated factory for creating file object types
@@ -782,7 +782,7 @@ class _ArgumentGroup(_ActionsContainer):
         conflict_handler: str = ...,
     ) -> None: ...
     @overload
-    @deprecated("Undocumented `prefix_chars` parameter is deprecated since Python 3.14.")
+    @deprecated("Undocumented `prefix_chars` parameter is deprecated.")
     def __init__(
         self,
         container: _ActionsContainer,

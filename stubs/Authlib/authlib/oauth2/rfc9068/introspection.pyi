@@ -1,6 +1,7 @@
 from _typeshed import Incomplete
 
-from authlib.oauth2.rfc7662 import IntrospectionEndpoint
+from ..rfc7662 import IntrospectionEndpoint
+from .claims import JWTAccessTokenClaims
 
 class JWTIntrospectionEndpoint(IntrospectionEndpoint):
     r"""
@@ -35,23 +36,7 @@ class JWTIntrospectionEndpoint(IntrospectionEndpoint):
     issuer: Incomplete
     def __init__(self, issuer, server=None, *args, **kwargs) -> None: ...
     def create_endpoint_response(self, request): ...
-    def authenticate_token(self, request, client): ...
-    def create_introspection_payload(self, token): ...
-    def get_jwks(self):
-        """
-        Return the JWKs that will be used to check the JWT access token signature.
-        Developers MUST re-implement this method::
-
-            def get_jwks(self):
-                return load_jwks("jwks.json")
-        """
-        ...
-    def get_username(self, user_id: str) -> str:
-        """
-        Returns an username from a user ID.
-        Developers MAY re-implement this method::
-
-            def get_username(self, user_id):
-                return User.get(id=user_id).username
-        """
-        ...
+    def authenticate_token(self, request, client) -> JWTAccessTokenClaims | None: ...
+    def create_introspection_payload(self, token: JWTAccessTokenClaims) -> dict[str, Incomplete]: ...
+    def get_jwks(self): ...
+    def get_username(self, user_id: str) -> str: ...

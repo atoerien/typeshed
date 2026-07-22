@@ -6,6 +6,7 @@ from authlib.oauth2 import JsonRequest, OAuth2Error, OAuth2Request
 from authlib.oauth2.rfc6749 import BaseGrant, ClientMixin
 from authlib.oauth2.rfc6750 import BearerTokenGenerator
 
+from .endpoint import Endpoint, EndpointRequest
 from .hooks import Hookable
 
 _ServerResponse: TypeAlias = tuple[int, str, list[tuple[str, str]]]
@@ -158,56 +159,13 @@ class AuthorizationServer(Hookable):
         ...
     def register_grant(
         self, grant_cls: type[BaseGrant], extensions: Collection[Callable[[BaseGrant], None]] | None = None
-    ) -> None:
-        """
-        Register a grant class into the endpoint registry. Developers
-        can implement the grants in ``authlib.oauth2.rfc6749.grants`` and
-        register with this method::
-
-            class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
-                def authenticate_user(self, credential):
-                    # ...
-
-            authorization_server.register_grant(AuthorizationCodeGrant)
-
-        :param grant_cls: a grant class.
-        :param extensions: extensions for the grant class.
-        """
-        ...
-    def register_endpoint(self, endpoint) -> None:
-        """
-        Add extra endpoint to authorization server. e.g.
-        RevocationEndpoint::
-
-            authorization_server.register_endpoint(RevocationEndpoint)
-
-        :param endpoint_cls: A endpoint class or instance.
-        """
-        ...
+    ) -> None: ...
+    def register_endpoint(self, endpoint: type[Endpoint] | Endpoint) -> None: ...
     def get_authorization_grant(self, request: OAuth2Request) -> BaseGrant: ...
-    def get_consent_grant(self, request=None, end_user=None):
-        """
-        Validate current HTTP request for authorization page. This page
-        is designed for resource owner to grant or deny the authorization.
-        """
-        ...
-    def get_token_grant(self, request: OAuth2Request) -> BaseGrant:
-        """
-        Find the token grant for current request.
-
-        :param request: OAuth2Request instance.
-        :return: grant instance
-        """
-        ...
-    def create_endpoint_response(self, name, request=None):
-        """
-        Validate endpoint request and create endpoint response.
-
-        :param name: Endpoint name
-        :param request: HTTP request instance.
-        :return: Response
-        """
-        ...
+    def get_consent_grant(self, request=None, end_user=None): ...
+    def get_token_grant(self, request: OAuth2Request) -> BaseGrant: ...
+    def validate_endpoint_request(self, name, request=None) -> EndpointRequest: ...
+    def create_endpoint_response(self, name, request=None): ...
 
     @overload
     @deprecated("The 'grant' parameter will become mandatory.")

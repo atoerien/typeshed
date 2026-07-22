@@ -434,84 +434,18 @@ class Variable:
         """Set the variable to VALUE."""
         ...
     initialize = set
-    def get(self):
-        """Return value of variable."""
-        ...
-    def trace_add(self, mode: Literal["array", "read", "write", "unset"], callback: Callable[[str, str, str], object]) -> str:
-        """
-        Define a trace callback for the variable.
-
-        Mode is one of "read", "write", "unset", or a list or tuple of
-        such strings.
-        Callback must be a function which is called when the variable is
-        read, written or unset.
-
-        Return the name of the callback.
-        """
-        ...
-    def trace_remove(self, mode: Literal["array", "read", "write", "unset"], cbname: str) -> None:
-        """
-        Delete the trace callback for a variable.
-
-        Mode is one of "read", "write", "unset" or a list or tuple of
-        such strings.  Must be same as were specified in trace_add().
-        cbname is the name of the callback returned from trace_add().
-        """
-        ...
-    def trace_info(self) -> list[tuple[tuple[Literal["array", "read", "write", "unset"], ...], str]]:
-        """Return all trace callback information."""
-        ...
-    @deprecated("Deprecated since Python 3.14. Use `trace_add()` instead.")
-    def trace(self, mode, callback) -> str:
-        """
-        Define a trace callback for the variable.
-
-        MODE is one of "r", "w", "u" for read, write, undefine.
-        CALLBACK must be a function which is called when
-        the variable is read, written or undefined.
-
-        Return the name of the callback.
-
-        This deprecated method wraps a deprecated Tcl method removed
-        in Tcl 9.0.  Use trace_add() instead.
-        """
-        ...
-    @deprecated("Deprecated since Python 3.14. Use `trace_add()` instead.")
-    def trace_variable(self, mode, callback) -> str:
-        """
-        Define a trace callback for the variable.
-
-        MODE is one of "r", "w", "u" for read, write, undefine.
-        CALLBACK must be a function which is called when
-        the variable is read, written or undefined.
-
-        Return the name of the callback.
-
-        This deprecated method wraps a deprecated Tcl method removed
-        in Tcl 9.0.  Use trace_add() instead.
-        """
-        ...
-    @deprecated("Deprecated since Python 3.14. Use `trace_remove()` instead.")
-    def trace_vdelete(self, mode, cbname) -> None:
-        """
-        Delete the trace callback for a variable.
-
-        MODE is one of "r", "w", "u" for read, write, undefine.
-        CBNAME is the name of the callback returned from trace_variable or trace.
-
-        This deprecated method wraps a deprecated Tcl method removed
-        in Tcl 9.0.  Use trace_remove() instead.
-        """
-        ...
-    @deprecated("Deprecated since Python 3.14. Use `trace_info()` instead.")
-    def trace_vinfo(self) -> list[Incomplete]:
-        """
-        Return all trace callback information.
-
-        This deprecated method wraps a deprecated Tcl method removed
-        in Tcl 9.0.  Use trace_info() instead.
-        """
-        ...
+    def get(self): ...
+    def trace_add(self, mode: Literal["array", "read", "write", "unset"], callback: Callable[[str, str, str], object]) -> str: ...
+    def trace_remove(self, mode: Literal["array", "read", "write", "unset"], cbname: str) -> None: ...
+    def trace_info(self) -> list[tuple[tuple[Literal["array", "read", "write", "unset"], ...], str]]: ...
+    @deprecated("Deprecated; will be removed in Python 3.17. Use `trace_add()` instead.")
+    def trace(self, mode, callback) -> str: ...
+    @deprecated("Deprecated; will be removed in Python 3.17. Use `trace_add()` instead.")
+    def trace_variable(self, mode, callback) -> str: ...
+    @deprecated("Deprecated; will be removed in Python 3.17. Use `trace_remove()` instead.")
+    def trace_vdelete(self, mode, cbname) -> None: ...
+    @deprecated("Deprecated; will be removed in Python 3.17. Use `trace_info()` instead.")
+    def trace_vinfo(self) -> list[Incomplete]: ...
     def __eq__(self, other: object) -> bool: ...
     def __del__(self) -> None:
         """Unset the variable in Tcl."""
