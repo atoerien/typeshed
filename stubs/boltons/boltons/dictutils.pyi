@@ -47,12 +47,113 @@ _VT = TypeVar("_VT")
 _T = TypeVar("_T")
 
 class OrderedMultiDict(dict[_KT, _VT]):
+    """
+    A MultiDict is a dictionary that can have multiple values per key
+    and the OrderedMultiDict (OMD) is a MultiDict that retains
+    original insertion order. Common use cases include:
+
+      * handling query strings parsed from URLs
+      * inverting a dictionary to create a reverse index (values to keys)
+      * stacking data from multiple dictionaries in a non-destructive way
+
+    The OrderedMultiDict constructor is identical to the built-in
+    :class:`dict`, and overall the API constitutes an intuitive
+    superset of the built-in type:
+
+    >>> omd = OrderedMultiDict()
+    >>> omd['a'] = 1
+    >>> omd['b'] = 2
+    >>> omd.add('a', 3)
+    >>> omd.get('a')
+    3
+    >>> omd.getlist('a')
+    [1, 3]
+
+    Some non-:class:`dict`-like behaviors also make an appearance,
+    such as support for :func:`reversed`:
+
+    >>> list(reversed(omd))
+    ['b', 'a']
+
+    Note that unlike some other MultiDicts, this OMD gives precedence
+    to the most recent value added. ``omd['a']`` refers to ``3``, not
+    ``1``.
+
+    >>> omd
+    OrderedMultiDict([('a', 1), ('b', 2), ('a', 3)])
+    >>> omd.poplast('a')
+    3
+    >>> omd
+    OrderedMultiDict([('a', 1), ('b', 2)])
+    >>> omd.pop('a')
+    1
+    >>> omd
+    OrderedMultiDict([('b', 2)])
+
+    If you want a safe-to-modify or flat dictionary, use
+    :meth:`OrderedMultiDict.todict()`.
+
+    >>> from pprint import pprint as pp  # preserve printed ordering
+    >>> omd = OrderedMultiDict([('a', 1), ('b', 2), ('a', 3)])
+    >>> pp(omd.todict())
+    {'a': 3, 'b': 2}
+    >>> pp(omd.todict(multi=True))
+    {'a': [1, 3], 'b': [2]}
+
+    With ``multi=False``, items appear with the keys in to original
+    insertion order, alongside the most-recently inserted value for
+    that key.
+
+    >>> OrderedMultiDict([('a', 1), ('b', 2), ('a', 3)]).items(multi=False)
+    [('a', 3), ('b', 2)]
+
+    .. warning::
+
+       ``dict(omd)`` changed behavior `in Python 3.7
+       <https://bugs.python.org/issue34320>`_ due to changes made to
+       support the transition from :class:`collections.OrderedDict` to
+       the built-in dictionary being ordered. Before 3.7, the result
+       would be a new dictionary, with values that were lists, similar
+       to ``omd.todict(multi=True)`` (but only shallow-copy; the lists
+       were direct references to OMD internal structures). From 3.7
+       onward, the values became singular, like
+       ``omd.todict(multi=False)``. For reliable cross-version
+       behavior, just use :meth:`~OrderedMultiDict.todict()`.
+    """
     def __reduce__(self) -> tuple[type[Self], tuple[()], list[tuple[_KT, _VT]]]: ...
-    def add(self, k: _KT, v: _VT) -> None: ...
-    def addlist(self, k: _KT, v: Iterable[_VT]) -> None: ...
-    def clear(self) -> None: ...
-    def copy(self) -> Self: ...
-    def counts(self) -> OrderedMultiDict[_KT, int]: ...
+    def add(self, k: _KT, v: _VT) -> None:
+        """
+        Add a single value *v* under a key *k*. Existing values under *k*
+        are preserved.
+        """
+        ...
+    def addlist(self, k: _KT, v: Iterable[_VT]) -> None:
+        """
+        Add an iterable of values underneath a specific key, preserving
+        any values already under that key.
+
+        >>> omd = OrderedMultiDict([('a', -1)])
+        >>> omd.addlist('a', range(3))
+        >>> omd
+        OrderedMultiDict([('a', -1), ('a', 0), ('a', 1), ('a', 2)])
+
+        Called ``addlist`` for consistency with :meth:`getlist`, but
+        tuples and other sequences and iterables work.
+        """
+        ...
+    def clear(self) -> None:
+        """Empty the dictionary."""
+        ...
+    def copy(self) -> Self:
+        """Return a shallow copy of the dictionary."""
+        ...
+    def counts(self) -> OrderedMultiDict[_KT, int]:
+        """
+        Returns a mapping from key to number of values inserted under that
+        key. Like :py:class:`collections.Counter`, but returns a new
+        :class:`OrderedMultiDict`.
+        """
+        ...
 
     @overload  # type: ignore[override]
     @classmethod

@@ -478,5 +478,50 @@ class FunctionBuilder:
 class MissingArgument(ValueError): ...
 class ExistingArgument(ValueError): ...
 
-def noop(*args: Unused, **kwargs: Unused) -> None: ...
-def once(func: Callable[[], _R]) -> Callable[[], _R]: ...
+def noop(*args: Unused, **kwargs: Unused) -> None:
+    """
+    Simple function that should be used when no effect is desired.
+    An alternative to checking for  an optional function type parameter.
+
+    e.g.
+    def decorate(func, pre_func=None, post_func=None):
+        if pre_func:
+            pre_func()
+        func()
+        if post_func:
+            post_func()
+
+    vs
+
+    def decorate(func, pre_func=noop, post_func=noop):
+        pre_func()
+        func()
+        post_func()
+    """
+    ...
+def once(func: Callable[[], _R]) -> Callable[[], _R]:
+    """
+    Decorator that ensures a function is only executed once, caching
+    the result for all subsequent calls. Thread-safe: concurrent callers
+    block until the first execution completes, then all receive the
+    cached result.
+
+    This is especially useful in cases like logging, where multiple
+    initializations can cause problems.
+
+    The decorated function must take no arguments.
+
+    >>> call_count = 0
+    >>> @once
+    ... def expensive_setup():
+    ...     global call_count
+    ...     call_count += 1
+    ...     return 'initialized'
+    >>> expensive_setup()
+    'initialized'
+    >>> expensive_setup()
+    'initialized'
+    >>> call_count
+    1
+    """
+    ...

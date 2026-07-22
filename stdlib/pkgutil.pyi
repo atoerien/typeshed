@@ -90,16 +90,16 @@ if sys.version_info < (3, 12):
 
 if sys.version_info < (3, 14):
     @deprecated("Deprecated; removed in Python 3.14. Use `importlib.util.find_spec()` instead.")
-    def find_loader(fullname: str) -> LoaderProtocol | None: ...
-    @deprecated("Deprecated; removed in Python 3.14. Use `importlib.util.find_spec()` instead.")
-    def get_loader(module_or_name: str) -> LoaderProtocol | None: ...
+    def find_loader(fullname: str) -> LoaderProtocol | None:
+        """
+        Find a "loader" object for fullname
 
         This is a backwards compatibility wrapper around
         importlib.util.find_spec that converts most failures to ImportError
         and only returns the loader rather than the full spec
         """
         ...
-    @deprecated("Deprecated since Python 3.12; removed in Python 3.14. Use `importlib.util.find_spec()` instead.")
+    @deprecated("Deprecated; removed in Python 3.14. Use `importlib.util.find_spec()` instead.")
     def get_loader(module_or_name: str) -> LoaderProtocol | None:
         """
         Get a "loader" object for module_or_name

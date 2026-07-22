@@ -250,6 +250,8 @@ def bytes2human(nbytes: int, ndigits: int = 0) -> str:
     '95M'
     >>> bytes2human(0, 2)
     '0.00B'
+    >>> bytes2human(1024)
+    '1K'
     """
     ...
 
@@ -573,7 +575,7 @@ class MultiReplace:
         s = strutils.MultiReplace([
             ('foo', 'zoo'),
             ('cat', 'hat'),
-            ('bat', 'kraken)'
+            ('bat', 'kraken')
         ])
         new = s.sub('The foo bar cat ate a bat')
         new == 'The zoo bar hat ate a kraken'
@@ -605,10 +607,67 @@ class MultiReplace:
         """
         Run substitutions on the input text.
 
-def multi_replace(text: str, sub_map: dict[str, str], **kwargs) -> str: ...
-def unwrap_text(text: str, ending: str | None = "\n\n") -> str: ...
-def removeprefix(text: str, prefix: str) -> str: ...
-def human_readable_list(items: Sequence[str], delimiter: str = ",", conjunction: str = "and", *, oxford: bool = True) -> str: ...
+        Given an input string, run all substitutions given in the
+        constructor.
+        """
+        ...
+
+def multi_replace(text: str, sub_map: dict[str, str], **kwargs) -> str:
+    """
+    Shortcut function to invoke MultiReplace in a single call.
+
+    Example Usage::
+
+        from boltons.strutils import multi_replace
+        new = multi_replace(
+            'The foo bar cat ate a bat',
+            {'foo': 'zoo', 'cat': 'hat', 'bat': 'kraken'}
+        )
+        new == 'The zoo bar hat ate a kraken'
+    """
+    ...
+def unwrap_text(text: str, ending: str | None = "\n\n") -> str:
+    r"""
+    Unwrap text, the natural complement to :func:`textwrap.wrap`.
+
+    >>> text = "Short \n lines  \nwrapped\nsmall.\n\nAnother\nparagraph."
+    >>> unwrap_text(text)
+    'Short lines wrapped small.\n\nAnother paragraph.'
+
+    Args:
+       text: A string to unwrap.
+       ending (str): The string to join all unwrapped paragraphs
+          by. Pass ``None`` to get the list. Defaults to '\n\n' for
+          compatibility with Markdown and RST.
+    """
+    ...
+def removeprefix(text: str, prefix: str) -> str:
+    """
+    Remove `prefix` from start of `text` if present.
+
+    Backport of `str.removeprefix` for Python versions less than 3.9.
+
+    Args:
+        text: A string to remove the prefix from.
+        prefix: The string to remove from the beginning of `text`.
+    """
+    ...
+def human_readable_list(items: Sequence[str], delimiter: str = ",", conjunction: str = "and", *, oxford: bool = True) -> str:
+    """
+    Given a list of strings, return a human readable string with
+    appropriate delimiters and the conjunction word.
+
+    Args:
+        items: The list of strings to join.
+        delimiter (optional): The delimiter to use between items.
+        conjunction (optional): The word to use before the last item.
+        oxford (optional): Whether to use the Oxford comma/delimiter before
+            the conjunction in lists of 3+ items.
+
+    Returns:
+        str: The human readable string.
+    """
+    ...
 
 __all__ = [
     "camel2under",

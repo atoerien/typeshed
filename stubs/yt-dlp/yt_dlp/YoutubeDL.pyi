@@ -302,7 +302,7 @@ class YoutubeDL:
                        geo_bypass_country
     external_downloader: A dictionary of protocol keys and the executable of the
                        external downloader to use for it. The allowed protocols
-                       are default|http|ftp|m3u8|dash|rtsp|rtmp|mms.
+                       are default|http|ftp|m3u8|dash|rtmp.
                        Set the value to 'native' to use the native downloader
     compat_opts:       Compatibility options. See "Differences in default behavior".
                        The following options do not work when used through the API:
@@ -514,10 +514,17 @@ class YoutubeDL:
         """Escape any remaining strings like %s, %abc% etc. """
         ...
     @classmethod
-    def validate_outtmpl(cls, outtmpl: str) -> ValueError | None: ...
+    def validate_outtmpl(cls, outtmpl: str) -> ValueError | None:
+        """@return None or Exception object """
+        ...
     def prepare_outtmpl(
         self, outtmpl: str, info_dict: _InfoDict, sanitize: bool = False, *, _exec: bool = False
-    ) -> tuple[str, dict[str, Any]]: ...
+    ) -> tuple[str, dict[str, Any]]:
+        """
+        Make the outtmpl and info_dict suitable for substitution: ydl.escape_outtmpl(outtmpl) % info_dict
+        @param sanitize    Whether to sanitize the output as a filename
+        """
+        ...
     def evaluate_outtmpl(self, outtmpl: str, info_dict: _InfoDict, sanitize: bool = False) -> str: ...
     def prepare_filename(
         self, info_dict: _InfoDict, dir_type: str = "", *, outtmpl: str | None = None, warn: bool = False

@@ -243,7 +243,44 @@ class DockerClient:
         until: datetime | int | None = None,
         filters: dict[str, Any] | None = None,
         decode: Literal[False] | None = None,
-    ) -> CancellableStream[str]: ...
+    ) -> CancellableStream[str]:
+        """
+        Get real-time events from the server. Similar to the ``docker events``
+        command.
+
+        Args:
+            since (UTC datetime or int): Get events from this point
+            until (UTC datetime or int): Get events until this point
+            filters (dict): Filter the events by event time, container or image
+            decode (bool): If set to true, stream will be decoded into dicts on
+                the fly. False by default.
+
+        Returns:
+            A :py:class:`docker.types.daemon.CancellableStream` generator
+
+        Raises:
+            :py:class:`docker.errors.APIError`
+                If the server returns an error.
+
+        Example:
+
+            >>> for event in client.events(decode=True)
+            ...   print(event)
+            {u'from': u'image/with:tag',
+             u'id': u'container-id',
+             u'status': u'start',
+             u'time': 1423339459}
+            ...
+
+            or
+
+            >>> events = client.events()
+            >>> for event in events:
+            ...   print(event)
+            >>> # and cancel from another thread
+            >>> events.close()
+        """
+        ...
     @overload
     def events(
         self,
@@ -251,11 +288,72 @@ class DockerClient:
         until: datetime | int | None = None,
         filters: dict[str, Any] | None = None,
         decode: Literal[True] = ...,
-    ) -> CancellableStream[dict[str, Any]]: ...
+    ) -> CancellableStream[dict[str, Any]]:
+        """
+        Get real-time events from the server. Similar to the ``docker events``
+        command.
 
-    def df(self) -> dict[str, Any]: ...
+        Args:
+            since (UTC datetime or int): Get events from this point
+            until (UTC datetime or int): Get events until this point
+            filters (dict): Filter the events by event time, container or image
+            decode (bool): If set to true, stream will be decoded into dicts on
+                the fly. False by default.
+
+        Returns:
+            A :py:class:`docker.types.daemon.CancellableStream` generator
+
+        Raises:
+            :py:class:`docker.errors.APIError`
+                If the server returns an error.
+
+        Example:
+
+            >>> for event in client.events(decode=True)
+            ...   print(event)
+            {u'from': u'image/with:tag',
+             u'id': u'container-id',
+             u'status': u'start',
+             u'time': 1423339459}
+            ...
+
+            or
+
+            >>> events = client.events()
+            >>> for event in events:
+            ...   print(event)
+            >>> # and cancel from another thread
+            >>> events.close()
+        """
+        ...
+
+    def df(self) -> dict[str, Any]:
+        """
+        Get data usage information.
+
+        Returns:
+            (dict): A dictionary representing different resource categories
+            and their respective data usage.
+
+        Raises:
+            :py:class:`docker.errors.APIError`
+                If the server returns an error.
+        """
+        ...
     # Please keep in sync with docker.api.daemon.DaemonApiMixin.info
-    def info(self) -> dict[str, Any]: ...
+    def info(self) -> dict[str, Any]:
+        """
+        Display system-wide information. Identical to the ``docker info``
+        command.
+
+        Returns:
+            (dict): The info as a dict
+
+        Raises:
+            :py:class:`docker.errors.APIError`
+                If the server returns an error.
+        """
+        ...
     # Please keep in sync with docker.api.daemon.DaemonApiMixin.login
     def login(
         self,
@@ -265,12 +363,61 @@ class DockerClient:
         registry: str | None = None,
         reauth: bool = False,
         dockercfg_path: str | None = None,
-    ) -> dict[str, Any]: ...
+    ) -> dict[str, Any]:
+        """
+        Authenticate with a registry. Similar to the ``docker login`` command.
+
+        Args:
+            username (str): The registry username
+            password (str): The plaintext password
+            email (str): The email for the registry account
+            registry (str): URL to the registry.  E.g.
+                ``https://index.docker.io/v1/``
+            reauth (bool): Whether or not to refresh existing authentication on
+                the Docker server.
+            dockercfg_path (str): Use a custom path for the Docker config file
+                (default ``$HOME/.docker/config.json`` if present,
+                otherwise ``$HOME/.dockercfg``)
+
+        Returns:
+            (dict): The response from the login request
+
+        Raises:
+            :py:class:`docker.errors.APIError`
+                If the server returns an error.
+        """
+        ...
     # Please keep in sync with docker.api.daemon.DaemonApiMixin.ping
-    def ping(self) -> bool: ...
+    def ping(self) -> bool:
+        """
+        Checks the server is responsive. An exception will be raised if it
+        isn't responding.
+
+        Returns:
+            (bool) The response from the server.
+
+        Raises:
+            :py:class:`docker.errors.APIError`
+                If the server returns an error.
+        """
+        ...
     # Please keep in sync with docker.api.daemon.DaemonApiMixin.version
-    def version(self, api_version: bool = True) -> dict[str, Any]: ...
-    def close(self) -> None: ...
+    def version(self, api_version: bool = True) -> dict[str, Any]:
+        """
+        Returns version information from the server. Similar to the ``docker
+        version`` command.
+
+        Returns:
+            (dict): The server version information
+
+        Raises:
+            :py:class:`docker.errors.APIError`
+                If the server returns an error.
+        """
+        ...
+    def close(self) -> None:
+        """Closes all adapters and as such the session"""
+        ...
     def __getattr__(self, name: str) -> NoReturn: ...
 
 from_env = DockerClient.from_env

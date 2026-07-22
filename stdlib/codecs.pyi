@@ -225,8 +225,37 @@ def getincrementaldecoder(encoding: _BufferedEncoding) -> _BufferedIncrementalDe
     Lookup up the codec for the given encoding and return
     its IncrementalDecoder class or factory function.
 
-def getreader(encoding: str) -> _StreamReader: ...
-def getwriter(encoding: str) -> _StreamWriter: ...
+    Raises a LookupError in case the encoding cannot be found
+    or the codecs doesn't provide an incremental decoder.
+    """
+    ...
+@overload
+def getincrementaldecoder(encoding: str) -> _IncrementalDecoder:
+    """
+    Lookup up the codec for the given encoding and return
+    its IncrementalDecoder class or factory function.
+
+    Raises a LookupError in case the encoding cannot be found
+    or the codecs doesn't provide an incremental decoder.
+    """
+    ...
+
+def getreader(encoding: str) -> _StreamReader:
+    """
+    Lookup up the codec for the given encoding and return
+    its StreamReader class or factory function.
+
+    Raises a LookupError in case the encoding cannot be found.
+    """
+    ...
+def getwriter(encoding: str) -> _StreamWriter:
+    """
+    Lookup up the codec for the given encoding and return
+    its StreamWriter class or factory function.
+
+    Raises a LookupError in case the encoding cannot be found.
+    """
+    ...
 @deprecated("Deprecated. Use `open()` instead.")
 def open(
     filename: str, mode: str = "r", encoding: str | None = None, errors: str = "strict", buffering: int = -1

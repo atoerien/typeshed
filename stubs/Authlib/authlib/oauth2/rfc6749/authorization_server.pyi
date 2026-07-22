@@ -159,13 +159,81 @@ class AuthorizationServer(Hookable):
         ...
     def register_grant(
         self, grant_cls: type[BaseGrant], extensions: Collection[Callable[[BaseGrant], None]] | None = None
-    ) -> None: ...
-    def register_endpoint(self, endpoint: type[Endpoint] | Endpoint) -> None: ...
+    ) -> None:
+        """
+        Register a grant class into the endpoint registry. Developers
+        can implement the grants in ``authlib.oauth2.rfc6749.grants`` and
+        register with this method::
+
+            class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
+                def authenticate_user(self, credential):
+                    # ...
+
+            authorization_server.register_grant(AuthorizationCodeGrant)
+
+        :param grant_cls: a grant class.
+        :param extensions: extensions for the grant class.
+        """
+        ...
+    def register_endpoint(self, endpoint: type[Endpoint] | Endpoint) -> None:
+        """
+        Add extra endpoint to authorization server. e.g.
+        RevocationEndpoint::
+
+            authorization_server.register_endpoint(RevocationEndpoint)
+
+        :param endpoint: An endpoint class or instance.
+        """
+        ...
     def get_authorization_grant(self, request: OAuth2Request) -> BaseGrant: ...
-    def get_consent_grant(self, request=None, end_user=None): ...
-    def get_token_grant(self, request: OAuth2Request) -> BaseGrant: ...
-    def validate_endpoint_request(self, name, request=None) -> EndpointRequest: ...
-    def create_endpoint_response(self, name, request=None): ...
+    def get_consent_grant(self, request=None, end_user=None):
+        """
+        Validate current HTTP request for authorization page. This page
+        is designed for resource owner to grant or deny the authorization.
+        """
+        ...
+    def get_token_grant(self, request: OAuth2Request) -> BaseGrant:
+        """
+        Find the token grant for current request.
+
+        :param request: OAuth2Request instance.
+        :return: grant instance
+        """
+        ...
+    def validate_endpoint_request(self, name, request=None) -> EndpointRequest:
+        """
+        Validate endpoint request and return the validated request object.
+
+        Use this for interactive endpoints where you need to handle UI
+        between validation and response creation.
+
+        :param name: Endpoint name
+        :param request: HTTP request instance
+        :returns: Validated EndpointRequest object
+        :raises OAuth2Error: If validation fails
+        :raises RuntimeError: If endpoint not found
+
+        Example::
+
+            req = server.validate_endpoint_request("end_session")
+            if req.needs_confirmation:
+                return render_template("confirm_logout.html", ...)
+            return server.create_endpoint_response("end_session", req)
+        """
+        ...
+    def create_endpoint_response(self, name, request=None):
+        """
+        Validate endpoint request and create endpoint response.
+
+        Can be called with:
+        - A raw HTTP request or None: validates and responds in one step
+        - A validated EndpointRequest: skips validation, creates response directly
+
+        :param name: Endpoint name
+        :param request: HTTP request instance or validated EndpointRequest
+        :return: Response, or None if the endpoint returns None
+        """
+        ...
 
     @overload
     @deprecated("The 'grant' parameter will become mandatory.")

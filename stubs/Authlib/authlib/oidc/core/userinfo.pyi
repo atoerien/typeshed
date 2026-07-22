@@ -49,7 +49,52 @@ class UserInfoEndpoint:
     ) -> None: ...
     def create_endpoint_request(self, request: OAuth2Request) -> OAuth2Request: ...
     def __call__(self, request: OAuth2Request) -> tuple[int, str | UserInfo, list[tuple[str, str]]]: ...
-    def get_supported_algorithms(self) -> list[str]: ...
-    def generate_user_info(self, user, scope: str) -> UserInfo: ...
-    def get_issuer(self) -> str: ...
-    def resolve_private_key(self): ...
+    def get_supported_algorithms(self) -> list[str]:
+        """
+        Return the supported algorithms for userinfo signing.
+        By default, it uses the recommended algorithms from ``joserfc``.
+        Developer can override this method to customize the supported algorithms::
+
+            def get_supported_algorithms(self) -> list[str]:
+                return ["RS256"]
+        """
+        ...
+    def generate_user_info(self, user, scope: str) -> UserInfo:
+        """
+        Generate a :class:`~authlib.oidc.core.UserInfo` object for an user::
+
+            def generate_user_info(self, user, scope: str) -> UserInfo:
+                return UserInfo(
+                    given_name=user.given_name,
+                    family_name=user.last_name,
+                    email=user.email,
+                    ...
+                ).filter(scope)
+
+        This method must be implemented by developers.
+        """
+        ...
+    def get_issuer(self) -> str:
+        """
+        The OP's Issuer Identifier URL.
+
+        The value is used to fill the ``iss`` claim that is mandatory in signed userinfo::
+
+            def get_issuer(self) -> str:
+                return "https://auth.example"
+
+        This method must be implemented by developers to support JWT userinfo.
+        """
+        ...
+    def resolve_private_key(self):
+        """
+        Return the server JSON Web Key Set.
+
+        This is used to sign userinfo payloads::
+
+            def resolve_private_key(self):
+                return server_private_jwk_set()
+
+        This method must be implemented by developers to support JWT userinfo signing.
+        """
+        ...

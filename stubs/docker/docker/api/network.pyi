@@ -16,7 +16,28 @@ _Network: TypeAlias = _HasId | _HasID | str
 _Container: TypeAlias = _HasId | _HasID | str
 
 class NetworkApiMixin:
-    def networks(self, names: list[Incomplete] | None = None, ids: list[Incomplete] | None = None, filters=None): ...
+    def networks(self, names: list[Incomplete] | None = None, ids: list[Incomplete] | None = None, filters=None):
+        """
+        List networks. Similar to the ``docker network ls`` command.
+
+        Args:
+            names (:py:class:`list`): List of names to filter by
+            ids (:py:class:`list`): List of ids to filter by
+            filters (dict): Filters to be processed on the network list.
+                Available filters:
+                - ``driver=[<driver-name>]`` Matches a network's driver.
+                - ``label=[<key>]``, ``label=[<key>=<value>]`` or a list of
+                    such.
+                - ``type=["custom"|"builtin"]`` Filters networks by type.
+
+        Returns:
+            (dict): List of network objects.
+
+        Raises:
+            :py:class:`docker.errors.APIError`
+                If the server returns an error.
+        """
+        ...
     def create_network(
         self,
         name: str,

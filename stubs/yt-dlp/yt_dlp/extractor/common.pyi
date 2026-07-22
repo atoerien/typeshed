@@ -392,6 +392,8 @@ class InfoExtractor:
                                            favorite by the video uploader
                         * "is_pinned" - Whether the comment is pinned to
                                         the top of the comments
+                        * "start_time" - Start time (in seconds) for displaying the comment
+                        * "end_time" - End time (in seconds) for displaying the comment
     age_limit:      Age restriction for the video, as an integer (years)
     webpage_url:    The URL to the video webpage, if given to yt-dlp it
                     should allow to get the same result again. (It will be set
@@ -766,10 +768,18 @@ class InfoExtractor:
     @deprecated("InfoExtractor.report_drm no longer accepts the argument partial")
     def report_drm(self, video_id: str, partial: bool) -> None: ...
 
-    def report_extraction(self, id_or_name: str) -> None: ...
-    def report_download_webpage(self, video_id: str, *, note: str | None = None) -> None: ...
-    def report_age_confirmation(self) -> None: ...
-    def report_login(self) -> None: ...
+    def report_extraction(self, id_or_name: str) -> None:
+        """Report information extraction."""
+        ...
+    def report_download_webpage(self, video_id: str, *, note: str | None = None) -> None:
+        """Report webpage download."""
+        ...
+    def report_age_confirmation(self) -> None:
+        """Report attempt to confirm age."""
+        ...
+    def report_login(self) -> None:
+        """Report attempt to log in."""
+        ...
     def raise_login_required(
         self,
         msg: str = "This video is only available for registered users",

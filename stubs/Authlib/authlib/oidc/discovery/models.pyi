@@ -1,6 +1,18 @@
 from authlib.oauth2.rfc8414 import AuthorizationServerMetadata
 
 class OpenIDProviderMetadata(AuthorizationServerMetadata):
+    """
+    OpenID Provider Metadata for OpenID Connect Discovery.
+
+    The :meth:`validate` method can compose extension classes via the
+    ``metadata_classes`` parameter. For example, to validate RP-Initiated
+    Logout metadata::
+
+        from authlib.oidc import discovery, rpinitiated
+
+        metadata = discovery.OpenIDProviderMetadata(data)
+        metadata.validate(metadata_classes=[rpinitiated.OpenIDProviderMetadata])
+    """
     REGISTRY_KEYS: list[str]
     def validate_jwks_uri(self): ...
     def validate_acr_values_supported(self) -> None:

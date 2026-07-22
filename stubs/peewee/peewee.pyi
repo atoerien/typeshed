@@ -753,7 +753,7 @@ class IndexMetadata(NamedTuple):
     table: Incomplete
 
 class ColumnMetadata(NamedTuple):
-    """ColumnMetadata(name, data_type, null, primary_key, table, default)"""
+    """ColumnMetadata(name, data_type, null, primary_key, table, default, full_type, identity)"""
     name: Incomplete
     data_type: Incomplete
     null: Incomplete
@@ -764,7 +764,7 @@ class ColumnMetadata(NamedTuple):
     identity: bool = False
 
 class ForeignKeyMetadata(NamedTuple):
-    """ForeignKeyMetadata(column, dest_table, dest_column, table)"""
+    """ForeignKeyMetadata(column, dest_table, dest_column, table, name, on_delete, on_update)"""
     column: Incomplete
     dest_table: Incomplete
     dest_column: Incomplete
@@ -1912,6 +1912,7 @@ class Model(metaclass=ModelBase):
     def add_index(cls, *fields, **kwargs) -> None: ...
 
 class ModelAlias(Node, Generic[_M]):
+    """Provide a separate reference to a model in a query."""
     def __init__(self, model: type[_M], alias=None) -> None: ...
     def __getattr__(self, attr: str): ...
     def __setattr__(self, attr: str, value) -> None: ...

@@ -228,10 +228,135 @@ class ImageApiMixin:
         decode: bool = False,
         platform: str | None = None,
         all_tags: bool = False,
-    ): ...
-    def push(self, repository: str, tag: str | None = None, stream: bool = False, auth_config=None, decode: bool = False): ...
-    def remove_image(self, image: str, force: bool = False, noprune: bool = False): ...
-    def search(self, term: str, limit: int | None = None): ...
-    def tag(self, image, repository, tag: str | None = None, force: bool = False) -> bool: ...
+    ):
+        """
+        Pulls an image. Similar to the ``docker pull`` command.
+
+        Args:
+            repository (str): The repository to pull
+            tag (str): The tag to pull. If ``tag`` is ``None`` or empty, it
+                is set to ``latest``.
+            stream (bool): Stream the output as a generator. Make sure to
+                consume the generator, otherwise pull might get cancelled.
+            auth_config (dict): Override the credentials that are found in the
+                config for this request.  ``auth_config`` should contain the
+                ``username`` and ``password`` keys to be valid.
+            decode (bool): Decode the JSON data from the server into dicts.
+                Only applies with ``stream=True``
+            platform (str): Platform in the format ``os[/arch[/variant]]``
+            all_tags (bool): Pull all image tags, the ``tag`` parameter is
+                ignored.
+
+        Returns:
+            (generator or str): The output
+
+        Raises:
+            :py:class:`docker.errors.APIError`
+                If the server returns an error.
+
+        Example:
+
+            >>> resp = client.api.pull('busybox', stream=True, decode=True)
+            ... for line in resp:
+            ...     print(json.dumps(line, indent=4))
+            {
+                "status": "Pulling image (latest) from busybox",
+                "progressDetail": {},
+                "id": "e72ac664f4f0"
+            }
+            {
+                "status": "Pulling image (latest) from busybox, endpoint: ...",
+                "progressDetail": {},
+                "id": "e72ac664f4f0"
+            }
+        """
+        ...
+    def push(self, repository: str, tag: str | None = None, stream: bool = False, auth_config=None, decode: bool = False):
+        """
+        Push an image or a repository to the registry. Similar to the ``docker
+        push`` command.
+
+        Args:
+            repository (str): The repository to push to
+            tag (str): An optional tag to push
+            stream (bool): Stream the output as a blocking generator
+            auth_config (dict): Override the credentials that are found in the
+                config for this request.  ``auth_config`` should contain the
+                ``username`` and ``password`` keys to be valid.
+            decode (bool): Decode the JSON data from the server into dicts.
+                Only applies with ``stream=True``
+
+        Returns:
+            (generator or str): The output from the server.
+
+        Raises:
+            :py:class:`docker.errors.APIError`
+                If the server returns an error.
+
+        Example:
+            >>> resp = client.api.push(
+            ...     'yourname/app',
+            ...     stream=True,
+            ...     decode=True,
+            ... )
+            ... for line in resp:
+            ...   print(line)
+            {'status': 'Pushing repository yourname/app (1 tags)'}
+            {'status': 'Pushing','progressDetail': {}, 'id': '511136ea3c5a'}
+            {'status': 'Image already pushed, skipping', 'progressDetail':{},
+             'id': '511136ea3c5a'}
+            ...
+        """
+        ...
+    def remove_image(self, image: str, force: bool = False, noprune: bool = False):
+        """
+        Remove an image. Similar to the ``docker rmi`` command.
+
+        Args:
+            image (str): The image to remove
+            force (bool): Force removal of the image
+            noprune (bool): Do not delete untagged parents
+        """
+        ...
+    def search(self, term: str, limit: int | None = None):
+        """
+        Search for images on Docker Hub. Similar to the ``docker search``
+        command.
+
+        Args:
+            term (str): A term to search for.
+            limit (int): The maximum number of results to return.
+
+        Returns:
+            (list of dicts): The response of the search.
+
+        Raises:
+            :py:class:`docker.errors.APIError`
+                If the server returns an error.
+        """
+        ...
+    def tag(self, image, repository, tag: str | None = None, force: bool = False) -> bool:
+        """
+        Tag an image into a repository. Similar to the ``docker tag`` command.
+
+        Args:
+            image (str): The image to tag
+            repository (str): The repository to set for the tag
+            tag (str): The tag name
+            force (bool): Force
+
+        Returns:
+            (bool): ``True`` if successful
+
+        Raises:
+            :py:class:`docker.errors.APIError`
+                If the server returns an error.
+
+        Example:
+
+            >>> client.api.tag('ubuntu', 'localhost:5000/ubuntu', 'latest',
+                           force=True)
+        """
+        ...
 
 def is_file(src: str) -> bool: ...

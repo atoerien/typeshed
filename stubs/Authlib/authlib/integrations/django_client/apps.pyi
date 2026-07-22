@@ -42,6 +42,31 @@ class DjangoOAuth2App(DjangoAppMixin, OAuth2Mixin, OpenIDMixin, BaseApp):
         client_id=None,
         logout_hint=None,
         ui_locales=None,
-    ) -> _HttpResponseRedirect: ...
-    def validate_logout_response(self, request): ...
-    def authorize_access_token(self, request, **kwargs): ...
+    ) -> _HttpResponseRedirect:
+        """
+        Create a HTTP Redirect for End Session Endpoint (RP-Initiated Logout).
+
+        :param request: HTTP request instance from Django view.
+        :param post_logout_redirect_uri: URI to redirect after logout.
+        :param id_token_hint: ID Token previously issued to the RP.
+        :param kwargs: Extra parameters (state, client_id, logout_hint, ui_locales).
+        :return: A HTTP redirect response.
+        """
+        ...
+    def validate_logout_response(self, request):
+        """
+        Validate the state parameter from the logout callback.
+
+        :param request: HTTP request instance from Django view.
+        :return: The state data dict.
+        :raises OAuthError: If state is missing or invalid.
+        """
+        ...
+    def authorize_access_token(self, request, **kwargs):
+        """
+        Fetch access token in one step.
+
+        :param request: HTTP request instance from Django view.
+        :return: A token dict.
+        """
+        ...

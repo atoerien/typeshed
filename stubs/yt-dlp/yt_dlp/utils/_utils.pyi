@@ -884,7 +884,7 @@ def ohdave_rsa_encrypt(data: ReadableBuffer, exponent: float, modulus: float | N
     ...
 def pkcs1pad(data: Sequence[int], length: int) -> list[int]:
     """
-    Padding input data with PKCS#1 scheme
+    Pad input data using EME-PKCS1-v1_5 encoding
 
     @param {int[]} data        input data
     @param {int}   length      target length
@@ -911,7 +911,13 @@ DOT_WEBLOC_LINK_TEMPLATE: Final[str]
 DOT_DESKTOP_LINK_TEMPLATE: Final[str]
 LINK_TEMPLATES: Final[Mapping[str, str]]
 
-def iri_to_uri(iri: str, *, allowed_schemes: Iterable[str] = ("http", "https")) -> str: ...
+def iri_to_uri(iri: str, *, allowed_schemes: Iterable[str] = ("http", "https")) -> str:
+    """
+    Converts an IRI (Internationalized Resource Identifier, allowing Unicode characters) to a URI (Uniform Resource Identifier, ASCII-only).
+
+    The function doesn't add an additional layer of escaping; e.g., it doesn't escape `%3C` as `%253C`. Instead, it percent-escapes characters with an underlying UTF-8 encoding *besides* those already escaped, leaving the URI intact.
+    """
+    ...
 def to_high_limit_path(path: PathLike[AnyStr]) -> str: ...
 def format_field(
     obj: Mapping[str, Any] | Sequence[Any],

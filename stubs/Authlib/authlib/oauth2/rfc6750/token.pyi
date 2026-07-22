@@ -38,7 +38,20 @@ class BearerTokenGenerator:
         expires_generator: Callable[[ClientMixin, str], int] | None = None,
     ) -> None: ...
     @staticmethod
-    def get_allowed_scope(client: ClientMixin, scope: str) -> str: ...
+    def get_allowed_scope(client: ClientMixin, scope: str) -> str:
+        """
+        Get the allowed scope for token generation.
+
+        Per RFC 6749 Section 3.3, if the client omits the scope parameter,
+        the authorization server MUST either process the request using a
+        pre-defined default value or fail the request indicating an invalid scope.
+
+        :param client: the client making the request
+        :param scope: the requested scope (may be None if omitted)
+        :return: the allowed scope string
+        :raises InvalidScopeError: if client.get_allowed_scope returns None
+        """
+        ...
     def generate(
         self,
         grant_type: str,

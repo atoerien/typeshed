@@ -29,7 +29,51 @@ class ConfigCollection(Collection[Config]):
         data: bytes,
         labels: dict[Incomplete, Incomplete] | None = None,
         templating: dict[Incomplete, Incomplete] | None = None,
-    ) -> Config: ...
-    def get(self, config_id: str) -> Config: ...
+    ) -> Config:
+        """
+        Create a config
+
+        Args:
+            name (string): Name of the config
+            data (bytes): Config data to be stored
+            labels (dict): A mapping of labels to assign to the config
+            templating (dict): dictionary containing the name of the
+                               templating driver to be used expressed as
+                               { name: <templating_driver_name>}
+
+        Returns (dict): ID of the newly created config
+        """
+        ...
+    def get(self, config_id: str) -> Config:
+        """
+        Get a config.
+
+        Args:
+            config_id (str): Config ID.
+
+        Returns:
+            (:py:class:`Config`): The config.
+
+        Raises:
+            :py:class:`docker.errors.NotFound`
+                If the config does not exist.
+            :py:class:`docker.errors.APIError`
+                If the server returns an error.
+        """
+        ...
     # Please keep in sync with docker.api.config.ConfigApiMixin.configs
-    def list(self, *, filters=None) -> _list[Config]: ...
+    def list(self, *, filters=None) -> _list[Config]:
+        """
+        List configs. Similar to the ``docker config ls`` command.
+
+        Args:
+            filters (dict): Server-side list filtering options.
+
+        Returns:
+            (list of :py:class:`Config`): The configs.
+
+        Raises:
+            :py:class:`docker.errors.APIError`
+                If the server returns an error.
+        """
+        ...

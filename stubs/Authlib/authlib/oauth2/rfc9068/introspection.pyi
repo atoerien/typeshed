@@ -38,5 +38,21 @@ class JWTIntrospectionEndpoint(IntrospectionEndpoint):
     def create_endpoint_response(self, request): ...
     def authenticate_token(self, request, client) -> JWTAccessTokenClaims | None: ...
     def create_introspection_payload(self, token: JWTAccessTokenClaims) -> dict[str, Incomplete]: ...
-    def get_jwks(self): ...
-    def get_username(self, user_id: str) -> str: ...
+    def get_jwks(self):
+        """
+        Return the JWKs that will be used to check the JWT access token signature.
+        Developers MUST re-implement this method::
+
+            def get_jwks(self):
+                return load_jwks("jwks.json")
+        """
+        ...
+    def get_username(self, user_id: str) -> str:
+        """
+        Returns an username from a user ID.
+        Developers MAY re-implement this method::
+
+            def get_username(self, user_id):
+                return User.get(id=user_id).username
+        """
+        ...
