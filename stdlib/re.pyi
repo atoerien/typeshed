@@ -413,7 +413,7 @@ class Pattern(Generic[AnyStr]):
         """Split string by the occurrences of pattern."""
         ...
 
-    # return type depends on the number of groups in the pattern
+    # return type is either list[str/bytes] or list[tuple[str/bytes, ...]]
     @overload
     def findall(self: Pattern[str], string: str, pos: int = 0, endpos: int = sys.maxsize) -> list[Any]:
         """Return a list of all non-overlapping matches of pattern in string."""
@@ -643,6 +643,7 @@ def split(
     """
     ...
 
+# return type is either list[str/bytes] or list[tuple[str/bytes, ...]]
 @overload
 def findall(pattern: str | Pattern[str], string: str, flags: _FlagsType = 0) -> list[Any]:
     """
