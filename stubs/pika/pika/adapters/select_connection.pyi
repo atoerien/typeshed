@@ -26,6 +26,10 @@ LOGGER: Logger
 SELECT_TYPE: Literal["epoll", "kqueue", "poll"] | None
 
 class SelectConnection(BaseConnection[IOLoop]):
+    """
+    An asynchronous connection adapter that attempts to use the fastest
+    event loop adapter for the given platform.
+    """
     def __init__(
         self,
         parameters: Parameters | None = None,
@@ -64,29 +68,91 @@ class SelectConnection(BaseConnection[IOLoop]):
         on_done: Callable[[Connection | AMQPConnectorException], object],
         custom_ioloop: IOLoop | None = None,
         workflow: AbstractAMQPConnectionWorkflow | None = None,
-    ) -> AbstractAMQPConnectionWorkflow: ...
+    ) -> AbstractAMQPConnectionWorkflow:
+        """
+        Implement
+        :py:classmethod::`pika.adapters.BaseConnection.create_connection()`.
+        """
+        ...
 
 class _Timeout:
     """Represents a timeout"""
     __slots__ = ("deadline", "callback")
     deadline: float
     callback: Callable[[], None]
-    def __init__(self, deadline: float, callback: Callable[[], None]) -> None: ...
-    def __eq__(self, other: object) -> bool: ...
-    def __ne__(self, other: object) -> bool: ...
-    def __lt__(self, other: object) -> bool: ...
-    def __gt__(self, other: object) -> bool: ...
-    def __le__(self, other: object) -> bool: ...
-    def __ge__(self, other: object) -> bool: ...
+    def __init__(self, deadline: float, callback: Callable[[], None]) -> None:
+        """
+        :param float deadline: timer expiration as non-negative epoch number
+        :param callable callback: callback to call when timeout expires
+        :raises ValueError, TypeError:
+        """
+        ...
+    def __eq__(self, other: object) -> bool:
+        """NOTE: not supporting sort stability"""
+        ...
+    def __ne__(self, other: object) -> bool:
+        """NOTE: not supporting sort stability"""
+        ...
+    def __lt__(self, other: object) -> bool:
+        """NOTE: not supporting sort stability"""
+        ...
+    def __gt__(self, other: object) -> bool:
+        """NOTE: not supporting sort stability"""
+        ...
+    def __le__(self, other: object) -> bool:
+        """NOTE: not supporting sort stability"""
+        ...
+    def __ge__(self, other: object) -> bool:
+        """NOTE: not supporting sort stability"""
+        ...
 
 class _Timer:
     """Manage timeouts for use in ioloop"""
     def __init__(self) -> None: ...
-    def close(self) -> None: ...
-    def call_later(self, delay: float, callback: Callable[[], None]) -> _Timeout: ...
-    def remove_timeout(self, timeout: _Timeout) -> None: ...
-    def get_remaining_interval(self) -> float | None: ...
-    def process_timeouts(self) -> None: ...
+    def close(self) -> None:
+        """
+        Release resources. Don't use the `_Timer` instance after closing
+        it
+        """
+        ...
+    def call_later(self, delay: float, callback: Callable[[], None]) -> _Timeout:
+        """
+        Schedule a one-shot timeout given delay seconds.
+
+        NOTE: you may cancel the timer before dispatch of the callback. Timer
+            Manager cancels the timer upon dispatch of the callback.
+
+        :param float delay: Non-negative number of seconds from now until
+            expiration
+        :param callable callback: The callback method, having the signature
+            `callback()`
+
+        :rtype: _Timeout
+        :raises ValueError, TypeError
+        """
+        ...
+    def remove_timeout(self, timeout: _Timeout) -> None:
+        """
+        Cancel the timeout
+
+        :param _Timeout timeout: The timer to cancel
+        """
+        ...
+    def get_remaining_interval(self) -> float | None:
+        """
+        Get the interval to the next timeout expiration
+
+        :returns: non-negative number of seconds until next timer expiration;
+                  None if there are no timers
+        :rtype: float
+        """
+        ...
+    def process_timeouts(self) -> None:
+        """
+        Process pending timeouts, invoking callbacks for those whose time has
+        come
+        """
+        ...
 
 class PollEvents:
     """Event flags for I/O"""
@@ -96,52 +162,276 @@ class PollEvents:
     HANGUP: Final[int]
 
 class IOLoop(AbstractSelectorIOLoop[_Timeout]):
+    """
+    I/O loop implementation that picks a suitable poller (`select`,
+    `poll`, `epoll`, `kqueue`) to use based on platform.
+
+    Implements the
+    `pika.adapters.utils.selector_ioloop_adapter.AbstractSelectorIOLoop`
+    interface.
+    """
     READ: Final[int]
     WRITE: Final[int]
     ERROR: Final[int]
     def __init__(self) -> None: ...
-    def close(self) -> None: ...
-    def call_later(self, delay: float, callback: Callable[[], object]) -> _Timeout: ...
-    def remove_timeout(self, timeout_handle: _Timeout) -> None: ...
-    def add_callback_threadsafe(self, callback: Callable[[], object]) -> None: ...
+    def close(self) -> None:
+        """
+        Release IOLoop's resources.
+
+        `IOLoop.close` is intended to be called by the application or test code
+        only after `IOLoop.start()` returns. After calling `close()`, no other
+        interaction with the closed instance of `IOLoop` should be performed.
+        """
+        ...
+    def call_later(self, delay: float, callback: Callable[[], object]) -> _Timeout:
+        """
+        Add the callback to the IOLoop timer to be called after delay seconds
+        from the time of call on best-effort basis. Returns a handle to the
+        timeout.
+
+        :param float delay: The number of seconds to wait to call callback
+        :param callable callback: The callback method
+        :returns: handle to the created timeout that may be passed to
+            `remove_timeout()`
+        :rtype: object
+        """
+        ...
+    def remove_timeout(self, timeout_handle: _Timeout) -> None:
+        """
+        Remove a timeout
+
+        :param timeout_handle: Handle of timeout to remove
+        """
+        ...
+    def add_callback_threadsafe(self, callback: Callable[[], object]) -> None:
+        """
+        Requests a call to the given function as soon as possible in the
+        context of this IOLoop's thread.
+
+        NOTE: This is the only thread-safe method in IOLoop. All other
+        manipulations of IOLoop must be performed from the IOLoop's thread.
+
+        For example, a thread may request a call to the `stop` method of an
+        ioloop that is running in a different thread via
+        `ioloop.add_callback_threadsafe(ioloop.stop)`
+
+        :param callable callback: The callback method
+        """
+        ...
     add_callback = add_callback_threadsafe
-    def process_timeouts(self) -> None: ...
-    def add_handler(self, fd: int, handler: Callable[[int, int], None], events: int) -> None: ...
-    def update_handler(self, fd: int, events: int) -> None: ...
-    def remove_handler(self, fd: int) -> None: ...
-    def start(self) -> None: ...
-    def stop(self) -> None: ...
-    def activate_poller(self) -> None: ...
-    def deactivate_poller(self) -> None: ...
-    def poll(self) -> None: ...
+    def process_timeouts(self) -> None:
+        """
+        [Extension] Process pending callbacks and timeouts, invoking those
+        whose time has come. Internal use only.
+        """
+        ...
+    def add_handler(self, fd: int, handler: Callable[[int, int], None], events: int) -> None:
+        """
+        Start watching the given file descriptor for events
+
+        :param int fd: The file descriptor
+        :param callable handler: When requested event(s) occur,
+            `handler(fd, events)` will be called.
+        :param int events: The event mask using READ, WRITE, ERROR.
+        """
+        ...
+    def update_handler(self, fd: int, events: int) -> None:
+        """
+        Changes the events we watch for
+
+        :param int fd: The file descriptor
+        :param int events: The event mask using READ, WRITE, ERROR
+        """
+        ...
+    def remove_handler(self, fd: int) -> None:
+        """
+        Stop watching the given file descriptor for events
+
+        :param int fd: The file descriptor
+        """
+        ...
+    def start(self) -> None:
+        """
+        [API] Start the main poller loop. It will loop until requested to
+        exit. See `IOLoop.stop`.
+        """
+        ...
+    def stop(self) -> None:
+        """
+        [API] Request exit from the ioloop. The loop is NOT guaranteed to
+        stop before this method returns.
+
+        To invoke `stop()` safely from a thread other than this IOLoop's thread,
+        call it via `add_callback_threadsafe`; e.g.,
+
+            `ioloop.add_callback_threadsafe(ioloop.stop)`
+        """
+        ...
+    def activate_poller(self) -> None:
+        """
+        [Extension] Activate the poller
+
+        
+        """
+        ...
+    def deactivate_poller(self) -> None:
+        """
+        [Extension] Deactivate the poller
+
+        
+        """
+        ...
+    def poll(self) -> None:
+        """
+        [Extension] Wait for events of interest on registered file
+        descriptors until an event of interest occurs or next timer deadline or
+        `_PollerBase._MAX_POLL_TIMEOUT`, whichever is sooner, and dispatch the
+        corresponding event handlers.
+        """
+        ...
 
 class _PollerBase(pika.compat.AbstractBase, metaclass=abc.ABCMeta):
+    """Base class for select-based IOLoop implementations"""
     POLL_TIMEOUT_MULT: ClassVar[int]
-    def __init__(self, get_wait_seconds: Callable[[], float | None], process_timeouts: Callable[[], None]) -> None: ...
-    def close(self) -> None: ...
-    def wake_threadsafe(self) -> None: ...
-    def add_handler(self, fileno: int, handler: Callable[[int, int], None], events: int) -> None: ...
-    def update_handler(self, fileno: int, events: int) -> None: ...
-    def remove_handler(self, fileno: int) -> None: ...
-    def activate_poller(self) -> None: ...
-    def deactivate_poller(self) -> None: ...
-    def start(self) -> None: ...
-    def stop(self) -> None: ...
+    def __init__(self, get_wait_seconds: Callable[[], float | None], process_timeouts: Callable[[], None]) -> None:
+        """
+        :param get_wait_seconds: Function for getting the maximum number of
+                                 seconds to wait for IO for use by the poller
+        :param process_timeouts: Function for processing timeouts for use by the
+                                 poller
+        """
+        ...
+    def close(self) -> None:
+        """
+        Release poller's resources.
+
+        `close()` is intended to be called after the poller's `start()` method
+        returns. After calling `close()`, no other interaction with the closed
+        poller instance should be performed.
+        """
+        ...
+    def wake_threadsafe(self) -> None:
+        """
+        Wake up the poller as soon as possible. As the name indicates, this
+        method is thread-safe.
+        """
+        ...
+    def add_handler(self, fileno: int, handler: Callable[[int, int], None], events: int) -> None:
+        """
+        Add a new fileno to the set to be monitored
+
+        :param int fileno: The file descriptor
+        :param callable handler: What is called when an event happens
+        :param int events: The event mask using READ, WRITE, ERROR
+        """
+        ...
+    def update_handler(self, fileno: int, events: int) -> None:
+        """
+        Set the events to the current events
+
+        :param int fileno: The file descriptor
+        :param int events: The event mask using READ, WRITE, ERROR
+        """
+        ...
+    def remove_handler(self, fileno: int) -> None:
+        """
+        Remove a file descriptor from the set
+
+        :param int fileno: The file descriptor
+        """
+        ...
+    def activate_poller(self) -> None:
+        """
+        Activate the poller
+
+        
+        """
+        ...
+    def deactivate_poller(self) -> None:
+        """
+        Deactivate the poller
+
+        
+        """
+        ...
+    def start(self) -> None:
+        """
+        Start the main poller loop. It will loop until requested to exit.
+        This method is not reentrant and will raise an error if called
+        recursively (pika/pika#1095)
+
+        :raises: RuntimeError
+        """
+        ...
+    def stop(self) -> None:
+        """
+        Request exit from the ioloop. The loop is NOT guaranteed to stop
+        before this method returns.
+        """
+        ...
     @abc.abstractmethod
-    def poll(self) -> None: ...
+    def poll(self) -> None:
+        """
+        Wait for events on interested filedescriptors.
+        
+        """
+        ...
 
 class SelectPoller(_PollerBase):
+    """
+    Default behavior is to use Select since it's the widest supported and has
+    all of the methods we need for child classes as well. One should only need
+    to override the update_handler and start methods for additional types.
+    """
     POLL_TIMEOUT_MULT: ClassVar[int]
-    def poll(self) -> None: ...
+    def poll(self) -> None:
+        """
+        Wait for events of interest on registered file descriptors until an
+        event of interest occurs or next timer deadline or _MAX_POLL_TIMEOUT,
+        whichever is sooner, and dispatch the corresponding event handlers.
+        """
+        ...
 
 class KQueuePoller(_PollerBase):
-    def __init__(self, get_wait_seconds: Callable[[], float | None], process_timeouts: Callable[[], None]) -> None: ...
-    def poll(self) -> None: ...
+    """KQueuePoller works on BSD based systems and is faster than select"""
+    def __init__(self, get_wait_seconds: Callable[[], float | None], process_timeouts: Callable[[], None]) -> None:
+        """
+        Create an instance of the KQueuePoller
+        
+        """
+        ...
+    def poll(self) -> None:
+        """
+        Wait for events of interest on registered file descriptors until an
+        event of interest occurs or next timer deadline or _MAX_POLL_TIMEOUT,
+        whichever is sooner, and dispatch the corresponding event handlers.
+        """
+        ...
 
 class PollPoller(_PollerBase):
+    """
+    Poll works on Linux and can have better performance than EPoll in
+    certain scenarios.  Both are faster than select.
+    """
     POLL_TIMEOUT_MULT: ClassVar[int]
-    def __init__(self, get_wait_seconds: Callable[[], float | None], process_timeouts: Callable[[], None]) -> None: ...
-    def poll(self) -> None: ...
+    def __init__(self, get_wait_seconds: Callable[[], float | None], process_timeouts: Callable[[], None]) -> None:
+        """
+        Create an instance of the KQueuePoller
+
+        
+        """
+        ...
+    def poll(self) -> None:
+        """
+        Wait for events of interest on registered file descriptors until an
+        event of interest occurs or next timer deadline or _MAX_POLL_TIMEOUT,
+        whichever is sooner, and dispatch the corresponding event handlers.
+        """
+        ...
 
 class EPollPoller(PollPoller):
+    """
+    EPoll works on Linux and can have better performance than Poll in
+    certain scenarios. Both are faster than select.
+    """
     POLL_TIMEOUT_MULT: ClassVar[int]

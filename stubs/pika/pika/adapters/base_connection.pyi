@@ -24,6 +24,11 @@ LOGGER: Logger
 _IOLoop = TypeVar("_IOLoop")
 
 class BaseConnection(Connection, Generic[_IOLoop], metaclass=abc.ABCMeta):
+    """
+    BaseConnection class that should be extended by connection adapters.
+
+    This class abstracts I/O loop and transport services from pika core.
+    """
     def __init__(
         self,
         parameters: Parameters | None,
@@ -64,13 +69,53 @@ class BaseConnection(Connection, Generic[_IOLoop], metaclass=abc.ABCMeta):
         on_done: Callable[[Connection | AMQPConnectorException], object],
         custom_ioloop: _IOLoop | None = None,
         workflow: AbstractAMQPConnectionWorkflow | None = None,
-    ) -> AbstractAMQPConnectionWorkflow: ...
+    ) -> AbstractAMQPConnectionWorkflow:
+        """
+        Asynchronously create a connection to an AMQP broker using the given
+        configurations. Will attempt to connect using each config in the given
+        order, including all compatible resolved IP addresses of the hostname
+        supplied in each config, until one is established or all attempts fail.
+
+        See also `_start_connection_workflow()`.
+
+        :param sequence connection_configs: A sequence of one or more
+            `pika.connection.Parameters`-based objects.
+        :param callable on_done: as defined in
+            `connection_workflow.AbstractAMQPConnectionWorkflow.start()`.
+        :param object | None custom_ioloop: Provide a custom I/O loop that is
+            native to the specific adapter implementation; if None, the adapter
+            will use a default loop instance, which is typically a singleton.
+        :param connection_workflow.AbstractAMQPConnectionWorkflow | None workflow:
+            Pass an instance of an implementation of the
+            `connection_workflow.AbstractAMQPConnectionWorkflow` interface;
+            defaults to a `connection_workflow.AMQPConnectionWorkflow` instance
+            with default values for optional args.
+        :returns: Connection workflow instance in use. The user should limit
+            their interaction with this object only to it's `abort()` method.
+        :rtype: connection_workflow.AbstractAMQPConnectionWorkflow
+        """
+        ...
     @property
-    def ioloop(self) -> _IOLoop: ...
+    def ioloop(self) -> _IOLoop:
+        """
+        :returns: the native I/O loop instance underlying async services selected
+            by user or the default selected by the specialized connection
+            adapter (e.g., Twisted reactor, `asyncio.SelectorEventLoop`,
+            `select_connection.IOLoop`, etc.)
+        :rtype: object
+        """
+        ...
 
 class _StreamingProtocolShim(AbstractStreamProtocol, Generic[_IOLoop]):
+    """
+    Shim for callbacks from transport so that we BaseConnection can
+    delegate to private methods, thus avoiding contamination of API with
+    methods that look public, but aren't.
+    """
     conn: BaseConnection[_IOLoop]
-    def __init__(self, conn: BaseConnection[_IOLoop]) -> None: ...
+    def __init__(self, conn: BaseConnection[_IOLoop]) -> None:
+        """:param BaseConnection conn:"""
+        ...
     # These are defined as None, but on initialization are set as callable attributes
     def connection_made(self, transport: AbstractStreamTransport) -> None: ...
     def connection_lost(self, error: BaseException | None) -> None: ...
