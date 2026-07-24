@@ -1,8 +1,8 @@
 """Polygons and their linear ring components."""
 
 from collections.abc import Collection
-from typing import Literal, NoReturn, TypeAlias, overload
-from typing_extensions import Self
+from typing import Literal, TypeAlias, overload
+from typing_extensions import Never, Self
 
 from .base import BaseGeometry
 from .linestring import LineString, _ConvertibleToLineString
@@ -120,24 +120,8 @@ class Polygon(BaseGeometry):
         """Return the sequence of interior rings of the polygon."""
         ...
     @property
-    def coords(self) -> NoReturn:
-        """Not implemented for polygons."""
-        ...
-    def svg(self, scale_factor: float = 1.0, fill_color: str | None = None, opacity: float | None = None) -> str:
-        """
-        Return SVG path element for the Polygon geometry.
-
-        Parameters
-        ----------
-        scale_factor : float
-            Multiplication factor for the SVG stroke-width.  Default is 1.
-        fill_color : str, optional
-            Hex string for fill color. Default is to use "#66cc99" if
-            geometry is valid, and "#ff3333" if invalid.
-        opacity : float
-            Float number between 0 and 1 for color opacity. Default value is 0.6
-        """
-        ...
+    def coords(self) -> Never: ...
+    def svg(self, scale_factor: float = 1.0, fill_color: str | None = None, opacity: float | None = None) -> str: ...  # type: ignore[override]
     @classmethod
     def from_bounds(cls, xmin: float, ymin: float, xmax: float, ymax: float) -> Self:
         """Construct a `Polygon()` from spatial bounds."""

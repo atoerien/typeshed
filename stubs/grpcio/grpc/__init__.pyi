@@ -6,8 +6,8 @@ import threading
 from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from concurrent import futures
 from types import ModuleType, TracebackType
-from typing import Any, Generic, NoReturn, Protocol, TypeAlias, TypeVar, runtime_checkable, type_check_only
-from typing_extensions import Self
+from typing import Any, Generic, Protocol, TypeAlias, TypeVar, runtime_checkable, type_check_only
+from typing_extensions import Never, Self
 
 from . import aio as aio
 
@@ -1528,43 +1528,9 @@ class ServicerContext(RpcContext, metaclass=abc.ABCMeta):
     """A context object passed to method implementations."""
     # misnamed parameter 'details', does not align with status.proto, where it is called 'message':
     @abc.abstractmethod
-    def abort(self, code: StatusCode, details: str) -> NoReturn:
-        """
-        Raises an exception to terminate the RPC with a non-OK status.
-
-        The code and details passed as arguments will supersede any existing
-        ones.
-
-        Args:
-          code: A StatusCode object to be sent to the client.
-            It must not be StatusCode.OK.
-          details: A UTF-8-encodable string to be sent to the client upon
-            termination of the RPC.
-
-        Raises:
-          Exception: An exception is always raised to signal the abortion the
-            RPC to the gRPC runtime.
-        """
-        ...
+    def abort(self, code: StatusCode, details: str) -> Never: ...
     @abc.abstractmethod
-    def abort_with_status(self, status: Status) -> NoReturn:
-        """
-        Raises an exception to terminate the RPC with a non-OK status.
-
-        The status passed as argument will supersede any existing status code,
-        status message and trailing metadata.
-
-        This is an EXPERIMENTAL API.
-
-        Args:
-          status: A grpc.Status object. The status code in it must not be
-            StatusCode.OK.
-
-        Raises:
-          Exception: An exception is always raised to signal the abortion the
-            RPC to the gRPC runtime.
-        """
-        ...
+    def abort_with_status(self, status: Status) -> Never: ...
 
     # FIXME: The docs say "A map of strings to an iterable of bytes for each auth property".
     # Does that mean 'bytes' (which is iterable), or 'Iterable[bytes]'?

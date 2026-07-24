@@ -26,8 +26,8 @@ import builtins
 from _typeshed import MaybeNone, SupportsWrite
 from abc import abstractmethod
 from collections.abc import Callable, Iterable, Mapping, Sequence
-from typing import Any, ClassVar, Final, Literal, NoReturn, overload
-from typing_extensions import Self
+from typing import Any, ClassVar, Final, Literal, overload
+from typing_extensions import Never, Self
 
 __all__ = [
     "Option",
@@ -533,45 +533,11 @@ class OptionParser(OptionContainer):
     @overload
     def add_option_group(self, title: str, /, description: str | None = None) -> OptionGroup: ...
 
-    def check_values(self, values: Values, args: list[str]) -> tuple[Values, list[str]]:
-        """
-        check_values(values : Values, args : [string])
-        -> (values : Values, args : [string])
-
-        Check that the supplied option values and leftover arguments are
-        valid.  Returns the option values and leftover arguments
-        (possibly adjusted, possibly completely new -- whatever you
-        like).  Default implementation just returns the passed-in
-        values; subclasses may override as desired.
-        """
-        ...
-    def disable_interspersed_args(self) -> None:
-        """
-        Set parsing to stop on the first non-option. Use this if
-        you have a command processor which runs another command that
-        has options of its own and you want to make sure these options
-        don't get confused.
-        """
-        ...
-    def enable_interspersed_args(self) -> None:
-        """
-        Set parsing to not stop on the first non-option, allowing
-        interspersing switches with command arguments. This is the
-        default behavior. See also disable_interspersed_args() and the
-        class documentation description of the attribute
-        allow_interspersed_args.
-        """
-        ...
-    def error(self, msg: str) -> NoReturn:
-        """
-        error(msg : string)
-
-        Print a usage message incorporating 'msg' to stderr and exit.
-        If you override this in a subclass, it should not return -- it
-        should either exit or raise an exception.
-        """
-        ...
-    def exit(self, status: int = 0, msg: str | None = None) -> NoReturn: ...
+    def check_values(self, values: Values, args: list[str]) -> tuple[Values, list[str]]: ...
+    def disable_interspersed_args(self) -> None: ...
+    def enable_interspersed_args(self) -> None: ...
+    def error(self, msg: str) -> Never: ...
+    def exit(self, status: int = 0, msg: str | None = None) -> Never: ...
     def expand_prog_name(self, s: str) -> str: ...
     def format_epilog(self, formatter: HelpFormatter) -> str: ...
     def format_help(self, formatter: HelpFormatter | None = None) -> str: ...

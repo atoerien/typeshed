@@ -1,6 +1,7 @@
 from _typeshed import Incomplete
 from collections.abc import Generator
-from typing import NoReturn, TypeAlias
+from typing import TypeAlias
+from typing_extensions import Never
 
 from authlib.oauth1 import ClientAuth
 from authlib.oauth1.client import OAuth1Client as _OAuth1Client
@@ -46,7 +47,7 @@ class AsyncOAuth1Client(_OAuth1Client):
         """
         ...
     @staticmethod
-    def handle_error(error_type: str | None, error_description: str | None) -> NoReturn: ...
+    def handle_error(error_type: str | None, error_description: str | None) -> Never: ...
 
 # Inherits from httpx.Client
 class OAuth1Client(_OAuth1Client):
@@ -66,4 +67,4 @@ class OAuth1Client(_OAuth1Client):
         **kwargs,
     ) -> None: ...
     @staticmethod
-    def handle_error(error_type: str | None, error_description: str | None) -> NoReturn: ...
+    def handle_error(error_type: str | None, error_description: str | None) -> Never: ...

@@ -4,8 +4,8 @@ import datetime as dt
 from _typeshed import ConvertibleToInt, Incomplete, SupportsRead, SupportsReadline, SupportsWrite, Unused
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from types import TracebackType
-from typing import Any, Literal, NoReturn, Protocol, TextIO, TypeAlias, TypeVar, overload, type_check_only
-from typing_extensions import Self, disjoint_base
+from typing import Any, Literal, Protocol, TextIO, TypeAlias, TypeVar, overload, type_check_only
+from typing_extensions import Never, Self, disjoint_base
 
 from psycopg2.extras import ReplicationCursor as extras_ReplicationCursor
 from psycopg2.sql import Composable
@@ -187,77 +187,18 @@ class cursor:
         sep: str = "\t",
         null: str = "\\N",
         columns: Iterable[str] | None = None,
-    ) -> None:
-        r"""copy_to(file, table, sep='\t', null='\\N', columns=None) -- Copy table to file."""
-        ...
-    def execute(self, query: str | bytes | Composable, vars: _Vars = None) -> None:
-        """execute(query, vars=None) -- Execute query with bound vars."""
-        ...
-    def executemany(self, query: str | bytes | Composable, vars_list: Iterable[_Vars]) -> None:
-        """executemany(query, vars_list) -- Execute many queries with bound vars."""
-        ...
-    def fetchall(self) -> list[tuple[Any, ...]]:
-        """
-        fetchall() -> list of tuple
-
-        Return all the remaining rows of a query result set.
-
-        Rows are returned in the form of a list of tuples (by default) or using
-        the sequence factory previously set in the `row_factory` attribute.
-        Return `!None` when no more data is available.
-        """
-        ...
-    def fetchmany(self, size: int | None = None) -> list[tuple[Any, ...]]:
-        """
-        fetchmany(size=self.arraysize) -> list of tuple
-
-        Return the next `size` rows of a query result set in the form of a list
-        of tuples (by default) or using the sequence factory previously set in
-        the `row_factory` attribute.
-
-        Return an empty list when no more data is available.
-        """
-        ...
-    def fetchone(self) -> tuple[Any, ...] | None:
-        """
-        fetchone() -> tuple or None
-
-        Return the next row of a query result set in the form of a tuple (by
-        default) or using the sequence factory previously set in the
-        `row_factory` attribute. Return `!None` when no more data is available.
-        """
-        ...
-    def mogrify(self, query: str | bytes | Composable, vars: _Vars | None = None) -> bytes:
-        """mogrify(query, vars=None) -> str -- Return query after vars binding."""
-        ...
-    def nextset(self) -> NoReturn:
-        """
-        nextset() -- Skip to next set of data.
-
-        This method is not supported (PostgreSQL does not have multiple data 
-        sets) and will raise a NotSupportedError exception.
-        """
-        ...
-    def scroll(self, value: int, mode: Literal["absolute", "relative"] = "relative") -> None:
-        """scroll(value, mode='relative') -- Scroll to new position according to mode."""
-        ...
-    def setinputsizes(self, sizes: Unused) -> None:
-        """
-        setinputsizes(sizes) -- Set memory areas before execute.
-
-        This method currently does nothing but it is safe to call it.
-        """
-        ...
-    def setoutputsize(self, size: int, column: int = ..., /) -> None:
-        """
-        setoutputsize(size, column=None) -- Set column buffer size.
-
-        This method currently does nothing but it is safe to call it.
-        """
-        ...
-    def __enter__(self) -> Self:
-        """__enter__ -> self"""
-        ...
+    ) -> None: ...
+    def execute(self, query: str | bytes | Composable, vars: _Vars = None) -> None: ...
+    def executemany(self, query: str | bytes | Composable, vars_list: Iterable[_Vars]) -> None: ...
+    def fetchall(self) -> list[tuple[Any, ...]]: ...
+    def fetchmany(self, size: int | None = None) -> list[tuple[Any, ...]]: ...
+    def fetchone(self) -> tuple[Any, ...] | None: ...
+    def mogrify(self, query: str | bytes | Composable, vars: _Vars | None = None) -> bytes: ...
+    def nextset(self) -> Never: ...  # not supported
+    def scroll(self, value: int, mode: Literal["absolute", "relative"] = "relative") -> None: ...
+    def setinputsizes(self, sizes: Unused) -> None: ...
+    def setoutputsize(self, size: int, column: int = ..., /) -> None: ...
+    def __enter__(self) -> Self: ...
     def __exit__(
         self, type: type[BaseException] | None, value: BaseException | None, traceback: TracebackType | None
     ) -> None:

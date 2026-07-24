@@ -4,8 +4,8 @@ compilation with Cython because of their frequency of use.
 """
 
 from abc import abstractmethod
-from typing import Any, NoReturn
-from typing_extensions import disjoint_base
+from typing import Any
+from typing_extensions import Never, disjoint_base
 
 from gevent._types import _Loop
 from greenlet import greenlet
@@ -26,11 +26,7 @@ class SwitchOutGreenletWithLoop(TrackedRawGreenlet):
         """loop: object"""
         ...
 
-    def switch(self) -> Any:
-        """SwitchOutGreenletWithLoop.switch(self)"""
-        ...
-    def switch_out(self) -> NoReturn:
-        """SwitchOutGreenletWithLoop.switch_out(self)"""
-        ...
+    def switch(self) -> Any: ...
+    def switch_out(self) -> Never: ...
 
 __all__ = ["TrackedRawGreenlet", "SwitchOutGreenletWithLoop"]

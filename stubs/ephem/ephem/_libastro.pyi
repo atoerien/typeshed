@@ -3,8 +3,8 @@
 import builtins
 from _typeshed import Unused
 from datetime import datetime as _datetime
-from typing import Final, NoReturn, TypeAlias, TypedDict, overload, type_check_only
-from typing_extensions import Self, deprecated, disjoint_base
+from typing import Final, TypeAlias, TypedDict, overload, type_check_only
+from typing_extensions import Never, Self, deprecated, disjoint_base
 
 _DateInitType: TypeAlias = (
     Date
@@ -68,11 +68,7 @@ sun_radius: Final[float]
 
 @disjoint_base
 class Angle(float):  # type: ignore[type-var]
-    """
-    An angle in radians that can print itself in an astronomical format.
-    Use ephem.degrees() and ephem.radians() to create one.
-    """
-    def __new__(cls, *args: Unused, **kwargs: Unused) -> NoReturn: ...
+    def __new__(cls, *args: Unused, **kwargs: Unused) -> Never: ...
     @property
     def norm(self) -> Angle:
         """Return this angle normalized to the interval [0, 2*pi)."""

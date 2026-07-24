@@ -9,8 +9,8 @@ different z values may intersect or be equal.
 
 from array import array
 from collections.abc import Iterator
-from typing import Any, Generic, Literal, NoReturn, overload
-from typing_extensions import Self, TypeVar, deprecated
+from typing import Any, Generic, Literal, overload
+from typing_extensions import Never, Self, TypeVar, deprecated
 
 import numpy as np
 from numpy.typing import NDArray
@@ -1083,14 +1083,7 @@ class BaseMultipartGeometry(BaseGeometry, Generic[_GeoT_co]):
     """Base class for collections of multiple geometries."""
     __slots__: list[str] = []
     @property
-    def coords(self) -> NoReturn:
-        """
-        Not implemented.
-
-        Sub-geometries may have coordinate sequences, but multi-part geometries
-        do not.
-        """
-        ...
+    def coords(self) -> Never: ...
     @property
     def geoms(self) -> GeometrySequence[Self]:
         """Access to the contained geometries."""

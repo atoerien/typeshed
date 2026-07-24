@@ -10,7 +10,7 @@ cygwin in no-cygwin mode).
 from _typeshed import StrPath
 from collections.abc import Callable, Iterable
 from shlex import _ShlexInstream
-from typing import ClassVar, Final, Literal, NoReturn
+from typing import ClassVar, Final, Literal
 from typing_extensions import Never, deprecated
 
 from ...version import LooseVersion
@@ -73,7 +73,7 @@ class MinGW32Compiler(Compiler):
     """Handles the Mingw32 port of the GNU C compiler to Windows."""
     compiler_type: ClassVar[str]
     def __init__(self, verbose: bool = False, force: bool = False) -> None: ...
-    def runtime_library_dir_option(self, dir: str) -> NoReturn: ...
+    def runtime_library_dir_option(self, dir: str) -> Never: ...
 
 CONFIG_H_OK: Final = "ok"
 CONFIG_H_NOTOK: Final = "not ok"

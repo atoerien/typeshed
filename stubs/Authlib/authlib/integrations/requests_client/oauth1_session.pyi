@@ -1,4 +1,4 @@
-from typing import NoReturn
+from typing_extensions import Never
 
 from authlib.oauth1 import ClientAuth
 from authlib.oauth1.client import OAuth1Client
@@ -32,4 +32,4 @@ class OAuth1Session(OAuth1Client):
         """
         ...
     @staticmethod
-    def handle_error(error_type: str | None, error_description: str | None) -> NoReturn: ...
+    def handle_error(error_type: str | None, error_description: str | None) -> Never: ...

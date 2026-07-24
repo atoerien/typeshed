@@ -1,6 +1,5 @@
-"""Interface to the Windows Console functions for dealing with character-mode applications."""
-
-from typing import Literal, NoReturn, overload
+from typing import Literal, overload
+from typing_extensions import Never
 
 import _win32typing
 from win32.lib.pywintypes import error as error
@@ -63,9 +62,7 @@ def GetConsoleTitle():
     ...
 
 @overload
-def GenerateConsoleCtrlEvent(CtrlEvent: Literal[1], ProcessGroupId: Literal[0] = 0) -> NoReturn:
-    """Sends a control signal to a group of processes attached to a common console"""
-    ...
+def GenerateConsoleCtrlEvent(CtrlEvent: Literal[1], ProcessGroupId: Literal[0] = 0) -> Never: ...
 @overload
 def GenerateConsoleCtrlEvent(CtrlEvent: Literal[0, 1], ProcessGroupId: int) -> None:
     """Sends a control signal to a group of processes attached to a common console"""

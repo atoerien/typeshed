@@ -8,8 +8,8 @@ time zone and DST data sources.
 import sys
 from abc import abstractmethod
 from time import struct_time
-from typing import ClassVar, Final, NoReturn, SupportsIndex, TypeAlias, final, overload, type_check_only
-from typing_extensions import CapsuleType, Self, deprecated, disjoint_base
+from typing import ClassVar, Final, SupportsIndex, TypeAlias, final, overload, type_check_only
+from typing_extensions import CapsuleType, Never, Self, deprecated, disjoint_base
 
 if sys.version_info >= (3, 11):
     __all__ = ("date", "datetime", "time", "timedelta", "timezone", "tzinfo", "MINYEAR", "MAXYEAR", "UTC")
@@ -195,9 +195,7 @@ class date:
         ...
 
     @overload
-    def __sub__(self, value: datetime, /) -> NoReturn:
-        """Return self-value."""
-        ...
+    def __sub__(self, value: datetime, /) -> Never: ...
     @overload
     def __sub__(self, value: Self, /) -> timedelta:
         """Return self-value."""

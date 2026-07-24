@@ -26,7 +26,8 @@ from _typeshed import Incomplete, Unused
 from collections.abc import Generator
 from contextlib import contextmanager
 from types import ModuleType
-from typing import Literal, NoReturn
+from typing import Literal
+from typing_extensions import Never
 
 from win32.lib.pywintypes import IIDType
 from win32com.client import dynamic
@@ -237,7 +238,5 @@ def AddModuleToCache(typelibclsid, lcid, major, minor, verbose: Unused = 1, bFlu
     """Add a newly generated file to the cache dictionary."""
     ...
 def GetGeneratedInfos() -> list[tuple[Incomplete, Incomplete, Incomplete, Incomplete]]: ...
-def Rebuild(verbose: bool | Literal[0, 1] = 1) -> None:
-    """Rebuild the cache indexes from the file system."""
-    ...
-def usage() -> NoReturn: ...
+def Rebuild(verbose: bool | Literal[0, 1] = 1) -> None: ...
+def usage() -> Never: ...

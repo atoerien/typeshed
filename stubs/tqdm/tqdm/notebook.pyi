@@ -10,7 +10,8 @@ Usage:
 
 from _typeshed import Incomplete, SupportsWrite
 from collections.abc import Iterable, Iterator, Mapping
-from typing import NoReturn, TypeVar, overload
+from typing import TypeVar, overload
+from typing_extensions import Never
 
 from .std import tqdm as std_tqdm, trange as trange
 
@@ -87,7 +88,7 @@ class tqdm_notebook(std_tqdm[_T]):
         ...
     @overload
     def __init__(
-        self: tqdm_notebook[NoReturn],
+        self: tqdm_notebook[Never],
         iterable: None = None,
         desc: str | None = ...,
         total: float | None = ...,

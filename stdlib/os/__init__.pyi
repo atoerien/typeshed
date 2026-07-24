@@ -57,7 +57,6 @@ from typing import (
     Final,
     Generic,
     Literal,
-    NoReturn,
     Protocol,
     TypeAlias,
     TypeVar,
@@ -66,7 +65,7 @@ from typing import (
     runtime_checkable,
     type_check_only,
 )
-from typing_extensions import LiteralString, Self, Unpack, deprecated
+from typing_extensions import LiteralString, Never, Self, Unpack, deprecated
 
 from . import path as _path
 
@@ -2642,55 +2641,17 @@ if sys.platform != "win32":
             follow_symlinks: bool = True,
         ) -> None: ...
 
-def abort() -> NoReturn:
-    """
-    Abort the interpreter immediately.
-
-    This function 'dumps core' or otherwise fails in the hardest way possible
-    on the hosting operating system.  This function never returns.
-    """
-    ...
+def abort() -> Never: ...
 
 # These are defined as execl(file, *args) but the first *arg is mandatory.
-def execl(file: StrOrBytesPath, *args: Unpack[tuple[StrOrBytesPath, Unpack[tuple[StrOrBytesPath, ...]]]]) -> NoReturn:
-    """
-    execl(file, *args)
-
-    Execute the executable file with argument list args, replacing the
-    current process. 
-    """
-    ...
-def execlp(file: StrOrBytesPath, *args: Unpack[tuple[StrOrBytesPath, Unpack[tuple[StrOrBytesPath, ...]]]]) -> NoReturn:
-    """
-    execlp(file, *args)
-
-    Execute the executable file (which is searched for along $PATH)
-    with argument list args, replacing the current process. 
-    """
-    ...
+def execl(file: StrOrBytesPath, *args: Unpack[tuple[StrOrBytesPath, Unpack[tuple[StrOrBytesPath, ...]]]]) -> Never: ...
+def execlp(file: StrOrBytesPath, *args: Unpack[tuple[StrOrBytesPath, Unpack[tuple[StrOrBytesPath, ...]]]]) -> Never: ...
 
 # These are: execle(file, *args, env) but env is pulled from the last element of the args.
-def execle(
-    file: StrOrBytesPath, *args: Unpack[tuple[StrOrBytesPath, Unpack[tuple[StrOrBytesPath, ...]], _ExecEnv]]
-) -> NoReturn:
-    """
-    execle(file, *args, env)
-
-    Execute the executable file with argument list args and
-    environment env, replacing the current process. 
-    """
-    ...
+def execle(file: StrOrBytesPath, *args: Unpack[tuple[StrOrBytesPath, Unpack[tuple[StrOrBytesPath, ...]], _ExecEnv]]) -> Never: ...
 def execlpe(
     file: StrOrBytesPath, *args: Unpack[tuple[StrOrBytesPath, Unpack[tuple[StrOrBytesPath, ...]], _ExecEnv]]
-) -> NoReturn:
-    """
-    execlpe(file, *args, env)
-
-    Execute the executable file (which is searched for along $PATH)
-    with argument list args and environment env, replacing the current
-    process. 
-    """
-    ...
+) -> Never: ...
 
 # The docs say `args: tuple or list of strings`
 # The implementation enforces tuple or list so we can't use Sequence.
@@ -2713,53 +2674,12 @@ _ExecVArgs: TypeAlias = (
 # we limit to str | bytes.
 _ExecEnv: TypeAlias = Mapping[bytes, bytes | str] | Mapping[str, bytes | str]
 
-def execv(path: StrOrBytesPath, argv: _ExecVArgs, /) -> NoReturn:
-    """
-    Execute an executable path with arguments, replacing current process.
-
-    path
-      Path of executable file.
-    argv
-      Tuple or list of strings.
-    """
-    ...
-def execve(path: FileDescriptorOrPath, argv: _ExecVArgs, env: _ExecEnv) -> NoReturn:
-    """
-    Execute an executable path with arguments, replacing current process.
-
-    path
-      Path of executable file.
-    argv
-      Tuple or list of strings.
-    env
-      Dictionary of strings mapping to strings.
-    """
-    ...
-def execvp(file: StrOrBytesPath, args: _ExecVArgs) -> NoReturn:
-    """
-    execvp(file, args)
-
-    Execute the executable file (which is searched for along $PATH)
-    with argument list args, replacing the current process.
-    args may be a list or tuple of strings. 
-    """
-    ...
-def execvpe(file: StrOrBytesPath, args: _ExecVArgs, env: _ExecEnv) -> NoReturn:
-    """
-    execvpe(file, args, env)
-
-    Execute the executable file (which is searched for along $PATH)
-    with argument list args and environment env, replacing the
-    current process.
-    args may be a list or tuple of strings. 
-    """
-    ...
-def _exit(status: int) -> NoReturn:
-    """Exit to the system with specified status, without normal exit processing."""
-    ...
-def kill(pid: int, signal: int, /) -> None:
-    """Kill a process with a signal."""
-    ...
+def execv(path: StrOrBytesPath, argv: _ExecVArgs, /) -> Never: ...
+def execve(path: FileDescriptorOrPath, argv: _ExecVArgs, env: _ExecEnv) -> Never: ...
+def execvp(file: StrOrBytesPath, args: _ExecVArgs) -> Never: ...
+def execvpe(file: StrOrBytesPath, args: _ExecVArgs, env: _ExecEnv) -> Never: ...
+def _exit(status: int) -> Never: ...
+def kill(pid: int, signal: int, /) -> None: ...
 
 if sys.platform != "win32":
     # Unix only

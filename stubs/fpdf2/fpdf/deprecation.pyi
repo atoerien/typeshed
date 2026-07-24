@@ -7,14 +7,15 @@ in non-backward-compatible ways.
 """
 
 from types import ModuleType
-from typing import Any, NoReturn
+from typing import Any
+from typing_extensions import Never
 
 def support_deprecated_txt_arg(fn):
     """Decorator converting `txt=` arguments into `text=` arguments"""
     ...
 
 class WarnOnDeprecatedModuleAttributes(ModuleType):
-    def __call__(self) -> NoReturn: ...
+    def __call__(self) -> Never: ...
     def __getattr__(self, name: str) -> Any: ...
     def __setattr__(self, name: str, value: Any) -> None: ...
 

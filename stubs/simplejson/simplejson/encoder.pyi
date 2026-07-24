@@ -3,7 +3,8 @@
 import re
 from _typeshed import SupportsRichComparison
 from collections.abc import Callable, Iterator
-from typing import Any, NoReturn
+from typing import Any
+from typing_extensions import Never
 
 ESCAPE: re.Pattern[str]
 ESCAPE_ASCII: re.Pattern[str]
@@ -79,9 +80,10 @@ class JSONEncoder:
         ignore_nan: bool = False,
         int_as_string_bitcount: int | None = None,
         iterable_as_array: bool = False,
-    ) -> None:
-        """
-        Constructor for JSONEncoder, with sensible defaults.
+    ) -> None: ...
+    def encode(self, o: Any) -> str: ...
+    def default(self, o: Any) -> Never: ...
+    def iterencode(self, o: Any) -> Iterator[str]: ...
 
         If skipkeys is false, then it is a TypeError to attempt
         encoding of keys that are not str, int, long, float or None.  If

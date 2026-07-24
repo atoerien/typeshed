@@ -26,8 +26,8 @@ return individual elements as an 'int'.
 
 from _typeshed import SupportsKeysAndGetItem, Unused
 from collections.abc import Iterable
-from typing import Final, Literal, NoReturn, TypeAlias, overload
-from typing_extensions import Self
+from typing import Final, Literal, TypeAlias, overload
+from typing_extensions import Never, Self
 
 from .util import AbstractKeystore, AbstractKeystoreEntry
 
@@ -167,20 +167,9 @@ class SecretKeyEntry(AbstractKeystoreEntry):
 
     # Not implemented by pyjks
     @classmethod
-    def new(  # type: ignore[override]
-        cls, alias: str, sealed_obj: bool, algorithm: str, key: bytes, key_size: int
-    ) -> NoReturn:
-        """
-        Helper function to create a new SecretKeyEntry.
-
-        :returns: A loaded :class:`SecretKeyEntry` instance, ready
-          to be placed in a keystore.
-        """
-        ...
+    def new(cls, alias: str, sealed_obj: bool, algorithm: str, key: bytes, key_size: int) -> Never: ...  # type: ignore[override]
     # Not implemented by pyjks
-    def encrypt(self, key_password: str) -> NoReturn:
-        """Encrypts the Secret Key so that the keystore can be saved"""
-        ...
+    def encrypt(self, key_password: str) -> Never: ...
 
 class KeyStore(AbstractKeystore):
     """Represents a loaded JKS or JCEKS keystore."""

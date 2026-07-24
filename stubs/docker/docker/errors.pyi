@@ -1,5 +1,6 @@
 from collections.abc import Iterator, Mapping
-from typing import Any, NoReturn
+from typing import Any
+from typing_extensions import Never
 
 from docker.models.containers import Container
 from docker.models.images import Image
@@ -9,14 +10,7 @@ class DockerException(Exception):
     """
     A base class from which all other exceptions inherit.
 
-    If you want to catch all errors that the Docker SDK might raise,
-    catch this base exception.
-    """
-    ...
-
-def create_api_error_from_http_exception(e: HTTPError) -> NoReturn:
-    """Create a suitable APIError from requests.exceptions.HTTPError."""
-    ...
+def create_api_error_from_http_exception(e: HTTPError) -> Never: ...
 
 class APIError(HTTPError, DockerException):
     """An HTTP error from the API."""
@@ -65,7 +59,7 @@ class BuildError(DockerException):
 
 class ImageLoadError(DockerException): ...
 
-def create_unexpected_kwargs_error(name, kwargs: Mapping[str, Any]) -> NoReturn: ...
+def create_unexpected_kwargs_error(name, kwargs: Mapping[str, Any]) -> Never: ...
 
 class MissingContextParameter(DockerException):
     param: str

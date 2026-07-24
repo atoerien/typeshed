@@ -22,8 +22,8 @@ from collections.abc import (
 )
 from concurrent import futures
 from types import TracebackType
-from typing import Any, Final, Generic, Literal, NoReturn, TypeAlias, TypeVar, overload, type_check_only
-from typing_extensions import Self
+from typing import Any, Final, Generic, Literal, TypeAlias, TypeVar, overload, type_check_only
+from typing_extensions import Never, Self
 
 from grpc import (
     CallCredentials,
@@ -844,26 +844,7 @@ class _DoneCallback(Generic[_TRequest, _TResponse]):
 class ServicerContext(Generic[_TRequest, _TResponse], metaclass=abc.ABCMeta):
     """A context object passed to method implementations."""
     @abc.abstractmethod
-    async def abort(self, code: StatusCode, details: str = "", trailing_metadata: _MetadataType = ()) -> NoReturn:
-        """
-        Raises an exception to terminate the RPC with a non-OK status.
-
-        The code and details passed as arguments will supersede any existing
-        ones.
-
-        Args:
-          code: A StatusCode object to be sent to the client.
-            It must not be StatusCode.OK.
-          details: A UTF-8-encodable string to be sent to the client upon
-            termination of the RPC.
-          trailing_metadata: A sequence of tuple represents the trailing
-            :term:`metadata`.
-
-        Raises:
-          Exception: An exception is always raised to signal the abortion the
-            RPC to the gRPC runtime.
-        """
-        ...
+    async def abort(self, code: StatusCode, details: str = "", trailing_metadata: _MetadataType = ()) -> Never: ...
     @abc.abstractmethod
     async def read(self) -> _TRequest:
         """

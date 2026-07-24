@@ -1,8 +1,8 @@
 """Misc utility functions and constants"""
 
 from collections.abc import Callable, Iterable, Mapping
-from typing import Any, NoReturn, TypedDict, TypeVar, type_check_only
-from typing_extensions import NotRequired
+from typing import Any, TypedDict, TypeVar, type_check_only
+from typing_extensions import Never, NotRequired
 
 @type_check_only
 class _DeprecateProperty(TypedDict):
@@ -22,31 +22,7 @@ def raise_for_error(
     errors: Iterable[str] | str | None = None,
     text: str | None = None,
     json: object | None = None,
-) -> NoReturn:
-    """
-    Helper method to raise exceptions based on the status code of a response received back from Vault.
-
-    :param method: HTTP method of a request to Vault.
-    :type method: str
-    :param url: URL of the endpoint requested in Vault.
-    :type url: str
-    :param status_code: Status code received in a response from Vault.
-    :type status_code: int
-    :param message: Optional message to include in a resulting exception.
-    :type message: str
-    :param errors: Optional errors to include in a resulting exception.
-    :type errors: list | str
-    :param text: Optional text of the response.
-    :type text: str
-    :param json: Optional deserialized version of a JSON response (object)
-    :type json: object
-
-    :raises: hvac.exceptions.InvalidRequest | hvac.exceptions.Unauthorized | hvac.exceptions.Forbidden |
-        hvac.exceptions.InvalidPath | hvac.exceptions.RateLimitExceeded | hvac.exceptions.InternalServerError |
-        hvac.exceptions.VaultNotInitialized | hvac.exceptions.BadGateway | hvac.exceptions.VaultDown |
-        hvac.exceptions.UnexpectedError
-    """
-    ...
+) -> Never: ...
 def aliased_parameter(
     name: str, *aliases: str, removed_in_version: str | None, position: int | None = None, raise_on_multiple: bool = True
 ) -> Callable[..., Any]:

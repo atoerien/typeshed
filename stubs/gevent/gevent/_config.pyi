@@ -13,7 +13,8 @@ is an object of :class:`Config`.
 """
 
 from collections.abc import Callable, Sequence
-from typing import Any, Generic, NoReturn, Protocol, TypeVar, overload, type_check_only
+from typing import Any, Generic, Protocol, TypeVar, overload, type_check_only
+from typing_extensions import Never
 
 from gevent._types import _Loop, _Resolver
 from gevent.fileobject import _FileObjectType
@@ -35,16 +36,8 @@ class _SettingDescriptor(Protocol[_T]):
 class SettingType(type):
     def fmt_desc(cls, desc: str) -> str: ...
 
-def validate_invalid(value: object) -> NoReturn: ...
-def validate_bool(value: str | bool) -> bool:
-    """
-    This is a boolean value.
-
-    In the environment variable, it may be given as ``1``, ``true``,
-    ``on`` or ``yes`` for `True`, or ``0``, ``false``, ``off``, or
-    ``no`` for `False`.
-    """
-    ...
+def validate_invalid(value: object) -> Never: ...
+def validate_bool(value: str | bool) -> bool: ...
 def validate_anything(value: _T) -> _T: ...
 
 convert_str_value_as_is = validate_anything

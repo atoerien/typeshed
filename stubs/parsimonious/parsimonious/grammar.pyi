@@ -10,7 +10,8 @@ import collections.abc
 from _typeshed import Incomplete
 from collections import OrderedDict
 from collections.abc import Callable, Mapping
-from typing import Any, NoReturn
+from typing import Any
+from typing_extensions import Never
 
 from parsimonious.expressions import _CALLABLE_TYPE, Expression, Literal, Lookahead, OneOf, Regex, Sequence, TokenMatcher
 from parsimonious.nodes import Node, NodeVisitor
@@ -230,12 +231,7 @@ class TokenRuleVisitor(RuleVisitor):
     """
     def visit_spaceless_literal(
         self, spaceless_literal: Node, visited_children: collections.abc.Sequence[Any]
-    ) -> TokenMatcher:
-        """
-        Turn a string literal into a ``TokenMatcher`` that matches
-        ``Token`` objects by their ``type`` attributes.
-        """
-        ...
-    def visit_regex(self, node: Node, regex: collections.abc.Sequence[Any]) -> NoReturn: ...
+    ) -> TokenMatcher: ...
+    def visit_regex(self, node: Node, regex: collections.abc.Sequence[Any]) -> Never: ...
 
 rule_grammar: Grammar

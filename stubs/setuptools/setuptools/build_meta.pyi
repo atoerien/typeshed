@@ -30,7 +30,8 @@ Again, this is not a formal definition! Just a "taste" of the module.
 from _typeshed import Incomplete, StrPath
 from collections.abc import Mapping
 from contextlib import _GeneratorContextManager
-from typing import NoReturn, TypeAlias
+from typing import TypeAlias
+from typing_extensions import Never
 
 from . import dist
 
@@ -54,7 +55,7 @@ class SetupRequirementsError(BaseException):
     def __init__(self, specifiers) -> None: ...
 
 class Distribution(dist.Distribution):
-    def fetch_build_eggs(self, specifiers) -> NoReturn: ...
+    def fetch_build_eggs(self, specifiers) -> Never: ...
     @classmethod
     def patch(cls) -> _GeneratorContextManager[None]:
         """

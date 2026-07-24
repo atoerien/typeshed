@@ -11,7 +11,8 @@ a modified base-20 counting scheme. Dates in the long count are usually written 
 
 from _typeshed import Unused
 from collections.abc import Generator
-from typing import Final, Literal, NoReturn, overload
+from typing import Final, Literal, overload
+from typing_extensions import Never
 
 EPOCH: Final = 584282.5
 HAAB: Final[list[str]]
@@ -46,25 +47,11 @@ def tzolkin_generator(number: int | None = None, name: str | None = None) -> Gen
     ...
 def longcount_generator(
     baktun: int, katun: int, tun: int, uinal: int, kin: int
-) -> Generator[tuple[int, int, int, int, int], None, NoReturn]:
-    """Generate long counts, starting with input"""
-    ...
-def next_haab(month: str, jd: float) -> float:
-    """For a given haab month and a julian day count, find the next start of that month on or after the JDC"""
-    ...
-def next_tzolkin(tzolkin: tuple[int, str], jd: float) -> float:
-    """For a given tzolk'in day, and a julian day count, find the next occurrance of that tzolk'in after the date"""
-    ...
-def next_tzolkin_haab(tzolkin: tuple[int, str], haab: tuple[int, str], jd: float) -> float:
-    """
-    Find the next occurence of a haab-tzolk'in combination.
-
-    Requires a Julian day count as the starting place for the search.
-    """
-    ...
-def month_length(month: str) -> Literal[5, 20]:
-    """Not the actual length of the month, but accounts for the 5 unlucky/nameless days"""
-    ...
+) -> Generator[tuple[int, int, int, int, int], None, Never]: ...
+def next_haab(month: str, jd: float) -> float: ...
+def next_tzolkin(tzolkin: tuple[int, str], jd: float) -> float: ...
+def next_tzolkin_haab(tzolkin: tuple[int, str], haab: tuple[int, str], jd: float) -> float: ...
+def month_length(month: str) -> Literal[5, 20]: ...
 
 @overload
 def haab_monthcalendar(

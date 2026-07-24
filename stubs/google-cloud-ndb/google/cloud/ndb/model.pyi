@@ -240,8 +240,8 @@ Documentation for writing a Property subclass is in the docs for the
 import datetime
 from _typeshed import Unused
 from collections.abc import Callable, Iterable, Sequence
-from typing import Any, Literal, NoReturn, TypeAlias
-from typing_extensions import Self
+from typing import Any, Literal, TypeAlias
+from typing_extensions import Never, Self
 
 from google.cloud.ndb import exceptions, key as key_module, query as query_module, tasklets as tasklets_module
 
@@ -351,10 +351,10 @@ class IndexState(_NotEqualMixin):
     def __hash__(self) -> int: ...
 
 class ModelAdapter:
-    # This actually returns NoReturn, but mypy can't handle that
+    # This actually returns Never, but mypy can't handle that
     def __new__(cls, *args, **kwargs) -> Self: ...
 
-def make_connection(*args, **kwargs) -> NoReturn: ...
+def make_connection(*args, **kwargs) -> Never: ...
 
 class ModelAttribute:
     """Base for classes that implement a ``_fix_up()`` method."""
@@ -740,10 +740,8 @@ class _CompressedValue(bytes):
     """
     z_val: bytes
     def __init__(self, z_val: bytes) -> None: ...
-    def __eq__(self, other: object) -> bool:
-        """Compare two compressed values."""
-        ...
-    def __hash__(self) -> NoReturn: ...
+    def __eq__(self, other: object) -> bool: ...
+    def __hash__(self) -> Never: ...
 
 class BlobProperty(Property):
     """
@@ -1594,17 +1592,8 @@ class Model(_NotEqualMixin, metaclass=MetaModel):
     """
     key: ModelKey
     def __init__(_self, **kwargs) -> None: ...
-    def __hash__(self) -> NoReturn:
-        """
-        Not implemented hash function.
-
-        Raises:
-            TypeError: Always, to emphasize that entities are mutable.
-        """
-        ...
-    def __eq__(self, other: object) -> bool:
-        """Compare two entities of the same class for equality."""
-        ...
+    def __hash__(self) -> Never: ...
+    def __eq__(self, other: object) -> bool: ...
     @classmethod
     def gql(cls: type[Model], query_string: str, *args, **kwargs) -> query_module.Query:
         """
@@ -2477,42 +2466,6 @@ def delete_multi(
     max_memcache_items: int | None = ...,
     force_writes: bool | None = ...,
     _options: object = None,
-) -> list[None]:
-    """
-    Deletes a sequence of keys.
-
-    Args:
-        keys (Sequence[:class:`~google.cloud.ndb.key.Key`]): A sequence of
-            keys.
-        retries (int): Number of times to retry this operation in the case
-            of transient server errors. Operation will potentially be tried
-            up to ``retries`` + 1 times. Set to ``0`` to try operation only
-            once, with no retries.
-        timeout (float): Override the gRPC timeout, in seconds.
-        deadline (float): DEPRECATED: Synonym for ``timeout``.
-        use_cache (bool): Specifies whether to store entities in in-process
-            cache; overrides in-process cache policy for this operation.
-        use_global_cache (bool): Specifies whether to store entities in
-            global cache; overrides global cache policy for this operation.
-        use_datastore (bool): Specifies whether to store entities in
-            Datastore; overrides Datastore policy for this operation.
-        global_cache_timeout (int): Maximum lifetime for entities in global
-            cache; overrides global cache timeout policy for this
-            operation.
-        use_memcache (bool): DEPRECATED: Synonym for ``use_global_cache``.
-        memcache_timeout (int): DEPRECATED: Synonym for
-            ``global_cache_timeout``.
-        max_memcache_items (int): No longer supported.
-        force_writes (bool): No longer supported.
-
-    Returns:
-        List[:data:`None`]: A list whose items are all None, one per deleted
-            key.
-    """
-    ...
-def get_indexes_async(**options: Unused) -> NoReturn:
-    """Get a data structure representing the configured indexes."""
-    ...
-def get_indexes(**options: Unused) -> NoReturn:
-    """Get a data structure representing the configured indexes."""
-    ...
+) -> list[None]: ...
+def get_indexes_async(**options: Unused) -> Never: ...
+def get_indexes(**options: Unused) -> Never: ...

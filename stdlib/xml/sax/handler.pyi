@@ -1,45 +1,19 @@
-"""
-This module contains the core classes of version 2.0 of SAX for Python.
-This file provides only default classes with absolutely minimum
-functionality, from which drivers and applications can be subclassed.
-
-Many of these classes are empty and are included only as documentation
-of the interfaces.
-
-$Id$
-"""
-
-from typing import Final, NoReturn, Protocol, type_check_only
+from typing import Final, Protocol, type_check_only
+from typing_extensions import Never
 from xml.sax import xmlreader
 
 version: Final[str]
 
 @type_check_only
 class _ErrorHandlerProtocol(Protocol):  # noqa: Y046  # Protocol is not used
-    def error(self, exception: BaseException) -> NoReturn: ...
-    def fatalError(self, exception: BaseException) -> NoReturn: ...
+    def error(self, exception: BaseException) -> Never: ...
+    def fatalError(self, exception: BaseException) -> Never: ...
     def warning(self, exception: BaseException) -> None: ...
 
 class ErrorHandler:
-    """
-    Basic interface for SAX error handlers.
-
-    If you create an object that implements this interface, then
-    register the object with your XMLReader, the parser will call the
-    methods in your object to report all warnings and errors. There
-    are three levels of errors available: warnings, (possibly)
-    recoverable errors, and unrecoverable errors. All methods take a
-    SAXParseException as the only parameter.
-    """
-    def error(self, exception: BaseException) -> NoReturn:
-        """Handle a recoverable error."""
-        ...
-    def fatalError(self, exception: BaseException) -> NoReturn:
-        """Handle a non-recoverable error."""
-        ...
-    def warning(self, exception: BaseException) -> None:
-        """Handle a warning."""
-        ...
+    def error(self, exception: BaseException) -> Never: ...
+    def fatalError(self, exception: BaseException) -> Never: ...
+    def warning(self, exception: BaseException) -> None: ...
 
 @type_check_only
 class _ContentHandlerProtocol(Protocol):  # noqa: Y046  # Protocol is not used
