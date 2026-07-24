@@ -1,6 +1,21 @@
+"""Enumerations."""
+
 from enum import Enum, IntEnum
 
 class TransformDirection(IntEnum):
+    """
+    Coordinate transform direction
+
+    Forward transform direction defined as image pixel (row, col) to
+    geographic/projected (x, y) coordinates. Reverse transform direction defined as
+    geographic/projected (x, y) to image pixel (row, col) coordinates.
+
+    Notes
+    -----
+    The convention for transform direction for RPC based coordinate transform is
+    typically the opposite of what is previously described. For consistency
+    all coordinate transforms methods use the same convention.
+    """
     forward = 1
     reverse = 0
 
@@ -10,6 +25,7 @@ class TransformMethod(Enum):
     rpcs = "rpcs"
 
 class ColorInterp(IntEnum):
+    """Raster band color interpretation."""
     undefined = 0
     gray = 1
     grey = 1
@@ -47,6 +63,26 @@ class ColorInterp(IntEnum):
     sar_p = 37
 
 class Resampling(IntEnum):
+    """
+    Available warp resampling algorithms.
+
+    Notes
+    ----------
+    The first 8, 'nearest', 'bilinear', 'cubic', 'cubic_spline',
+    'lanczos', 'average', 'mode', and 'gauss', are available for making
+    dataset overviews.
+
+    'max', 'min', 'med', 'q1', 'q3' are only supported in GDAL >= 2.0.0.
+
+    'nearest', 'bilinear', 'cubic', 'cubic_spline', 'lanczos',
+    'average', 'mode' are always available (GDAL >= 1.10).
+
+    'sum' is only supported in GDAL >= 3.1.
+
+    'rms' is only supported in GDAL >= 3.3.
+
+    Note: 'gauss' is not available to the functions in rio.warp.
+    """
     nearest = 0
     bilinear = 1
     cubic = 2
@@ -64,6 +100,18 @@ class Resampling(IntEnum):
     rms = 14
 
 class OverviewResampling(IntEnum):
+    """
+    Available Overview resampling algorithms.
+
+    The first 8, 'nearest', 'bilinear', 'cubic', 'cubic_spline',
+    'lanczos', 'average', 'mode', and 'gauss', are available for making
+    dataset overviews.
+
+    'nearest', 'bilinear', 'cubic', 'cubic_spline', 'lanczos',
+    'average', 'mode' are always available (GDAL >= 1.10).
+
+    'rms' is only supported in GDAL >= 3.3.
+    """
     nearest = 0
     bilinear = 1
     cubic = 2
@@ -75,6 +123,12 @@ class OverviewResampling(IntEnum):
     rms = 14
 
 class Compression(Enum):
+    """
+    Available compression algorithms for GeoTIFFs.
+
+    Note that compression options for EXR, MRF, etc are not included
+    in this enum.
+    """
     jpeg = "JPEG"
     lzw = "LZW"
     packbits = "PACKBITS"
@@ -114,10 +168,16 @@ class PhotometricInterp(Enum):
     itulab = "ITULAB"
 
 class MergeAlg(Enum):
+    """Available rasterization algorithms"""
     replace = "REPLACE"
     add = "ADD"
 
 class WktVersion(Enum):
+    """
+     .. versionadded:: 1.3.0
+
+    Supported CRS WKT string versions
+    """
     WKT2_2015 = "WKT2_2015"
     WKT2 = "WKT2"
     WKT2_2019 = "WKT2_2018"

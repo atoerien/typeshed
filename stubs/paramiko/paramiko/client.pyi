@@ -391,6 +391,10 @@ class AutoAddPolicy(MissingHostKeyPolicy):
     def missing_host_key(self, client: SSHClient, hostname: str, key: PKey) -> None: ...
 
 class RejectPolicy(MissingHostKeyPolicy):
+    """
+    Policy for automatically rejecting the unknown hostname & key.  This is
+    used by `.SSHClient`.
+    """
     def missing_host_key(self, client: SSHClient, hostname: str, key: PKey) -> Never: ...
 
 class WarningPolicy(MissingHostKeyPolicy):

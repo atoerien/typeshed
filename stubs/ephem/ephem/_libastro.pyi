@@ -68,6 +68,10 @@ sun_radius: Final[float]
 
 @disjoint_base
 class Angle(float):  # type: ignore[type-var]
+    """
+    An angle in radians that can print itself in an astronomical format.
+    Use ephem.degrees() and ephem.radians() to create one.
+    """
     def __new__(cls, *args: Unused, **kwargs: Unused) -> Never: ...
     @property
     def norm(self) -> Angle:

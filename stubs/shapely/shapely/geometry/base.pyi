@@ -1083,7 +1083,14 @@ class BaseMultipartGeometry(BaseGeometry, Generic[_GeoT_co]):
     """Base class for collections of multiple geometries."""
     __slots__: list[str] = []
     @property
-    def coords(self) -> Never: ...
+    def coords(self) -> Never:
+        """
+        Not implemented.
+
+        Sub-geometries may have coordinate sequences, but multi-part geometries
+        do not.
+        """
+        ...
     @property
     def geoms(self) -> GeometrySequence[Self]:
         """Access to the contained geometries."""

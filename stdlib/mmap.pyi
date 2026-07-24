@@ -142,7 +142,9 @@ class mmap:
         """Return self[key]."""
         ...
 
-    def __delitem__(self, key: SupportsIndex | slice[SupportsIndex | None], /) -> Never: ...
+    def __delitem__(self, key: SupportsIndex | slice[SupportsIndex | None], /) -> Never:
+        """Delete self[key]."""
+        ...
 
     @overload
     def __setitem__(self, key: SupportsIndex, value: int, /) -> None:

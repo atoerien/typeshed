@@ -1,3 +1,9 @@
+"""
+rasterio._err
+
+Exception-raising wrappers for GDAL API functions.
+"""
+
 from contextlib import AbstractContextManager
 from enum import IntEnum
 from typing import Final
@@ -10,6 +16,12 @@ class GDALError(IntEnum):
     fatal = 4
 
 class CPLE_BaseError(Exception):
+    """
+    Base CPL error class
+
+    Exceptions deriving from this class are intended for use only in
+    Rasterio's Cython code. Let's not expose API users to them.
+    """
     error: int
     errno: int
     errmsg: str

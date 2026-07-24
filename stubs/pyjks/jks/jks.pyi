@@ -167,9 +167,18 @@ class SecretKeyEntry(AbstractKeystoreEntry):
 
     # Not implemented by pyjks
     @classmethod
-    def new(cls, alias: str, sealed_obj: bool, algorithm: str, key: bytes, key_size: int) -> Never: ...  # type: ignore[override]
+    def new(cls, alias: str, sealed_obj: bool, algorithm: str, key: bytes, key_size: int) -> Never:
+        """
+        Helper function to create a new SecretKeyEntry.
+
+        :returns: A loaded :class:`SecretKeyEntry` instance, ready
+          to be placed in a keystore.
+        """
+        ...
     # Not implemented by pyjks
-    def encrypt(self, key_password: str) -> Never: ...
+    def encrypt(self, key_password: str) -> Never:
+        """Encrypts the Secret Key so that the keystore can be saved"""
+        ...
 
 class KeyStore(AbstractKeystore):
     """Represents a loaded JKS or JCEKS keystore."""

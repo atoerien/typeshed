@@ -659,7 +659,9 @@ class SpecializedBody(Body):
     """
     def invalid_input(
         self, match: Match[str] | None = None, context: list[str] | None = None, next_state: str | None = None
-    ) -> Never: ...
+    ) -> Never:
+        """Not a compound element member. Abort this state machine."""
+        ...
     indent = invalid_input  # type: ignore[assignment]
     bullet = invalid_input
     enumerator = invalid_input
@@ -814,7 +816,9 @@ class SpecializedText(Text):
         ...
     def invalid_input(
         self, match: Match[str] | None = None, context: list[str] | None = None, next_state: str | None = None
-    ) -> Never: ...
+    ) -> Never:
+        """Not a compound element member. Abort this state machine."""
+        ...
     blank = invalid_input
     indent = invalid_input
     underline = invalid_input

@@ -80,10 +80,9 @@ class JSONEncoder:
         ignore_nan: bool = False,
         int_as_string_bitcount: int | None = None,
         iterable_as_array: bool = False,
-    ) -> None: ...
-    def encode(self, o: Any) -> str: ...
-    def default(self, o: Any) -> Never: ...
-    def iterencode(self, o: Any) -> Iterator[str]: ...
+    ) -> None:
+        """
+        Constructor for JSONEncoder, with sensible defaults.
 
         If skipkeys is false, then it is a TypeError to attempt
         encoding of keys that are not str, int, long, float or None.  If
@@ -173,7 +172,7 @@ class JSONEncoder:
         '{"foo": ["bar", "baz"]}'
         """
         ...
-    def default(self, o: Any) -> NoReturn:
+    def default(self, o: Any) -> Never:
         """
         Implement this method in a subclass such that it returns
         a serializable object for ``o``, or calls the base implementation

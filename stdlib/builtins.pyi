@@ -516,7 +516,25 @@ class int:
             byteorder: Literal["little", "big"] = "big",
             *,
             signed: bool = False,
-        ) -> Self: ...
+        ) -> Self:
+            """
+            Return the integer represented by the given array of bytes.
+
+            bytes
+              Holds the array of bytes to convert.  The argument must either
+              support the buffer protocol or be an iterable object producing bytes.
+              Bytes and bytearray are examples of built-in objects that support the
+              buffer protocol.
+            byteorder
+              The byte order used to represent the integer.  If byteorder is 'big',
+              the most significant byte is at the beginning of the byte array.  If
+              byteorder is 'little', the most significant byte is at the end of the
+              byte array.  To request the native byte order of the host system, use
+              sys.byteorder as the byte order value.  Default is to use 'big'.
+            signed
+              Indicates whether two's complement is used to represent the integer.
+            """
+            ...
 
     else:
         def to_bytes(self, length: SupportsIndex, byteorder: Literal["little", "big"], *, signed: bool = False) -> bytes:
@@ -692,7 +710,13 @@ class int:
         """Flooring an Integral returns itself."""
         ...
     if sys.version_info >= (3, 14):
-        def __round__(self, ndigits: SupportsIndex | None = None, /) -> int: ...
+        def __round__(self, ndigits: SupportsIndex | None = None, /) -> int:
+            """
+            Rounding an Integral returns itself.
+
+            Rounding with an ndigits argument also returns an integer.
+            """
+            ...
 
     else:
         def __round__(self, ndigits: SupportsIndex = ..., /) -> int:
@@ -3251,8 +3275,16 @@ class memoryview(Sequence[_I]):
         """Release the buffer object that exposes the underlying memory of the object."""
         ...
     if sys.version_info >= (3, 14):
-        def index(self, value: object, start: SupportsIndex = 0, stop: SupportsIndex = sys.maxsize, /) -> int: ...
-        def count(self, value: object, /) -> int: ...
+        def index(self, value: object, start: SupportsIndex = 0, stop: SupportsIndex = sys.maxsize, /) -> int:
+            """
+            Return the index of the first occurrence of a value.
+
+            Raises ValueError if the value is not present.
+            """
+            ...
+        def count(self, value: object, /) -> int:
+            """Count the number of occurrences of a value."""
+            ...
 
     else:
         # These are inherited from the Sequence ABC, but don't actually exist on memoryview.
@@ -3380,7 +3412,9 @@ class slice(Generic[_StartT_co, _StopT_co, _StepT_co]):
         """Return self==value."""
         ...
     if sys.version_info >= (3, 12):
-        def __hash__(self) -> int: ...
+        def __hash__(self) -> int:
+            """Return hash(self)."""
+            ...
 
     else:
         __hash__: ClassVar[None]  # type: ignore[assignment]
@@ -6339,14 +6373,21 @@ class _SupportsReversed(Protocol[_T_co]):
 
 @disjoint_base
 class reversed(Generic[_T_co]):
+    """Return a reverse iterator over the values of the given sequence."""
     @overload
     def __new__(cls, sequence: _SupportsReversed[_T], /) -> _T: ...  # type: ignore[misc]
     @overload
     def __new__(cls, sequence: SupportsLenAndGetItem[_T_co], /) -> Self: ...
 
-    def __iter__(self) -> Self: ...
-    def __next__(self) -> _T_co: ...
-    def __length_hint__(self) -> int: ...
+    def __iter__(self) -> Self:
+        """Implement iter(self)."""
+        ...
+    def __next__(self) -> _T_co:
+        """Implement next(self)."""
+        ...
+    def __length_hint__(self) -> int:
+        """Private method returning an estimate of len(list(it))."""
+        ...
 
 def repr(obj: object, /) -> str:
     """

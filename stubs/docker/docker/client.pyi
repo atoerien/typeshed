@@ -403,8 +403,22 @@ class DockerClient:
         """
         ...
     # Please keep in sync with docker.api.daemon.DaemonApiMixin.version
-    def version(self, api_version: bool = True) -> dict[str, Any]: ...
-    def close(self) -> None: ...
+    def version(self, api_version: bool = True) -> dict[str, Any]:
+        """
+        Returns version information from the server. Similar to the ``docker
+        version`` command.
+
+        Returns:
+            (dict): The server version information
+
+        Raises:
+            :py:class:`docker.errors.APIError`
+                If the server returns an error.
+        """
+        ...
+    def close(self) -> None:
+        """Closes all adapters and as such the session"""
+        ...
     def __getattr__(self, name: str) -> Never: ...
 
 from_env = DockerClient.from_env

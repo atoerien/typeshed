@@ -296,11 +296,32 @@ def start_new(function: Callable[..., object], args: tuple[Any, ...], kwargs: di
     """An obsolete synonym of start_new_thread()."""
     ...
 
-def interrupt_main(signum: signal.Signals = signal.SIGINT, /) -> None: ...
-def exit() -> Never: ...
+def interrupt_main(signum: signal.Signals = signal.SIGINT, /) -> None:
+    """
+    Simulate the arrival of the given signal in the main thread,
+    where the corresponding signal handler will be executed.
+    If *signum* is omitted, SIGINT is assumed.
+    A subthread can use this function to interrupt the main thread.
+
+    Note: the default signal handler for SIGINT raises ``KeyboardInterrupt``.
+    """
+    ...
+def exit() -> Never:
+    """
+    This is synonymous to ``raise SystemExit''.  It will cause the current
+    thread to exit silently unless the exception is caught.
+    """
+    ...
 @deprecated("Obsolete synonym. Use `exit()` instead.")
-def exit_thread() -> Never: ...  # undocumented
-def allocate_lock() -> LockType: ...
+def exit_thread() -> Never:
+    """An obsolete synonym of exit()."""
+    ...
+def allocate_lock() -> LockType:
+    """
+    Create a new lock object. See help(type(threading.Lock())) for
+    information about locks.
+    """
+    ...
 @deprecated("Obsolete synonym. Use `allocate_lock()` instead.")
 def allocate() -> LockType:
     """An obsolete synonym of allocate_lock()."""

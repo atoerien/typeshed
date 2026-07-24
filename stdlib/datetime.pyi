@@ -195,7 +195,9 @@ class date:
         ...
 
     @overload
-    def __sub__(self, value: datetime, /) -> Never: ...
+    def __sub__(self, value: datetime, /) -> Never:
+        """Return self-value."""
+        ...
     @overload
     def __sub__(self, value: Self, /) -> timedelta:
         """Return self-value."""

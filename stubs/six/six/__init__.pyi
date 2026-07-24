@@ -99,7 +99,9 @@ def assertNotRegex(self: unittest.TestCase, text: AnyStr, expected_regex: AnyStr
 
 exec_ = exec
 
-def reraise(tp: type[BaseException] | None, value: BaseException | None, tb: types.TracebackType | None = None) -> Never: ...
+def reraise(tp: type[BaseException] | None, value: BaseException | None, tb: types.TracebackType | None = None) -> Never:
+    """Reraise an exception."""
+    ...
 def raise_from(value: BaseException | type[BaseException], from_value: BaseException | None) -> Never: ...
 
 print_ = print

@@ -144,7 +144,28 @@ class Plot:
     config: PlotConfig
     def __init__(self, *args: DataSource | VariableSpec, data: DataSource = None, **variables: VariableSpec) -> None: ...
     def __add__(self, other: Never) -> Never: ...
-    def on(self, target: Axes | SubFigure | Figure) -> Plot: ...
+    def on(self, target: Axes | SubFigure | Figure) -> Plot:
+        """
+        Provide existing Matplotlib figure or axes for drawing the plot.
+
+        When using this method, you will also need to explicitly call a method that
+        triggers compilation, such as :meth:`Plot.show` or :meth:`Plot.save`. If you
+        want to postprocess using matplotlib, you'd need to call :meth:`Plot.plot`
+        first to compile the plot without rendering it.
+
+        Parameters
+        ----------
+        target : Axes, SubFigure, or Figure
+            Matplotlib object to use. Passing :class:`matplotlib.axes.Axes` will add
+            artists without otherwise modifying the figure. Otherwise, subplots will be
+            created within the space of the given :class:`matplotlib.figure.Figure` or
+            :class:`matplotlib.figure.SubFigure`.
+
+        Examples
+        --------
+        .. include:: ../docstrings/objects.Plot.on.rst
+        """
+        ...
     def add(
         self,
         mark: Mark,

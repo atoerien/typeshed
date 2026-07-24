@@ -668,7 +668,14 @@ class Worksheet(_WorkbookChild):
     # Will always raise: TypeError: 'set' object is not subscriptable
     @property
     @deprecated("Use ws.merged_cells.ranges")
-    def merged_cell_ranges(self) -> Never: ...
+    def merged_cell_ranges(self) -> Never:
+        """
+        Return a copy of cell ranges
+
+        .. note::
+            Deprecated: Use ws.merged_cells.ranges
+        """
+        ...
     def unmerge_cells(
         self,
         range_string: str | None = None,

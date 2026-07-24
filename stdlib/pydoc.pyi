@@ -138,8 +138,12 @@ class Doc:
     if sys.version_info >= (3, 15):
         STDLIB_DIR: str
 
-    def document(self, object: object, name: str | None = None, *args: Any) -> str: ...
-    def fail(self, object: object, name: str | None = None, *args: Any) -> Never: ...
+    def document(self, object: object, name: str | None = None, *args: Any) -> str:
+        """Generate documentation for an object."""
+        ...
+    def fail(self, object: object, name: str | None = None, *args: Any) -> Never:
+        """Raise an exception for unimplemented types."""
+        ...
     @abstractmethod
     def docmodule(self, object: object, name: str | None = None, *args: Any) -> str:
         """Raise an exception for unimplemented types."""

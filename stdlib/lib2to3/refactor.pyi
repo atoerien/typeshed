@@ -52,9 +52,29 @@ class RefactoringTool:
     bmi_post_order: list[BaseFix]
     def __init__(
         self, fixer_names: Iterable[str], options: Mapping[str, object] | None = None, explicit: Container[str] | None = None
-    ) -> None: ...
-    def get_fixers(self) -> tuple[list[BaseFix], list[BaseFix]]: ...
-    def log_error(self, msg: str, *args: Iterable[str], **kwargs: _ExcInfoType) -> Never: ...
+    ) -> None:
+        """
+        Initializer.
+
+        Args:
+            fixer_names: a list of fixers to import
+            options: a dict with configuration.
+            explicit: a list of fixers to run even if they are explicit.
+        """
+        ...
+    def get_fixers(self) -> tuple[list[BaseFix], list[BaseFix]]:
+        """
+        Inspects the options to load the requested patterns and handlers.
+
+        Returns:
+          (pre_order, post_order), where pre_order is the list of fixers that
+          want a pre-order AST traversal, and post_order is the list that want
+          post-order traversal.
+        """
+        ...
+    def log_error(self, msg: str, *args: Iterable[str], **kwargs: _ExcInfoType) -> Never:
+        """Called when an error occurs."""
+        ...
 
     @overload
     def log_message(self, msg: object) -> None:

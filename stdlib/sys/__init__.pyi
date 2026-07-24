@@ -522,7 +522,22 @@ if sys.version_info >= (3, 11):
         """
         Return the current exception.
 
-def exit(status: _ExitCode = None, /) -> Never: ...
+        Return the most recent exception caught by an except clause
+        in the current stack frame or in an older stack frame, or None
+        if no such exception exists.
+        """
+        ...
+
+def exit(status: _ExitCode = None, /) -> Never:
+    """
+    Exit the interpreter by raising SystemExit(status).
+
+    If the status is omitted or None, it defaults to zero (i.e., success).
+    If the status is an integer, it will be used as the system exit status.
+    If it is another kind of object, it will be printed and the system
+    exit status will be one (i.e., failure).
+    """
+    ...
 
 if sys.platform == "android":  # noqa: Y008
     def getandroidapilevel() -> int: ...
@@ -842,7 +857,9 @@ if sys.version_info >= (3, 12):
     if sys.platform == "linux":
         def activate_stack_trampoline(backend: str, /) -> None: ...
     else:
-        def activate_stack_trampoline(backend: str, /) -> Never: ...
+        def activate_stack_trampoline(backend: str, /) -> Never:
+            """Activate stack profiler trampoline *backend*."""
+            ...
 
     from . import _monitoring
 

@@ -39,4 +39,12 @@ class JWTRevocationEndpoint(RevocationEndpoint):
     issuer: Incomplete
     def __init__(self, issuer, server=None, *args, **kwargs) -> None: ...
     def authenticate_token(self, request, client) -> Never: ...
-    def get_jwks(self): ...
+    def get_jwks(self):
+        """
+        Return the JWKs that will be used to check the JWT access token signature.
+        Developers MUST re-implement this method::
+
+            def get_jwks(self):
+                return load_jwks("jwks.json")
+        """
+        ...

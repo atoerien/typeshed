@@ -1,3 +1,5 @@
+"""Interface to the Windows Console functions for dealing with character-mode applications."""
+
 from typing import Literal, overload
 from typing_extensions import Never
 
@@ -62,7 +64,9 @@ def GetConsoleTitle():
     ...
 
 @overload
-def GenerateConsoleCtrlEvent(CtrlEvent: Literal[1], ProcessGroupId: Literal[0] = 0) -> Never: ...
+def GenerateConsoleCtrlEvent(CtrlEvent: Literal[1], ProcessGroupId: Literal[0] = 0) -> Never:
+    """Sends a control signal to a group of processes attached to a common console"""
+    ...
 @overload
 def GenerateConsoleCtrlEvent(CtrlEvent: Literal[0, 1], ProcessGroupId: int) -> None:
     """Sends a control signal to a group of processes attached to a common console"""

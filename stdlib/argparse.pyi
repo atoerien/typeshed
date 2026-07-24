@@ -372,7 +372,17 @@ class ArgumentParser(_AttributeHolder, _ActionsContainer):
 
     def convert_arg_line_to_args(self, arg_line: str) -> list[str]: ...
     def exit(self, status: int = 0, message: str | None = None) -> Never: ...
-    def error(self, message: str) -> Never: ...
+    def error(self, message: str) -> Never:
+        """
+        error(message: string)
+
+        Prints a usage message incorporating the message to stderr and
+        exits.
+
+        If you override this in a subclass, it should not return -- it
+        should either exit or raise an exception.
+        """
+        ...
 
     @overload
     def parse_intermixed_args(self, args: Iterable[str] | None = None, namespace: None = None) -> Namespace: ...

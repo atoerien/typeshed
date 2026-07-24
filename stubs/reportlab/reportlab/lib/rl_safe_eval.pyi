@@ -27,7 +27,20 @@ class UntrustedAstTransformer(ast.NodeTransformer):
     @property
     def tmpName(self) -> str: ...
     def error(self, node, msg) -> Never: ...
-    def guard_iter(self, node): ...
+    def guard_iter(self, node):
+        """
+        Converts:
+                for x in expr
+        to
+                for x in __rl_getiter__(expr)
+
+        Also used for
+        * list comprehensions
+        * dict comprehensions
+        * set comprehensions
+        * generator expresions
+        """
+        ...
     def is_starred(self, ob): ...
     def gen_unpack_spec(self, tpl) -> ast.Dict:
         """
@@ -223,10 +236,16 @@ class UntrustedAstTransformer(ast.NodeTransformer):
     visit_ImportFrom = visit_Import  # pyright: ignore[reportAssignmentType]
     visit_For = guard_iter
     visit_comprehension = guard_iter
-    def generic_visit(self, node: ast.AST) -> None: ...  # type: ignore[override]
+    def generic_visit(self, node: ast.AST) -> None:
+        """Reject nodes which do not have a corresponding `visit` method."""
+        ...
     def not_allowed(self, node: ast.AST) -> Never: ...
-    def visit_children(self, node) -> ast.AST: ...
-    def visit(self, node): ...
+    def visit_children(self, node) -> ast.AST:
+        """Visit the contents of a node."""
+        ...
+    def visit(self, node):
+        """Visit a node."""
+        ...
     visit_Ellipsis = not_allowed
     visit_MatMult = not_allowed
     visit_Exec = not_allowed

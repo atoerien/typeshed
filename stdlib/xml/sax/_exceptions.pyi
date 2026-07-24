@@ -1,11 +1,37 @@
+"""Different kinds of SAX Exceptions"""
+
 from typing_extensions import Never
 from xml.sax.xmlreader import Locator
 
 class SAXException(Exception):
-    def __init__(self, msg: str, exception: Exception | None = None) -> None: ...
-    def getMessage(self) -> str: ...
-    def getException(self) -> Exception | None: ...
-    def __getitem__(self, ix: object) -> Never: ...
+    """
+    Encapsulate an XML error or warning. This class can contain
+    basic error or warning information from either the XML parser or
+    the application: you can subclass it to provide additional
+    functionality, or to add localization. Note that although you will
+    receive a SAXException as the argument to the handlers in the
+    ErrorHandler interface, you are not actually required to raise
+    the exception; instead, you can simply read the information in
+    it.
+    """
+    def __init__(self, msg: str, exception: Exception | None = None) -> None:
+        """
+        Creates an exception. The message is required, but the exception
+        is optional.
+        """
+        ...
+    def getMessage(self) -> str:
+        """Return a message for this exception."""
+        ...
+    def getException(self) -> Exception | None:
+        """Return the embedded exception, or None if there was none."""
+        ...
+    def __getitem__(self, ix: object) -> Never:
+        """
+        Avoids weird error messages if someone does exception[ix] by
+        mistake, since Exception has __getitem__ defined.
+        """
+        ...
 
 class SAXParseException(SAXException):
     """

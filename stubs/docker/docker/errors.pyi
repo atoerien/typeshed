@@ -10,7 +10,14 @@ class DockerException(Exception):
     """
     A base class from which all other exceptions inherit.
 
-def create_api_error_from_http_exception(e: HTTPError) -> Never: ...
+    If you want to catch all errors that the Docker SDK might raise,
+    catch this base exception.
+    """
+    ...
+
+def create_api_error_from_http_exception(e: HTTPError) -> Never:
+    """Create a suitable APIError from requests.exceptions.HTTPError."""
+    ...
 
 class APIError(HTTPError, DockerException):
     """An HTTP error from the API."""

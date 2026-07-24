@@ -231,7 +231,12 @@ class TokenRuleVisitor(RuleVisitor):
     """
     def visit_spaceless_literal(
         self, spaceless_literal: Node, visited_children: collections.abc.Sequence[Any]
-    ) -> TokenMatcher: ...
+    ) -> TokenMatcher:
+        """
+        Turn a string literal into a ``TokenMatcher`` that matches
+        ``Token`` objects by their ``type`` attributes.
+        """
+        ...
     def visit_regex(self, node: Node, regex: collections.abc.Sequence[Any]) -> Never: ...
 
 rule_grammar: Grammar

@@ -50,12 +50,42 @@ class MultiProcessHelper:
     handling logic.
     """
     processes: list[Process]
-    def __init__(self) -> None: ...
-    def start_child(self, target: Callable[[Event], Any]) -> None: ...
-    def stop_children(self) -> None: ...
-    def wait_for_children(self) -> None: ...
-    def enable_graceful_shutdown(self) -> None: ...
-    def raise_shutdown_request(self, signum: int, frame: FrameType | None) -> Never: ...
+    def __init__(self) -> None:
+        """Initialize a :class:`MultiProcessHelper` object."""
+        ...
+    def start_child(self, target: Callable[[Event], Any]) -> None:
+        """
+        Start a child process using :class:`multiprocessing.Process`.
+
+        :param target: The callable to run in the child process. Expected to
+                       take a single argument which is a
+                       :class:`multiprocessing.Event` to be set when the child
+                       process has finished initialization.
+        """
+        ...
+    def stop_children(self) -> None:
+        """
+        Gracefully shut down all child processes.
+
+        Child processes are expected to call :func:`enable_graceful_shutdown()`
+        during initialization.
+        """
+        ...
+    def wait_for_children(self) -> None:
+        """Wait for all child processes to terminate."""
+        ...
+    def enable_graceful_shutdown(self) -> None:
+        """
+        Register a signal handler that converts :data:`GRACEFUL_SHUTDOWN_SIGNAL` to an exception.
+
+        Used by :func:`~PseudoTerminal.capture_loop()` to gracefully interrupt
+        the blocking :func:`os.read()` call when the capture loop needs to be
+        terminated (this is required for coverage collection).
+        """
+        ...
+    def raise_shutdown_request(self, signum: int, frame: FrameType | None) -> Never:
+        """Raise :exc:`ShutdownRequested` when :data:`GRACEFUL_SHUTDOWN_SIGNAL` is received."""
+        ...
 
 class CaptureOutput(MultiProcessHelper):
     """Context manager to capture the standard output and error streams."""

@@ -443,9 +443,22 @@ class Random(_random.Random):
 
 # SystemRandom is not implemented for all OS's; good on Windows & Linux
 class SystemRandom(Random):
-    def getrandbits(self, k: int) -> int: ...  # k can be passed by keyword
-    def getstate(self, *args: Any, **kwds: Any) -> Never: ...
-    def setstate(self, *args: Any, **kwds: Any) -> Never: ...
+    """
+    Alternate random number generator using sources provided
+    by the operating system (such as /dev/urandom on Unix or
+    CryptGenRandom on Windows).
+
+     Not available on all systems (see os.urandom() for details).
+    """
+    def getrandbits(self, k: int) -> int:
+        """getrandbits(k) -> x.  Generates an int with k random bits."""
+        ...
+    def getstate(self, *args: Any, **kwds: Any) -> Never:
+        """Method should not be called for a system random number generator."""
+        ...
+    def setstate(self, *args: Any, **kwds: Any) -> Never:
+        """Method should not be called for a system random number generator."""
+        ...
 
 _inst: Random
 seed = _inst.seed
