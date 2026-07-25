@@ -1,8 +1,8 @@
 import builtins
 from _typeshed import Incomplete, Unused
 from collections.abc import Callable, Collection
-from typing import Any, ClassVar, Final, Literal, NoReturn, SupportsIndex, TypeAlias, TypeVar, overload
-from typing_extensions import Self, deprecated
+from typing import Any, ClassVar, Final, Literal, SupportsIndex, TypeAlias, TypeVar, overload
+from typing_extensions import Never, Self, deprecated
 
 import numpy as np
 import pandas as pd
@@ -540,51 +540,10 @@ class GeometryArray(ExtensionArray):
         ...
     @property
     def nbytes(self) -> int: ...
-    def shift(self, periods: int = 1, fill_value: Geometry | None = None) -> GeometryArray:
-        """
-        Shift values by desired number.
-
-        Newly introduced missing values are filled with
-        ``self.dtype.na_value``.
-
-        Parameters
-        ----------
-        periods : int, default 1
-            The number of periods to shift. Negative values are allowed
-            for shifting backwards.
-
-        fill_value : object, optional (default None)
-            The scalar value to use for newly introduced missing values.
-            The default is ``self.dtype.na_value``.
-
-        Returns
-        -------
-        GeometryArray
-            Shifted.
-
-        Notes
-        -----
-        If ``self`` is empty or ``periods`` is 0, a copy of ``self`` is
-        returned.
-
-        If ``periods > len(self)``, then an array of size
-        len(self) is returned, with all values filled with
-        ``self.dtype.na_value``.
-        """
-        ...
-    def argmin(self, skipna: bool = True) -> NoReturn: ...
-    def argmax(self, skipna: bool = True) -> NoReturn: ...
-    def __array__(self, dtype: DTypeLike | None = None, copy: bool | None = None) -> _Array1D[np.object_]:
-        """
-        Return the data as a numpy array.
-
-        This is the numpy array interface.
-
-        Returns
-        -------
-        values : numpy array
-        """
-        ...
+    def shift(self, periods: int = 1, fill_value: Geometry | None = None) -> GeometryArray: ...  # type: ignore[override]
+    def argmin(self, skipna: bool = True) -> Never: ...
+    def argmax(self, skipna: bool = True) -> Never: ...
+    def __array__(self, dtype: DTypeLike | None = None, copy: bool | None = None) -> _Array1D[np.object_]: ...
     def __eq__(self, other: object) -> _Array1D[np.bool_]: ...  # type: ignore[override]
     def __ne__(self, other: object) -> _Array1D[np.bool_]: ...  # type: ignore[override]
     def __contains__(self, item: object) -> np.bool_:

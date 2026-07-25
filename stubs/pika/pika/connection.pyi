@@ -5,17 +5,17 @@ import ssl
 from _typeshed import Incomplete
 from collections.abc import Callable
 from logging import Logger
-from typing import Final
+from typing import Final, Literal
 from typing_extensions import Self
 
 from .callback import CallbackManager
 from .channel import Channel
 from .compat import AbstractBase
-from .credentials import _Credentials
+from .credentials import PlainCredentials, _Credentials
 from .frame import Method
 from .spec import Connection as SpecConnection
 
-PRODUCT: str
+PRODUCT: Final = "Pika Python Client Library"
 LOGGER: Logger
 
 class Parameters:
@@ -42,26 +42,26 @@ class Parameters:
         "_virtual_host",
         "_tcp_options",
     )
-    DEFAULT_USERNAME: str
-    DEFAULT_PASSWORD: str
-    DEFAULT_BLOCKED_CONNECTION_TIMEOUT: None
-    DEFAULT_CHANNEL_MAX: int
-    DEFAULT_CLIENT_PROPERTIES: None
-    DEFAULT_CREDENTIALS: Incomplete
-    DEFAULT_CONNECTION_ATTEMPTS: int
-    DEFAULT_FRAME_MAX: int
+    DEFAULT_USERNAME: Final = "guest"
+    DEFAULT_PASSWORD: Final = "guest"
+    DEFAULT_BLOCKED_CONNECTION_TIMEOUT: Final = None
+    DEFAULT_CHANNEL_MAX: Final = 65535
+    DEFAULT_CLIENT_PROPERTIES: Final = None
+    DEFAULT_CREDENTIALS: Final[PlainCredentials]
+    DEFAULT_CONNECTION_ATTEMPTS: Final = 1
+    DEFAULT_FRAME_MAX: Final = 131072
     DEFAULT_HEARTBEAT_TIMEOUT: None
-    DEFAULT_HOST: str
-    DEFAULT_LOCALE: str
-    DEFAULT_PORT: int
-    DEFAULT_RETRY_DELAY: float
-    DEFAULT_SOCKET_TIMEOUT: float
-    DEFAULT_STACK_TIMEOUT: float
-    DEFAULT_SSL: bool
-    DEFAULT_SSL_OPTIONS: None
-    DEFAULT_SSL_PORT: int
-    DEFAULT_VIRTUAL_HOST: str
-    DEFAULT_TCP_OPTIONS: None
+    DEFAULT_HOST: Final = "localhost"
+    DEFAULT_LOCALE: Final = "en_US"
+    DEFAULT_PORT: Final = 5672
+    DEFAULT_RETRY_DELAY: Final = 2.0
+    DEFAULT_SOCKET_TIMEOUT: Final = 10.0
+    DEFAULT_STACK_TIMEOUT: Final = 15.0
+    DEFAULT_SSL: Final = False
+    DEFAULT_SSL_OPTIONS: Final = None
+    DEFAULT_SSL_PORT: Final = 5671
+    DEFAULT_VIRTUAL_HOST: Final = "/"
+    DEFAULT_TCP_OPTIONS: Final = None
     def __init__(self) -> None: ...
     def __eq__(self, other: object) -> bool: ...
     def __ne__(self, other: object) -> bool: ...
@@ -324,19 +324,9 @@ class Parameters:
         ...
 
     @property
-    def tcp_options(self) -> dict[Incomplete, Incomplete] | None:
-        """
-        :returns: None or a dict of options to pass to the underlying socket
-        :rtype: dict|None
-        """
-        ...
+    def tcp_options(self) -> dict[str, Incomplete] | None: ...
     @tcp_options.setter
-    def tcp_options(self, value: dict[Incomplete, Incomplete] | None) -> None:
-        """
-        :returns: None or a dict of options to pass to the underlying socket
-        :rtype: dict|None
-        """
-        ...
+    def tcp_options(self, value: dict[str, Incomplete] | None) -> None: ...
 
 class ConnectionParameters(Parameters):
     """
@@ -344,7 +334,6 @@ class ConnectionParameters(Parameters):
     upon construction.
     """
     __slots__ = ()
-
     def __init__(
         self,
         host: str = ...,
@@ -361,50 +350,9 @@ class ConnectionParameters(Parameters):
         stack_timeout: float | None = ...,
         locale: str = ...,
         blocked_connection_timeout: float | None = ...,
-        client_properties: dict[Incomplete, Incomplete] | None = ...,
-        tcp_options: dict[Incomplete, Incomplete] | None = ...,
-    ) -> None:
-        """
-        Create a new ConnectionParameters instance. See `Parameters` for
-        default values.
-
-        :param str host: Hostname or IP Address to connect to
-        :param int port: TCP port to connect to
-        :param str virtual_host: RabbitMQ virtual host to use
-        :param pika.credentials.PlainCredentials credentials: auth credentials
-        :param int channel_max: Maximum number of channels to allow
-        :param int frame_max: The maximum byte size for an AMQP frame
-        :param int|None|callable heartbeat: Controls AMQP heartbeat timeout negotiation
-            during connection tuning. An integer value always overrides the value
-            proposed by broker. Use 0 to deactivate heartbeats and None to always
-            accept the broker's proposal. If a callable is given, it will be called
-            with the connection instance and the heartbeat timeout proposed by broker
-            as its arguments. The callback should return a non-negative integer that
-            will be used to override the broker's proposal.
-        :param `pika.SSLOptions`|None ssl_options: None for plaintext or
-            `pika.SSLOptions` instance for SSL/TLS. Defaults to None.
-        :param int connection_attempts: Maximum number of retry attempts
-        :param int|float retry_delay: Time to wait in seconds, before the next
-        :param int|float socket_timeout: Positive socket connect timeout in
-            seconds.
-        :param int|float stack_timeout: Positive full protocol stack
-            (TCP/[SSL]/AMQP) bring-up timeout in seconds. It's recommended to
-            set this value higher than `socket_timeout`.
-        :param str locale: Set the locale value
-        :param int|float|None blocked_connection_timeout: If not None,
-            the value is a non-negative timeout, in seconds, for the
-            connection to remain blocked (triggered by Connection.Blocked from
-            broker); if the timeout expires before connection becomes unblocked,
-            the connection will be torn down, triggering the adapter-specific
-            mechanism for informing client app about the closed connection:
-            passing `ConnectionBlockedTimeout` exception to on_close_callback
-            in asynchronous adapters or raising it in `BlockingConnection`.
-        :param client_properties: None or dict of client properties used to
-            override the fields in the default client properties reported to
-            RabbitMQ via `Connection.StartOk` method.
-        :param tcp_options: None or a dict of TCP options to set for socket
-        """
-        ...
+        client_properties: dict[str, Incomplete] | None = ...,
+        tcp_options: dict[str, Incomplete] | None = ...,
+    ) -> None: ...
 
 class URLParameters(Parameters):
     """
@@ -484,27 +432,22 @@ class SSLOptions:
         ...
 
 class Connection(AbstractBase, metaclass=abc.ABCMeta):
-    """
-    This is the core class that implements communication with RabbitMQ. This
-    class should not be invoked directly but rather through the use of an
-    adapter such as SelectConnection or BlockingConnection.
-    """
-    ON_CONNECTION_CLOSED: Final[str]
-    ON_CONNECTION_ERROR: Final[str]
-    ON_CONNECTION_OPEN_OK: Final[str]
-    CONNECTION_CLOSED: Final[int]
-    CONNECTION_INIT: Final[int]
-    CONNECTION_PROTOCOL: Final[int]
-    CONNECTION_START: Final[int]
-    CONNECTION_TUNE: Final[int]
-    CONNECTION_OPEN: Final[int]
-    CONNECTION_CLOSING: Final[int]
-    connection_state: int  # one of the constants above
+    ON_CONNECTION_CLOSED: Final = "_on_connection_closed"
+    ON_CONNECTION_ERROR: Final = "_on_connection_error"
+    ON_CONNECTION_OPEN_OK: Final = "_on_connection_open_ok"
+    CONNECTION_CLOSED: Final = 0
+    CONNECTION_INIT: Final = 1
+    CONNECTION_PROTOCOL: Final = 2
+    CONNECTION_START: Final = 3
+    CONNECTION_TUNE: Final = 4
+    CONNECTION_OPEN: Final = 5
+    CONNECTION_CLOSING: Final = 6
+    connection_state: Literal[0, 1, 2, 3, 4, 5, 6]  # one of the constants above
     params: Parameters
     callbacks: CallbackManager
-    server_capabilities: Incomplete
-    server_properties: Incomplete
-    known_hosts: Incomplete
+    server_capabilities: dict[str, bool] | None
+    server_properties: dict[str, Incomplete] | None
+    known_hosts: str | None
     def __init__(
         self,
         parameters: Parameters | None = None,
@@ -609,52 +552,14 @@ class Connection(AbstractBase, metaclass=abc.ABCMeta):
         ...
     def channel(
         self, channel_number: int | None = None, on_open_callback: Callable[[Channel], object] | None = None
-    ) -> Channel:
-        """
-        Create a new channel with the next available channel number or pass
-        in a channel number to use. Must be non-zero if you would like to
-        specify but it is recommended that you let Pika manage the channel
-        numbers.
-
-        :param int channel_number: The channel number to use, defaults to the
-                                   next available.
-        :param callable on_open_callback: The callback when the channel is
-            opened.  The callback will be invoked with the `Channel` instance
-            as its only argument.
-        :rtype: pika.channel.Channel
-        """
-        ...
-    def update_secret(self, new_secret, reason, callback=None) -> None:
-        """
-        RabbitMQ AMQP extension - This method updates the secret used to authenticate this connection.
-        It is used when secrets have an expiration date and need to be renewed, like OAuth 2 tokens.
-        Pass a callback to be notified of the response from the server.
-
-        :param string new_secret: The new secret
-        :param string reason: The reason for the secret update
-        :param callable callback: Callback to call on
-            `Connection.UpdateSecretOk`, having the signature
-            `callback(pika.frame.Method)`, where the method frame's
-            `method` member is of type `pika.spec.Connection.UpdateSecretOk`
-
-        :raises pika.exceptions.ConnectionWrongStateError: if connection is
-            not open.
-        """
-        ...
-    def close(self, reply_code: int = 200, reply_text: str = "Normal shutdown") -> None:
-        """
-        Disconnect from RabbitMQ. If there are any open channels, it will
-        attempt to close them prior to fully disconnecting. Channels which
-        have active consumers will attempt to send a Basic.Cancel to RabbitMQ
-        to cleanly stop the delivery of messages prior to closing the channel.
-
-        :param int reply_code: The code number for the close
-        :param str reply_text: The text reason for the close
-
-        :raises pika.exceptions.ConnectionWrongStateError: if connection is
-            closed or closing.
-        """
-        ...
+    ) -> Channel: ...
+    def update_secret(
+        self,
+        new_secret: str | bytes,
+        reason: str | bytes,
+        callback: Callable[[Method[SpecConnection.UpdateSecretOk]], object] | None = None,
+    ) -> None: ...
+    def close(self, reply_code: int = 200, reply_text: str = "Normal shutdown") -> None: ...
     @property
     def is_closed(self) -> bool:
         """Returns a boolean reporting the current connection state."""

@@ -23,7 +23,10 @@ Payload is TLV-encoded (see tlv.py).
 import asyncio
 import socket
 from _typeshed import Incomplete
-from typing import ClassVar, Final
+from typing import ClassVar, Final, Literal, TypeAlias, TypedDict, type_check_only
+from typing_extensions import NotRequired
+
+from .errors import _DirtyErrorDict
 
 MAGIC: Final = b"GD"
 VERSION: Final = 0x01
@@ -60,6 +63,65 @@ MANAGE_OP_REMOVE: Final = 2
 HEADER_FORMAT: Final = ">2sBBIQ"
 HEADER_SIZE: Final[int]
 MAX_MESSAGE_SIZE: Final = 67108864
+
+@type_check_only
+class _DirtyRequest(TypedDict):
+    type: Literal["request"]
+    id: int | str
+    app_path: str
+    action: str
+    args: list[Incomplete]
+    kwargs: dict[str, Incomplete]
+
+@type_check_only
+class _DirtyResponse(TypedDict):
+    type: Literal["response"]
+    id: int | str
+    result: Incomplete
+
+@type_check_only
+class _DirtyErrorResponse(TypedDict):
+    type: Literal["error"]
+    id: int | str
+    error: _DirtyErrorDict | dict[str, Incomplete]
+
+@type_check_only
+class _DirtyChunkMessage(TypedDict):
+    type: Literal["chunk"]
+    id: int | str
+    data: Incomplete
+
+@type_check_only
+class _DirtyEndMessage(TypedDict):
+    type: Literal["end"]
+    id: int | str
+
+@type_check_only
+class _DirtyStashMessage(TypedDict):
+    type: Literal["stash"]
+    id: int | str
+    op: int
+    table: str
+    key: NotRequired[Incomplete]
+    value: NotRequired[Incomplete]
+    pattern: NotRequired[Incomplete]
+
+@type_check_only
+class _DirtyManageMessage(TypedDict):
+    type: Literal["manage"]
+    id: int | str
+    op: int
+    count: int
+
+_DirtyMessage: TypeAlias = (
+    _DirtyRequest
+    | _DirtyResponse
+    | _DirtyErrorResponse
+    | _DirtyChunkMessage
+    | _DirtyEndMessage
+    | _DirtyStashMessage
+    | _DirtyManageMessage
+)
 
 class BinaryProtocol:
     """Binary message protocol for dirty worker IPC."""
@@ -237,37 +299,9 @@ class BinaryProtocol:
         """
         ...
     @staticmethod
-    async def read_message_async(reader: asyncio.StreamReader) -> dict[str, Incomplete]:
-        """
-        Read a complete binary message from async stream.
-
-        Args:
-            reader: asyncio StreamReader
-
-        Returns:
-            dict: Message dict with 'type', 'id', and payload fields
-
-        Raises:
-            DirtyProtocolError: If read fails or message is malformed
-            asyncio.IncompleteReadError: If connection closed mid-read
-        """
-        ...
+    async def read_message_async(reader: asyncio.StreamReader) -> _DirtyMessage: ...
     @staticmethod
-    async def write_message_async(writer: asyncio.StreamWriter, message: dict[str, Incomplete]) -> None:
-        """
-        Write a message to async stream.
-
-        Accepts dict format for backwards compatibility.
-
-        Args:
-            writer: asyncio StreamWriter
-            message: Message dict with 'type', 'id', and payload fields
-
-        Raises:
-            DirtyProtocolError: If encoding fails
-            ConnectionError: If write fails
-        """
-        ...
+    async def write_message_async(writer: asyncio.StreamWriter, message: _DirtyMessage) -> None: ...
     @staticmethod
     def _recv_exactly(sock: socket.socket, n: int) -> bytes:
         """
@@ -285,148 +319,24 @@ class BinaryProtocol:
         """
         ...
     @staticmethod
-    def read_message(sock: socket.socket) -> dict[str, Incomplete]:
-        """
-        Read a complete message from socket (sync).
-
-        Args:
-            sock: Socket to read from
-
-        Returns:
-            dict: Message dict with 'type', 'id', and payload fields
-
-        Raises:
-            DirtyProtocolError: If read fails or message is malformed
-        """
-        ...
+    def read_message(sock: socket.socket) -> _DirtyMessage: ...
     @staticmethod
-    def write_message(sock: socket.socket, message: dict[str, Incomplete]) -> None:
-        """
-        Write a message to socket (sync).
-
-        Args:
-            sock: Socket to write to
-            message: Message dict with 'type', 'id', and payload fields
-
-        Raises:
-            DirtyProtocolError: If encoding fails
-            OSError: If write fails
-        """
-        ...
+    def write_message(sock: socket.socket, message: _DirtyMessage) -> None: ...
     @staticmethod
-    def _encode_from_dict(message: dict[str, Incomplete]) -> bytes:
-        """
-        Encode a message dict to binary format.
-
-        Supports the old dict-based API for backwards compatibility.
-
-        Args:
-            message: Message dict with 'type', 'id', and payload fields
-
-        Returns:
-            bytes: Complete encoded message
-        """
-        ...
+    def _encode_from_dict(message: _DirtyMessage) -> bytes: ...
 
 DirtyProtocol = BinaryProtocol
 
-# TODO: Use TypedDict for results
 def make_request(
     request_id: int | str,
     app_path: str,
     action: str,
     args: tuple[Incomplete, ...] | None = None,
     kwargs: dict[str, Incomplete] | None = None,
-) -> dict[str, Incomplete]:
-    """
-    Build a request message dict.
-
-    Args:
-        request_id: Unique request identifier (int or str)
-        app_path: Import path of the dirty app (e.g., 'myapp.ml:MLApp')
-        action: Action to call on the app
-        args: Positional arguments
-        kwargs: Keyword arguments
-
-    Returns:
-        dict: Request message dict
-    """
-    ...
-def make_response(request_id: int | str, result) -> dict[str, Incomplete]:
-    """
-    Build a success response message dict.
-
-    Args:
-        request_id: Request identifier this responds to
-        result: Result value
-
-    Returns:
-        dict: Response message dict
-    """
-    ...
-def make_error_response(request_id: int | str, error) -> dict[str, Incomplete]:
-    """
-    Build an error response message dict.
-
-    Args:
-        request_id: Request identifier this responds to
-        error: DirtyError instance or dict with error info
-
-    Returns:
-        dict: Error response message dict
-    """
-    ...
-def make_chunk_message(request_id: int | str, data) -> dict[str, Incomplete]:
-    """
-    Build a chunk message dict for streaming responses.
-
-    Args:
-        request_id: Request identifier this chunk belongs to
-        data: Chunk data
-
-    Returns:
-        dict: Chunk message dict
-    """
-    ...
-def make_end_message(request_id: int | str) -> dict[str, Incomplete]:
-    """
-    Build an end-of-stream message dict.
-
-    Args:
-        request_id: Request identifier this ends
-
-    Returns:
-        dict: End message dict
-    """
-    ...
-def make_stash_message(
-    request_id: int | str, op: int, table: str, key=None, value=None, pattern=None
-) -> dict[str, Incomplete]:
-    """
-    Build a stash operation message dict.
-
-    Args:
-        request_id: Unique request identifier (int or str)
-        op: Stash operation code (STASH_OP_*)
-        table: Table name
-        key: Optional key for put/get/delete operations
-        value: Optional value for put operation
-        pattern: Optional pattern for keys operation
-
-    Returns:
-        dict: Stash message dict
-    """
-    ...
-def make_manage_message(request_id: int | str, op: int, count: int = 1) -> dict[str, Incomplete]:
-    """
-    Build a worker management message dict.
-
-    Args:
-        request_id: Unique request identifier (int or str)
-        op: Management operation (MANAGE_OP_ADD or MANAGE_OP_REMOVE)
-        count: Number of workers to add/remove
-
-    Returns:
-        dict: Manage message dict
-    """
-    ...
+) -> _DirtyRequest: ...
+def make_response(request_id: int | str, result) -> _DirtyResponse: ...
+def make_error_response(request_id: int | str, error) -> _DirtyErrorResponse: ...
+def make_chunk_message(request_id: int | str, data) -> _DirtyChunkMessage: ...
+def make_end_message(request_id: int | str) -> _DirtyEndMessage: ...
+def make_stash_message(request_id: int | str, op: int, table: str, key=None, value=None, pattern=None) -> _DirtyStashMessage: ...
+def make_manage_message(request_id: int | str, op: int, count: int = 1) -> _DirtyManageMessage: ...
