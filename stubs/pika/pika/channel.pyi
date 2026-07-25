@@ -38,14 +38,109 @@ class Channel:
     connection: Connection
     flow_active: bool
 
-    def __init__(self, connection: Connection, channel_number: int, on_open_callback: Callable[[Self], object]) -> None: ...
-    def __int__(self) -> int: ...
-    def add_callback(self, callback: Callable[..., object], replies: Iterable[Incomplete], one_shot: bool = True) -> None: ...
-    def add_on_cancel_callback(self, callback: Callable[[Method[Basic.Cancel]], object]) -> None: ...
-    def add_on_close_callback(self, callback: Callable[[Channel, Exception], object]) -> None: ...
-    def add_on_flow_callback(self, callback: Callable[[bool], object]) -> None: ...
-    def add_on_return_callback(self, callback: Callable[[Channel, Basic.Return, BasicProperties, bytes], object]) -> None: ...
-    def basic_ack(self, delivery_tag: int = 0, multiple: bool = False) -> None: ...
+    def __init__(self, connection: Connection, channel_number: int, on_open_callback: Callable[[Self], object]) -> None:
+        """
+        Create a new instance of the Channel
+
+        :param pika.connection.Connection connection: The connection
+        :param int channel_number: The channel number for this instance
+        :param callable on_open_callback: The callback to call on channel open.
+            The callback will be invoked with the `Channel` instance as its only
+            argument.
+        """
+        ...
+    def __int__(self) -> int:
+        """
+        Return the channel object as its channel number
+
+        :rtype: int
+        """
+        ...
+    def add_callback(self, callback: Callable[..., object], replies: Iterable[Incomplete], one_shot: bool = True) -> None:
+        """
+        Pass in a callback handler and a list replies from the
+        RabbitMQ broker which you'd like the callback notified of. Callbacks
+        should allow for the frame parameter to be passed in.
+
+        :param callable callback: The callback to call
+        :param list replies: The replies to get a callback for
+        :param bool one_shot: Only handle the first type callback
+        """
+        ...
+    def add_on_cancel_callback(self, callback: Callable[[Method[Basic.Cancel]], object]) -> None:
+        """
+        Pass a callback function that will be called when the basic_cancel
+        is sent by the server. The callback function should receive a frame
+        parameter.
+
+        :param callable callback: The callback to call on Basic.Cancel from
+            broker
+        """
+        ...
+    def add_on_close_callback(self, callback: Callable[[Channel, Exception], object]) -> None:
+        """
+        Pass a callback function that will be called when the channel is
+        closed. The callback function will receive the channel and an exception
+        describing why the channel was closed.
+
+        If the channel is closed by broker via Channel.Close, the callback will
+        receive `ChannelClosedByBroker` as the reason.
+
+        If graceful user-initiated channel closing completes successfully (
+        either directly of indirectly by closing a connection containing the
+        channel) and closing concludes gracefully without Channel.Close from the
+        broker and without loss of connection, the callback will receive
+        `ChannelClosedByClient` exception as reason.
+
+        If channel was closed due to loss of connection, the callback will
+        receive another exception type describing the failure.
+
+        :param callable callback: The callback, having the signature:
+            callback(Channel, Exception reason)
+        """
+        ...
+    def add_on_flow_callback(self, callback: Callable[[bool], object]) -> None:
+        """
+        Pass a callback function that will be called when Channel.Flow is
+        called by the remote server. Note that newer versions of RabbitMQ
+        will not issue this but instead use TCP backpressure
+
+        :param callable callback: The callback function
+        """
+        ...
+    def add_on_return_callback(self, callback: Callable[[Channel, Basic.Return, BasicProperties, bytes], object]) -> None:
+        """
+        Pass a callback function that will be called when basic_publish is
+        sent a message that has been rejected and returned by the server.
+
+        :param callable callback: The function to call, having the signature
+                                callback(channel, method, properties, body)
+                                where
+                                - channel: pika.channel.Channel
+                                - method: pika.spec.Basic.Return
+                                - properties: pika.spec.BasicProperties
+                                - body: bytes
+        """
+        ...
+    def basic_ack(self, delivery_tag: int = 0, multiple: bool = False) -> None:
+        """
+        Acknowledge one or more messages. When sent by the client, this
+        method acknowledges one or more messages delivered via the Deliver or
+        Get-Ok methods. When sent by server, this method acknowledges one or
+        more messages published with the Publish method on a channel in
+        confirm mode. The acknowledgement can be for a single message or a
+        set of messages up to and including a specific message.
+
+        :param integer delivery_tag: int/long The server-assigned delivery tag
+        :param bool multiple: If set to True, the delivery tag is treated as
+                              "up to and including", so that multiple messages
+                              can be acknowledged with a single method. If set
+                              to False, the delivery tag refers to a single
+                              message. If the multiple field is 1, and the
+                              delivery tag is zero, this indicates
+                              acknowledgement of all outstanding messages.
+        """
+        ...
     def basic_cancel(
         self, consumer_tag: str = "", callback: Callable[[Method[Basic.CancelOk]], object] | None = None
     ) -> None:
@@ -586,5 +681,23 @@ class Channel:
         ...
 
 class ContentFrameAssembler:
-    def __init__(self) -> None: ...
-    def process(self, frame_value: Method[_Method] | Header | Body) -> tuple[Method[_Method], Header, bytes] | None: ...
+    """
+    Handle content related frames, building a message and return the message
+    back in three parts upon receipt.
+    """
+    def __init__(self) -> None:
+        """
+        Create a new instance of the conent frame assembler.
+
+        
+        """
+        ...
+    def process(self, frame_value: Method[_Method] | Header | Body) -> tuple[Method[_Method], Header, bytes] | None:
+        """
+        Invoked by the Channel object when passed frames that are not
+        setup in the rpc process and that don't have explicit reply types
+        defined. This includes Basic.Publish, Basic.GetOk and Basic.Return
+
+        :param Method|Header|Body frame_value: The frame to process
+        """
+        ...

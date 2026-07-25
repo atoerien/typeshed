@@ -299,9 +299,37 @@ class BinaryProtocol:
         """
         ...
     @staticmethod
-    async def read_message_async(reader: asyncio.StreamReader) -> _DirtyMessage: ...
+    async def read_message_async(reader: asyncio.StreamReader) -> _DirtyMessage:
+        """
+        Read a complete binary message from async stream.
+
+        Args:
+            reader: asyncio StreamReader
+
+        Returns:
+            dict: Message dict with 'type', 'id', and payload fields
+
+        Raises:
+            DirtyProtocolError: If read fails or message is malformed
+            asyncio.IncompleteReadError: If connection closed mid-read
+        """
+        ...
     @staticmethod
-    async def write_message_async(writer: asyncio.StreamWriter, message: _DirtyMessage) -> None: ...
+    async def write_message_async(writer: asyncio.StreamWriter, message: _DirtyMessage) -> None:
+        """
+        Write a message to async stream.
+
+        Accepts dict format for backwards compatibility.
+
+        Args:
+            writer: asyncio StreamWriter
+            message: Message dict with 'type', 'id', and payload fields
+
+        Raises:
+            DirtyProtocolError: If encoding fails
+            ConnectionError: If write fails
+        """
+        ...
     @staticmethod
     def _recv_exactly(sock: socket.socket, n: int) -> bytes:
         """
@@ -319,11 +347,48 @@ class BinaryProtocol:
         """
         ...
     @staticmethod
-    def read_message(sock: socket.socket) -> _DirtyMessage: ...
+    def read_message(sock: socket.socket) -> _DirtyMessage:
+        """
+        Read a complete message from socket (sync).
+
+        Args:
+            sock: Socket to read from
+
+        Returns:
+            dict: Message dict with 'type', 'id', and payload fields
+
+        Raises:
+            DirtyProtocolError: If read fails or message is malformed
+        """
+        ...
     @staticmethod
-    def write_message(sock: socket.socket, message: _DirtyMessage) -> None: ...
+    def write_message(sock: socket.socket, message: _DirtyMessage) -> None:
+        """
+        Write a message to socket (sync).
+
+        Args:
+            sock: Socket to write to
+            message: Message dict with 'type', 'id', and payload fields
+
+        Raises:
+            DirtyProtocolError: If encoding fails
+            OSError: If write fails
+        """
+        ...
     @staticmethod
-    def _encode_from_dict(message: _DirtyMessage) -> bytes: ...
+    def _encode_from_dict(message: _DirtyMessage) -> bytes:
+        """
+        Encode a message dict to binary format.
+
+        Supports the old dict-based API for backwards compatibility.
+
+        Args:
+            message: Message dict with 'type', 'id', and payload fields
+
+        Returns:
+            bytes: Complete encoded message
+        """
+        ...
 
 DirtyProtocol = BinaryProtocol
 
@@ -333,10 +398,94 @@ def make_request(
     action: str,
     args: tuple[Incomplete, ...] | None = None,
     kwargs: dict[str, Incomplete] | None = None,
-) -> _DirtyRequest: ...
-def make_response(request_id: int | str, result) -> _DirtyResponse: ...
-def make_error_response(request_id: int | str, error) -> _DirtyErrorResponse: ...
-def make_chunk_message(request_id: int | str, data) -> _DirtyChunkMessage: ...
-def make_end_message(request_id: int | str) -> _DirtyEndMessage: ...
-def make_stash_message(request_id: int | str, op: int, table: str, key=None, value=None, pattern=None) -> _DirtyStashMessage: ...
-def make_manage_message(request_id: int | str, op: int, count: int = 1) -> _DirtyManageMessage: ...
+) -> _DirtyRequest:
+    """
+    Build a request message dict.
+
+    Args:
+        request_id: Unique request identifier (int or str)
+        app_path: Import path of the dirty app (e.g., 'myapp.ml:MLApp')
+        action: Action to call on the app
+        args: Positional arguments
+        kwargs: Keyword arguments
+
+    Returns:
+        dict: Request message dict
+    """
+    ...
+def make_response(request_id: int | str, result) -> _DirtyResponse:
+    """
+    Build a success response message dict.
+
+    Args:
+        request_id: Request identifier this responds to
+        result: Result value
+
+    Returns:
+        dict: Response message dict
+    """
+    ...
+def make_error_response(request_id: int | str, error) -> _DirtyErrorResponse:
+    """
+    Build an error response message dict.
+
+    Args:
+        request_id: Request identifier this responds to
+        error: DirtyError instance or dict with error info
+
+    Returns:
+        dict: Error response message dict
+    """
+    ...
+def make_chunk_message(request_id: int | str, data) -> _DirtyChunkMessage:
+    """
+    Build a chunk message dict for streaming responses.
+
+    Args:
+        request_id: Request identifier this chunk belongs to
+        data: Chunk data
+
+    Returns:
+        dict: Chunk message dict
+    """
+    ...
+def make_end_message(request_id: int | str) -> _DirtyEndMessage:
+    """
+    Build an end-of-stream message dict.
+
+    Args:
+        request_id: Request identifier this ends
+
+    Returns:
+        dict: End message dict
+    """
+    ...
+def make_stash_message(request_id: int | str, op: int, table: str, key=None, value=None, pattern=None) -> _DirtyStashMessage:
+    """
+    Build a stash operation message dict.
+
+    Args:
+        request_id: Unique request identifier (int or str)
+        op: Stash operation code (STASH_OP_*)
+        table: Table name
+        key: Optional key for put/get/delete operations
+        value: Optional value for put operation
+        pattern: Optional pattern for keys operation
+
+    Returns:
+        dict: Stash message dict
+    """
+    ...
+def make_manage_message(request_id: int | str, op: int, count: int = 1) -> _DirtyManageMessage:
+    """
+    Build a worker management message dict.
+
+    Args:
+        request_id: Unique request identifier (int or str)
+        op: Management operation (MANAGE_OP_ADD or MANAGE_OP_REMOVE)
+        count: Number of workers to add/remove
+
+    Returns:
+        dict: Manage message dict
+    """
+    ...

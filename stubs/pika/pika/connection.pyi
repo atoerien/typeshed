@@ -324,9 +324,19 @@ class Parameters:
         ...
 
     @property
-    def tcp_options(self) -> dict[str, Incomplete] | None: ...
+    def tcp_options(self) -> dict[str, Incomplete] | None:
+        """
+        :returns: None or a dict of options to pass to the underlying socket
+        :rtype: dict|None
+        """
+        ...
     @tcp_options.setter
-    def tcp_options(self, value: dict[str, Incomplete] | None) -> None: ...
+    def tcp_options(self, value: dict[str, Incomplete] | None) -> None:
+        """
+        :returns: None or a dict of options to pass to the underlying socket
+        :rtype: dict|None
+        """
+        ...
 
 class ConnectionParameters(Parameters):
     """
@@ -352,7 +362,48 @@ class ConnectionParameters(Parameters):
         blocked_connection_timeout: float | None = ...,
         client_properties: dict[str, Incomplete] | None = ...,
         tcp_options: dict[str, Incomplete] | None = ...,
-    ) -> None: ...
+    ) -> None:
+        """
+        Create a new ConnectionParameters instance. See `Parameters` for
+        default values.
+
+        :param str host: Hostname or IP Address to connect to
+        :param int port: TCP port to connect to
+        :param str virtual_host: RabbitMQ virtual host to use
+        :param pika.credentials.PlainCredentials credentials: auth credentials
+        :param int channel_max: Maximum number of channels to allow
+        :param int frame_max: The maximum byte size for an AMQP frame
+        :param int|None|callable heartbeat: Controls AMQP heartbeat timeout negotiation
+            during connection tuning. An integer value always overrides the value
+            proposed by broker. Use 0 to deactivate heartbeats and None to always
+            accept the broker's proposal. If a callable is given, it will be called
+            with the connection instance and the heartbeat timeout proposed by broker
+            as its arguments. The callback should return a non-negative integer that
+            will be used to override the broker's proposal.
+        :param `pika.SSLOptions`|None ssl_options: None for plaintext or
+            `pika.SSLOptions` instance for SSL/TLS. Defaults to None.
+        :param int connection_attempts: Maximum number of retry attempts
+        :param int|float retry_delay: Time to wait in seconds, before the next
+        :param int|float socket_timeout: Positive socket connect timeout in
+            seconds.
+        :param int|float stack_timeout: Positive full protocol stack
+            (TCP/[SSL]/AMQP) bring-up timeout in seconds. It's recommended to
+            set this value higher than `socket_timeout`.
+        :param str locale: Set the locale value
+        :param int|float|None blocked_connection_timeout: If not None,
+            the value is a non-negative timeout, in seconds, for the
+            connection to remain blocked (triggered by Connection.Blocked from
+            broker); if the timeout expires before connection becomes unblocked,
+            the connection will be torn down, triggering the adapter-specific
+            mechanism for informing client app about the closed connection:
+            passing `ConnectionBlockedTimeout` exception to on_close_callback
+            in asynchronous adapters or raising it in `BlockingConnection`.
+        :param client_properties: None or dict of client properties used to
+            override the fields in the default client properties reported to
+            RabbitMQ via `Connection.StartOk` method.
+        :param tcp_options: None or a dict of TCP options to set for socket
+        """
+        ...
 
 class URLParameters(Parameters):
     """
@@ -432,6 +483,11 @@ class SSLOptions:
         ...
 
 class Connection(AbstractBase, metaclass=abc.ABCMeta):
+    """
+    This is the core class that implements communication with RabbitMQ. This
+    class should not be invoked directly but rather through the use of an
+    adapter such as SelectConnection or BlockingConnection.
+    """
     ON_CONNECTION_CLOSED: Final = "_on_connection_closed"
     ON_CONNECTION_ERROR: Final = "_on_connection_error"
     ON_CONNECTION_OPEN_OK: Final = "_on_connection_open_ok"
@@ -552,14 +608,57 @@ class Connection(AbstractBase, metaclass=abc.ABCMeta):
         ...
     def channel(
         self, channel_number: int | None = None, on_open_callback: Callable[[Channel], object] | None = None
-    ) -> Channel: ...
+    ) -> Channel:
+        """
+        Create a new channel with the next available channel number or pass
+        in a channel number to use. Must be non-zero if you would like to
+        specify but it is recommended that you let Pika manage the channel
+        numbers.
+
+        :param int channel_number: The channel number to use, defaults to the
+                                   next available.
+        :param callable on_open_callback: The callback when the channel is
+            opened.  The callback will be invoked with the `Channel` instance
+            as its only argument.
+        :rtype: pika.channel.Channel
+        """
+        ...
     def update_secret(
         self,
         new_secret: str | bytes,
         reason: str | bytes,
         callback: Callable[[Method[SpecConnection.UpdateSecretOk]], object] | None = None,
-    ) -> None: ...
-    def close(self, reply_code: int = 200, reply_text: str = "Normal shutdown") -> None: ...
+    ) -> None:
+        """
+        RabbitMQ AMQP extension - This method updates the secret used to authenticate this connection.
+        It is used when secrets have an expiration date and need to be renewed, like OAuth 2 tokens.
+        Pass a callback to be notified of the response from the server.
+
+        :param string new_secret: The new secret
+        :param string reason: The reason for the secret update
+        :param callable callback: Callback to call on
+            `Connection.UpdateSecretOk`, having the signature
+            `callback(pika.frame.Method)`, where the method frame's
+            `method` member is of type `pika.spec.Connection.UpdateSecretOk`
+
+        :raises pika.exceptions.ConnectionWrongStateError: if connection is
+            not open.
+        """
+        ...
+    def close(self, reply_code: int = 200, reply_text: str = "Normal shutdown") -> None:
+        """
+        Disconnect from RabbitMQ. If there are any open channels, it will
+        attempt to close them prior to fully disconnecting. Channels which
+        have active consumers will attempt to send a Basic.Cancel to RabbitMQ
+        to cleanly stop the delivery of messages prior to closing the channel.
+
+        :param int reply_code: The code number for the close
+        :param str reply_text: The text reason for the close
+
+        :raises pika.exceptions.ConnectionWrongStateError: if connection is
+            closed or closing.
+        """
+        ...
     @property
     def is_closed(self) -> bool:
         """Returns a boolean reporting the current connection state."""

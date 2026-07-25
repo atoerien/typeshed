@@ -12,6 +12,11 @@ _M = TypeVar("_M", bound=amqp_object.Method)
 LOGGER: Logger
 
 class Frame(amqp_object.AMQPObject):
+    """
+    Base Frame object mapping. Defines a behavior for all child classes for
+    assignment of core attributes and implementation of the a core _marshal
+    method which child classes use to create the binary AMQP frame.
+    """
     frame_type: int
     channel_number: int
     def __init__(self, frame_type: int, channel_number: int) -> None:
@@ -117,6 +122,10 @@ class Heartbeat(Frame):
         ...
 
 class ProtocolHeader(amqp_object.AMQPObject):
+    """
+    AMQP Protocol header frame class which provides a pythonic interface
+    for creating AMQP Protocol headers
+    """
     frame_type: int
     major: int
     minor: int
@@ -126,4 +135,27 @@ class ProtocolHeader(amqp_object.AMQPObject):
         Construct a Protocol Header frame object for the specified AMQP
         version
 
-def decode_frame(data_in: bytes) -> tuple[int, Frame | ProtocolHeader | None]: ...
+        :param int major: Major version number
+        :param int minor: Minor version number
+        :param int revision: Revision
+        """
+        ...
+    def marshal(self) -> bytes:
+        """
+        Return the full AMQP wire protocol frame data representation of the
+        ProtocolHeader frame
+
+        :rtype: bytes
+        """
+        ...
+
+def decode_frame(data_in: bytes) -> tuple[int, Frame | ProtocolHeader | None]:
+    """
+    Receives raw socket data and attempts to turn it into a frame.
+    Returns bytes used to make the frame and the frame
+
+    :param bytes data_in: The raw data stream
+    :rtype: tuple(bytes consumed, frame)
+    :raises: pika.exceptions.InvalidFrameError
+    """
+    ...
