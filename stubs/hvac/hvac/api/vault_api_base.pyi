@@ -1,3 +1,5 @@
+"""Base class used by all hvac "api" classes."""
+
 from abc import ABCMeta
 from logging import Logger
 from typing import Any
@@ -7,4 +9,12 @@ from hvac.adapters import Adapter
 logger: Logger
 
 class VaultApiBase(metaclass=ABCMeta):
-    def __init__(self, adapter: Adapter[Any]) -> None: ...
+    """Base class for API endpoints."""
+    def __init__(self, adapter: Adapter[Any]) -> None:
+        """
+        Default api class constructor.
+
+        :param adapter: Instance of :py:class:`hvac.adapters.Adapter`; used for performing HTTP requests.
+        :type adapter: hvac.adapters.Adapter
+        """
+        ...

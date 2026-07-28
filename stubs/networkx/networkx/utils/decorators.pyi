@@ -4,11 +4,280 @@ from typing import NamedTuple
 
 __all__ = ["not_implemented_for", "open_file", "nodes_or_number", "np_random_state", "py_random_state", "argmap"]
 
-def not_implemented_for(*graph_types) -> Callable[..., Incomplete]: ...
-def open_file(path_arg: str | int, mode: str = "r") -> Callable[..., Incomplete]: ...
-def nodes_or_number(which_args: str | int | Sequence[str | int]) -> Callable[..., Incomplete]: ...
-def np_random_state(random_state_argument: str | int) -> Callable[..., Incomplete]: ...
-def py_random_state(random_state_argument: str | int) -> Callable[..., Incomplete]: ...
+def not_implemented_for(*graph_types) -> Callable[..., Incomplete]:
+    """
+    Decorator to mark algorithms as not implemented
+
+    Parameters
+    ----------
+    graph_types : container of strings
+        Entries must be one of "directed", "undirected", "multigraph", or "graph".
+
+    Returns
+    -------
+    _require : function
+        The decorated function.
+
+    Raises
+    ------
+    NetworkXNotImplemented
+    If any of the packages cannot be imported
+
+    Notes
+    -----
+    Multiple types are joined logically with "and".
+    For "or" use multiple @not_implemented_for() lines.
+
+    Examples
+    --------
+    Decorate functions like this::
+
+       @not_implemented_for("directed")
+       def sp_function(G):
+           pass
+
+
+       # rule out MultiDiGraph
+       @not_implemented_for("directed", "multigraph")
+       def sp_np_function(G):
+           pass
+
+
+       # rule out all except DiGraph
+       @not_implemented_for("undirected")
+       @not_implemented_for("multigraph")
+       def sp_np_function(G):
+           pass
+    """
+    ...
+def open_file(path_arg: str | int, mode: str = "r") -> Callable[..., Incomplete]:
+    """
+    Decorator to ensure clean opening and closing of files.
+
+    Parameters
+    ----------
+    path_arg : string or int
+        Name or index of the argument that is a path.
+
+    mode : str
+        String for opening mode.
+
+    Returns
+    -------
+    _open_file : function
+        Function which cleanly executes the io.
+
+    Examples
+    --------
+    Decorate functions like this::
+
+       @open_file(0, "r")
+       def read_function(pathname):
+           pass
+
+
+       @open_file(1, "w")
+       def write_function(G, pathname):
+           pass
+
+
+       @open_file(1, "w")
+       def write_function(G, pathname="graph.dot"):
+           pass
+
+
+       @open_file("pathname", "w")
+       def write_function(G, pathname="graph.dot"):
+           pass
+
+
+       @open_file("path", "w+")
+       def another_function(arg, **kwargs):
+           path = kwargs["path"]
+           pass
+
+    Notes
+    -----
+    Note that this decorator solves the problem when a path argument is
+    specified as a string, but it does not handle the situation when the
+    function wants to accept a default of None (and then handle it).
+
+    Here is an example of how to handle this case::
+
+      @open_file("path")
+      def some_function(arg1, arg2, path=None):
+          if path is None:
+              fobj = tempfile.NamedTemporaryFile(delete=False)
+          else:
+              # `path` could have been a string or file object or something
+              # similar. In any event, the decorator has given us a file object
+              # and it will close it for us, if it should.
+              fobj = path
+
+          try:
+              fobj.write("blah")
+          finally:
+              if path is None:
+                  fobj.close()
+
+    Normally, we'd want to use "with" to ensure that fobj gets closed.
+    However, the decorator will make `path` a file object for us,
+    and using "with" would undesirably close that file object.
+    Instead, we use a try block, as shown above.
+    When we exit the function, fobj will be closed, if it should be, by the decorator.
+    """
+    ...
+def nodes_or_number(which_args: str | int | Sequence[str | int]) -> Callable[..., Incomplete]:
+    """
+    Decorator to allow number of nodes or container of nodes.
+
+    With this decorator, the specified argument can be either a number or a container
+    of nodes. If it is a number, the nodes used are `range(n)`.
+    This allows `nx.complete_graph(50)` in place of `nx.complete_graph(list(range(50)))`.
+    And it also allows `nx.complete_graph(any_list_of_nodes)`.
+
+    Parameters
+    ----------
+    which_args : string or int or sequence of strings or ints
+        If string, the name of the argument to be treated.
+        If int, the index of the argument to be treated.
+        If more than one node argument is allowed, can be a list of locations.
+
+    Returns
+    -------
+    _nodes_or_numbers : function
+        Function which replaces int args with ranges.
+
+    Examples
+    --------
+    Decorate functions like this::
+
+       @nodes_or_number("nodes")
+       def empty_graph(nodes):
+           # nodes is converted to a list of nodes
+
+       @nodes_or_number(0)
+       def empty_graph(nodes):
+           # nodes is converted to a list of nodes
+
+       @nodes_or_number(["m1", "m2"])
+       def grid_2d_graph(m1, m2, periodic=False):
+           # m1 and m2 are each converted to a list of nodes
+
+       @nodes_or_number([0, 1])
+       def grid_2d_graph(m1, m2, periodic=False):
+           # m1 and m2 are each converted to a list of nodes
+
+       @nodes_or_number(1)
+       def full_rary_tree(r, n)
+           # presumably r is a number. It is not handled by this decorator.
+           # n is converted to a list of nodes
+    """
+    ...
+def np_random_state(random_state_argument: str | int) -> Callable[..., Incomplete]:
+    """
+    Decorator to generate a numpy RandomState or Generator instance.
+
+    The decorator processes the argument indicated by `random_state_argument`
+    using :func:`nx.utils.create_random_state`.
+    The argument value can be a seed (integer), or a `numpy.random.RandomState`
+    or `numpy.random.RandomState` instance or (`None` or `numpy.random`).
+    The latter two options use the global random number generator for `numpy.random`.
+
+    The returned instance is a `numpy.random.RandomState` or `numpy.random.Generator`.
+
+    Parameters
+    ----------
+    random_state_argument : string or int
+        The name or index of the argument to be converted
+        to a `numpy.random.RandomState` instance.
+
+    Returns
+    -------
+    _random_state : function
+        Function whose random_state keyword argument is a RandomState instance.
+
+    Examples
+    --------
+    Decorate functions like this::
+
+       @np_random_state("seed")
+       def random_float(seed=None):
+           return seed.rand()
+
+
+       @np_random_state(0)
+       def random_float(rng=None):
+           return rng.rand()
+
+
+       @np_random_state(1)
+       def random_array(dims, random_state=1):
+           return random_state.rand(*dims)
+
+    See Also
+    --------
+    py_random_state
+    """
+    ...
+def py_random_state(random_state_argument: str | int) -> Callable[..., Incomplete]:
+    """
+    Decorator to generate a random.Random instance (or equiv).
+
+    This decorator processes `random_state_argument` using
+    :func:`nx.utils.create_py_random_state`.
+    The input value can be a seed (integer), or a random number generator::
+
+        If int, return a random.Random instance set with seed=int.
+        If random.Random instance, return it.
+        If None or the `random` package, return the global random number
+        generator used by `random`.
+        If np.random package, or the default numpy RandomState instance,
+        return the default numpy random number generator wrapped in a
+        `PythonRandomViaNumpyBits`  class.
+        If np.random.Generator instance, return it wrapped in a
+        `PythonRandomViaNumpyBits`  class.
+
+        # Legacy options
+        If np.random.RandomState instance, return it wrapped in a
+        `PythonRandomInterface` class.
+        If a `PythonRandomInterface` instance, return it
+
+    Parameters
+    ----------
+    random_state_argument : string or int
+        The name of the argument or the index of the argument in args that is
+        to be converted to the random.Random instance or numpy.random.RandomState
+        instance that mimics basic methods of random.Random.
+
+    Returns
+    -------
+    _random_state : function
+        Function whose random_state_argument is converted to a Random instance.
+
+    Examples
+    --------
+    Decorate functions like this::
+
+       @py_random_state("random_state")
+       def random_float(random_state=None):
+           return random_state.rand()
+
+
+       @py_random_state(0)
+       def random_float(rng=None):
+           return rng.rand()
+
+
+       @py_random_state(1)
+       def random_array(dims, seed=12345):
+           return seed.rand(*dims)
+
+    See Also
+    --------
+    np_random_state
+    """
+    ...
 
 class argmap:
     """
@@ -349,11 +618,136 @@ class argmap:
     networkx.algorithms.community.quality.require_partition
     """
     def __init__(self, func, *args, try_finally: bool = False) -> None: ...
-    def __call__(self, f) -> Callable[..., Incomplete]: ...
-    def compile(self, f: Callable[..., Incomplete]) -> Callable[..., Incomplete]: ...
-    def assemble(self, f: Callable[..., Incomplete]): ...
+    def __call__(self, f) -> Callable[..., Incomplete]:
+        """
+        Construct a lazily decorated wrapper of f.
+
+        The decorated function will be compiled when it is called for the first time,
+        and it will replace its own __code__ object so subsequent calls are fast.
+
+        Parameters
+        ----------
+        f : callable
+            A function to be decorated.
+
+        Returns
+        -------
+        func : callable
+            The decorated function.
+
+        See Also
+        --------
+        argmap._lazy_compile
+        """
+        ...
+    def compile(self, f: Callable[..., Incomplete]) -> Callable[..., Incomplete]:
+        """
+        Compile the decorated function.
+
+        Called once for a given decorated function -- collects the code from all
+        argmap decorators in the stack, and compiles the decorated function.
+
+        Much of the work done here uses the `assemble` method to allow recursive
+        treatment of multiple argmap decorators on a single decorated function.
+        That flattens the argmap decorators, collects the source code to construct
+        a single decorated function, then compiles/executes/returns that function.
+
+        The source code for the decorated function is stored as an attribute
+        `_code` on the function object itself.
+
+        Note that Python's `compile` function requires a filename, but this
+        code is constructed without a file, so a fictitious filename is used
+        to describe where the function comes from. The name is something like:
+        "argmap compilation 4".
+
+        Parameters
+        ----------
+        f : callable
+            The function to be decorated
+
+        Returns
+        -------
+        func : callable
+            The decorated file
+        """
+        ...
+    def assemble(self, f: Callable[..., Incomplete]):
+        """
+        Collects components of the source for the decorated function wrapping f.
+
+        If `f` has multiple argmap decorators, we recursively assemble the stack of
+        decorators into a single flattened function.
+
+        This method is part of the `compile` method's process yet separated
+        from that method to allow recursive processing. The outputs are
+        strings, dictionaries and lists that collect needed info to
+        flatten any nested argmap-decoration.
+
+        Parameters
+        ----------
+        f : callable
+            The function to be decorated.  If f is argmapped, we assemble it.
+
+        Returns
+        -------
+        sig : argmap.Signature
+            The function signature as an `argmap.Signature` object.
+        wrapped_name : str
+            The mangled name used to represent the wrapped function in the code
+            being assembled.
+        functions : dict
+            A dictionary mapping id(g) -> (mangled_name(g), g) for functions g
+            referred to in the code being assembled. These need to be present
+            in the ``globals`` scope of ``exec`` when defining the decorated
+            function.
+        mapblock : list of lists and/or strings
+            Code that implements mapping of parameters including any try blocks
+            if needed. This code will precede the decorated function call.
+        finallys : list of lists and/or strings
+            Code that implements the finally blocks to post-process the
+            arguments (usually close any files if needed) after the
+            decorated function is called.
+        mutable_args : bool
+            True if the decorator needs to modify positional arguments
+            via their indices. The compile method then turns the argument
+            tuple into a list so that the arguments can be modified.
+        """
+        ...
     @classmethod
-    def signature(cls, f: Callable[..., Incomplete]): ...
+    def signature(cls, f: Callable[..., Incomplete]):
+        r"""
+        Construct a Signature object describing `f`
+
+        Compute a Signature so that we can write a function wrapping f with
+        the same signature and call-type.
+
+        Parameters
+        ----------
+        f : callable
+            A function to be decorated
+
+        Returns
+        -------
+        sig : argmap.Signature
+            The Signature of f
+
+        Notes
+        -----
+        The Signature is a namedtuple with names:
+
+            name : a unique version of the name of the decorated function
+            signature : the inspect.signature of the decorated function
+            def_sig : a string used as code to define the new function
+            call_sig : a string used as code to call the decorated function
+            names : a dict keyed by argument name and index to the argument's name
+            n_positional : the number of positional arguments in the signature
+            args : the name of the VAR_POSITIONAL argument if any, i.e. \*theseargs
+            kwargs : the name of the VAR_KEYWORDS argument if any, i.e. \*\*kwargs
+
+        These named attributes of the signature are used in `assemble` and `compile`
+        to construct a string of source code for the decorated function.
+        """
+        ...
 
     class Signature(NamedTuple):
         """Signature(name, signature, def_sig, call_sig, names, n_positional, args, kwargs)"""

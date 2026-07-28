@@ -271,7 +271,63 @@ def is_d_separator(G: DiGraph[_Node], x: _Node | set[_Node], y: _Node | set[_Nod
 @_dispatchable
 def find_minimal_d_separator(
     G: DiGraph[_Node], x: set[Incomplete] | Incomplete, y: set[Incomplete] | Incomplete, *, included=None, restricted=None
-) -> set[Incomplete] | None: ...
+) -> set[Incomplete] | None:
+    """
+    Returns a minimal d-separating set between `x` and `y` if possible
+
+    A d-separating set in a DAG is a set of nodes that blocks all
+    paths between the two sets of nodes, `x` and `y`. This function
+    constructs a d-separating set that is "minimal", meaning no nodes can
+    be removed without it losing the d-separating property for `x` and `y`.
+    If no d-separating sets exist for `x` and `y`, this returns `None`.
+
+    In a DAG there may be more than one minimal d-separator between two
+    sets of nodes. Minimal d-separators are not always unique. This function
+    returns one minimal d-separator, or `None` if no d-separator exists.
+
+    Uses the algorithm presented in [1]_. The complexity of the algorithm
+    is :math:`O(m)`, where :math:`m` stands for the number of edges in
+    the subgraph of G consisting of only the ancestors of `x` and `y`.
+    For full details, see [1]_.
+
+    Parameters
+    ----------
+    G : graph
+        A networkx DAG.
+    x : set | node
+        A node or set of nodes in the graph.
+    y : set | node
+        A node or set of nodes in the graph.
+    included : set | node | None
+        A node or set of nodes which must be included in the found separating set,
+        default is None, which means the empty set.
+    restricted : set | node | None
+        Restricted node or set of nodes to consider. Only these nodes can be in
+        the found separating set, default is None meaning all nodes in ``G``.
+
+    Returns
+    -------
+    z : set | None
+        The minimal d-separating set, if at least one d-separating set exists,
+        otherwise None.
+
+    Raises
+    ------
+    NetworkXError
+        Raises a :exc:`NetworkXError` if the input graph is not a DAG
+        or if node sets `x`, `y`, and `included` are not disjoint.
+
+    NodeNotFound
+        If any of the input nodes are not found in the graph,
+        a :exc:`NodeNotFound` exception is raised.
+
+    References
+    ----------
+    .. [1] van der Zander, Benito, and Maciej Liśkiewicz. "Finding
+        minimal d-separators in linear time and applications." In
+        Uncertainty in Artificial Intelligence, pp. 637-647. PMLR, 2020.
+    """
+    ...
 @_dispatchable
 def is_minimal_d_separator(
     G: DiGraph[_Node],

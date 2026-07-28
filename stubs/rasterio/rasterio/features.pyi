@@ -272,7 +272,45 @@ def bounds(geometry: Geometry, north_up: bool = True, transform: Affine | None =
 @overload
 def geometry_window(
     dataset: DatasetReaderBase, shapes: Iterable[Geometry], pad_x: float = 0, pad_y: float = 0, *, boundless: bool = False
-) -> Window: ...
+) -> Window:
+    """
+    Calculate the window within the raster that fits the bounds of
+    the geometry plus optional padding.  The window is the outermost
+    pixel indices that contain the geometry (floor of offsets, ceiling
+    of width and height).
+
+    If shapes do not overlap raster, a WindowError is raised.
+
+    Parameters
+    ----------
+    dataset : dataset object opened in 'r' mode
+        Raster for which the mask will be created.
+    shapes : iterable over geometries.
+        A geometry is a GeoJSON-like object or implements the geo
+        interface.  Must be in same coordinate system as dataset.
+    pad_x : float
+        Amount of padding (as fraction of raster's x pixel size) to add
+        to left and right side of bounds.
+    pad_y : float
+        Amount of padding (as fraction of raster's y pixel size) to add
+        to top and bottom of bounds.
+    north_up : optional
+        This parameter is ignored since version 1.2.1. A deprecation
+        warning will be emitted in 1.3.0.
+    rotated : optional
+        This parameter is ignored since version 1.2.1. A deprecation
+        warning will be emitted in 1.3.0.
+    pixel_precision : int or float, optional
+        This parameter is ignored since version 1.5. A deprecation
+        warning will be emitted.
+    boundless : bool, optional
+        Whether to allow a boundless window or not.
+
+    Returns
+    -------
+    rasterio.windows.Window
+    """
+    ...
 @overload
 @deprecated(
     "`north_up`, `rotated`, and `pixel_precision` on features.geometry_window are "

@@ -15,7 +15,17 @@ class Kv(VaultApiBase):
     Reference: https://www.vaultproject.io/docs/secrets/kv/index.html
     """
     allowed_kv_versions: list[str]
-    def __init__(self, adapter: Adapter[Any], default_kv_version: str = "2") -> None: ...
+    def __init__(self, adapter: Adapter[Any], default_kv_version: str = "2") -> None:
+        """
+        Create a new Kv instance.
+
+        :param adapter: Instance of :py:class:`hvac.adapters.Adapter`; used for performing HTTP requests.
+        :type adapter: hvac.adapters.Adapter
+        :param default_kv_version: KV version number (e.g., '1') to use as the default when accessing attributes/methods
+            under this class.
+        :type default_kv_version: str | unicode
+        """
+        ...
     @property
     def v1(self) -> KvV1:
         """

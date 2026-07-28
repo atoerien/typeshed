@@ -312,7 +312,41 @@ def find_cliques_recursive(G: Graph[_Node], nodes: Iterable[Incomplete] | None =
 @_dispatchable
 def make_max_clique_graph(
     G: Graph[_Node], create_using: Graph[_Node, _NodeData, _EdgeData] | type[Graph[_Node, _NodeData, _EdgeData]] | None = None
-) -> Graph[_Node, _NodeData, _EdgeData]: ...
+) -> Graph[_Node, _NodeData, _EdgeData]:
+    """
+    Returns the maximal clique graph of the given graph.
+
+    The nodes of the maximal clique graph of `G` are the cliques of
+    `G` and an edge joins two cliques if the cliques are not disjoint.
+
+    Parameters
+    ----------
+    G : NetworkX graph
+
+    create_using : NetworkX graph constructor, optional (default=nx.Graph)
+       Graph type to create. If graph instance, then cleared before populated.
+
+    Returns
+    -------
+    NetworkX graph
+        A graph whose nodes are the cliques of `G` and whose edges
+        join two cliques if they are not disjoint.
+
+    Notes
+    -----
+    This function behaves like the following code::
+
+        import networkx as nx
+
+        G = nx.make_clique_bipartite(G)
+        cliques = [v for v in G.nodes() if G.nodes[v]["bipartite"] == 0]
+        G = nx.bipartite.projected_graph(G, cliques)
+        G = nx.relabel_nodes(G, {-v: v - 1 for v in G})
+
+    It should be faster, though, since it skips all the intermediate
+    steps.
+    """
+    ...
 @_dispatchable
 def make_clique_bipartite(
     G: Graph[_Node, _NodeData, _EdgeData],
@@ -362,11 +396,191 @@ def node_clique_number(
     """
     Returns the size of the largest maximal clique containing each given node.
 
+    Returns a single or list depending on input nodes.
+    An optional list of cliques can be input if already computed.
+
+    Parameters
+    ----------
+    G : NetworkX graph
+        An undirected graph.
+
+    cliques : list, optional (default=None)
+        A list of cliques, each of which is itself a list of nodes.
+        If not specified, the list of all cliques will be computed
+        using :func:`find_cliques`.
+
+    Returns
+    -------
+    int or dict
+        If `nodes` is a single node, returns the size of the
+        largest maximal clique in `G` containing that node.
+        Otherwise return a dict keyed by node to the size
+        of the largest maximal clique containing that node.
+
+    See Also
+    --------
+    find_cliques
+        find_cliques yields the maximal cliques of G.
+        It accepts a `nodes` argument which restricts consideration to
+        maximal cliques containing all the given `nodes`.
+        The search for the cliques is optimized for `nodes`.
+    number_of_cliques
+    """
+    ...
+@overload
+def node_clique_number(G: Graph[_Node], nodes=None, cliques: Iterable[Incomplete] | None = None, separate_nodes=False) -> int:
+    """
+    Returns the size of the largest maximal clique containing each given node.
+
+    Returns a single or list depending on input nodes.
+    An optional list of cliques can be input if already computed.
+
+    Parameters
+    ----------
+    G : NetworkX graph
+        An undirected graph.
+
+    cliques : list, optional (default=None)
+        A list of cliques, each of which is itself a list of nodes.
+        If not specified, the list of all cliques will be computed
+        using :func:`find_cliques`.
+
+    Returns
+    -------
+    int or dict
+        If `nodes` is a single node, returns the size of the
+        largest maximal clique in `G` containing that node.
+        Otherwise return a dict keyed by node to the size
+        of the largest maximal clique containing that node.
+
+    See Also
+    --------
+    find_cliques
+        find_cliques yields the maximal cliques of G.
+        It accepts a `nodes` argument which restricts consideration to
+        maximal cliques containing all the given `nodes`.
+        The search for the cliques is optimized for `nodes`.
+    number_of_cliques
+    """
+    ...
+
 def number_of_cliques(
     G: Graph[_Node], nodes: list[_Node] | _Node | None = None, cliques: Iterable[Incomplete] | None = None
-) -> int | dict[Incomplete, Incomplete]: ...
+) -> int | dict[Incomplete, Incomplete]:
+    """
+    Return the number of maximal cliques each node is part of.
+
+    Output is a single value or dict depending on `nodes`.
+    Optional list of cliques can be input if already computed.
+
+    Parameters
+    ----------
+    G : NetworkX graph
+        An undirected graph.
+
+    nodes : list or None, optional (default=None)
+        A list of nodes to return the number of maximal cliques for.
+        If `None`, return the number of maximal cliques for all nodes.
+
+    cliques : list or None, optional (default=None)
+        A precomputed list of maximal cliques to use for the calculation.
+
+    Returns
+    -------
+    int or dict
+        If `nodes` is a single node, return the number of maximal cliques it is
+        part of. If `nodes` is a list, return a dictionary keyed by node to the
+        number of maximal cliques it is part of.
+
+    Raises
+    ------
+    NetworkXNotImplemented
+        If `G` is directed.
+
+    See Also
+    --------
+    find_cliques
+    node_clique_number
+
+    Examples
+    --------
+    Compute the number of maximal cliques a node is part of:
+
+    >>> G = nx.complete_graph(3)
+    >>> nx.add_cycle(G, [0, 3, 4])
+    >>> nx.number_of_cliques(G, nodes=0)
+    2
+    >>> nx.number_of_cliques(G, nodes=1)
+    1
+
+    Or, for a list of nodes:
+
+    >>> nx.number_of_cliques(G, nodes=[0, 1])
+    {0: 2, 1: 1}
+
+    If no explicit `nodes` are provided, all nodes are considered:
+
+    >>> nx.number_of_cliques(G)
+    {0: 2, 1: 1, 2: 1, 3: 1, 4: 1}
+
+    The list of maximal cliques can also be precomputed:
+
+    >>> cl = list(nx.find_cliques(G))
+    >>> nx.number_of_cliques(G, cliques=cl)
+    {0: 2, 1: 1, 2: 1, 3: 1, 4: 1}
+    """
+    ...
 @_dispatchable
-def max_weight_clique(G: Graph[_Node], weight: str | None = "weight") -> tuple[list[Incomplete], int]: ...
+def max_weight_clique(G: Graph[_Node], weight: str | None = "weight") -> tuple[list[Incomplete], int]:
+    """
+    Find a maximum weight clique in G.
+
+    A *clique* in a graph is a set of nodes such that every two distinct nodes
+    are adjacent.  The *weight* of a clique is the sum of the weights of its
+    nodes.  A *maximum weight clique* of graph G is a clique C in G such that
+    no clique in G has weight greater than the weight of C.
+
+    Parameters
+    ----------
+    G : NetworkX graph
+        Undirected graph
+    weight : string or None, optional (default='weight')
+        The node attribute that holds the integer value used as a weight.
+        If None, then each node has weight 1.
+
+    Returns
+    -------
+    clique : list
+        the nodes of a maximum weight clique
+    weight : int
+        the weight of a maximum weight clique
+
+    Notes
+    -----
+    The implementation is recursive, and therefore it may run into recursion
+    depth issues if G contains a clique whose number of nodes is close to the
+    recursion depth limit.
+
+    At each search node, the algorithm greedily constructs a weighted
+    independent set cover of part of the graph in order to find a small set of
+    nodes on which to branch.  The algorithm is very similar to the algorithm
+    of Tavares et al. [1]_, other than the fact that the NetworkX version does
+    not use bitsets.  This style of algorithm for maximum weight clique (and
+    maximum weight independent set, which is the same problem but on the
+    complement graph) has a decades-long history.  See Algorithm B of Warren
+    and Hicks [2]_ and the references in that paper.
+
+    References
+    ----------
+    .. [1] Tavares, W.A., Neto, M.B.C., Rodrigues, C.D., Michelon, P.: Um
+           algoritmo de branch and bound para o problema da clique máxima
+           ponderada.  Proceedings of XLVII SBPO 1 (2015).
+
+    .. [2] Warren, Jeffrey S, Hicks, Illya V.: Combinatorial Branch-and-Bound
+           for the Maximum Weight Independent Set Problem.  Technical Report,
+           Texas A&M University (2016).
+    """
+    ...
 
 class MaxWeightClique:
     """

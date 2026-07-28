@@ -1,3 +1,5 @@
+"""Raster and vector warping and reprojection."""
+
 from collections.abc import Sequence
 from typing import Any, Final
 
@@ -19,7 +21,9 @@ def recursive_round(val: _NestedScalar, precision: int) -> _NestedScalar:
     ...
 def _transform_geom(
     src_crs: CRSInput, dst_crs: CRSInput, geom: Geometry | Sequence[Geometry], precision: int
-) -> dict[str, Any] | list[dict[str, Any]]: ...
+) -> dict[str, Any] | list[dict[str, Any]]:
+    """Return a transformed geometry."""
+    ...
 def _reproject(
     source: NDArray[Any] | Any,
     destination: NDArray[Any] | Any,

@@ -76,7 +76,56 @@ def single_source_shortest_path_length(G: Graph[_Node], source: _Node, cutoff: i
 @_dispatchable
 def single_target_shortest_path_length(
     G: Graph[_Node], target: _Node, cutoff: int | None = None
-) -> dict[Incomplete, Incomplete]: ...
+) -> dict[Incomplete, Incomplete]:
+    """
+    Compute the shortest path lengths to target from all reachable nodes.
+
+    Parameters
+    ----------
+    G : NetworkX graph
+
+    target : node
+       Target node for path
+
+    cutoff : integer, optional
+        Depth to stop the search. Only source nodes where the shortest path
+        from this node to the target node contains <= ``cutoff + 1`` nodes will
+        be included in the returned results.
+
+    Returns
+    -------
+    lengths : dictionary
+        Dictionary, keyed by source, of shortest path lengths.
+
+    Examples
+    --------
+    >>> G = nx.path_graph(5, create_using=nx.DiGraph())
+    >>> length = nx.single_target_shortest_path_length(G, 4)
+    >>> length[0]
+    4
+    >>> for node in sorted(length):
+    ...     print(f"{node}: {length[node]}")
+    0: 4
+    1: 3
+    2: 2
+    3: 1
+    4: 0
+
+    Only include paths with length less than or equal to the `cutoff` keyword
+    argument:
+
+    >>> length = nx.single_target_shortest_path_length(G, 4, cutoff=2)
+    >>> for node in sorted(length):
+    ...     print(f"{node}: {length[node]}")
+    2: 2
+    3: 1
+    4: 0
+
+    See Also
+    --------
+    single_source_shortest_path_length, shortest_path_length
+    """
+    ...
 @_dispatchable
 def all_pairs_shortest_path_length(G: Graph[_Node], cutoff: int | None = None) -> Generator[Incomplete]:
     """
@@ -310,4 +359,52 @@ def all_pairs_shortest_path(
 @_dispatchable
 def predecessor(
     G: Graph[_Node], source: _Node, target: _Node | None = None, cutoff: int | None = None, return_seen: bool | None = None
-) -> dict[_Node, list[_Node]] | list[_Node] | tuple[dict[_Node, list[_Node]], dict[_Node, int]] | tuple[list[_Node], int]: ...
+) -> dict[_Node, list[_Node]] | list[_Node] | tuple[dict[_Node, list[_Node]], dict[_Node, int]] | tuple[list[_Node], int]:
+    """
+    Returns dict of predecessors for the path from source to all nodes in G.
+
+    Parameters
+    ----------
+    G : NetworkX graph
+
+    source : node label
+       Starting node for path
+
+    target : node label, optional
+       Ending node for path. If provided only predecessors between
+       source and target are returned
+
+    cutoff : integer, optional
+        Depth to stop the search. Only paths of length <= `cutoff` are
+        returned.
+
+    return_seen : bool, optional (default=None)
+        Whether to return a dictionary, keyed by node, of the level (number of
+        hops) to reach the node (as seen during breadth-first-search).
+
+    Returns
+    -------
+    pred : dictionary
+        Dictionary, keyed by node, of predecessors in the shortest path.
+
+
+    (pred, seen): tuple of dictionaries
+        If `return_seen` argument is set to `True`, then a tuple of dictionaries
+        is returned. The first element is the dictionary, keyed by node, of
+        predecessors in the shortest path. The second element is the dictionary,
+        keyed by node, of the level (number of hops) to reach the node (as seen
+        during breadth-first-search).
+
+    Examples
+    --------
+    >>> G = nx.path_graph(4)
+    >>> list(G)
+    [0, 1, 2, 3]
+    >>> nx.predecessor(G, 0)
+    {0: [], 1: [0], 2: [1], 3: [2]}
+    >>> nx.predecessor(G, 0, cutoff=2)
+    {0: [], 1: [0], 2: [1]}
+    >>> nx.predecessor(G, 0, return_seen=True)
+    ({0: [], 1: [0], 2: [1], 3: [2]}, {0: 0, 1: 1, 2: 2, 3: 3})
+    """
+    ...

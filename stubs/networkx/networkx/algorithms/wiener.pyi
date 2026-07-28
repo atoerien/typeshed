@@ -84,8 +84,162 @@ def wiener_index(G: Graph[_Node], weight: str | None = None) -> float:
     """
     ...
 @_dispatchable
-def schultz_index(G: Graph[_Node], weight: str | None = None) -> float: ...
+def schultz_index(G: Graph[_Node], weight: str | None = None) -> float:
+    """
+    Returns the Schultz Index (of the first kind) of `G`
+
+    The *Schultz Index* [3]_ of a graph is the sum over all node pairs of
+    distances times the sum of degrees. Consider an undirected graph `G`.
+    For each node pair ``(u, v)`` compute ``dist(u, v) * (deg(u) + deg(v)``
+    where ``dist`` is the shortest path length between two nodes and ``deg``
+    is the degree of a node.
+
+    The Schultz Index is the sum of these quantities over all (unordered)
+    pairs of nodes.
+
+    Parameters
+    ----------
+    G : NetworkX graph
+        The undirected graph of interest.
+    weight : string or None, optional (default: None)
+        If None, every edge has weight 1.
+        If a string, use this edge attribute as the edge weight.
+        Any edge attribute not present defaults to 1.
+        The edge weights are used to computing shortest-path distances.
+
+    Returns
+    -------
+    number
+        The first kind of Schultz Index of the graph `G`.
+
+    Examples
+    --------
+    The Schultz Index of the (unweighted) complete graph on *n* nodes
+    equals the number of pairs of the *n* nodes times ``2 * (n - 1)``,
+    since each pair of nodes is at distance one and the sum of degree
+    of two nodes is ``2 * (n - 1)``.
+
+    >>> n = 10
+    >>> G = nx.complete_graph(n)
+    >>> nx.schultz_index(G) == (n * (n - 1) / 2) * (2 * (n - 1))
+    True
+
+    Graph that is disconnected
+
+    >>> nx.schultz_index(nx.empty_graph(2))
+    inf
+
+    References
+    ----------
+    .. [1] I. Gutman, Selected properties of the Schultz molecular topological index,
+           J. Chem. Inf. Comput. Sci. 34 (1994), 1087–1089.
+           https://doi.org/10.1021/ci00021a009
+    .. [2] M.V. Diudeaa and I. Gutman, Wiener-Type Topological Indices,
+           Croatica Chemica Acta, 71 (1998), 21-51.
+           https://hrcak.srce.hr/132323
+    .. [3] H. P. Schultz, Topological organic chemistry. 1.
+           Graph theory and topological indices of alkanes,i
+           J. Chem. Inf. Comput. Sci. 29 (1989), 239–257.
+    """
+    ...
 @_dispatchable
-def gutman_index(G: Graph[_Node], weight: str | None = None) -> float: ...
+def gutman_index(G: Graph[_Node], weight: str | None = None) -> float:
+    """
+    Returns the Gutman Index for the graph `G`.
+
+    The *Gutman Index* measures the topology of networks, especially for molecule
+    networks of atoms connected by bonds [1]_. It is also called the Schultz Index
+    of the second kind [2]_.
+
+    Consider an undirected graph `G` with node set ``V``.
+    The Gutman Index of a graph is the sum over all (unordered) pairs of nodes
+    of nodes ``(u, v)``, with distance ``dist(u, v)`` and degrees ``deg(u)``
+    and ``deg(v)``, of ``dist(u, v) * deg(u) * deg(v)``
+
+    Parameters
+    ----------
+    G : NetworkX graph
+
+    weight : string or None, optional (default: None)
+        If None, every edge has weight 1.
+        If a string, use this edge attribute as the edge weight.
+        Any edge attribute not present defaults to 1.
+        The edge weights are used to computing shortest-path distances.
+
+    Returns
+    -------
+    number
+        The Gutman Index of the graph `G`.
+
+    Examples
+    --------
+    The Gutman Index of the (unweighted) complete graph on *n* nodes
+    equals the number of pairs of the *n* nodes times ``(n - 1) * (n - 1)``,
+    since each pair of nodes is at distance one and the product of degree of two
+    vertices is ``(n - 1) * (n - 1)``.
+
+    >>> n = 10
+    >>> G = nx.complete_graph(n)
+    >>> nx.gutman_index(G) == (n * (n - 1) / 2) * ((n - 1) * (n - 1))
+    True
+
+    Graphs that are disconnected
+
+    >>> G = nx.empty_graph(2)
+    >>> nx.gutman_index(G)
+    inf
+
+    References
+    ----------
+    .. [1] M.V. Diudeaa and I. Gutman, Wiener-Type Topological Indices,
+           Croatica Chemica Acta, 71 (1998), 21-51.
+           https://hrcak.srce.hr/132323
+    .. [2] I. Gutman, Selected properties of the Schultz molecular topological index,
+           J. Chem. Inf. Comput. Sci. 34 (1994), 1087–1089.
+           https://doi.org/10.1021/ci00021a009
+    """
+    ...
 @_dispatchable
-def hyper_wiener_index(G: Graph[_Node], weight: str | None = None) -> float: ...
+def hyper_wiener_index(G: Graph[_Node], weight: str | None = None) -> float:
+    r"""
+    Returns the Hyper-Wiener index of the graph `G`.
+
+    The Hyper-Wiener index of a connected graph `G` is defined as
+
+    .. math::
+        WW(G) = \frac{1}{2} \sum_{u,v \in V(G)} (d(u,v) + d(u,v)^2)
+
+    where ``d(u, v)`` is the shortest-path distance between nodes ``u`` and ``v``.
+
+    Parameters
+    ----------
+    G : NetworkX graph
+        An undirected, connected graph.
+
+    weight : string or None, optional (default: None)
+        The edge attribute to use for calculating shortest-path distances.
+        If None, all edges are considered to have a weight of 1.
+
+    Returns
+    -------
+    float
+        The Hyper-Wiener index of the graph G.
+        Returns float("inf") if the graph is not connected.
+
+    References
+    ----------
+    .. [1] M. Randić, "Novel molecular descriptor for structure-property studies,"
+           Chemical Physics Letters, vol. 211, pp. 478-483, 1993.
+    .. [2] `Wikipedia: Hyper-Wiener Index <https://en.wikipedia.org/wiki/Hyper-Wiener_index>`_
+
+    Examples
+    --------
+    >>> G = nx.path_graph(4)
+    >>> nx.hyper_wiener_index(G)
+    30.0
+
+    >>> G = nx.cycle_graph(4)
+    >>> nx.hyper_wiener_index(G)
+    20.0
+    """
+    ...

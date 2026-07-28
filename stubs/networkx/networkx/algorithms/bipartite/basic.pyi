@@ -151,6 +151,87 @@ def sets(G: Graph[_Node], top_nodes: Iterable[Incomplete] | None = None) -> tupl
     """
     ...
 @_dispatchable
-def density(B: Graph[_Node], nodes: Collection[Incomplete]) -> float: ...
+def density(B: Graph[_Node], nodes: Collection[Incomplete]) -> float:
+    """
+    Returns density of bipartite graph B.
+
+    Parameters
+    ----------
+    B : NetworkX graph
+
+    nodes: list or container
+      Nodes in one node set of the bipartite graph.
+
+    Returns
+    -------
+    d : float
+       The bipartite density
+
+    Examples
+    --------
+    >>> from networkx.algorithms import bipartite
+    >>> G = nx.complete_bipartite_graph(3, 2)
+    >>> X = set([0, 1, 2])
+    >>> bipartite.density(G, X)
+    1.0
+    >>> Y = set([3, 4])
+    >>> bipartite.density(G, Y)
+    1.0
+
+    Notes
+    -----
+    The container of nodes passed as argument must contain all nodes
+    in one of the two bipartite node sets to avoid ambiguity in the
+    case of disconnected graphs.
+    See :mod:`bipartite documentation <networkx.algorithms.bipartite>`
+    for further details on how bipartite graphs are handled in NetworkX.
+
+    See Also
+    --------
+    color
+    """
+    ...
 @_dispatchable
-def degrees(B: Graph[_Node], nodes: Iterable[Incomplete], weight: str | None = None) -> tuple[Incomplete, Incomplete]: ...
+def degrees(B: Graph[_Node], nodes: Iterable[Incomplete], weight: str | None = None) -> tuple[Incomplete, Incomplete]:
+    """
+    Returns the degrees of the two node sets in the bipartite graph B.
+
+    Parameters
+    ----------
+    B : NetworkX graph
+
+    nodes: list or container
+      Nodes in one node set of the bipartite graph.
+
+    weight : string or None, optional (default=None)
+       The edge attribute that holds the numerical value used as a weight.
+       If None, then each edge has weight 1.
+       The degree is the sum of the edge weights adjacent to the node.
+
+    Returns
+    -------
+    (degX,degY) : tuple of dictionaries
+       The degrees of the two bipartite sets as dictionaries keyed by node.
+
+    Examples
+    --------
+    >>> from networkx.algorithms import bipartite
+    >>> G = nx.complete_bipartite_graph(3, 2)
+    >>> Y = set([3, 4])
+    >>> degX, degY = bipartite.degrees(G, Y)
+    >>> dict(degX)
+    {0: 2, 1: 2, 2: 2}
+
+    Notes
+    -----
+    The container of nodes passed as argument must contain all nodes
+    in one of the two bipartite node sets to avoid ambiguity in the
+    case of disconnected graphs.
+    See :mod:`bipartite documentation <networkx.algorithms.bipartite>`
+    for further details on how bipartite graphs are handled in NetworkX.
+
+    See Also
+    --------
+    color, density
+    """
+    ...

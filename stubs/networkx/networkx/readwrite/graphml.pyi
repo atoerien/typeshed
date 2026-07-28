@@ -1,3 +1,46 @@
+"""
+*******
+GraphML
+*******
+Read and write graphs in GraphML format.
+
+.. warning::
+
+    This parser uses the standard xml library present in Python, which is
+    insecure - see :external+python:mod:`xml` for additional information.
+    Only parse GraphML files you trust.
+
+This implementation does not support mixed graphs (directed and unidirected
+edges together), hyperedges, nested graphs, or ports.
+
+"GraphML is a comprehensive and easy-to-use file format for graphs. It
+consists of a language core to describe the structural properties of a
+graph and a flexible extension mechanism to add application-specific
+data. Its main features include support of
+
+    * directed, undirected, and mixed graphs,
+    * hypergraphs,
+    * hierarchical graphs,
+    * graphical representations,
+    * references to external data,
+    * application-specific attribute data, and
+    * light-weight parsers.
+
+Unlike many other file formats for graphs, GraphML does not use a
+custom syntax. Instead, it is based on XML and hence ideally suited as
+a common denominator for all kinds of services generating, archiving,
+or processing graphs."
+
+http://graphml.graphdrawing.org/
+
+Format
+------
+GraphML is an XML format.  See
+http://graphml.graphdrawing.org/specification.html for the specification and
+http://graphml.graphdrawing.org/primer/graphml-primer.html
+for examples.
+"""
+
 from _typeshed import Incomplete, StrPath, SupportsRead, SupportsWrite
 from collections.abc import Generator
 from typing import Final, Literal
@@ -24,7 +67,43 @@ def write_graphml_xml(
     infer_numeric_types: bool = False,
     named_key_ids: bool = False,
     edge_id_from_attribute: str | None = None,
-) -> None: ...
+) -> None:
+    """
+    Write G in GraphML XML format to path
+
+    Parameters
+    ----------
+    G : graph
+       A networkx graph
+    path : file or string
+       File or filename to write.
+       Filenames ending in .gz or .bz2 will be compressed.
+    encoding : string (optional)
+       Encoding for text data.
+    prettyprint : bool (optional)
+       If True use line breaks and indenting in output XML.
+    infer_numeric_types : boolean
+       Determine if numeric types should be generalized.
+       For example, if edges have both int and float 'weight' attributes,
+       we infer in GraphML that both are floats.
+    named_key_ids : bool (optional)
+       If True use attr.name as value for key elements' id attribute.
+    edge_id_from_attribute : dict key (optional)
+        If provided, the graphml edge id is set by looking up the corresponding
+        edge data attribute keyed by this parameter. If `None` or the key does not exist in edge data,
+        the edge id is set by the edge key if `G` is a MultiGraph, else the edge id is left unset.
+
+    Examples
+    --------
+    >>> G = nx.path_graph(4)
+    >>> nx.write_graphml(G, "test.graphml")
+
+    Notes
+    -----
+    This implementation does not support mixed graphs (directed
+    and unidirected edges together) hyperedges, nested graphs, or ports.
+    """
+    ...
 def write_graphml_lxml(
     G: Graph[_Node],
     path: StrPath | SupportsWrite[bytes],
@@ -33,25 +112,213 @@ def write_graphml_lxml(
     infer_numeric_types: bool = False,
     named_key_ids: bool = False,
     edge_id_from_attribute: str | None = None,
-): ...
+):
+    """
+    Write G in GraphML XML format to path
+
+    This function uses the LXML framework and should be faster than
+    the version using the xml library.
+
+    Parameters
+    ----------
+    G : graph
+       A networkx graph
+    path : file or string
+       File or filename to write.
+       Filenames ending in .gz or .bz2 will be compressed.
+    encoding : string (optional)
+       Encoding for text data.
+    prettyprint : bool (optional)
+       If True use line breaks and indenting in output XML.
+    infer_numeric_types : boolean
+       Determine if numeric types should be generalized.
+       For example, if edges have both int and float 'weight' attributes,
+       we infer in GraphML that both are floats.
+    named_key_ids : bool (optional)
+       If True use attr.name as value for key elements' id attribute.
+    edge_id_from_attribute : dict key (optional)
+        If provided, the graphml edge id is set by looking up the corresponding
+        edge data attribute keyed by this parameter. If `None` or the key does not exist in edge data,
+        the edge id is set by the edge key if `G` is a MultiGraph, else the edge id is left unset.
+
+    Examples
+    --------
+    >>> G = nx.path_graph(4)
+    >>> nx.write_graphml_lxml(G, "fourpath.graphml")
+
+    Notes
+    -----
+    This implementation does not support mixed graphs (directed
+    and unidirected edges together) hyperedges, nested graphs, or ports.
+    """
+    ...
 def generate_graphml(
     G: Graph[_Node],
     encoding: str = "utf-8",
     prettyprint: bool = True,
     named_key_ids: bool = False,
     edge_id_from_attribute: str | None = None,
-) -> Generator[Incomplete, Incomplete]: ...
+) -> Generator[Incomplete, Incomplete]:
+    """
+    Generate GraphML lines for G
+
+    Parameters
+    ----------
+    G : graph
+       A networkx graph
+    encoding : string (optional)
+       Encoding for text data.
+    prettyprint : bool (optional)
+       If True use line breaks and indenting in output XML.
+    named_key_ids : bool (optional)
+       If True use attr.name as value for key elements' id attribute.
+    edge_id_from_attribute : dict key (optional)
+        If provided, the graphml edge id is set by looking up the corresponding
+        edge data attribute keyed by this parameter. If `None` or the key does not exist in edge data,
+        the edge id is set by the edge key if `G` is a MultiGraph, else the edge id is left unset.
+
+    Examples
+    --------
+    >>> G = nx.path_graph(4)
+    >>> linefeed = chr(10)  # linefeed = 
+
+    >>> s = linefeed.join(nx.generate_graphml(G))
+    >>> for line in nx.generate_graphml(G):  # doctest: +SKIP
+    ...     print(line)
+
+    Notes
+    -----
+    This implementation does not support mixed graphs (directed and unidirected
+    edges together) hyperedges, nested graphs, or ports.
+    """
+    ...
 @_dispatchable
 def read_graphml(
     path: StrPath | SupportsRead[bytes],
     node_type: type[Incomplete] = ...,
     edge_key_type: type[Incomplete] = ...,
     force_multigraph: bool = False,
-) -> Graph[Incomplete]: ...
+) -> Graph[Incomplete]:
+    """
+    Read graph in GraphML format from path.
+
+    Parameters
+    ----------
+    path : file or string
+       Filename or file handle to read.
+       Filenames ending in .gz or .bz2 will be decompressed.
+
+    node_type: Python type (default: str)
+       Convert node ids to this type
+
+    edge_key_type: Python type (default: int)
+       Convert graphml edge ids to this type. Multigraphs use id as edge key.
+       Non-multigraphs add to edge attribute dict with name "id".
+
+    force_multigraph : bool (default: False)
+       If True, return a multigraph with edge keys. If False (the default)
+       return a multigraph when multiedges are in the graph.
+
+    Returns
+    -------
+    graph: NetworkX graph
+        If parallel edges are present or `force_multigraph=True` then
+        a MultiGraph or MultiDiGraph is returned. Otherwise a Graph/DiGraph.
+        The returned graph is directed if the file indicates it should be.
+
+    Notes
+    -----
+    Default node and edge attributes are not propagated to each node and edge.
+    They can be obtained from `G.graph` and applied to node and edge attributes
+    if desired using something like this:
+
+    >>> default_color = G.graph["node_default"]["color"]  # doctest: +SKIP
+    >>> for node, data in G.nodes(data=True):  # doctest: +SKIP
+    ...     if "color" not in data:
+    ...         data["color"] = default_color
+    >>> default_color = G.graph["edge_default"]["color"]  # doctest: +SKIP
+    >>> for u, v, data in G.edges(data=True):  # doctest: +SKIP
+    ...     if "color" not in data:
+    ...         data["color"] = default_color
+
+    This implementation does not support mixed graphs (directed and unidirected
+    edges together), hypergraphs, nested graphs, or ports.
+
+    For multigraphs the GraphML edge "id" will be used as the edge
+    key.  If not specified then they "key" attribute will be used.  If
+    there is no "key" attribute a default NetworkX multigraph edge key
+    will be provided.
+
+    Files with the yEd "yfiles" extension can be read. The type of the node's
+    shape is preserved in the `shape_type` node attribute.
+
+    yEd compressed files ("file.graphmlz" extension) can be read by renaming
+    the file to "file.graphml.gz".
+    """
+    ...
 @_dispatchable
 def parse_graphml(
     graphml_string: str, node_type: type[Incomplete] = ..., edge_key_type: type[Incomplete] = ..., force_multigraph: bool = False
-) -> Graph[Incomplete]: ...
+) -> Graph[Incomplete]:
+    """
+    Read graph in GraphML format from string.
+
+    Parameters
+    ----------
+    graphml_string : string
+       String containing graphml information
+       (e.g., contents of a graphml file).
+
+    node_type: Python type (default: str)
+       Convert node ids to this type
+
+    edge_key_type: Python type (default: int)
+       Convert graphml edge ids to this type. Multigraphs use id as edge key.
+       Non-multigraphs add to edge attribute dict with name "id".
+
+    force_multigraph : bool (default: False)
+       If True, return a multigraph with edge keys. If False (the default)
+       return a multigraph when multiedges are in the graph.
+
+
+    Returns
+    -------
+    graph: NetworkX graph
+        If no parallel edges are found a Graph or DiGraph is returned.
+        Otherwise a MultiGraph or MultiDiGraph is returned.
+
+    Examples
+    --------
+    >>> G = nx.path_graph(4)
+    >>> linefeed = chr(10)  # linefeed = 
+
+    >>> s = linefeed.join(nx.generate_graphml(G))
+    >>> H = nx.parse_graphml(s)
+
+    Notes
+    -----
+    Default node and edge attributes are not propagated to each node and edge.
+    They can be obtained from `G.graph` and applied to node and edge attributes
+    if desired using something like this:
+
+    >>> default_color = G.graph["node_default"]["color"]  # doctest: +SKIP
+    >>> for node, data in G.nodes(data=True):  # doctest: +SKIP
+    ...     if "color" not in data:
+    ...         data["color"] = default_color
+    >>> default_color = G.graph["edge_default"]["color"]  # doctest: +SKIP
+    >>> for u, v, data in G.edges(data=True):  # doctest: +SKIP
+    ...     if "color" not in data:
+    ...         data["color"] = default_color
+
+    This implementation does not support mixed graphs (directed and unidirected
+    edges together), hypergraphs, nested graphs, or ports.
+
+    For multigraphs the GraphML edge "id" will be used as the edge
+    key.  If not specified then they "key" attribute will be used.  If
+    there is no "key" attribute a default NetworkX multigraph edge key
+    will be provided.
+    """
+    ...
 
 class GraphML:
     NS_GRAPHML: Final[str]
