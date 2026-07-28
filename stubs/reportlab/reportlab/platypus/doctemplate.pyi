@@ -25,8 +25,8 @@ for the current frame).
 from _typeshed import Incomplete
 from abc import abstractmethod
 from collections.abc import Callable
-from typing import IO, Any, Literal, Protocol, TypeAlias, type_check_only
-from typing_extensions import Self
+from typing import IO, Any, Literal, Protocol, TypeAlias, TypedDict, type_check_only
+from typing_extensions import Self, Unpack
 
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.platypus.flowables import Flowable
@@ -285,6 +285,54 @@ class PageAccumulator:
         ...
     def onDrawStr(self, value: object, *args) -> _OnDrawStr: ...
 
+@type_check_only
+class _DocTemplateKwargs(TypedDict, total=False):
+    pagesize: Incomplete
+    pageTemplates: list[PageTemplate]
+    showBoundary: Incomplete
+    width: float
+    height: float
+    leftMargin: float
+    rightMargin: float
+    topMargin: float
+    bottomMargin: float
+    allowSplitting: Incomplete
+    title: Incomplete | None
+    author: Incomplete | None
+    subject: Incomplete | None
+    creator: Incomplete | None
+    producer: Incomplete | None
+    keywords: list[Incomplete]
+    invariant: Incomplete | None
+    pageCompression: Incomplete | None
+    rotation: Incomplete
+    encrypt: Incomplete | None
+    cropMarks: Incomplete | None
+    enforceColorSpace: Incomplete | None
+    displayDocTitle: Incomplete | None
+    lang: Incomplete | None
+    initialFontName: Incomplete | None
+    initialFontSize: Incomplete | None
+    initialLeading: Incomplete | None
+    cropBox: Incomplete | None
+    artBox: Incomplete | None
+    trimBox: Incomplete | None
+    bleedBox: Incomplete | None
+    keepTogetherClass: type[Flowable]
+    hideToolbar: Incomplete | None
+    hideMenubar: Incomplete | None
+    hideWindowUI: Incomplete | None
+    fitWindow: Incomplete | None
+    centerWindow: Incomplete | None
+    nonFullScreenPageMode: Incomplete | None
+    direction: Incomplete | None
+    viewArea: Incomplete | None
+    viewClip: Incomplete | None
+    printArea: Incomplete | None
+    printClip: Incomplete | None
+    printScaling: Incomplete | None
+    duplex: Incomplete | None
+
 class BaseDocTemplate:
     """
     First attempt at defining a document template class.
@@ -392,68 +440,23 @@ class BaseDocTemplate:
     page: int
     frame: Frame
     canv: Canvas
-    # TODO: Use TypedDict with Unpack for **kw
-    def __init__(self, filename: str | IO[bytes], **kw) -> None:
-        """create a document template bound to a filename (see class documentation for keyword arguments)"""
-        ...
-    def setPageCallBack(self, func: Callable[[int], object] | None) -> None:
-        """Simple progress monitor - func(pageNo) called on each new page"""
-        ...
-    def setProgressCallBack(self, func: Callable[[str, int], object] | None) -> None:
-        """Cleverer progress monitor - func(typ, value) called regularly"""
-        ...
-    def clean_hanging(self) -> None:
-        """handle internal postponed actions"""
-        ...
-    def addPageTemplates(self, pageTemplates: list[PageTemplate] | tuple[PageTemplate, ...] | PageTemplate) -> None:
-        """add one or a sequence of pageTemplates"""
-        ...
-    def handle_documentBegin(self) -> None:
-        """implement actions at beginning of document"""
-        ...
-    def handle_pageBegin(self) -> None:
-        """
-        Perform actions required at beginning of page.
-        shouldn't normally be called directly
-        """
-        ...
-    def handle_pageEnd(self) -> None:
-        """
-        show the current page
-        check the next page template
-        hang a page begin
-        """
-        ...
-    def handle_pageBreak(self, slow: bool | None = None) -> None:
-        """some might choose not to end all the frames"""
-        ...
-    def handle_frameBegin(self, resume: int = 0, pageTopFlowables=None) -> None:
-        """What to do at the beginning of a frame"""
-        ...
-    def handle_frameEnd(self, resume: int = 0) -> None:
-        """
-        Handles the semantics of the end of a frame. This includes the selection of
-        the next frame or if this is the last frame then invoke pageEnd.
-        """
-        ...
-    def handle_nextPageTemplate(self, pt: str | int | list[str] | tuple[str, ...]) -> None:
-        """On endPage change to the page template with name or index pt"""
-        ...
-    def handle_nextFrame(self, fx: str | int, resume: int = 0) -> None:
-        """On endFrame change to the frame with name or index fx"""
-        ...
-    def handle_currentFrame(self, fx: str | int, resume: int = 0) -> None:
-        """change to the frame with name or index fx"""
-        ...
-    def handle_breakBefore(self, flowables: list[Flowable]) -> None:
-        """preprocessing step to allow pageBreakBefore and frameBreakBefore attributes"""
-        ...
-    def handle_keepWithNext(self, flowables: list[Flowable]) -> None:
-        """implements keepWithNext"""
-        ...
-    def handle_flowable(self, flowables: list[Flowable]) -> None:
-        """try to handle one flowable from the front of list flowables."""
-        ...
+    def __init__(self, filename: str | IO[bytes], **kw: Unpack[_DocTemplateKwargs]) -> None: ...
+    def setPageCallBack(self, func: Callable[[int], object] | None) -> None: ...
+    def setProgressCallBack(self, func: Callable[[str, int], object] | None) -> None: ...
+    def clean_hanging(self) -> None: ...
+    def addPageTemplates(self, pageTemplates: list[PageTemplate] | tuple[PageTemplate, ...] | PageTemplate) -> None: ...
+    def handle_documentBegin(self) -> None: ...
+    def handle_pageBegin(self) -> None: ...
+    def handle_pageEnd(self) -> None: ...
+    def handle_pageBreak(self, slow: bool | None = None) -> None: ...
+    def handle_frameBegin(self, resume: int = 0, pageTopFlowables=None) -> None: ...
+    def handle_frameEnd(self, resume: int = 0) -> None: ...
+    def handle_nextPageTemplate(self, pt: str | int | list[str] | tuple[str, ...]) -> None: ...
+    def handle_nextFrame(self, fx: str | int, resume: int = 0) -> None: ...
+    def handle_currentFrame(self, fx: str | int, resume: int = 0) -> None: ...
+    def handle_breakBefore(self, flowables: list[Flowable]) -> None: ...
+    def handle_keepWithNext(self, flowables: list[Flowable]) -> None: ...
+    def handle_flowable(self, flowables: list[Flowable]) -> None: ...
     def build(
         self, flowables: list[Flowable], filename: str | IO[bytes] | None = None, canvasmaker: _CanvasMaker = ...
     ) -> None:

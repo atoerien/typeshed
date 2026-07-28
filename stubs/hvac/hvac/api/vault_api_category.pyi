@@ -12,24 +12,8 @@ logger: Logger
 class VaultApiCategory(VaultApiBase, metaclass=ABCMeta):
     """Base class for API categories."""
     implemented_class_names: list[str]
-    def __init__(self, adapter: Adapter[Any]) -> None:
-        """
-        API Category class constructor.
-
-        :param adapter: Instance of :py:class:`hvac.adapters.Adapter`; used for performing HTTP requests.
-        :type adapter: hvac.adapters.Adapter
-        """
-        ...
-    def __getattr__(self, item):
-        """
-        Get an instance of an class instance in this category where available.
-
-        :param item: Name of the class being requested.
-        :type item: str | unicode
-        :return: The requested class instance where available.
-        :rtype: hvac.api.VaultApiBase
-        """
-        ...
+    def __init__(self, adapter: Adapter[Any]) -> None: ...
+    def __getattr__(self, item: str): ...
 
     @property
     def adapter(self) -> Adapter[Any]:
@@ -52,14 +36,7 @@ class VaultApiCategory(VaultApiBase, metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def implemented_classes(self):
-        """
-        List of implemented classes under this category.
-
-        :return: List of implemented classes under this category.
-        :rtype: List[hvac.api.VaultApiBase]
-        """
-        ...
+    def implemented_classes(self) -> list[type[VaultApiBase]]: ...
     @property
     def unimplemented_classes(self) -> list[str]:
         """
@@ -70,13 +47,4 @@ class VaultApiCategory(VaultApiBase, metaclass=ABCMeta):
         """
         ...
     @staticmethod
-    def get_private_attr_name(class_name):
-        """
-        Helper method to prepend a leading underscore to a provided class name.
-
-        :param class_name: Name of a class under this category.
-        :type class_name: str|unicode
-        :return: The private attribute label for the provided class.
-        :rtype: str
-        """
-        ...
+    def get_private_attr_name(class_name: str) -> str: ...

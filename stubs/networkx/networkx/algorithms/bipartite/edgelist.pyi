@@ -1,29 +1,5 @@
-"""
-********************
-Bipartite Edge Lists
-********************
-Read and write NetworkX graphs as bipartite edge lists.
-
-Format
-------
-You can read or write three formats of edge lists with these functions.
-
-Node pairs with no data::
-
- 1 2
-
-Python dictionary as data::
-
- 1 2 {'weight':7, 'color':'green'}
-
-Arbitrary data::
-
- 1 2 7 green
-
-For each edge (u, v) the node u is assigned to part 0 and the node v to part 1.
-"""
-
-from collections.abc import Generator
+from _typeshed import Incomplete, StrPath, SupportsRead, SupportsWrite
+from collections.abc import Collection, Generator, Iterable
 
 from networkx.classes.graph import Graph, _Node
 from networkx.utils.backends import _dispatchable
@@ -32,53 +8,13 @@ __all__ = ["generate_edgelist", "write_edgelist", "parse_edgelist", "read_edgeli
 
 @_dispatchable
 def write_edgelist(
-    G: Graph[_Node], path, comments: str = "#", delimiter: str = " ", data: bool = True, encoding: str = "utf-8"
-) -> None:
-    """
-    Write a bipartite graph as a list of edges.
-
-    Parameters
-    ----------
-    G : Graph
-       A NetworkX bipartite graph
-    path : file or string
-       File or filename to write. If a file is provided, it must be
-       opened in 'wb' mode. Filenames ending in .gz or .bz2 will be compressed.
-    comments : string, optional
-       The character used to indicate the start of a comment
-    delimiter : string, optional
-       The string used to separate values.  The default is whitespace.
-    data : bool or list, optional
-       If False write no edge data.
-       If True write a string representation of the edge data dictionary..
-       If a list (or other iterable) is provided, write the  keys specified
-       in the list.
-    encoding: string, optional
-       Specify which encoding to use when writing file.
-
-    Examples
-    --------
-    >>> G = nx.path_graph(4)
-    >>> G.add_nodes_from([0, 2], bipartite=0)
-    >>> G.add_nodes_from([1, 3], bipartite=1)
-    >>> nx.write_edgelist(G, "test.edgelist")
-    >>> fh = open("test.edgelist_open", "wb")
-    >>> nx.write_edgelist(G, fh)
-    >>> nx.write_edgelist(G, "test.edgelist.gz")
-    >>> nx.write_edgelist(G, "test.edgelist_nodata.gz", data=False)
-
-    >>> G = nx.Graph()
-    >>> G.add_edge(1, 2, weight=7, color="red")
-    >>> nx.write_edgelist(G, "test.edgelist_bigger_nodata", data=False)
-    >>> nx.write_edgelist(G, "test.edgelist_color", data=["color"])
-    >>> nx.write_edgelist(G, "test.edgelist_color_weight", data=["color", "weight"])
-
-    See Also
-    --------
-    write_edgelist
-    generate_edgelist
-    """
-    ...
+    G: Graph[_Node],
+    path: StrPath | SupportsWrite[bytes],
+    comments: str = "#",
+    delimiter: str = " ",
+    data: bool = True,
+    encoding: str = "utf-8",
+) -> None: ...
 @_dispatchable
 def generate_edgelist(G: Graph[_Node], delimiter: str = " ", data: bool = True) -> Generator[str]:
     """
@@ -132,153 +68,21 @@ def generate_edgelist(G: Graph[_Node], delimiter: str = " ", data: bool = True) 
     ...
 @_dispatchable
 def parse_edgelist(
-    lines,
+    lines: Iterable[str],
     comments: str | None = "#",
     delimiter: str | None = None,
-    create_using: Graph[_Node] | None = None,
-    nodetype=None,
-    data=True,
-):
-    """
-    Parse lines of an edge list representation of a bipartite graph.
-
-    Parameters
-    ----------
-    lines : list or iterator of strings
-        Input data in edgelist format
-    comments : string, optional
-       Marker for comment lines
-    delimiter : string, optional
-       Separator for node labels
-    create_using: NetworkX graph container, optional
-       Use given NetworkX graph for holding nodes or edges.
-    nodetype : Python type, optional
-       Convert nodes to this type.
-    data : bool or list of (label,type) tuples
-       If False generate no edge data or if True use a dictionary
-       representation of edge data or a list tuples specifying dictionary
-       key names and types for edge data.
-
-    Returns
-    -------
-    G: NetworkX Graph
-        The bipartite graph corresponding to lines
-
-    Examples
-    --------
-    Edgelist with no data:
-
-    >>> from networkx.algorithms import bipartite
-    >>> lines = ["1 2", "2 3", "3 4"]
-    >>> G = bipartite.parse_edgelist(lines, nodetype=int)
-    >>> sorted(G.nodes())
-    [1, 2, 3, 4]
-    >>> sorted(G.nodes(data=True))
-    [(1, {'bipartite': 0}), (2, {'bipartite': 0}), (3, {'bipartite': 0}), (4, {'bipartite': 1})]
-    >>> sorted(G.edges())
-    [(1, 2), (2, 3), (3, 4)]
-
-    Edgelist with data in Python dictionary representation:
-
-    >>> lines = ["1 2 {'weight':3}", "2 3 {'weight':27}", "3 4 {'weight':3.0}"]
-    >>> G = bipartite.parse_edgelist(lines, nodetype=int)
-    >>> sorted(G.nodes())
-    [1, 2, 3, 4]
-    >>> sorted(G.edges(data=True))
-    [(1, 2, {'weight': 3}), (2, 3, {'weight': 27}), (3, 4, {'weight': 3.0})]
-
-    Edgelist with data in a list:
-
-    >>> lines = ["1 2 3", "2 3 27", "3 4 3.0"]
-    >>> G = bipartite.parse_edgelist(lines, nodetype=int, data=(("weight", float),))
-    >>> sorted(G.nodes())
-    [1, 2, 3, 4]
-    >>> sorted(G.edges(data=True))
-    [(1, 2, {'weight': 3.0}), (2, 3, {'weight': 27.0}), (3, 4, {'weight': 3.0})]
-
-    See Also
-    --------
-    """
-    ...
+    create_using: Graph[_Node] | type[Graph[_Node]] | None = None,
+    nodetype: type[Incomplete] | None = None,
+    data: bool | Collection[tuple[str, type[Incomplete]]] = True,
+) -> Graph[Incomplete]: ...
 @_dispatchable
 def read_edgelist(
-    path,
+    path: StrPath | SupportsRead[bytes],
     comments: str | None = "#",
     delimiter: str | None = None,
-    create_using=None,
+    create_using: Graph[Incomplete] | type[Graph[Incomplete]] | None = None,
     nodetype=None,
-    data=True,
+    data: bool | Collection[tuple[str, type[Incomplete]]] = True,
     edgetype=None,
     encoding: str | None = "utf-8",
-):
-    """
-    Read a bipartite graph from a list of edges.
-
-    Parameters
-    ----------
-    path : file or string
-       File or filename to read. If a file is provided, it must be
-       opened in 'rb' mode.
-       Filenames ending in .gz or .bz2 will be decompressed.
-    comments : string, optional
-       The character used to indicate the start of a comment.
-    delimiter : string, optional
-       The string used to separate values.  The default is whitespace.
-    create_using : Graph container, optional,
-       Use specified container to build graph.  The default is networkx.Graph,
-       an undirected graph.
-    nodetype : int, float, str, Python type, optional
-       Convert node data from strings to specified type
-    data : bool or list of (label,type) tuples
-       Tuples specifying dictionary key names and types for edge data
-    edgetype : int, float, str, Python type, optional OBSOLETE
-       Convert edge data from strings to specified type and use as 'weight'
-    encoding: string, optional
-       Specify which encoding to use when reading file.
-
-    Returns
-    -------
-    G : graph
-       A networkx Graph or other type specified with create_using
-
-    Examples
-    --------
-    >>> from networkx.algorithms import bipartite
-    >>> G = nx.path_graph(4)
-    >>> G.add_nodes_from([0, 2], bipartite=0)
-    >>> G.add_nodes_from([1, 3], bipartite=1)
-    >>> bipartite.write_edgelist(G, "test.edgelist")
-    >>> G = bipartite.read_edgelist("test.edgelist")
-
-    >>> fh = open("test.edgelist", "rb")
-    >>> G = bipartite.read_edgelist(fh)
-    >>> fh.close()
-
-    >>> G = bipartite.read_edgelist("test.edgelist", nodetype=int)
-
-    Edgelist with data in a list:
-
-    >>> textline = "1 2 3"
-    >>> fh = open("test.edgelist", "w")
-    >>> d = fh.write(textline)
-    >>> fh.close()
-    >>> G = bipartite.read_edgelist(
-    ...     "test.edgelist", nodetype=int, data=(("weight", float),)
-    ... )
-    >>> list(G)
-    [1, 2]
-    >>> list(G.edges(data=True))
-    [(1, 2, {'weight': 3.0})]
-
-    See parse_edgelist() for more examples of formatting.
-
-    See Also
-    --------
-    parse_edgelist
-
-    Notes
-    -----
-    Since nodes must be hashable, the function nodetype must return hashable
-    types (e.g. int, float, str, frozenset - or tuples of those, etc.)
-    """
-    ...
+) -> Graph[Incomplete]: ...

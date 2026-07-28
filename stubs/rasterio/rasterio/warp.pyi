@@ -7,7 +7,7 @@ from typing_extensions import deprecated
 
 from numpy.typing import ArrayLike, NDArray
 from rasterio._affine_types import Affine
-from rasterio._typing import CRSInput, _GDALOption
+from rasterio._typing import CRSInput, Geometry, _GDALOption
 from rasterio.control import GroundControlPoint
 from rasterio.enums import Resampling
 from rasterio.rpc import RPC
@@ -51,34 +51,8 @@ def transform(
 
 @overload
 def transform_geom(
-    src_crs: CRSInput, dst_crs: CRSInput, geom: Mapping[str, Any] | Sequence[Mapping[str, Any]], *, precision: float = -1
-) -> dict[str, Any] | list[dict[str, Any]]:
-    """
-    Transform geometry from source coordinate reference system into target.
-
-    Parameters
-    ------------
-    src_crs: CRS or dict
-        Source coordinate reference system, in rasterio dict format.
-        Example: CRS({'init': 'EPSG:4326'})
-    dst_crs: CRS or dict
-        Target coordinate reference system.
-    geom: GeoJSON like dict object or iterable of GeoJSON like objects.
-    antimeridian_cutting: bool
-        DEPRECATED: Always enabled since GDAL 2.2.
-    antimeridian_offset: float
-        DEPRECATED: No longer has any effect since GDAL 2.2.
-    precision: float
-        If >= 0, geometry coordinates will be rounded to this number of decimal
-        places after the transform operation, otherwise original coordinate
-        values will be preserved (default).
-
-    Returns
-    ---------
-    out: GeoJSON like dict object or list of GeoJSON like objects.
-        Transformed geometry(s) in GeoJSON dict format
-    """
-    ...
+    src_crs: CRSInput, dst_crs: CRSInput, geom: Geometry | Sequence[Geometry], *, precision: float = -1
+) -> dict[str, Any] | list[dict[str, Any]]: ...
 @overload
 @deprecated(
     "`antimeridian_cutting` and `antimeridian_offset` are no-ops since GDAL 2.2 "
@@ -88,7 +62,7 @@ def transform_geom(
 def transform_geom(
     src_crs: CRSInput,
     dst_crs: CRSInput,
-    geom: Mapping[str, Any] | Sequence[Mapping[str, Any]],
+    geom: Geometry | Sequence[Geometry],
     antimeridian_cutting: bool | None = None,
     antimeridian_offset: float | None = None,
     precision: float = -1,

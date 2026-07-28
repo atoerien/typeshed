@@ -14,7 +14,7 @@ See Also
 """
 
 from _typeshed import Incomplete, SupportsGetItem
-from collections.abc import Generator
+from collections.abc import Collection, Generator, Iterable
 from typing import NamedTuple
 
 from networkx.classes.graph import Graph, _Node
@@ -219,151 +219,22 @@ def k_edge_augmentation(
     """
     ...
 @_dispatchable
-def partial_k_edge_augmentation(G: Graph[_Node], k, avail, weight: str | None = None):
-    """
-    Finds augmentation that k-edge-connects as much of the graph as possible.
-
-    When a k-edge-augmentation is not possible, we can still try to find a
-    small set of edges that partially k-edge-connects as much of the graph as
-    possible. All possible edges are generated between remaining parts.
-    This minimizes the number of k-edge-connected subgraphs in the resulting
-    graph and maximizes the edge connectivity between those subgraphs.
-
-    Parameters
-    ----------
-    G : NetworkX graph
-       An undirected graph.
-
-    k : integer
-        Desired edge connectivity
-
-    avail : dict or a set of 2 or 3 tuples
-        For more details, see :func:`k_edge_augmentation`.
-
-    weight : string
-        key to use to find weights if ``avail`` is a set of 3-tuples.
-        For more details, see :func:`k_edge_augmentation`.
-
-    Yields
-    ------
-    edge : tuple
-        Edges in the partial augmentation of G. These edges k-edge-connect any
-        part of G where it is possible, and maximally connects the remaining
-        parts. In other words, all edges from avail are generated except for
-        those within subgraphs that have already become k-edge-connected.
-
-    Notes
-    -----
-    Construct H that augments G with all edges in avail.
-    Find the k-edge-subgraphs of H.
-    For each k-edge-subgraph, if the number of nodes is more than k, then find
-    the k-edge-augmentation of that graph and add it to the solution. Then add
-    all edges in avail between k-edge subgraphs to the solution.
-
-    See Also
-    --------
-    :func:`k_edge_augmentation`
-
-    Examples
-    --------
-    >>> G = nx.path_graph((1, 2, 3, 4, 5, 6, 7))
-    >>> G.add_node(8)
-    >>> avail = [(1, 3), (1, 4), (1, 5), (2, 4), (2, 5), (3, 5), (1, 8)]
-    >>> sorted(partial_k_edge_augmentation(G, k=2, avail=avail))
-    [(1, 5), (1, 8)]
-    """
-    ...
+def partial_k_edge_augmentation(
+    G: Graph[_Node], k: int, avail: dict[Incomplete, Incomplete] | Collection[tuple[Incomplete, ...]], weight: str | None = None
+): ...
 @_dispatchable
-def one_edge_augmentation(G: Graph[_Node], avail=None, weight: str | None = None, partial: bool = False):
-    """
-    Finds minimum weight set of edges to connect G.
-
-    Equivalent to :func:`k_edge_augmentation` when k=1. Adding the resulting
-    edges to G will make it 1-edge-connected. The solution is optimal for both
-    weighted and non-weighted variants.
-
-    Parameters
-    ----------
-    G : NetworkX graph
-       An undirected graph.
-
-    avail : dict or a set of 2 or 3 tuples
-        For more details, see :func:`k_edge_augmentation`.
-
-    weight : string
-        key to use to find weights if ``avail`` is a set of 3-tuples.
-        For more details, see :func:`k_edge_augmentation`.
-
-    partial : boolean
-        If partial is True and no feasible k-edge-augmentation exists, then the
-        augmenting edges minimize the number of connected components.
-
-    Yields
-    ------
-    edge : tuple
-        Edges in the one-augmentation of G
-
-    Raises
-    ------
-    NetworkXUnfeasible
-        If partial is False and no one-edge-augmentation exists.
-
-    Notes
-    -----
-    Uses either :func:`unconstrained_one_edge_augmentation` or
-    :func:`weighted_one_edge_augmentation` depending on whether ``avail`` is
-    specified. Both algorithms are based on finding a minimum spanning tree.
-    As such both algorithms find optimal solutions and run in linear time.
-
-    See Also
-    --------
-    :func:`k_edge_augmentation`
-    """
-    ...
+def one_edge_augmentation(
+    G: Graph[_Node],
+    avail: dict[Incomplete, Incomplete] | Collection[tuple[Incomplete, ...]] | None = None,
+    weight: str | None = None,
+    partial: bool = False,
+): ...
 @_dispatchable
-def bridge_augmentation(G: Graph[_Node], avail=None, weight: str | None = None):
-    """
-    Finds the a set of edges that bridge connects G.
-
-    Equivalent to :func:`k_edge_augmentation` when k=2, and partial=False.
-    Adding the resulting edges to G will make it 2-edge-connected.  If no
-    constraints are specified the returned set of edges is minimum an optimal,
-    otherwise the solution is approximated.
-
-    Parameters
-    ----------
-    G : NetworkX graph
-       An undirected graph.
-
-    avail : dict or a set of 2 or 3 tuples
-        For more details, see :func:`k_edge_augmentation`.
-
-    weight : string
-        key to use to find weights if ``avail`` is a set of 3-tuples.
-        For more details, see :func:`k_edge_augmentation`.
-
-    Yields
-    ------
-    edge : tuple
-        Edges in the bridge-augmentation of G
-
-    Raises
-    ------
-    NetworkXUnfeasible
-        If no bridge-augmentation exists.
-
-    Notes
-    -----
-    If there are no constraints the solution can be computed in linear time
-    using :func:`unconstrained_bridge_augmentation`. Otherwise, the problem
-    becomes NP-hard and is the solution is approximated by
-    :func:`weighted_bridge_augmentation`.
-
-    See Also
-    --------
-    :func:`k_edge_augmentation`
-    """
-    ...
+def bridge_augmentation(
+    G: Graph[_Node],
+    avail: dict[Incomplete, Incomplete] | Collection[tuple[Incomplete, ...]] | None = None,
+    weight: str | None = None,
+): ...
 
 class MetaEdge(NamedTuple):
     """MetaEdge(meta_uv, uv, w)"""
@@ -403,53 +274,12 @@ def unconstrained_one_edge_augmentation(G: Graph[_Node]):
     """
     ...
 @_dispatchable
-def weighted_one_edge_augmentation(G: Graph[_Node], avail, weight: str | None = None, partial: bool = False):
-    """
-    Finds the minimum weight set of edges to connect G if one exists.
-
-    This is a variant of the weighted MST problem.
-
-    Parameters
-    ----------
-    G : NetworkX graph
-       An undirected graph.
-
-    avail : dict or a set of 2 or 3 tuples
-        For more details, see :func:`k_edge_augmentation`.
-
-    weight : string
-        key to use to find weights if ``avail`` is a set of 3-tuples.
-        For more details, see :func:`k_edge_augmentation`.
-
-    partial : boolean
-        If partial is True and no feasible k-edge-augmentation exists, then the
-        augmenting edges minimize the number of connected components.
-
-    Yields
-    ------
-    edge : tuple
-        Edges in the subset of avail chosen to connect G.
-
-    See Also
-    --------
-    :func:`one_edge_augmentation`
-    :func:`k_edge_augmentation`
-
-    Examples
-    --------
-    >>> G = nx.Graph([(1, 2), (2, 3), (4, 5)])
-    >>> G.add_nodes_from([6, 7, 8])
-    >>> # any edge not in avail has an implicit weight of infinity
-    >>> avail = [(1, 3), (1, 5), (4, 7), (4, 8), (6, 1), (8, 1), (8, 2)]
-    >>> sorted(weighted_one_edge_augmentation(G, avail))
-    [(1, 5), (4, 7), (6, 1), (8, 1)]
-    >>> # find another solution by giving large weights to edges in the
-    >>> # previous solution (note some of the old edges must be used)
-    >>> avail = [(1, 3), (1, 5, 99), (4, 7, 9), (6, 1, 99), (8, 1, 99), (8, 2)]
-    >>> sorted(weighted_one_edge_augmentation(G, avail))
-    [(1, 5), (4, 7), (6, 1), (8, 2)]
-    """
-    ...
+def weighted_one_edge_augmentation(
+    G: Graph[_Node],
+    avail: dict[Incomplete, Incomplete] | Collection[tuple[Incomplete, ...]],
+    weight: str | None = None,
+    partial: bool = False,
+): ...
 @_dispatchable
 def unconstrained_bridge_augmentation(G: Graph[_Node]):
     """
@@ -530,116 +360,11 @@ def unconstrained_bridge_augmentation(G: Graph[_Node]):
     """
     ...
 @_dispatchable
-def weighted_bridge_augmentation(G: Graph[_Node], avail, weight: str | None = None):
-    """
-    Finds an approximate min-weight 2-edge-augmentation of G.
-
-    This is an implementation of the approximation algorithm detailed in [1]_.
-    It chooses a set of edges from avail to add to G that renders it
-    2-edge-connected if such a subset exists.  This is done by finding a
-    minimum spanning arborescence of a specially constructed metagraph.
-
-    Parameters
-    ----------
-    G : NetworkX graph
-       An undirected graph.
-
-    avail : set of 2 or 3 tuples.
-        candidate edges (with optional weights) to choose from
-
-    weight : string
-        key to use to find weights if avail is a set of 3-tuples where the
-        third item in each tuple is a dictionary.
-
-    Yields
-    ------
-    edge : tuple
-        Edges in the subset of avail chosen to bridge augment G.
-
-    Notes
-    -----
-    Finding a weighted 2-edge-augmentation is NP-hard.
-    Any edge not in ``avail`` is considered to have a weight of infinity.
-    The approximation factor is 2 if ``G`` is connected and 3 if it is not.
-    Runs in :math:`O(m + n log(n))` time
-
-    References
-    ----------
-    .. [1] Khuller, Samir, and Ramakrishna Thurimella. (1993) Approximation
-        algorithms for graph augmentation.
-        http://www.sciencedirect.com/science/article/pii/S0196677483710102
-
-    See Also
-    --------
-    :func:`bridge_augmentation`
-    :func:`k_edge_augmentation`
-
-    Examples
-    --------
-    >>> G = nx.path_graph((1, 2, 3, 4))
-    >>> # When the weights are equal, (1, 4) is the best
-    >>> avail = [(1, 4, 1), (1, 3, 1), (2, 4, 1)]
-    >>> sorted(weighted_bridge_augmentation(G, avail))
-    [(1, 4)]
-    >>> # Giving (1, 4) a high weight makes the two edge solution the best.
-    >>> avail = [(1, 4, 1000), (1, 3, 1), (2, 4, 1)]
-    >>> sorted(weighted_bridge_augmentation(G, avail))
-    [(1, 3), (2, 4)]
-    >>> # ------
-    >>> G = nx.path_graph((1, 2, 3, 4))
-    >>> G.add_node(5)
-    >>> avail = [(1, 5, 11), (2, 5, 10), (4, 3, 1), (4, 5, 1)]
-    >>> sorted(weighted_bridge_augmentation(G, avail=avail))
-    [(1, 5), (4, 5)]
-    >>> avail = [(1, 5, 11), (2, 5, 10), (4, 3, 1), (4, 5, 51)]
-    >>> sorted(weighted_bridge_augmentation(G, avail=avail))
-    [(1, 5), (2, 5), (4, 5)]
-    """
-    ...
+def weighted_bridge_augmentation(
+    G: Graph[_Node], avail: dict[Incomplete, Incomplete] | Collection[tuple[Incomplete, ...]], weight: str | None = None
+): ...
 @_dispatchable
-def collapse(G: Graph[_Node], grouped_nodes):
-    """
-    Collapses each group of nodes into a single node.
-
-    This is similar to condensation, but works on undirected graphs.
-
-    Parameters
-    ----------
-    G : NetworkX Graph
-
-    grouped_nodes:  list or generator
-       Grouping of nodes to collapse. The grouping must be disjoint.
-       If grouped_nodes are strongly_connected_components then this is
-       equivalent to :func:`condensation`.
-
-    Returns
-    -------
-    C : NetworkX Graph
-       The collapsed graph C of G with respect to the node grouping.  The node
-       labels are integers corresponding to the index of the component in the
-       list of grouped_nodes.  C has a graph attribute named 'mapping' with a
-       dictionary mapping the original nodes to the nodes in C to which they
-       belong.  Each node in C also has a node attribute 'members' with the set
-       of original nodes in G that form the group that the node in C
-       represents.
-
-    Examples
-    --------
-    >>> # Collapses a graph using disjoint groups, but not necessarily connected
-    >>> G = nx.Graph([(1, 0), (2, 3), (3, 1), (3, 4), (4, 5), (5, 6), (5, 7)])
-    >>> G.add_node("A")
-    >>> grouped_nodes = [{0, 1, 2, 3}, {5, 6, 7}]
-    >>> C = collapse(G, grouped_nodes)
-    >>> members = nx.get_node_attributes(C, "members")
-    >>> sorted(members.keys())
-    [0, 1, 2, 3]
-    >>> member_values = set(map(frozenset, members.values()))
-    >>> assert {0, 1, 2, 3} in member_values
-    >>> assert {4} in member_values
-    >>> assert {5, 6, 7} in member_values
-    >>> assert {"A"} in member_values
-    """
-    ...
+def collapse(G: Graph[_Node], grouped_nodes: Iterable[Incomplete]) -> Graph[Incomplete]: ...
 @_dispatchable
 def complement_edges(G: Graph[_Node]):
     """
@@ -668,61 +393,10 @@ def complement_edges(G: Graph[_Node]):
     """
     ...
 @_dispatchable
-def greedy_k_edge_augmentation(G: Graph[_Node], k, avail=None, weight: str | None = None, seed=None):
-    """
-    Greedy algorithm for finding a k-edge-augmentation
-
-    Parameters
-    ----------
-    G : NetworkX graph
-       An undirected graph.
-
-    k : integer
-        Desired edge connectivity
-
-    avail : dict or a set of 2 or 3 tuples
-        For more details, see :func:`k_edge_augmentation`.
-
-    weight : string
-        key to use to find weights if ``avail`` is a set of 3-tuples.
-        For more details, see :func:`k_edge_augmentation`.
-
-    seed : integer, random_state, or None (default)
-        Indicator of random number generation state.
-        See :ref:`Randomness<randomness>`.
-
-    Yields
-    ------
-    edge : tuple
-        Edges in the greedy augmentation of G
-
-    Notes
-    -----
-    The algorithm is simple. Edges are incrementally added between parts of the
-    graph that are not yet locally k-edge-connected. Then edges are from the
-    augmenting set are pruned as long as local-edge-connectivity is not broken.
-
-    This algorithm is greedy and does not provide optimality guarantees. It
-    exists only to provide :func:`k_edge_augmentation` with the ability to
-    generate a feasible solution for arbitrary k.
-
-    See Also
-    --------
-    :func:`k_edge_augmentation`
-
-    Examples
-    --------
-    >>> G = nx.path_graph((1, 2, 3, 4, 5, 6, 7))
-    >>> sorted(greedy_k_edge_augmentation(G, k=2))
-    [(1, 7)]
-    >>> sorted(greedy_k_edge_augmentation(G, k=1, avail=[]))
-    []
-    >>> G = nx.path_graph((1, 2, 3, 4, 5, 6, 7))
-    >>> avail = {(u, v): 1 for (u, v) in complement_edges(G)}
-    >>> # randomized pruning process can produce different solutions
-    >>> sorted(greedy_k_edge_augmentation(G, k=4, avail=avail, seed=2))
-    [(1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (2, 4), (2, 6), (3, 7), (5, 7)]
-    >>> sorted(greedy_k_edge_augmentation(G, k=4, avail=avail, seed=3))
-    [(1, 3), (1, 5), (1, 6), (2, 4), (2, 6), (3, 7), (4, 7), (5, 7)]
-    """
-    ...
+def greedy_k_edge_augmentation(
+    G: Graph[_Node],
+    k: int,
+    avail: dict[Incomplete, Incomplete] | Collection[tuple[Incomplete, ...]] | None = None,
+    weight: str | None = None,
+    seed=None,
+): ...

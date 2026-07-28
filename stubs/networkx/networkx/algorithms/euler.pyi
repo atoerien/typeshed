@@ -4,6 +4,7 @@ from _typeshed import Incomplete
 from collections.abc import Generator
 
 from networkx.classes.graph import Graph, _Node
+from networkx.classes.multigraph import MultiGraph
 from networkx.utils.backends import _dispatchable
 
 __all__ = ["is_eulerian", "eulerian_circuit", "eulerize", "is_semieulerian", "has_eulerian_path", "eulerian_path"]
@@ -216,45 +217,4 @@ def eulerian_path(G: Graph[_Node], source=None, keys: bool = False) -> Generator
     """
     ...
 @_dispatchable
-def eulerize(G: Graph[_Node]):
-    """
-    Transforms a graph into an Eulerian graph.
-
-    If `G` is Eulerian the result is `G` as a MultiGraph, otherwise the result is a smallest
-    (in terms of the number of edges) multigraph whose underlying simple graph is `G`.
-
-    Parameters
-    ----------
-    G : NetworkX graph
-       An undirected graph
-
-    Returns
-    -------
-    G : NetworkX multigraph
-
-    Raises
-    ------
-    NetworkXError
-       If the graph is not connected.
-
-    See Also
-    --------
-    is_eulerian
-    eulerian_circuit
-
-    References
-    ----------
-    .. [1] J. Edmonds, E. L. Johnson.
-       Matching, Euler tours and the Chinese postman.
-       Mathematical programming, Volume 5, Issue 1 (1973), 111-114.
-    .. [2] https://en.wikipedia.org/wiki/Eulerian_path
-    .. [3] http://web.math.princeton.edu/math_alive/5/Notes1.pdf
-
-    Examples
-    --------
-        >>> G = nx.complete_graph(10)
-        >>> H = nx.eulerize(G)
-        >>> nx.is_eulerian(H)
-        True
-    """
-    ...
+def eulerize(G: Graph[_Node]) -> MultiGraph[Incomplete]: ...

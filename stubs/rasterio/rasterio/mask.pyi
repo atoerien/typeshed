@@ -1,20 +1,21 @@
 """Mask the area outside of the input shapes with no data."""
 
 import logging
-from collections.abc import Iterable, Mapping
+from collections.abc import Iterable
 from typing import Any, Final
 
 from numpy.typing import NDArray
 from rasterio._affine_types import Affine
+from rasterio._typing import Geometry
 from rasterio.errors import WindowError as WindowError
 from rasterio.features import geometry_mask as geometry_mask, geometry_window as geometry_window
-from rasterio.io import DatasetReader
+from rasterio.io import DatasetReaderBase
 
 logger: Final[logging.Logger]
 
 def raster_geometry_mask(
-    dataset: DatasetReader,
-    shapes: Iterable[Mapping[str, Any]],
+    dataset: DatasetReaderBase,
+    shapes: Iterable[Geometry],
     all_touched: bool = False,
     invert: bool = False,
     crop: bool = False,
@@ -79,8 +80,8 @@ def raster_geometry_mask(
     """
     ...
 def mask(
-    dataset: DatasetReader,
-    shapes: Iterable[Mapping[str, Any]],
+    dataset: DatasetReaderBase,
+    shapes: Iterable[Geometry],
     all_touched: bool = False,
     invert: bool = False,
     nodata: float | None = None,

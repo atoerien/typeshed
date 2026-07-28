@@ -19,40 +19,7 @@ NUM_GRAPHS: Final = 1253
 ATLAS_FILE: Final[Traversable]
 
 @_dispatchable
-def graph_atlas(i) -> Graph[Incomplete]:
-    """
-    Returns graph number `i` from the Graph Atlas.
-
-    For more information, see :func:`.graph_atlas_g`.
-
-    Parameters
-    ----------
-    i : int
-        The index of the graph from the atlas to get. The graph at index
-        0 is assumed to be the null graph.
-
-    Returns
-    -------
-    list
-        A list of :class:`~networkx.Graph` objects, the one at index *i*
-        corresponding to the graph *i* in the Graph Atlas.
-
-    See also
-    --------
-    graph_atlas_g
-
-    Notes
-    -----
-    The time required by this function increases linearly with the
-    argument `i`, since it reads a large file sequentially in order to
-    generate the graph [1]_.
-
-    References
-    ----------
-    .. [1] Ronald C. Read and Robin J. Wilson, *An Atlas of Graphs*.
-           Oxford University Press, 1998.
-    """
-    ...
+def graph_atlas(i: int) -> Graph[Incomplete]: ...
 @_dispatchable
 def graph_atlas_g() -> list[Graph[Incomplete]]:
     """

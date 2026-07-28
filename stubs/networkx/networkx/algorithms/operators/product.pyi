@@ -215,69 +215,7 @@ def strong_product(G: Graph[_X], H: Graph[_Y]) -> Graph[tuple[_X, _Y]]:
     """
     ...
 @_dispatchable
-def power(G: Graph[_Node], k):
-    """
-    Returns the specified power of a graph.
-
-    The $k$th power of a simple graph $G$, denoted $G^k$, is a
-    graph on the same set of nodes in which two distinct nodes $u$ and
-    $v$ are adjacent in $G^k$ if and only if the shortest path
-    distance between $u$ and $v$ in $G$ is at most $k$.
-
-    Parameters
-    ----------
-    G : graph
-        A NetworkX simple graph object.
-
-    k : positive integer
-        The power to which to raise the graph `G`.
-
-    Returns
-    -------
-    NetworkX simple graph
-        `G` to the power `k`.
-
-    Raises
-    ------
-    ValueError
-        If the exponent `k` is not positive.
-
-    NetworkXNotImplemented
-        If `G` is not a simple graph.
-
-    Examples
-    --------
-    The number of edges will never decrease when taking successive
-    powers:
-
-    >>> G = nx.path_graph(4)
-    >>> list(nx.power(G, 2).edges)
-    [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3)]
-    >>> list(nx.power(G, 3).edges)
-    [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
-
-    The `k` th power of a cycle graph on *n* nodes is the complete graph
-    on *n* nodes, if `k` is at least ``n // 2``:
-
-    >>> G = nx.cycle_graph(5)
-    >>> H = nx.complete_graph(5)
-    >>> nx.is_isomorphic(nx.power(G, 2), H)
-    True
-    >>> G = nx.cycle_graph(8)
-    >>> H = nx.complete_graph(8)
-    >>> nx.is_isomorphic(nx.power(G, 4), H)
-    True
-
-    References
-    ----------
-    .. [1] J. A. Bondy, U. S. R. Murty, *Graph Theory*. Springer, 2008.
-
-    Notes
-    -----
-    This definition of "power graph" comes from Exercise 3.1.6 of
-    *Graph Theory* by Bondy and Murty [1]_.
-    """
-    ...
+def power(G: Graph[_Node], k: int) -> Graph[Incomplete]: ...
 @_dispatchable
 def rooted_product(G: Graph[_X], H: Graph[_Y], root: _Y) -> Graph[tuple[_X, _Y]]:
     """
