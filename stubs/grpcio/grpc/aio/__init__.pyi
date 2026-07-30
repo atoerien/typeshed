@@ -914,9 +914,36 @@ class ServicerContext(Generic[_TRequest, _TResponse], metaclass=abc.ABCMeta):
         """
         ...
     @abc.abstractmethod
-    async def abort_with_status(self, status: Status) -> Never: ...
+    async def abort_with_status(self, status: Status) -> Never:
+        """
+        Raises an exception to terminate the RPC with a non-OK status.
+
+        The status passed as argument will supersede any existing status code,
+        status message and trailing metadata.
+
+        This is an EXPERIMENTAL API.
+
+        Args:
+          status: A grpc.Status object. The status code in it must not be
+            StatusCode.OK.
+
+        Raises:
+          Exception: An exception is always raised to signal the abortion of the
+            RPC to the gRPC runtime.
+        """
+        ...
     @abc.abstractmethod
-    def set_trailing_metadata(self, trailing_metadata: _MetadataType) -> None: ...
+    def set_trailing_metadata(self, trailing_metadata: _MetadataType) -> None:
+        """
+        Sends the trailing metadata for the RPC.
+
+        This method need not be called by implementations if they have no
+        metadata to add to what the gRPC runtime will transmit.
+
+        Args:
+          trailing_metadata: The trailing :term:`metadata`.
+        """
+        ...
     @abc.abstractmethod
     def invocation_metadata(self) -> Metadata | None:
         """

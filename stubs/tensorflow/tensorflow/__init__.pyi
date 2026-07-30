@@ -1725,9 +1725,9 @@ class TensorShape(metaclass=ABCMeta):
         ...
 
     @overload
-    def __getitem__(self, key: int) -> int | None: ...
-    @overload
-    def __getitem__(self, key: _slice) -> TensorShape: ...
+    def __getitem__(self, key: int) -> int | None:
+        """
+        Returns the value of a dimension or a shape, depending on the key.
 
         Args:
           key: If `key` is an integer, returns the dimension at that index;
@@ -1744,7 +1744,7 @@ class TensorShape(metaclass=ABCMeta):
         """
         ...
     @overload
-    def __getitem__(self, key: slice) -> TensorShape:
+    def __getitem__(self, key: _slice) -> TensorShape:
         """
         Returns the value of a dimension or a shape, depending on the key.
 
@@ -3152,15 +3152,168 @@ def squeeze(input: RaggedTensor, axis: int | tuple[int, ...] | list[int], name: 
     """
     ...
 
-def slice(input_: TensorCompatible, begin: IntTensorCompatible, size: IntTensorCompatible, name: str | None = None) -> Tensor: ...
+def slice(input_: TensorCompatible, begin: IntTensorCompatible, size: IntTensorCompatible, name: str | None = None) -> Tensor:
+    """
+    Extracts a slice from a tensor.
+
+    See also `tf.strided_slice`.
+
+    This operation extracts a slice of size `size` from a tensor `input_` starting
+    at the location specified by `begin`. The slice `size` is represented as a
+    tensor shape, where `size[i]` is the number of elements of the 'i'th dimension
+    of `input_` that you want to slice. The starting location (`begin`) for the
+    slice is represented as an offset in each dimension of `input_`. In other
+    words, `begin[i]` is the offset into the i'th dimension of `input_` that you
+    want to slice from.
+
+    Note that `tf.Tensor.__getitem__` is typically a more pythonic way to
+    perform slices, as it allows you to write `foo[3:7, :-2]` instead of
+    `tf.slice(foo, [3, 0], [4, foo.get_shape()[1]-2])`.
+
+    `begin` is zero-based; `size` is one-based. If `size[i]` is -1,
+    all remaining elements in dimension i are included in the
+    slice. In other words, this is equivalent to setting:
+
+    `size[i] = input_.dim_size(i) - begin[i]`
+
+    This operation requires that:
+
+    `0 <= begin[i] <= begin[i] + size[i] <= Di  for i in [0, n]`
+
+    For example:
+
+    ```python
+    t = tf.constant([[[1, 1, 1], [2, 2, 2]],
+                     [[3, 3, 3], [4, 4, 4]],
+                     [[5, 5, 5], [6, 6, 6]]])
+    tf.slice(t, [1, 0, 0], [1, 1, 3])  # [[[3, 3, 3]]]
+    tf.slice(t, [1, 0, 0], [1, 2, 3])  # [[[3, 3, 3],
+                                       #   [4, 4, 4]]]
+    tf.slice(t, [1, 0, 0], [2, 1, 3])  # [[[3, 3, 3]],
+                                       #  [[5, 5, 5]]]
+    ```
+
+    Args:
+      input_: A `Tensor`.
+      begin: An `int32` or `int64` `Tensor`.
+      size: An `int32` or `int64` `Tensor`.
+      name: A name for the operation (optional).
+
+    Returns:
+      A `Tensor` the same type as `input_`.
+    """
+    ...
 def split(
     value: TensorCompatible,
     num_or_size_splits: int | TensorCompatible,
     axis: int | Tensor = 0,
     num: int | None = None,
     name: str | None = "split",
-) -> list[Tensor]: ...
-def stack(values: TensorCompatible, axis: int = 0, name: str | None = "stack") -> Tensor: ...
+) -> list[Tensor]:
+    """
+    Splits a tensor `value` into a list of sub tensors.
+
+    See also `tf.unstack`.
+
+    If `num_or_size_splits` is an `int`,  then it splits `value` along the
+    dimension `axis` into `num_or_size_splits` smaller tensors. This requires that
+    `value.shape[axis]` is divisible by `num_or_size_splits`.
+
+    If `num_or_size_splits` is a 1-D Tensor (or list), then `value` is split into
+    `len(num_or_size_splits)` elements. The shape of the `i`-th
+    element has the same size as the `value` except along dimension `axis` where
+    the size is `num_or_size_splits[i]`.
+
+    For example:
+
+    >>> x = tf.Variable(tf.random.uniform([5, 30], -1, 1))
+    >>>
+    >>> # Split `x` into 3 tensors along dimension 1
+    >>> s0, s1, s2 = tf.split(x, num_or_size_splits=3, axis=1)
+    >>> tf.shape(s0).numpy()
+    array([ 5, 10], dtype=int32)
+    >>>
+    >>> # Split `x` into 3 tensors with sizes [4, 15, 11] along dimension 1
+    >>> split0, split1, split2 = tf.split(x, [4, 15, 11], 1)
+    >>> tf.shape(split0).numpy()
+    array([5, 4], dtype=int32)
+    >>> tf.shape(split1).numpy()
+    array([ 5, 15], dtype=int32)
+    >>> tf.shape(split2).numpy()
+    array([ 5, 11], dtype=int32)
+
+    Args:
+      value: The `Tensor` to split.
+      num_or_size_splits: Either an `int` indicating the number of splits
+        along `axis` or a 1-D integer `Tensor` or Python list containing the sizes
+        of each output tensor along `axis`. If an `int`, then it must evenly
+        divide `value.shape[axis]`; otherwise the sum of sizes along the split
+        axis must match that of the `value`.
+      axis: An `int` or scalar `int32` `Tensor`. The dimension along which
+        to split. Must be in the range `[-rank(value), rank(value))`. Defaults to
+        0.
+      num: Optional, an `int`, used to specify the number of outputs when it
+        cannot be inferred from the shape of `size_splits`.
+      name: A name for the operation (optional).
+
+    Returns:
+      if `num_or_size_splits` is an `int` returns a list of
+      `num_or_size_splits` `Tensor` objects; if `num_or_size_splits` is a 1-D
+      list or 1-D `Tensor` returns `num_or_size_splits.get_shape[0]`
+      `Tensor` objects resulting from splitting `value`.
+
+    Raises:
+      ValueError: If `num` is unspecified and cannot be inferred.
+      ValueError: If `num_or_size_splits` is a scalar `Tensor`.
+    """
+    ...
+def stack(values: TensorCompatible, axis: int = 0, name: str | None = "stack") -> Tensor:
+    """
+    Stacks a list of rank-`R` tensors into one rank-`(R+1)` tensor.
+
+    See also `tf.concat`, `tf.tile`, `tf.repeat`.
+
+    Packs the list of tensors in `values` into a tensor with rank one higher than
+    each tensor in `values`, by packing them along the `axis` dimension.
+    Given a list of length `N` of tensors of shape `(A, B, C)`;
+
+    if `axis == 0` then the `output` tensor will have the shape `(N, A, B, C)`.
+    if `axis == 1` then the `output` tensor will have the shape `(A, N, B, C)`.
+    Etc.
+
+    For example:
+
+    >>> x = tf.constant([1, 4])
+    >>> y = tf.constant([2, 5])
+    >>> z = tf.constant([3, 6])
+    >>> tf.stack([x, y, z])
+    <tf.Tensor: shape=(3, 2), dtype=int32, numpy=
+    array([[1, 4],
+           [2, 5],
+           [3, 6]], dtype=int32)>
+    >>> tf.stack([x, y, z], axis=1)
+    <tf.Tensor: shape=(2, 3), dtype=int32, numpy=
+    array([[1, 2, 3],
+           [4, 5, 6]], dtype=int32)>
+
+    This is the opposite of unstack.  The numpy equivalent is `np.stack`
+
+    >>> np.array_equal(np.stack([x, y, z]), tf.stack([x, y, z]))
+    True
+
+    Args:
+      values: A list of `Tensor` objects with the same shape and type.
+      axis: An `int`. The axis to stack along. Defaults to the first dimension.
+        Negative values wrap around, so the valid range is `[-(R+1), R+1)`.
+      name: A name for this operation (optional).
+
+    Returns:
+      output: A stacked `Tensor` with the same type as `values`.
+
+    Raises:
+      ValueError: If `axis` is out of the range [-(R+1), R+1).
+    """
+    ...
 def tensor_scatter_nd_update(
     tensor: TensorCompatible, indices: TensorCompatible, updates: TensorCompatible, name: str | None = None
 ) -> Tensor:
@@ -3910,8 +4063,235 @@ def ones_like(
     """
     Creates a tensor of all ones that has the same shape as the input.
 
-def reshape(tensor: TensorCompatible, shape: ShapeLike | Tensor, name: str | None = None) -> Tensor: ...
-def reverse(tensor: TensorCompatible, axis: IntTensorCompatible, name: str | None = None) -> Tensor: ...
+    See also `tf.ones`.
+
+    Given a single tensor (`tensor`), this operation returns a tensor of the
+    same type and shape as `tensor` with all elements set to 1. Optionally,
+    you can use `dtype` to specify a new type for the returned tensor.
+
+    For example:
+
+    >>> tensor = tf.constant([[1, 2, 3], [4, 5, 6]])
+    >>> tf.ones_like(tensor)
+    <tf.Tensor: shape=(2, 3), dtype=int32, numpy=
+      array([[1, 1, 1],
+             [1, 1, 1]], dtype=int32)>
+
+    Note that the layout of the input tensor is not preserved if the op
+    is used inside tf.function. To obtain a tensor with the same layout as the
+    input, chain the returned value to a `dtensor.relayout_like`.
+
+    Args:
+      input: A `Tensor`.
+      dtype: A type for the returned `Tensor`. Must be `float16`, `float32`,
+        `float64`, `int8`, `uint8`, `int16`, `uint16`, `int32`, `int64`,
+        `complex64`, `complex128`, `bool` or `string`.
+      name: A name for the operation (optional).
+      layout: Optional, `tf.experimental.dtensor.Layout`. If provided, the result
+        is a [DTensor](https://www.tensorflow.org/guide/dtensor_overview) with the
+        provided layout.
+
+    Returns:
+      A `Tensor` with all elements set to one.
+    """
+    ...
+
+def reshape(tensor: TensorCompatible, shape: ShapeLike | Tensor, name: str | None = None) -> Tensor:
+    """
+    Reshapes a tensor.
+
+    Given `tensor`, this operation returns a new `tf.Tensor` that has the same
+    values as `tensor` in the same order, except with a new shape given by
+    `shape`.
+
+    >>> t1 = [[1, 2, 3],
+    ...       [4, 5, 6]]
+    >>> print(tf.shape(t1).numpy())
+    [2 3]
+    >>> t2 = tf.reshape(t1, [6])
+    >>> t2
+    <tf.Tensor: shape=(6,), dtype=int32,
+      numpy=array([1, 2, 3, 4, 5, 6], dtype=int32)>
+    >>> tf.reshape(t2, [3, 2])
+    <tf.Tensor: shape=(3, 2), dtype=int32, numpy=
+      array([[1, 2],
+             [3, 4],
+             [5, 6]], dtype=int32)>
+
+    The `tf.reshape` does not change the order of or the total number of elements
+    in the tensor, and so it can reuse the underlying data buffer. This makes it
+    a fast operation independent of how big of a tensor it is operating on.
+
+    >>> tf.reshape([1, 2, 3], [2, 2])
+    Traceback (most recent call last):
+    ...
+    InvalidArgumentError: Input to reshape is a tensor with 3 values, but the
+    requested shape has 4
+
+    To instead reorder the data to rearrange the dimensions of a tensor, see
+    `tf.transpose`.
+
+    >>> t = [[1, 2, 3],
+    ...      [4, 5, 6]]
+    >>> tf.reshape(t, [3, 2]).numpy()
+    array([[1, 2],
+           [3, 4],
+           [5, 6]], dtype=int32)
+    >>> tf.transpose(t, perm=[1, 0]).numpy()
+    array([[1, 4],
+           [2, 5],
+           [3, 6]], dtype=int32)
+
+    If one component of `shape` is the special value -1, the size of that
+    dimension is computed so that the total size remains constant.  In particular,
+    a `shape` of `[-1]` flattens into 1-D.  At most one component of `shape` can
+    be -1.
+
+    >>> t = [[1, 2, 3],
+    ...      [4, 5, 6]]
+    >>> tf.reshape(t, [-1])
+    <tf.Tensor: shape=(6,), dtype=int32,
+      numpy=array([1, 2, 3, 4, 5, 6], dtype=int32)>
+    >>> tf.reshape(t, [3, -1])
+    <tf.Tensor: shape=(3, 2), dtype=int32, numpy=
+      array([[1, 2],
+             [3, 4],
+             [5, 6]], dtype=int32)>
+    >>> tf.reshape(t, [-1, 2])
+    <tf.Tensor: shape=(3, 2), dtype=int32, numpy=
+      array([[1, 2],
+             [3, 4],
+             [5, 6]], dtype=int32)>
+
+    `tf.reshape(t, [])` reshapes a tensor `t` with one element to a scalar.
+
+    >>> tf.reshape([7], []).numpy().item()
+    7
+
+    More examples:
+
+    >>> t = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    >>> print(tf.shape(t).numpy())
+    [9]
+    >>> tf.reshape(t, [3, 3])
+    <tf.Tensor: shape=(3, 3), dtype=int32, numpy=
+      array([[1, 2, 3],
+             [4, 5, 6],
+             [7, 8, 9]], dtype=int32)>
+
+    >>> t = [[[1, 1], [2, 2]],
+    ...      [[3, 3], [4, 4]]]
+    >>> print(tf.shape(t).numpy())
+    [2 2 2]
+    >>> tf.reshape(t, [2, 4])
+    <tf.Tensor: shape=(2, 4), dtype=int32, numpy=
+      array([[1, 1, 2, 2],
+             [3, 3, 4, 4]], dtype=int32)>
+
+    >>> t = [[[1, 1, 1],
+    ...       [2, 2, 2]],
+    ...      [[3, 3, 3],
+    ...       [4, 4, 4]],
+    ...      [[5, 5, 5],
+    ...       [6, 6, 6]]]
+    >>> print(tf.shape(t).numpy())
+    [3 2 3]
+    >>> # Pass '[-1]' to flatten 't'.
+    >>> tf.reshape(t, [-1])
+    <tf.Tensor: shape=(18,), dtype=int32,
+      numpy=array([1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6],
+      dtype=int32)>
+    >>> # -- Using -1 to infer the shape --
+    >>> # Here -1 is inferred to be 9:
+    >>> tf.reshape(t, [2, -1])
+    <tf.Tensor: shape=(2, 9), dtype=int32, numpy=
+      array([[1, 1, 1, 2, 2, 2, 3, 3, 3],
+             [4, 4, 4, 5, 5, 5, 6, 6, 6]], dtype=int32)>
+    >>> # -1 is inferred to be 2:
+    >>> tf.reshape(t, [-1, 9])
+    <tf.Tensor: shape=(2, 9), dtype=int32, numpy=
+      array([[1, 1, 1, 2, 2, 2, 3, 3, 3],
+             [4, 4, 4, 5, 5, 5, 6, 6, 6]], dtype=int32)>
+    >>> # -1 is inferred to be 3:
+    >>> tf.reshape(t, [ 2, -1, 3])
+    <tf.Tensor: shape=(2, 3, 3), dtype=int32, numpy=
+      array([[[1, 1, 1],
+              [2, 2, 2],
+              [3, 3, 3]],
+             [[4, 4, 4],
+              [5, 5, 5],
+              [6, 6, 6]]], dtype=int32)>
+
+    Args:
+      tensor: A `Tensor`.
+      shape: A `Tensor`. Must be one of the following types: `int32`, `int64`.
+        Defines the shape of the output tensor.
+      name: Optional string. A name for the operation.
+
+    Returns:
+      A `Tensor`. Has the same type as `tensor`.
+    """
+    ...
+def reverse(tensor: TensorCompatible, axis: IntTensorCompatible, name: str | None = None) -> Tensor:
+    """
+    Reverses specific dimensions of a tensor.
+
+    Given a `tensor`, and a `int32` tensor `axis` representing the set of
+    dimensions of `tensor` to reverse. This operation reverses each dimension
+    `i` for which there exists `j` s.t. `axis[j] == i`.
+
+    `tensor` can have up to 8 dimensions. The number of dimensions specified
+    in `axis` may be 0 or more entries. If an index is specified more than
+    once, a InvalidArgument error is raised.
+
+    For example:
+
+    ```
+    # tensor 't' is [[[[ 0,  1,  2,  3],
+    #                  [ 4,  5,  6,  7],
+    #                  [ 8,  9, 10, 11]],
+    #                 [[12, 13, 14, 15],
+    #                  [16, 17, 18, 19],
+    #                  [20, 21, 22, 23]]]]
+    # tensor 't' shape is [1, 2, 3, 4]
+
+    # 'dims' is [3] or 'dims' is [-1]
+    reverse(t, dims) ==> [[[[ 3,  2,  1,  0],
+                            [ 7,  6,  5,  4],
+                            [ 11, 10, 9, 8]],
+                           [[15, 14, 13, 12],
+                            [19, 18, 17, 16],
+                            [23, 22, 21, 20]]]]
+
+    # 'dims' is '[1]' (or 'dims' is '[-3]')
+    reverse(t, dims) ==> [[[[12, 13, 14, 15],
+                            [16, 17, 18, 19],
+                            [20, 21, 22, 23]
+                           [[ 0,  1,  2,  3],
+                            [ 4,  5,  6,  7],
+                            [ 8,  9, 10, 11]]]]
+
+    # 'dims' is '[2]' (or 'dims' is '[-2]')
+    reverse(t, dims) ==> [[[[8, 9, 10, 11],
+                            [4, 5, 6, 7],
+                            [0, 1, 2, 3]]
+                           [[20, 21, 22, 23],
+                            [16, 17, 18, 19],
+                            [12, 13, 14, 15]]]]
+    ```
+
+    Args:
+      tensor: A `Tensor`. Must be one of the following types: `uint8`, `int8`, `uint16`, `int16`, `int32`, `uint32`, `int64`, `uint64`, `bool`, `bfloat16`, `half`, `float32`, `float64`, `complex64`, `complex128`, `string`.
+        Up to 8-D.
+      axis: A `Tensor`. Must be one of the following types: `int32`, `int64`.
+        1-D. The indices of the dimensions to reverse. Must be in the range
+        `[-rank(tensor), rank(tensor))`.
+      name: A name for the operation (optional).
+
+    Returns:
+      A `Tensor`. Has the same type as `tensor`.
+    """
+    ...
 
 _ElemT = TypeVar("_ElemT", bound=TensorLike)
 _RetT = TypeVar("_RetT", bound=TensorLike)
@@ -3927,7 +4307,274 @@ def map_fn(
     infer_shape: _bool = True,
     name: str | None = None,
     fn_output_signature: Signature | None = None,
-) -> _RetT: ...
+) -> _RetT:
+    """
+    Transforms `elems` by applying `fn` to each element unstacked on axis 0. (deprecated arguments)
+
+    Deprecated: SOME ARGUMENTS ARE DEPRECATED: `(dtype)`. They will be removed in a future version.
+    Instructions for updating:
+    Use fn_output_signature instead
+
+    See also `tf.scan`.
+
+    `map_fn` unstacks `elems` on axis 0 to obtain a sequence of elements;
+    calls `fn` to transform each element; and then stacks the transformed
+    values back together.
+
+    #### Mapping functions with single-Tensor inputs and outputs
+
+    If `elems` is a single tensor and `fn`'s signature is `tf.Tensor->tf.Tensor`,
+    then `map_fn(fn, elems)` is equivalent to
+    `tf.stack([fn(elem) for elem in tf.unstack(elems)])`.  E.g.:
+
+    >>> tf.map_fn(fn=lambda t: tf.range(t, t + 3), elems=tf.constant([3, 5, 2]))
+    <tf.Tensor: shape=(3, 3), dtype=int32, numpy=
+      array([[3, 4, 5],
+             [5, 6, 7],
+             [2, 3, 4]], dtype=int32)>
+
+    `map_fn(fn, elems).shape = [elems.shape[0]] + fn(elems[0]).shape`.
+
+    #### Mapping functions with multi-arity inputs and outputs
+
+    `map_fn` also supports functions with multi-arity inputs and outputs:
+
+    * If `elems` is a tuple (or nested structure) of tensors, then those tensors
+      must all have the same outer-dimension size (`num_elems`); and `fn` is
+      used to transform each tuple (or structure) of corresponding slices from
+      `elems`.  E.g., if `elems` is a tuple `(t1, t2, t3)`, then `fn` is used to
+      transform each tuple of slices `(t1[i], t2[i], t3[i])`
+      (where `0 <= i < num_elems`).
+
+    * If `fn` returns a tuple (or nested structure) of tensors, then the
+      result is formed by stacking corresponding elements from those structures.
+
+    #### Specifying `fn`'s output signature
+
+    If `fn`'s input and output signatures are different, then the output
+    signature must be specified using `fn_output_signature`.  (The input and
+    output signatures are differ if their structures, dtypes, or tensor types do
+    not match).  E.g.:
+
+    >>> tf.map_fn(fn=tf.strings.length,  # input & output have different dtypes
+    ...           elems=tf.constant(["hello", "moon"]),
+    ...           fn_output_signature=tf.int32)
+    <tf.Tensor: shape=(2,), dtype=int32, numpy=array([5, 4], dtype=int32)>
+    >>> tf.map_fn(fn=tf.strings.join,  # input & output have different structures
+    ...           elems=[tf.constant(['The', 'A']), tf.constant(['Dog', 'Cat'])],
+    ...           fn_output_signature=tf.string)
+    <tf.Tensor: shape=(2,), dtype=string,
+     numpy=array([b'TheDog', b'ACat'], dtype=object)>
+
+    `fn_output_signature` can be specified using any of the following:
+
+    * A `tf.DType` or `tf.TensorSpec` (to describe a `tf.Tensor`)
+    * A `tf.RaggedTensorSpec` (to describe a `tf.RaggedTensor`)
+    * A `tf.SparseTensorSpec` (to describe a `tf.sparse.SparseTensor`)
+    * A (possibly nested) tuple, list, or dict containing the above types.
+
+    #### RaggedTensors
+
+    `map_fn` supports `tf.RaggedTensor` inputs and outputs.  In particular:
+
+    * If `elems` is a `RaggedTensor`, then `fn` will be called with each
+      row of that ragged tensor.
+      * If `elems` has only one ragged dimension, then the values passed to
+        `fn` will be `tf.Tensor`s.
+      * If `elems` has multiple ragged dimensions, then the values passed to
+        `fn` will be `tf.RaggedTensor`s with one fewer ragged dimension.
+
+    * If the result of `map_fn` should be a `RaggedTensor`, then use a
+      `tf.RaggedTensorSpec` to specify `fn_output_signature`.
+      * If `fn` returns `tf.Tensor`s with varying sizes, then use a
+        `tf.RaggedTensorSpec` with `ragged_rank=0` to combine them into a
+        single ragged tensor (which will have ragged_rank=1).
+      * If `fn` returns `tf.RaggedTensor`s, then use a `tf.RaggedTensorSpec`
+        with the same `ragged_rank`.
+
+    >>> # Example: RaggedTensor input
+    >>> rt = tf.ragged.constant([[1, 2, 3], [], [4, 5], [6]])
+    >>> tf.map_fn(tf.reduce_sum, rt, fn_output_signature=tf.int32)
+    <tf.Tensor: shape=(4,), dtype=int32, numpy=array([6, 0, 9, 6], dtype=int32)>
+
+    >>> # Example: RaggedTensor output
+    >>> elems = tf.constant([3, 5, 0, 2])
+    >>> tf.map_fn(tf.range, elems,
+    ...           fn_output_signature=tf.RaggedTensorSpec(shape=[None],
+    ...                                                   dtype=tf.int32))
+    <tf.RaggedTensor [[0, 1, 2], [0, 1, 2, 3, 4], [], [0, 1]]>
+
+    Note: `map_fn` should only be used if you need to map a function over the
+    *rows* of a `RaggedTensor`.  If you wish to map a function over the
+    individual values, then you should use:
+
+    * `tf.ragged.map_flat_values(fn, rt)`
+      (if fn is expressible as TensorFlow ops)
+    * `rt.with_flat_values(map_fn(fn, rt.flat_values))`
+      (otherwise)
+
+    E.g.:
+
+    >>> rt = tf.ragged.constant([[1, 2, 3], [], [4, 5], [6]])
+    >>> tf.ragged.map_flat_values(lambda x: x + 2, rt)
+    <tf.RaggedTensor [[3, 4, 5], [], [6, 7], [8]]>
+
+    #### SparseTensors
+
+    `map_fn` supports `tf.sparse.SparseTensor` inputs and outputs.  In particular:
+
+    * If `elems` is a `SparseTensor`, then `fn` will be called with each row
+      of that sparse tensor. In particular, the value passed to `fn` will be a
+      `tf.sparse.SparseTensor` with one fewer dimension than `elems`.
+
+    * If the result of `map_fn` should be a `SparseTensor`, then use a
+      `tf.SparseTensorSpec` to specify `fn_output_signature`.  The individual
+      `SparseTensor`s returned by `fn` will be stacked into a single
+      `SparseTensor` with one more dimension.
+
+    >>> # Example: SparseTensor input
+    >>> st = tf.sparse.SparseTensor([[0, 0], [2, 0], [2, 1]], [2, 3, 4], [4, 4])
+    >>> tf.map_fn(tf.sparse.reduce_sum, st, fn_output_signature=tf.int32)
+    <tf.Tensor: shape=(4,), dtype=int32, numpy=array([2, 0, 7, 0], dtype=int32)>
+
+    >>> # Example: SparseTensor output
+    >>> tf.sparse.to_dense(
+    ...     tf.map_fn(tf.sparse.eye, tf.constant([2, 3]),
+    ...               fn_output_signature=tf.SparseTensorSpec(None, tf.float32)))
+    <tf.Tensor: shape=(2, 3, 3), dtype=float32, numpy=
+      array([[[1., 0., 0.],
+              [0., 1., 0.],
+              [0., 0., 0.]],
+             [[1., 0., 0.],
+              [0., 1., 0.],
+              [0., 0., 1.]]], dtype=float32)>
+
+    Note: `map_fn` should only be used if you need to map a function over the
+    *rows* of a `SparseTensor`.  If you wish to map a function over the nonzero
+    values, then you should use:
+
+    * If the function is expressible as TensorFlow ops, use:
+      ```python
+      tf.sparse.SparseTensor(st.indices, fn(st.values), st.dense_shape)
+      ```
+    * Otherwise, use:
+      ```python
+      tf.sparse.SparseTensor(st.indices, tf.map_fn(fn, st.values),
+                             st.dense_shape)
+      ```
+
+    #### `map_fn` vs. vectorized operations
+
+    `map_fn` will apply the operations used by `fn` to each element of `elems`,
+    resulting in `O(elems.shape[0])` total operations.  This is somewhat
+    mitigated by the fact that `map_fn` can process elements in parallel.
+    However, a transform expressed using `map_fn` is still typically less
+    efficient than an equivalent transform expressed using vectorized operations.
+
+    `map_fn` should typically only be used if one of the following is true:
+
+    * It is difficult or expensive to express the desired transform with
+      vectorized operations.
+    * `fn` creates large intermediate values, so an equivalent vectorized
+      transform would take too much memory.
+    * Processing elements in parallel is more efficient than an equivalent
+      vectorized transform.
+    * Efficiency of the transform is not critical, and using `map_fn` is
+      more readable.
+
+    E.g., the example given above that maps `fn=lambda t: tf.range(t, t + 3)`
+    across `elems` could be rewritten more efficiently using vectorized ops:
+
+    >>> elems = tf.constant([3, 5, 2])
+    >>> tf.range(3) + tf.expand_dims(elems, 1)
+    <tf.Tensor: shape=(3, 3), dtype=int32, numpy=
+      array([[3, 4, 5],
+             [5, 6, 7],
+             [2, 3, 4]], dtype=int32)>
+
+    In some cases, `tf.vectorized_map` can be used to automatically convert a
+    function to a vectorized equivalent.
+
+    #### Eager execution
+
+    When executing eagerly, `map_fn` does not execute in parallel even if
+    `parallel_iterations` is set to a value > 1. You can still get the
+    performance benefits of running a function in parallel by using the
+    `tf.function` decorator:
+
+    >>> fn=lambda t: tf.range(t, t + 3)
+    >>> @tf.function
+    ... def func(elems):
+    ...   return tf.map_fn(fn, elems, parallel_iterations=3)
+    >>> func(tf.constant([3, 5, 2]))
+    <tf.Tensor: shape=(3, 3), dtype=int32, numpy=
+      array([[3, 4, 5],
+             [5, 6, 7],
+             [2, 3, 4]], dtype=int32)>
+
+
+    Note: if you use the `tf.function` decorator, any non-TensorFlow Python
+    code that you may have written in your function won't get executed. See
+    `tf.function` for more  details. The recommendation would be to debug without
+    `tf.function` but switch to it to get performance benefits of running `map_fn`
+    in parallel.
+
+    Args:
+      fn: The callable to be performed.  It accepts one argument, which will have
+        the same (possibly nested) structure as `elems`.  Its output must have the
+        same structure as `fn_output_signature` if one is provided; otherwise it
+        must have the same structure as `elems`.
+      elems: A tensor or (possibly nested) sequence of tensors, each of which will
+        be unstacked along their first dimension.  `fn` will be applied to the
+        nested sequence of the resulting slices.  `elems` may include ragged and
+        sparse tensors. `elems` must consist of at least one tensor.
+      dtype: Deprecated: Equivalent to `fn_output_signature`.
+      parallel_iterations: (optional) The number of iterations allowed to run in
+        parallel. When graph building, the default value is 10. While executing
+        eagerly, the default value is set to 1.
+      back_prop: (optional) Deprecated: prefer using `tf.stop_gradient` instead.  False disables support for back propagation.
+      swap_memory: (optional) True enables GPU-CPU memory swapping.
+      infer_shape: (optional) False disables tests for consistent output shapes.
+      name: (optional) Name prefix for the returned tensors.
+      fn_output_signature: The output signature of `fn`. Must be specified if
+        `fn`'s input and output signatures are different (i.e., if their
+        structures, dtypes, or tensor types do not match).
+        `fn_output_signature` can be specified using any of the following:
+
+        * A `tf.DType` or `tf.TensorSpec` (to describe a `tf.Tensor`)
+        * A `tf.RaggedTensorSpec` (to describe a `tf.RaggedTensor`)
+        * A `tf.SparseTensorSpec` (to describe a `tf.sparse.SparseTensor`)
+        * A (possibly nested) tuple, list, or dict containing the above types.
+
+    Returns:
+      A tensor or (possibly nested) sequence of tensors.  Each tensor stacks the
+      results of applying `fn` to tensors unstacked from `elems` along the first
+      dimension, from first to last.  The result may include ragged and sparse
+      tensors.
+
+    Raises:
+      TypeError: if `fn` is not callable or the structure of the output of
+        `fn` and `fn_output_signature` do not match.
+      ValueError: if the lengths of the output of `fn` and `fn_output_signature`
+        do not match, or if the `elems` does not contain any tensor.
+
+    Examples:
+
+      >>> elems = np.array([1, 2, 3, 4, 5, 6])
+      >>> tf.map_fn(lambda x: x * x, elems)
+      <tf.Tensor: shape=(6,), dtype=int64, numpy=array([ 1,  4,  9, 16, 25, 36])>
+
+      >>> elems = (np.array([1, 2, 3]), np.array([-1, 1, -1]))
+      >>> tf.map_fn(lambda x: x[0] * x[1], elems, fn_output_signature=tf.int64)
+      <tf.Tensor: shape=(3,), dtype=int64, numpy=array([-1,  2, -3])>
+
+      >>> elems = np.array([1, 2, 3])
+      >>> tf.map_fn(lambda x: (x, -x), elems,
+      ...          fn_output_signature=(tf.int64, tf.int64))
+      (<tf.Tensor: shape=(3,), dtype=int64, numpy=array([1, 2, 3])>,
+       <tf.Tensor: shape=(3,), dtype=int64, numpy=array([-1, -2, -3])>)
+    """
+    ...
 @overload
 def map_fn(
     fn: Callable[[Tensor], _RetT],
@@ -3939,7 +4586,274 @@ def map_fn(
     infer_shape: _bool = True,
     name: str | None = None,
     fn_output_signature: Signature | None = None,
-) -> _RetT: ...
+) -> _RetT:
+    """
+    Transforms `elems` by applying `fn` to each element unstacked on axis 0. (deprecated arguments)
+
+    Deprecated: SOME ARGUMENTS ARE DEPRECATED: `(dtype)`. They will be removed in a future version.
+    Instructions for updating:
+    Use fn_output_signature instead
+
+    See also `tf.scan`.
+
+    `map_fn` unstacks `elems` on axis 0 to obtain a sequence of elements;
+    calls `fn` to transform each element; and then stacks the transformed
+    values back together.
+
+    #### Mapping functions with single-Tensor inputs and outputs
+
+    If `elems` is a single tensor and `fn`'s signature is `tf.Tensor->tf.Tensor`,
+    then `map_fn(fn, elems)` is equivalent to
+    `tf.stack([fn(elem) for elem in tf.unstack(elems)])`.  E.g.:
+
+    >>> tf.map_fn(fn=lambda t: tf.range(t, t + 3), elems=tf.constant([3, 5, 2]))
+    <tf.Tensor: shape=(3, 3), dtype=int32, numpy=
+      array([[3, 4, 5],
+             [5, 6, 7],
+             [2, 3, 4]], dtype=int32)>
+
+    `map_fn(fn, elems).shape = [elems.shape[0]] + fn(elems[0]).shape`.
+
+    #### Mapping functions with multi-arity inputs and outputs
+
+    `map_fn` also supports functions with multi-arity inputs and outputs:
+
+    * If `elems` is a tuple (or nested structure) of tensors, then those tensors
+      must all have the same outer-dimension size (`num_elems`); and `fn` is
+      used to transform each tuple (or structure) of corresponding slices from
+      `elems`.  E.g., if `elems` is a tuple `(t1, t2, t3)`, then `fn` is used to
+      transform each tuple of slices `(t1[i], t2[i], t3[i])`
+      (where `0 <= i < num_elems`).
+
+    * If `fn` returns a tuple (or nested structure) of tensors, then the
+      result is formed by stacking corresponding elements from those structures.
+
+    #### Specifying `fn`'s output signature
+
+    If `fn`'s input and output signatures are different, then the output
+    signature must be specified using `fn_output_signature`.  (The input and
+    output signatures are differ if their structures, dtypes, or tensor types do
+    not match).  E.g.:
+
+    >>> tf.map_fn(fn=tf.strings.length,  # input & output have different dtypes
+    ...           elems=tf.constant(["hello", "moon"]),
+    ...           fn_output_signature=tf.int32)
+    <tf.Tensor: shape=(2,), dtype=int32, numpy=array([5, 4], dtype=int32)>
+    >>> tf.map_fn(fn=tf.strings.join,  # input & output have different structures
+    ...           elems=[tf.constant(['The', 'A']), tf.constant(['Dog', 'Cat'])],
+    ...           fn_output_signature=tf.string)
+    <tf.Tensor: shape=(2,), dtype=string,
+     numpy=array([b'TheDog', b'ACat'], dtype=object)>
+
+    `fn_output_signature` can be specified using any of the following:
+
+    * A `tf.DType` or `tf.TensorSpec` (to describe a `tf.Tensor`)
+    * A `tf.RaggedTensorSpec` (to describe a `tf.RaggedTensor`)
+    * A `tf.SparseTensorSpec` (to describe a `tf.sparse.SparseTensor`)
+    * A (possibly nested) tuple, list, or dict containing the above types.
+
+    #### RaggedTensors
+
+    `map_fn` supports `tf.RaggedTensor` inputs and outputs.  In particular:
+
+    * If `elems` is a `RaggedTensor`, then `fn` will be called with each
+      row of that ragged tensor.
+      * If `elems` has only one ragged dimension, then the values passed to
+        `fn` will be `tf.Tensor`s.
+      * If `elems` has multiple ragged dimensions, then the values passed to
+        `fn` will be `tf.RaggedTensor`s with one fewer ragged dimension.
+
+    * If the result of `map_fn` should be a `RaggedTensor`, then use a
+      `tf.RaggedTensorSpec` to specify `fn_output_signature`.
+      * If `fn` returns `tf.Tensor`s with varying sizes, then use a
+        `tf.RaggedTensorSpec` with `ragged_rank=0` to combine them into a
+        single ragged tensor (which will have ragged_rank=1).
+      * If `fn` returns `tf.RaggedTensor`s, then use a `tf.RaggedTensorSpec`
+        with the same `ragged_rank`.
+
+    >>> # Example: RaggedTensor input
+    >>> rt = tf.ragged.constant([[1, 2, 3], [], [4, 5], [6]])
+    >>> tf.map_fn(tf.reduce_sum, rt, fn_output_signature=tf.int32)
+    <tf.Tensor: shape=(4,), dtype=int32, numpy=array([6, 0, 9, 6], dtype=int32)>
+
+    >>> # Example: RaggedTensor output
+    >>> elems = tf.constant([3, 5, 0, 2])
+    >>> tf.map_fn(tf.range, elems,
+    ...           fn_output_signature=tf.RaggedTensorSpec(shape=[None],
+    ...                                                   dtype=tf.int32))
+    <tf.RaggedTensor [[0, 1, 2], [0, 1, 2, 3, 4], [], [0, 1]]>
+
+    Note: `map_fn` should only be used if you need to map a function over the
+    *rows* of a `RaggedTensor`.  If you wish to map a function over the
+    individual values, then you should use:
+
+    * `tf.ragged.map_flat_values(fn, rt)`
+      (if fn is expressible as TensorFlow ops)
+    * `rt.with_flat_values(map_fn(fn, rt.flat_values))`
+      (otherwise)
+
+    E.g.:
+
+    >>> rt = tf.ragged.constant([[1, 2, 3], [], [4, 5], [6]])
+    >>> tf.ragged.map_flat_values(lambda x: x + 2, rt)
+    <tf.RaggedTensor [[3, 4, 5], [], [6, 7], [8]]>
+
+    #### SparseTensors
+
+    `map_fn` supports `tf.sparse.SparseTensor` inputs and outputs.  In particular:
+
+    * If `elems` is a `SparseTensor`, then `fn` will be called with each row
+      of that sparse tensor. In particular, the value passed to `fn` will be a
+      `tf.sparse.SparseTensor` with one fewer dimension than `elems`.
+
+    * If the result of `map_fn` should be a `SparseTensor`, then use a
+      `tf.SparseTensorSpec` to specify `fn_output_signature`.  The individual
+      `SparseTensor`s returned by `fn` will be stacked into a single
+      `SparseTensor` with one more dimension.
+
+    >>> # Example: SparseTensor input
+    >>> st = tf.sparse.SparseTensor([[0, 0], [2, 0], [2, 1]], [2, 3, 4], [4, 4])
+    >>> tf.map_fn(tf.sparse.reduce_sum, st, fn_output_signature=tf.int32)
+    <tf.Tensor: shape=(4,), dtype=int32, numpy=array([2, 0, 7, 0], dtype=int32)>
+
+    >>> # Example: SparseTensor output
+    >>> tf.sparse.to_dense(
+    ...     tf.map_fn(tf.sparse.eye, tf.constant([2, 3]),
+    ...               fn_output_signature=tf.SparseTensorSpec(None, tf.float32)))
+    <tf.Tensor: shape=(2, 3, 3), dtype=float32, numpy=
+      array([[[1., 0., 0.],
+              [0., 1., 0.],
+              [0., 0., 0.]],
+             [[1., 0., 0.],
+              [0., 1., 0.],
+              [0., 0., 1.]]], dtype=float32)>
+
+    Note: `map_fn` should only be used if you need to map a function over the
+    *rows* of a `SparseTensor`.  If you wish to map a function over the nonzero
+    values, then you should use:
+
+    * If the function is expressible as TensorFlow ops, use:
+      ```python
+      tf.sparse.SparseTensor(st.indices, fn(st.values), st.dense_shape)
+      ```
+    * Otherwise, use:
+      ```python
+      tf.sparse.SparseTensor(st.indices, tf.map_fn(fn, st.values),
+                             st.dense_shape)
+      ```
+
+    #### `map_fn` vs. vectorized operations
+
+    `map_fn` will apply the operations used by `fn` to each element of `elems`,
+    resulting in `O(elems.shape[0])` total operations.  This is somewhat
+    mitigated by the fact that `map_fn` can process elements in parallel.
+    However, a transform expressed using `map_fn` is still typically less
+    efficient than an equivalent transform expressed using vectorized operations.
+
+    `map_fn` should typically only be used if one of the following is true:
+
+    * It is difficult or expensive to express the desired transform with
+      vectorized operations.
+    * `fn` creates large intermediate values, so an equivalent vectorized
+      transform would take too much memory.
+    * Processing elements in parallel is more efficient than an equivalent
+      vectorized transform.
+    * Efficiency of the transform is not critical, and using `map_fn` is
+      more readable.
+
+    E.g., the example given above that maps `fn=lambda t: tf.range(t, t + 3)`
+    across `elems` could be rewritten more efficiently using vectorized ops:
+
+    >>> elems = tf.constant([3, 5, 2])
+    >>> tf.range(3) + tf.expand_dims(elems, 1)
+    <tf.Tensor: shape=(3, 3), dtype=int32, numpy=
+      array([[3, 4, 5],
+             [5, 6, 7],
+             [2, 3, 4]], dtype=int32)>
+
+    In some cases, `tf.vectorized_map` can be used to automatically convert a
+    function to a vectorized equivalent.
+
+    #### Eager execution
+
+    When executing eagerly, `map_fn` does not execute in parallel even if
+    `parallel_iterations` is set to a value > 1. You can still get the
+    performance benefits of running a function in parallel by using the
+    `tf.function` decorator:
+
+    >>> fn=lambda t: tf.range(t, t + 3)
+    >>> @tf.function
+    ... def func(elems):
+    ...   return tf.map_fn(fn, elems, parallel_iterations=3)
+    >>> func(tf.constant([3, 5, 2]))
+    <tf.Tensor: shape=(3, 3), dtype=int32, numpy=
+      array([[3, 4, 5],
+             [5, 6, 7],
+             [2, 3, 4]], dtype=int32)>
+
+
+    Note: if you use the `tf.function` decorator, any non-TensorFlow Python
+    code that you may have written in your function won't get executed. See
+    `tf.function` for more  details. The recommendation would be to debug without
+    `tf.function` but switch to it to get performance benefits of running `map_fn`
+    in parallel.
+
+    Args:
+      fn: The callable to be performed.  It accepts one argument, which will have
+        the same (possibly nested) structure as `elems`.  Its output must have the
+        same structure as `fn_output_signature` if one is provided; otherwise it
+        must have the same structure as `elems`.
+      elems: A tensor or (possibly nested) sequence of tensors, each of which will
+        be unstacked along their first dimension.  `fn` will be applied to the
+        nested sequence of the resulting slices.  `elems` may include ragged and
+        sparse tensors. `elems` must consist of at least one tensor.
+      dtype: Deprecated: Equivalent to `fn_output_signature`.
+      parallel_iterations: (optional) The number of iterations allowed to run in
+        parallel. When graph building, the default value is 10. While executing
+        eagerly, the default value is set to 1.
+      back_prop: (optional) Deprecated: prefer using `tf.stop_gradient` instead.  False disables support for back propagation.
+      swap_memory: (optional) True enables GPU-CPU memory swapping.
+      infer_shape: (optional) False disables tests for consistent output shapes.
+      name: (optional) Name prefix for the returned tensors.
+      fn_output_signature: The output signature of `fn`. Must be specified if
+        `fn`'s input and output signatures are different (i.e., if their
+        structures, dtypes, or tensor types do not match).
+        `fn_output_signature` can be specified using any of the following:
+
+        * A `tf.DType` or `tf.TensorSpec` (to describe a `tf.Tensor`)
+        * A `tf.RaggedTensorSpec` (to describe a `tf.RaggedTensor`)
+        * A `tf.SparseTensorSpec` (to describe a `tf.sparse.SparseTensor`)
+        * A (possibly nested) tuple, list, or dict containing the above types.
+
+    Returns:
+      A tensor or (possibly nested) sequence of tensors.  Each tensor stacks the
+      results of applying `fn` to tensors unstacked from `elems` along the first
+      dimension, from first to last.  The result may include ragged and sparse
+      tensors.
+
+    Raises:
+      TypeError: if `fn` is not callable or the structure of the output of
+        `fn` and `fn_output_signature` do not match.
+      ValueError: if the lengths of the output of `fn` and `fn_output_signature`
+        do not match, or if the `elems` does not contain any tensor.
+
+    Examples:
+
+      >>> elems = np.array([1, 2, 3, 4, 5, 6])
+      >>> tf.map_fn(lambda x: x * x, elems)
+      <tf.Tensor: shape=(6,), dtype=int64, numpy=array([ 1,  4,  9, 16, 25, 36])>
+
+      >>> elems = (np.array([1, 2, 3]), np.array([-1, 1, -1]))
+      >>> tf.map_fn(lambda x: x[0] * x[1], elems, fn_output_signature=tf.int64)
+      <tf.Tensor: shape=(3,), dtype=int64, numpy=array([-1,  2, -3])>
+
+      >>> elems = np.array([1, 2, 3])
+      >>> tf.map_fn(lambda x: (x, -x), elems,
+      ...          fn_output_signature=(tf.int64, tf.int64))
+      (<tf.Tensor: shape=(3,), dtype=int64, numpy=array([1, 2, 3])>,
+       <tf.Tensor: shape=(3,), dtype=int64, numpy=array([-1, -2, -3])>)
+    """
+    ...
 
 def pad(
     tensor: TensorCompatible,
@@ -4589,13 +5503,172 @@ def transpose(
     ...
 def clip_by_value(
     t: Tensor | IndexedSlices, clip_value_min: TensorCompatible, clip_value_max: TensorCompatible, name: str | None = None
-) -> Tensor: ...
-def tile(input: RaggedTensorLike, multiples: Tensor | Sequence[int], name: str | None = None) -> Tensor: ...
+) -> Tensor:
+    """
+    Clips tensor values to a specified min and max.
+
+    Given a tensor `t`, this operation returns a tensor of the same type and
+    shape as `t` with its values clipped to `clip_value_min` and `clip_value_max`.
+    Any values less than `clip_value_min` are set to `clip_value_min`. Any values
+    greater than `clip_value_max` are set to `clip_value_max`.
+
+    Note: `clip_value_min` needs to be smaller or equal to `clip_value_max` for
+    correct results.
+
+    For example:
+
+    Basic usage passes a scalar as the min and max value.
+
+    >>> t = tf.constant([[-10., -1., 0.], [0., 2., 10.]])
+    >>> t2 = tf.clip_by_value(t, clip_value_min=-1, clip_value_max=1)
+    >>> t2.numpy()
+    array([[-1., -1.,  0.],
+           [ 0.,  1.,  1.]], dtype=float32)
+
+    The min and max can be the same size as `t`, or broadcastable to that size.
+
+    >>> t = tf.constant([[-1, 0., 10.], [-1, 0, 10]])
+    >>> clip_min = [[2],[1]]
+    >>> t3 = tf.clip_by_value(t, clip_value_min=clip_min, clip_value_max=100)
+    >>> t3.numpy()
+    array([[ 2.,  2., 10.],
+           [ 1.,  1., 10.]], dtype=float32)
+
+    Broadcasting fails, intentionally, if you would expand the dimensions of `t`
+
+    >>> t = tf.constant([[-1, 0., 10.], [-1, 0, 10]])
+    >>> clip_min = [[[2, 1]]] # Has a third axis
+    >>> t4 = tf.clip_by_value(t, clip_value_min=clip_min, clip_value_max=100)
+    Traceback (most recent call last):
+    ...
+    InvalidArgumentError: Incompatible shapes: [2,3] vs. [1,1,2]
+
+    It throws a `TypeError` if you try to clip an `int` to a `float` value
+    (`tf.cast` the input to `float` first).
+
+    >>> t = tf.constant([[1, 2], [3, 4]], dtype=tf.int32)
+    >>> t5 = tf.clip_by_value(t, clip_value_min=-3.1, clip_value_max=3.1)
+    Traceback (most recent call last):
+    ...
+    TypeError: Cannot convert ...
+
+
+    Args:
+      t: A `Tensor` or `IndexedSlices`.
+      clip_value_min: The minimum value to clip to. A scalar `Tensor` or one that
+        is broadcastable to the shape of `t`.
+      clip_value_max: The maximum value to clip to. A scalar `Tensor` or one that
+        is broadcastable to the shape of `t`.
+      name: A name for the operation (optional).
+
+    Returns:
+      A clipped `Tensor` or `IndexedSlices`.
+
+    Raises:
+      `tf.errors.InvalidArgumentError`: If the clip tensors would trigger array
+        broadcasting that would make the returned tensor larger than the input.
+      TypeError: If dtype of the input is `int32` and dtype of
+        the `clip_value_min` or `clip_value_max` is `float32`
+    """
+    ...
+def tile(input: RaggedTensorLike, multiples: Tensor | Sequence[int], name: str | None = None) -> Tensor:
+    """
+    Constructs a tensor by tiling a given tensor.
+
+    This operation creates a new tensor by replicating `input` `multiples` times.
+    The output tensor's i'th dimension has `input.dims(i) * multiples[i]` elements,
+    and the values of `input` are replicated `multiples[i]` times along the 'i'th
+    dimension. For example, tiling `[a b c d]` by `[2]` produces
+    `[a b c d a b c d]`.
+
+    >>> a = tf.constant([[1,2,3],[4,5,6]], tf.int32)
+    >>> b = tf.constant([1,2], tf.int32)
+    >>> tf.tile(a, b)
+    <tf.Tensor: shape=(2, 6), dtype=int32, numpy=
+    array([[1, 2, 3, 1, 2, 3],
+           [4, 5, 6, 4, 5, 6]], dtype=int32)>
+    >>> c = tf.constant([2,1], tf.int32)
+    >>> tf.tile(a, c)
+    <tf.Tensor: shape=(4, 3), dtype=int32, numpy=
+    array([[1, 2, 3],
+           [4, 5, 6],
+           [1, 2, 3],
+           [4, 5, 6]], dtype=int32)>
+    >>> d = tf.constant([2,2], tf.int32)
+    >>> tf.tile(a, d)
+    <tf.Tensor: shape=(4, 6), dtype=int32, numpy=
+    array([[1, 2, 3, 1, 2, 3],
+           [4, 5, 6, 4, 5, 6],
+           [1, 2, 3, 1, 2, 3],
+           [4, 5, 6, 4, 5, 6]], dtype=int32)>
+
+    Args:
+      input: A `Tensor`. Can be of any rank.
+      multiples: A `Tensor`. Must be one of the following types: `int32`, `int64`.
+        1-D. Length must be the same as the number of dimensions in `input`
+      name: A name for the operation (optional).
+
+    Returns:
+      A `Tensor`. Has the same type as `input`.
+    """
+    ...
 
 @overload
 def range(
     limit: int | Tensor, /, *, delta: int | Tensor = 1, dtype: DTypeLike | None = None, name: str | None = "range"
-) -> Tensor: ...
+) -> Tensor:
+    """
+    Creates a sequence of numbers.
+
+    Creates a sequence of numbers that begins at `start` and extends by
+    increments of `delta` up to but not including `limit`.
+
+    The dtype of the resulting tensor is inferred from the inputs unless
+    it is provided explicitly.
+
+    Like the Python builtin `range`, `start` defaults to 0, so that
+    `range(n) = range(0, n)`.
+
+    For example:
+
+    >>> start = 3
+    >>> limit = 18
+    >>> delta = 3
+    >>> tf.range(start, limit, delta)
+    <tf.Tensor: shape=(5,), dtype=int32,
+    numpy=array([ 3,  6,  9, 12, 15], dtype=int32)>
+
+    >>> start = 3
+    >>> limit = 1
+    >>> delta = -0.5
+    >>> tf.range(start, limit, delta)
+    <tf.Tensor: shape=(4,), dtype=float32,
+    numpy=array([3. , 2.5, 2. , 1.5], dtype=float32)>
+
+    >>> limit = 5
+    >>> tf.range(limit)
+    <tf.Tensor: shape=(5,), dtype=int32,
+    numpy=array([0, 1, 2, 3, 4], dtype=int32)>
+
+    Args:
+      start: A 0-D `Tensor` (scalar). Acts as first entry in the range if `limit`
+        is not None; otherwise, acts as range limit and first entry defaults to 0.
+      limit: A 0-D `Tensor` (scalar). Upper limit of sequence, exclusive. If None,
+        defaults to the value of `start` while the first entry of the range
+        defaults to 0.
+      delta: A 0-D `Tensor` (scalar). Number that increments `start`. Defaults to
+        1.
+      dtype: The type of the elements of the resulting tensor.
+      name: A name for the operation. Defaults to "range".
+
+    Returns:
+      An 1-D `Tensor` of type `dtype`.
+
+    @compatibility(numpy)
+    Equivalent to np.arange
+    @end_compatibility
+    """
+    ...
 @overload
 def range(
     start: int | Tensor = 0,
@@ -4603,6 +5676,58 @@ def range(
     delta: int | Tensor = 1,
     dtype: DTypeLike | None = None,
     name: str | None = "range",
-) -> Tensor: ...
+) -> Tensor:
+    """
+    Creates a sequence of numbers.
+
+    Creates a sequence of numbers that begins at `start` and extends by
+    increments of `delta` up to but not including `limit`.
+
+    The dtype of the resulting tensor is inferred from the inputs unless
+    it is provided explicitly.
+
+    Like the Python builtin `range`, `start` defaults to 0, so that
+    `range(n) = range(0, n)`.
+
+    For example:
+
+    >>> start = 3
+    >>> limit = 18
+    >>> delta = 3
+    >>> tf.range(start, limit, delta)
+    <tf.Tensor: shape=(5,), dtype=int32,
+    numpy=array([ 3,  6,  9, 12, 15], dtype=int32)>
+
+    >>> start = 3
+    >>> limit = 1
+    >>> delta = -0.5
+    >>> tf.range(start, limit, delta)
+    <tf.Tensor: shape=(4,), dtype=float32,
+    numpy=array([3. , 2.5, 2. , 1.5], dtype=float32)>
+
+    >>> limit = 5
+    >>> tf.range(limit)
+    <tf.Tensor: shape=(5,), dtype=int32,
+    numpy=array([0, 1, 2, 3, 4], dtype=int32)>
+
+    Args:
+      start: A 0-D `Tensor` (scalar). Acts as first entry in the range if `limit`
+        is not None; otherwise, acts as range limit and first entry defaults to 0.
+      limit: A 0-D `Tensor` (scalar). Upper limit of sequence, exclusive. If None,
+        defaults to the value of `start` while the first entry of the range
+        defaults to 0.
+      delta: A 0-D `Tensor` (scalar). Number that increments `start`. Defaults to
+        1.
+      dtype: The type of the elements of the resulting tensor.
+      name: A name for the operation. Defaults to "range".
+
+    Returns:
+      An 1-D `Tensor` of type `dtype`.
+
+    @compatibility(numpy)
+    Equivalent to np.arange
+    @end_compatibility
+    """
+    ...
 
 def __getattr__(name: str): ...  # incomplete module

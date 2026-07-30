@@ -1,3 +1,12 @@
+"""
+Python parse tree definitions.
+
+This is a very concrete parse tree; we need to keep every token and
+even the comments and whitespace between tokens.
+
+There's also a pattern matching implementation here.
+"""
+
 from _typeshed import SupportsGetItem, SupportsLenAndGetItem, Unused
 from abc import abstractmethod
 from collections.abc import Iterable, Iterator, MutableSequence
