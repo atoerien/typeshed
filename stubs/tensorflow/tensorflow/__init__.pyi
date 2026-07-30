@@ -15,7 +15,7 @@ this file with a file generated from [`api_template.__init__.py`](https://www.gi
 import abc
 from _typeshed import Incomplete, Unused
 from abc import ABC, ABCMeta, abstractmethod
-from builtins import bool as _bool
+from builtins import bool as _bool, slice as _slice
 from collections.abc import Callable, Generator, Iterable, Iterator, Sequence
 from contextlib import contextmanager
 from enum import Enum
@@ -26,8 +26,10 @@ from typing_extensions import Self
 from google.protobuf.message import Message
 from tensorflow import (
     data as data,
+    debugging as debugging,
     experimental as experimental,
     feature_column as feature_column,
+    image as image,
     initializers as initializers,
     io as io,
     keras as keras,
@@ -40,12 +42,15 @@ from tensorflow._aliases import (
     AnyArray,
     DTypeLike,
     IntArray,
+    IntTensorCompatible,
     RaggedTensorLike,
     ScalarTensorCompatible,
     ShapeLike,
+    Signature,
     Slice,
     SparseTensorCompatible,
     TensorCompatible,
+    TensorLike,
     UIntTensorCompatible,
 )
 from tensorflow.autodiff import GradientTape as GradientTape
@@ -1720,9 +1725,9 @@ class TensorShape(metaclass=ABCMeta):
         ...
 
     @overload
-    def __getitem__(self, key: int) -> int | None:
-        """
-        Returns the value of a dimension or a shape, depending on the key.
+    def __getitem__(self, key: int) -> int | None: ...
+    @overload
+    def __getitem__(self, key: _slice) -> TensorShape: ...
 
         Args:
           key: If `key` is an integer, returns the dimension at that index;
@@ -2629,6 +2634,8 @@ class RaggedTensorSpec(TypeSpec[struct_pb2.TypeSpecProto]):
     @classmethod
     def from_value(cls, value: RaggedTensor) -> Self: ...
 
+newaxis: None
+
 def convert_to_tensor(
     value: TensorCompatible | IndexedSlices,
     dtype: DTypeLike | None = None,
@@ -3145,70 +3152,15 @@ def squeeze(input: RaggedTensor, axis: int | tuple[int, ...] | list[int], name: 
     """
     ...
 
+def slice(input_: TensorCompatible, begin: IntTensorCompatible, size: IntTensorCompatible, name: str | None = None) -> Tensor: ...
 def split(
     value: TensorCompatible,
     num_or_size_splits: int | TensorCompatible,
     axis: int | Tensor = 0,
     num: int | None = None,
     name: str | None = "split",
-) -> list[Tensor]:
-    """
-    Splits a tensor `value` into a list of sub tensors.
-
-    See also `tf.unstack`.
-
-    If `num_or_size_splits` is an `int`,  then it splits `value` along the
-    dimension `axis` into `num_or_size_splits` smaller tensors. This requires that
-    `value.shape[axis]` is divisible by `num_or_size_splits`.
-
-    If `num_or_size_splits` is a 1-D Tensor (or list), then `value` is split into
-    `len(num_or_size_splits)` elements. The shape of the `i`-th
-    element has the same size as the `value` except along dimension `axis` where
-    the size is `num_or_size_splits[i]`.
-
-    For example:
-
-    >>> x = tf.Variable(tf.random.uniform([5, 30], -1, 1))
-    >>>
-    >>> # Split `x` into 3 tensors along dimension 1
-    >>> s0, s1, s2 = tf.split(x, num_or_size_splits=3, axis=1)
-    >>> tf.shape(s0).numpy()
-    array([ 5, 10], dtype=int32)
-    >>>
-    >>> # Split `x` into 3 tensors with sizes [4, 15, 11] along dimension 1
-    >>> split0, split1, split2 = tf.split(x, [4, 15, 11], 1)
-    >>> tf.shape(split0).numpy()
-    array([5, 4], dtype=int32)
-    >>> tf.shape(split1).numpy()
-    array([ 5, 15], dtype=int32)
-    >>> tf.shape(split2).numpy()
-    array([ 5, 11], dtype=int32)
-
-    Args:
-      value: The `Tensor` to split.
-      num_or_size_splits: Either an `int` indicating the number of splits
-        along `axis` or a 1-D integer `Tensor` or Python list containing the sizes
-        of each output tensor along `axis`. If an `int`, then it must evenly
-        divide `value.shape[axis]`; otherwise the sum of sizes along the split
-        axis must match that of the `value`.
-      axis: An `int` or scalar `int32` `Tensor`. The dimension along which
-        to split. Must be in the range `[-rank(value), rank(value))`. Defaults to
-        0.
-      num: Optional, an `int`, used to specify the number of outputs when it
-        cannot be inferred from the shape of `size_splits`.
-      name: A name for the operation (optional).
-
-    Returns:
-      if `num_or_size_splits` is an `int` returns a list of
-      `num_or_size_splits` `Tensor` objects; if `num_or_size_splits` is a 1-D
-      list or 1-D `Tensor` returns `num_or_size_splits.get_shape[0]`
-      `Tensor` objects resulting from splitting `value`.
-
-    Raises:
-      ValueError: If `num` is unspecified and cannot be inferred.
-      ValueError: If `num_or_size_splits` is a scalar `Tensor`.
-    """
-    ...
+) -> list[Tensor]: ...
+def stack(values: TensorCompatible, axis: int = 0, name: str | None = "stack") -> Tensor: ...
 def tensor_scatter_nd_update(
     tensor: TensorCompatible, indices: TensorCompatible, updates: TensorCompatible, name: str | None = None
 ) -> Tensor:
@@ -3958,175 +3910,37 @@ def ones_like(
     """
     Creates a tensor of all ones that has the same shape as the input.
 
-    See also `tf.ones`.
+def reshape(tensor: TensorCompatible, shape: ShapeLike | Tensor, name: str | None = None) -> Tensor: ...
+def reverse(tensor: TensorCompatible, axis: IntTensorCompatible, name: str | None = None) -> Tensor: ...
 
-    Given a single tensor (`tensor`), this operation returns a tensor of the
-    same type and shape as `tensor` with all elements set to 1. Optionally,
-    you can use `dtype` to specify a new type for the returned tensor.
+_ElemT = TypeVar("_ElemT", bound=TensorLike)
+_RetT = TypeVar("_RetT", bound=TensorLike)
 
-    For example:
+@overload
+def map_fn(
+    fn: Callable[[_ElemT], _RetT],
+    elems: _ElemT,
+    dtype: DTypeLike | None = None,
+    parallel_iterations: int | None = None,
+    back_prop: _bool = True,
+    swap_memory: _bool = False,
+    infer_shape: _bool = True,
+    name: str | None = None,
+    fn_output_signature: Signature | None = None,
+) -> _RetT: ...
+@overload
+def map_fn(
+    fn: Callable[[Tensor], _RetT],
+    elems: TensorCompatible,
+    dtype: DTypeLike | None = None,
+    parallel_iterations: int | None = None,
+    back_prop: _bool = True,
+    swap_memory: _bool = False,
+    infer_shape: _bool = True,
+    name: str | None = None,
+    fn_output_signature: Signature | None = None,
+) -> _RetT: ...
 
-    >>> tensor = tf.constant([[1, 2, 3], [4, 5, 6]])
-    >>> tf.ones_like(tensor)
-    <tf.Tensor: shape=(2, 3), dtype=int32, numpy=
-      array([[1, 1, 1],
-             [1, 1, 1]], dtype=int32)>
-
-    Note that the layout of the input tensor is not preserved if the op
-    is used inside tf.function. To obtain a tensor with the same layout as the
-    input, chain the returned value to a `dtensor.relayout_like`.
-
-    Args:
-      input: A `Tensor`.
-      dtype: A type for the returned `Tensor`. Must be `float16`, `float32`,
-        `float64`, `int8`, `uint8`, `int16`, `uint16`, `int32`, `int64`,
-        `complex64`, `complex128`, `bool` or `string`.
-      name: A name for the operation (optional).
-      layout: Optional, `tf.experimental.dtensor.Layout`. If provided, the result
-        is a [DTensor](https://www.tensorflow.org/guide/dtensor_overview) with the
-        provided layout.
-
-    Returns:
-      A `Tensor` with all elements set to one.
-    """
-    ...
-
-def reshape(tensor: TensorCompatible, shape: ShapeLike | Tensor, name: str | None = None) -> Tensor:
-    """
-    Reshapes a tensor.
-
-    Given `tensor`, this operation returns a new `tf.Tensor` that has the same
-    values as `tensor` in the same order, except with a new shape given by
-    `shape`.
-
-    >>> t1 = [[1, 2, 3],
-    ...       [4, 5, 6]]
-    >>> print(tf.shape(t1).numpy())
-    [2 3]
-    >>> t2 = tf.reshape(t1, [6])
-    >>> t2
-    <tf.Tensor: shape=(6,), dtype=int32,
-      numpy=array([1, 2, 3, 4, 5, 6], dtype=int32)>
-    >>> tf.reshape(t2, [3, 2])
-    <tf.Tensor: shape=(3, 2), dtype=int32, numpy=
-      array([[1, 2],
-             [3, 4],
-             [5, 6]], dtype=int32)>
-
-    The `tf.reshape` does not change the order of or the total number of elements
-    in the tensor, and so it can reuse the underlying data buffer. This makes it
-    a fast operation independent of how big of a tensor it is operating on.
-
-    >>> tf.reshape([1, 2, 3], [2, 2])
-    Traceback (most recent call last):
-    ...
-    InvalidArgumentError: Input to reshape is a tensor with 3 values, but the
-    requested shape has 4
-
-    To instead reorder the data to rearrange the dimensions of a tensor, see
-    `tf.transpose`.
-
-    >>> t = [[1, 2, 3],
-    ...      [4, 5, 6]]
-    >>> tf.reshape(t, [3, 2]).numpy()
-    array([[1, 2],
-           [3, 4],
-           [5, 6]], dtype=int32)
-    >>> tf.transpose(t, perm=[1, 0]).numpy()
-    array([[1, 4],
-           [2, 5],
-           [3, 6]], dtype=int32)
-
-    If one component of `shape` is the special value -1, the size of that
-    dimension is computed so that the total size remains constant.  In particular,
-    a `shape` of `[-1]` flattens into 1-D.  At most one component of `shape` can
-    be -1.
-
-    >>> t = [[1, 2, 3],
-    ...      [4, 5, 6]]
-    >>> tf.reshape(t, [-1])
-    <tf.Tensor: shape=(6,), dtype=int32,
-      numpy=array([1, 2, 3, 4, 5, 6], dtype=int32)>
-    >>> tf.reshape(t, [3, -1])
-    <tf.Tensor: shape=(3, 2), dtype=int32, numpy=
-      array([[1, 2],
-             [3, 4],
-             [5, 6]], dtype=int32)>
-    >>> tf.reshape(t, [-1, 2])
-    <tf.Tensor: shape=(3, 2), dtype=int32, numpy=
-      array([[1, 2],
-             [3, 4],
-             [5, 6]], dtype=int32)>
-
-    `tf.reshape(t, [])` reshapes a tensor `t` with one element to a scalar.
-
-    >>> tf.reshape([7], []).numpy().item()
-    7
-
-    More examples:
-
-    >>> t = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    >>> print(tf.shape(t).numpy())
-    [9]
-    >>> tf.reshape(t, [3, 3])
-    <tf.Tensor: shape=(3, 3), dtype=int32, numpy=
-      array([[1, 2, 3],
-             [4, 5, 6],
-             [7, 8, 9]], dtype=int32)>
-
-    >>> t = [[[1, 1], [2, 2]],
-    ...      [[3, 3], [4, 4]]]
-    >>> print(tf.shape(t).numpy())
-    [2 2 2]
-    >>> tf.reshape(t, [2, 4])
-    <tf.Tensor: shape=(2, 4), dtype=int32, numpy=
-      array([[1, 1, 2, 2],
-             [3, 3, 4, 4]], dtype=int32)>
-
-    >>> t = [[[1, 1, 1],
-    ...       [2, 2, 2]],
-    ...      [[3, 3, 3],
-    ...       [4, 4, 4]],
-    ...      [[5, 5, 5],
-    ...       [6, 6, 6]]]
-    >>> print(tf.shape(t).numpy())
-    [3 2 3]
-    >>> # Pass '[-1]' to flatten 't'.
-    >>> tf.reshape(t, [-1])
-    <tf.Tensor: shape=(18,), dtype=int32,
-      numpy=array([1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6],
-      dtype=int32)>
-    >>> # -- Using -1 to infer the shape --
-    >>> # Here -1 is inferred to be 9:
-    >>> tf.reshape(t, [2, -1])
-    <tf.Tensor: shape=(2, 9), dtype=int32, numpy=
-      array([[1, 1, 1, 2, 2, 2, 3, 3, 3],
-             [4, 4, 4, 5, 5, 5, 6, 6, 6]], dtype=int32)>
-    >>> # -1 is inferred to be 2:
-    >>> tf.reshape(t, [-1, 9])
-    <tf.Tensor: shape=(2, 9), dtype=int32, numpy=
-      array([[1, 1, 1, 2, 2, 2, 3, 3, 3],
-             [4, 4, 4, 5, 5, 5, 6, 6, 6]], dtype=int32)>
-    >>> # -1 is inferred to be 3:
-    >>> tf.reshape(t, [ 2, -1, 3])
-    <tf.Tensor: shape=(2, 3, 3), dtype=int32, numpy=
-      array([[[1, 1, 1],
-              [2, 2, 2],
-              [3, 3, 3]],
-             [[4, 4, 4],
-              [5, 5, 5],
-              [6, 6, 6]]], dtype=int32)>
-
-    Args:
-      tensor: A `Tensor`.
-      shape: A `Tensor`. Must be one of the following types: `int32`, `int64`.
-        Defines the shape of the output tensor.
-      name: Optional string. A name for the operation.
-
-    Returns:
-      A `Tensor`. Has the same type as `tensor`.
-    """
-    ...
 def pad(
     tensor: TensorCompatible,
     paddings: Tensor | IntArray | Iterable[Iterable[int]],
@@ -4775,113 +4589,20 @@ def transpose(
     ...
 def clip_by_value(
     t: Tensor | IndexedSlices, clip_value_min: TensorCompatible, clip_value_max: TensorCompatible, name: str | None = None
-) -> Tensor:
-    """
-    Clips tensor values to a specified min and max.
+) -> Tensor: ...
+def tile(input: RaggedTensorLike, multiples: Tensor | Sequence[int], name: str | None = None) -> Tensor: ...
 
-    Given a tensor `t`, this operation returns a tensor of the same type and
-    shape as `t` with its values clipped to `clip_value_min` and `clip_value_max`.
-    Any values less than `clip_value_min` are set to `clip_value_min`. Any values
-    greater than `clip_value_max` are set to `clip_value_max`.
+@overload
+def range(
+    limit: int | Tensor, /, *, delta: int | Tensor = 1, dtype: DTypeLike | None = None, name: str | None = "range"
+) -> Tensor: ...
+@overload
+def range(
+    start: int | Tensor = 0,
+    limit: int | Tensor = 0,
+    delta: int | Tensor = 1,
+    dtype: DTypeLike | None = None,
+    name: str | None = "range",
+) -> Tensor: ...
 
-    Note: `clip_value_min` needs to be smaller or equal to `clip_value_max` for
-    correct results.
-
-    For example:
-
-    Basic usage passes a scalar as the min and max value.
-
-    >>> t = tf.constant([[-10., -1., 0.], [0., 2., 10.]])
-    >>> t2 = tf.clip_by_value(t, clip_value_min=-1, clip_value_max=1)
-    >>> t2.numpy()
-    array([[-1., -1.,  0.],
-           [ 0.,  1.,  1.]], dtype=float32)
-
-    The min and max can be the same size as `t`, or broadcastable to that size.
-
-    >>> t = tf.constant([[-1, 0., 10.], [-1, 0, 10]])
-    >>> clip_min = [[2],[1]]
-    >>> t3 = tf.clip_by_value(t, clip_value_min=clip_min, clip_value_max=100)
-    >>> t3.numpy()
-    array([[ 2.,  2., 10.],
-           [ 1.,  1., 10.]], dtype=float32)
-
-    Broadcasting fails, intentionally, if you would expand the dimensions of `t`
-
-    >>> t = tf.constant([[-1, 0., 10.], [-1, 0, 10]])
-    >>> clip_min = [[[2, 1]]] # Has a third axis
-    >>> t4 = tf.clip_by_value(t, clip_value_min=clip_min, clip_value_max=100)
-    Traceback (most recent call last):
-    ...
-    InvalidArgumentError: Incompatible shapes: [2,3] vs. [1,1,2]
-
-    It throws a `TypeError` if you try to clip an `int` to a `float` value
-    (`tf.cast` the input to `float` first).
-
-    >>> t = tf.constant([[1, 2], [3, 4]], dtype=tf.int32)
-    >>> t5 = tf.clip_by_value(t, clip_value_min=-3.1, clip_value_max=3.1)
-    Traceback (most recent call last):
-    ...
-    TypeError: Cannot convert ...
-
-
-    Args:
-      t: A `Tensor` or `IndexedSlices`.
-      clip_value_min: The minimum value to clip to. A scalar `Tensor` or one that
-        is broadcastable to the shape of `t`.
-      clip_value_max: The maximum value to clip to. A scalar `Tensor` or one that
-        is broadcastable to the shape of `t`.
-      name: A name for the operation (optional).
-
-    Returns:
-      A clipped `Tensor` or `IndexedSlices`.
-
-    Raises:
-      `tf.errors.InvalidArgumentError`: If the clip tensors would trigger array
-        broadcasting that would make the returned tensor larger than the input.
-      TypeError: If dtype of the input is `int32` and dtype of
-        the `clip_value_min` or `clip_value_max` is `float32`
-    """
-    ...
-def tile(input: RaggedTensorLike, multiples: Tensor | Sequence[int], name: str | None = None) -> Tensor:
-    """
-    Constructs a tensor by tiling a given tensor.
-
-    This operation creates a new tensor by replicating `input` `multiples` times.
-    The output tensor's i'th dimension has `input.dims(i) * multiples[i]` elements,
-    and the values of `input` are replicated `multiples[i]` times along the 'i'th
-    dimension. For example, tiling `[a b c d]` by `[2]` produces
-    `[a b c d a b c d]`.
-
-    >>> a = tf.constant([[1,2,3],[4,5,6]], tf.int32)
-    >>> b = tf.constant([1,2], tf.int32)
-    >>> tf.tile(a, b)
-    <tf.Tensor: shape=(2, 6), dtype=int32, numpy=
-    array([[1, 2, 3, 1, 2, 3],
-           [4, 5, 6, 4, 5, 6]], dtype=int32)>
-    >>> c = tf.constant([2,1], tf.int32)
-    >>> tf.tile(a, c)
-    <tf.Tensor: shape=(4, 3), dtype=int32, numpy=
-    array([[1, 2, 3],
-           [4, 5, 6],
-           [1, 2, 3],
-           [4, 5, 6]], dtype=int32)>
-    >>> d = tf.constant([2,2], tf.int32)
-    >>> tf.tile(a, d)
-    <tf.Tensor: shape=(4, 6), dtype=int32, numpy=
-    array([[1, 2, 3, 1, 2, 3],
-           [4, 5, 6, 4, 5, 6],
-           [1, 2, 3, 1, 2, 3],
-           [4, 5, 6, 4, 5, 6]], dtype=int32)>
-
-    Args:
-      input: A `Tensor`. Can be of any rank.
-      multiples: A `Tensor`. Must be one of the following types: `int32`, `int64`.
-        1-D. Length must be the same as the number of dimensions in `input`
-      name: A name for the operation (optional).
-
-    Returns:
-      A `Tensor`. Has the same type as `input`.
-    """
-    ...
 def __getattr__(name: str): ...  # incomplete module

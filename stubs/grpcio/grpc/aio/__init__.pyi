@@ -35,6 +35,7 @@ from grpc import (
     RpcError,
     RpcMethodHandler,
     ServerCredentials,
+    Status,
     StatusCode,
     _Options,
 )
@@ -913,17 +914,9 @@ class ServicerContext(Generic[_TRequest, _TResponse], metaclass=abc.ABCMeta):
         """
         ...
     @abc.abstractmethod
-    def set_trailing_metadata(self, trailing_metadata: _MetadataType) -> None:
-        """
-        Sends the trailing metadata for the RPC.
-
-        This method need not be called by implementations if they have no
-        metadata to add to what the gRPC runtime will transmit.
-
-        Args:
-          trailing_metadata: The trailing :term:`metadata`.
-        """
-        ...
+    async def abort_with_status(self, status: Status) -> Never: ...
+    @abc.abstractmethod
+    def set_trailing_metadata(self, trailing_metadata: _MetadataType) -> None: ...
     @abc.abstractmethod
     def invocation_metadata(self) -> Metadata | None:
         """

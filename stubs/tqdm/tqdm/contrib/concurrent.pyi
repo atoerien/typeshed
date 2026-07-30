@@ -1,13 +1,14 @@
-"""Thin wrappers around `concurrent.futures`."""
-
+import sys
 from _typeshed import SupportsWrite
-from collections.abc import Callable, Iterable, Mapping
+from collections.abc import Callable, Generator, Iterable, Mapping
+from contextlib import contextmanager
+from multiprocessing.context import BaseContext
 from typing import Any, TypedDict, TypeVar, overload, type_check_only
 from typing_extensions import Unpack
 
 from ..std import tqdm
 
-__all__ = ["thread_map", "process_map"]
+__all__ = ["thread_map", "process_map", "interpreter_map"]
 
 _R = TypeVar("_R")
 _T1 = TypeVar("_T1")
@@ -17,12 +18,11 @@ _T4 = TypeVar("_T4")
 _T5 = TypeVar("_T5")
 
 @type_check_only
-class _TqdmKwargs(TypedDict, total=False):
+class _TqdmCommonKwargs(TypedDict, total=False):
     # Concurrent-specific parameters
     tqdm_class: type[tqdm[object]]
     max_workers: int | None
     chunksize: int
-    lock_name: str
     # Standard tqdm parameters
     desc: str | None
     total: float | None
@@ -49,62 +49,43 @@ class _TqdmKwargs(TypedDict, total=False):
     colour: str | None
     delay: float | None
 
-@overload
-def thread_map(fn: Callable[[_T1], _R], iter1: Iterable[_T1], **tqdm_kwargs: Unpack[_TqdmKwargs]) -> list[_R]:
-    """
-    Equivalent of `list(map(fn, *iterables))`
-    driven by `concurrent.futures.ThreadPoolExecutor`.
+# TODO: refactor this, when `TypedDict` will support conditional fields
+if sys.version_info >= (3, 14):
+    @type_check_only
+    class _TqdmKwargs(_TqdmCommonKwargs):
+        buffersize: int | None
 
-    Parameters
-    ----------
-    tqdm_class  : optional
-        `tqdm` class to use for bars [default: tqdm.auto.tqdm].
-    max_workers  : int, optional
-        Maximum number of workers to spawn; passed to
-        `concurrent.futures.ThreadPoolExecutor.__init__`.
-        [default: max(32, cpu_count() + 4)].
-    """
-    ...
+else:
+    _TqdmKwargs = _TqdmCommonKwargs
+
+@type_check_only
+class _TqdmProcessKwargs(_TqdmKwargs):
+    mp_context: BaseContext | None
+    max_tasks_per_child: int | None
+
+@type_check_only
+class _TqdmThreadKwargs(_TqdmKwargs):
+    thread_name_prefix: str | None
+    # Not techically for threading, but just a signature difference:
+    lock_name: str
+
+@contextmanager
+def ensure_lock(tqdm_class: type[tqdm[object]], lock_name: str = "", lock=None) -> Generator[None]: ...
+
+@overload
+def thread_map(fn: Callable[[_T1], _R], iter1: Iterable[_T1], **tqdm_kwargs: Unpack[_TqdmThreadKwargs]) -> list[_R]: ...
 @overload
 def thread_map(
-    fn: Callable[[_T1, _T2], _R], iter1: Iterable[_T1], iter2: Iterable[_T2], /, **tqdm_kwargs: Unpack[_TqdmKwargs]
-) -> list[_R]:
-    """
-    Equivalent of `list(map(fn, *iterables))`
-    driven by `concurrent.futures.ThreadPoolExecutor`.
-
-    Parameters
-    ----------
-    tqdm_class  : optional
-        `tqdm` class to use for bars [default: tqdm.auto.tqdm].
-    max_workers  : int, optional
-        Maximum number of workers to spawn; passed to
-        `concurrent.futures.ThreadPoolExecutor.__init__`.
-        [default: max(32, cpu_count() + 4)].
-    """
-    ...
+    fn: Callable[[_T1, _T2], _R], iter1: Iterable[_T1], iter2: Iterable[_T2], /, **tqdm_kwargs: Unpack[_TqdmThreadKwargs]
+) -> list[_R]: ...
 @overload
 def thread_map(
     fn: Callable[[_T1, _T2, _T3], _R],
     iter1: Iterable[_T1],
     iter2: Iterable[_T2],
     iter3: Iterable[_T3],
-    **tqdm_kwargs: Unpack[_TqdmKwargs],
-) -> list[_R]:
-    """
-    Equivalent of `list(map(fn, *iterables))`
-    driven by `concurrent.futures.ThreadPoolExecutor`.
-
-    Parameters
-    ----------
-    tqdm_class  : optional
-        `tqdm` class to use for bars [default: tqdm.auto.tqdm].
-    max_workers  : int, optional
-        Maximum number of workers to spawn; passed to
-        `concurrent.futures.ThreadPoolExecutor.__init__`.
-        [default: max(32, cpu_count() + 4)].
-    """
-    ...
+    **tqdm_kwargs: Unpack[_TqdmThreadKwargs],
+) -> list[_R]: ...
 @overload
 def thread_map(
     fn: Callable[[_T1, _T2, _T3, _T4], _R],
@@ -112,22 +93,8 @@ def thread_map(
     iter2: Iterable[_T2],
     iter3: Iterable[_T3],
     iter4: Iterable[_T4],
-    **tqdm_kwargs: Unpack[_TqdmKwargs],
-) -> list[_R]:
-    """
-    Equivalent of `list(map(fn, *iterables))`
-    driven by `concurrent.futures.ThreadPoolExecutor`.
-
-    Parameters
-    ----------
-    tqdm_class  : optional
-        `tqdm` class to use for bars [default: tqdm.auto.tqdm].
-    max_workers  : int, optional
-        Maximum number of workers to spawn; passed to
-        `concurrent.futures.ThreadPoolExecutor.__init__`.
-        [default: max(32, cpu_count() + 4)].
-    """
-    ...
+    **tqdm_kwargs: Unpack[_TqdmThreadKwargs],
+) -> list[_R]: ...
 @overload
 def thread_map(
     fn: Callable[[_T1, _T2, _T3, _T4, _T5], _R],
@@ -136,22 +103,8 @@ def thread_map(
     iter3: Iterable[_T3],
     iter4: Iterable[_T4],
     iter5: Iterable[_T5],
-    **tqdm_kwargs: Unpack[_TqdmKwargs],
-) -> list[_R]:
-    """
-    Equivalent of `list(map(fn, *iterables))`
-    driven by `concurrent.futures.ThreadPoolExecutor`.
-
-    Parameters
-    ----------
-    tqdm_class  : optional
-        `tqdm` class to use for bars [default: tqdm.auto.tqdm].
-    max_workers  : int, optional
-        Maximum number of workers to spawn; passed to
-        `concurrent.futures.ThreadPoolExecutor.__init__`.
-        [default: max(32, cpu_count() + 4)].
-    """
-    ...
+    **tqdm_kwargs: Unpack[_TqdmThreadKwargs],
+) -> list[_R]: ...
 @overload
 def thread_map(
     fn: Callable[..., _R],
@@ -162,94 +115,32 @@ def thread_map(
     iter5: Iterable[Any],
     iter6: Iterable[Any],
     *iterables: Iterable[Any],
-    **tqdm_kwargs: Unpack[_TqdmKwargs],
-) -> list[_R]:
-    """
-    Equivalent of `list(map(fn, *iterables))`
-    driven by `concurrent.futures.ThreadPoolExecutor`.
+    **tqdm_kwargs: Unpack[_TqdmThreadKwargs],
+) -> list[_R]: ...
 
-    Parameters
-    ----------
-    tqdm_class  : optional
-        `tqdm` class to use for bars [default: tqdm.auto.tqdm].
-    max_workers  : int, optional
-        Maximum number of workers to spawn; passed to
-        `concurrent.futures.ThreadPoolExecutor.__init__`.
-        [default: max(32, cpu_count() + 4)].
-    """
-    ...
-
-@overload
-def process_map(fn: Callable[[_T1], _R], iter1: Iterable[_T1], **tqdm_kwargs: Unpack[_TqdmKwargs]) -> list[_R]:
-    """
-    Equivalent of `list(map(fn, *iterables))`
-    driven by `concurrent.futures.ProcessPoolExecutor`.
-
-    Parameters
-    ----------
-    tqdm_class  : optional
-        `tqdm` class to use for bars [default: tqdm.auto.tqdm].
-    max_workers  : int, optional
-        Maximum number of workers to spawn; passed to
-        `concurrent.futures.ProcessPoolExecutor.__init__`.
-        [default: min(32, cpu_count() + 4)].
-    chunksize  : int, optional
-        Size of chunks sent to worker processes; passed to
-        `concurrent.futures.ProcessPoolExecutor.map`. [default: 1].
-    lock_name  : str, optional
-        Member of `tqdm_class.get_lock()` to use [default: mp_lock].
-    """
-    ...
 @overload
 def process_map(
-    fn: Callable[[_T1, _T2], _R], iter1: Iterable[_T1], iter2: Iterable[_T2], **tqdm_kwargs: Unpack[_TqdmKwargs]
-) -> list[_R]:
-    """
-    Equivalent of `list(map(fn, *iterables))`
-    driven by `concurrent.futures.ProcessPoolExecutor`.
-
-    Parameters
-    ----------
-    tqdm_class  : optional
-        `tqdm` class to use for bars [default: tqdm.auto.tqdm].
-    max_workers  : int, optional
-        Maximum number of workers to spawn; passed to
-        `concurrent.futures.ProcessPoolExecutor.__init__`.
-        [default: min(32, cpu_count() + 4)].
-    chunksize  : int, optional
-        Size of chunks sent to worker processes; passed to
-        `concurrent.futures.ProcessPoolExecutor.map`. [default: 1].
-    lock_name  : str, optional
-        Member of `tqdm_class.get_lock()` to use [default: mp_lock].
-    """
-    ...
+    fn: Callable[[_T1], _R], iter1: Iterable[_T1], *, lock_name: str = "mp_lock", **tqdm_kwargs: Unpack[_TqdmProcessKwargs]
+) -> list[_R]: ...
+@overload
+def process_map(
+    fn: Callable[[_T1, _T2], _R],
+    iter1: Iterable[_T1],
+    iter2: Iterable[_T2],
+    *,
+    lock_name: str = "mp_lock",
+    **tqdm_kwargs: Unpack[_TqdmProcessKwargs],
+) -> list[_R]: ...
 @overload
 def process_map(
     fn: Callable[[_T1, _T2, _T3], _R],
     iter1: Iterable[_T1],
     iter2: Iterable[_T2],
     iter3: Iterable[_T3],
-    **tqdm_kwargs: Unpack[_TqdmKwargs],
-) -> list[_R]:
-    """
-    Equivalent of `list(map(fn, *iterables))`
-    driven by `concurrent.futures.ProcessPoolExecutor`.
-
-    Parameters
-    ----------
-    tqdm_class  : optional
-        `tqdm` class to use for bars [default: tqdm.auto.tqdm].
-    max_workers  : int, optional
-        Maximum number of workers to spawn; passed to
-        `concurrent.futures.ProcessPoolExecutor.__init__`.
-        [default: min(32, cpu_count() + 4)].
-    chunksize  : int, optional
-        Size of chunks sent to worker processes; passed to
-        `concurrent.futures.ProcessPoolExecutor.map`. [default: 1].
-    lock_name  : str, optional
-        Member of `tqdm_class.get_lock()` to use [default: mp_lock].
-    """
-    ...
+    *,
+    lock_name: str = "mp_lock",
+    **tqdm_kwargs: Unpack[_TqdmProcessKwargs],
+) -> list[_R]: ...
 @overload
 def process_map(
     fn: Callable[[_T1, _T2, _T3, _T4], _R],
@@ -257,27 +148,10 @@ def process_map(
     iter2: Iterable[_T2],
     iter3: Iterable[_T3],
     iter4: Iterable[_T4],
-    **tqdm_kwargs: Unpack[_TqdmKwargs],
-) -> list[_R]:
-    """
-    Equivalent of `list(map(fn, *iterables))`
-    driven by `concurrent.futures.ProcessPoolExecutor`.
-
-    Parameters
-    ----------
-    tqdm_class  : optional
-        `tqdm` class to use for bars [default: tqdm.auto.tqdm].
-    max_workers  : int, optional
-        Maximum number of workers to spawn; passed to
-        `concurrent.futures.ProcessPoolExecutor.__init__`.
-        [default: min(32, cpu_count() + 4)].
-    chunksize  : int, optional
-        Size of chunks sent to worker processes; passed to
-        `concurrent.futures.ProcessPoolExecutor.map`. [default: 1].
-    lock_name  : str, optional
-        Member of `tqdm_class.get_lock()` to use [default: mp_lock].
-    """
-    ...
+    *,
+    lock_name: str = "mp_lock",
+    **tqdm_kwargs: Unpack[_TqdmProcessKwargs],
+) -> list[_R]: ...
 @overload
 def process_map(
     fn: Callable[[_T1, _T2, _T3, _T4, _T5], _R],
@@ -286,27 +160,10 @@ def process_map(
     iter3: Iterable[_T3],
     iter4: Iterable[_T4],
     iter5: Iterable[_T5],
-    **tqdm_kwargs: Unpack[_TqdmKwargs],
-) -> list[_R]:
-    """
-    Equivalent of `list(map(fn, *iterables))`
-    driven by `concurrent.futures.ProcessPoolExecutor`.
-
-    Parameters
-    ----------
-    tqdm_class  : optional
-        `tqdm` class to use for bars [default: tqdm.auto.tqdm].
-    max_workers  : int, optional
-        Maximum number of workers to spawn; passed to
-        `concurrent.futures.ProcessPoolExecutor.__init__`.
-        [default: min(32, cpu_count() + 4)].
-    chunksize  : int, optional
-        Size of chunks sent to worker processes; passed to
-        `concurrent.futures.ProcessPoolExecutor.map`. [default: 1].
-    lock_name  : str, optional
-        Member of `tqdm_class.get_lock()` to use [default: mp_lock].
-    """
-    ...
+    *,
+    lock_name: str = "mp_lock",
+    **tqdm_kwargs: Unpack[_TqdmProcessKwargs],
+) -> list[_R]: ...
 @overload
 def process_map(
     fn: Callable[..., _R],
@@ -317,24 +174,52 @@ def process_map(
     iter5: Iterable[Any],
     iter6: Iterable[Any],
     *iterables: Iterable[Any],
-    **tqdm_kwargs: Unpack[_TqdmKwargs],
-) -> list[_R]:
-    """
-    Equivalent of `list(map(fn, *iterables))`
-    driven by `concurrent.futures.ProcessPoolExecutor`.
+    lock_name: str = "mp_lock",
+    **tqdm_kwargs: Unpack[_TqdmProcessKwargs],
+) -> list[_R]: ...
 
-    Parameters
-    ----------
-    tqdm_class  : optional
-        `tqdm` class to use for bars [default: tqdm.auto.tqdm].
-    max_workers  : int, optional
-        Maximum number of workers to spawn; passed to
-        `concurrent.futures.ProcessPoolExecutor.__init__`.
-        [default: min(32, cpu_count() + 4)].
-    chunksize  : int, optional
-        Size of chunks sent to worker processes; passed to
-        `concurrent.futures.ProcessPoolExecutor.map`. [default: 1].
-    lock_name  : str, optional
-        Member of `tqdm_class.get_lock()` to use [default: mp_lock].
-    """
-    ...
+@overload
+def interpreter_map(fn: Callable[[_T1], _R], iter1: Iterable[_T1], **tqdm_kwargs: Unpack[_TqdmThreadKwargs]) -> list[_R]: ...
+@overload
+def interpreter_map(
+    fn: Callable[[_T1, _T2], _R], iter1: Iterable[_T1], iter2: Iterable[_T2], /, **tqdm_kwargs: Unpack[_TqdmThreadKwargs]
+) -> list[_R]: ...
+@overload
+def interpreter_map(
+    fn: Callable[[_T1, _T2, _T3], _R],
+    iter1: Iterable[_T1],
+    iter2: Iterable[_T2],
+    iter3: Iterable[_T3],
+    **tqdm_kwargs: Unpack[_TqdmThreadKwargs],
+) -> list[_R]: ...
+@overload
+def interpreter_map(
+    fn: Callable[[_T1, _T2, _T3, _T4], _R],
+    iter1: Iterable[_T1],
+    iter2: Iterable[_T2],
+    iter3: Iterable[_T3],
+    iter4: Iterable[_T4],
+    **tqdm_kwargs: Unpack[_TqdmThreadKwargs],
+) -> list[_R]: ...
+@overload
+def interpreter_map(
+    fn: Callable[[_T1, _T2, _T3, _T4, _T5], _R],
+    iter1: Iterable[_T1],
+    iter2: Iterable[_T2],
+    iter3: Iterable[_T3],
+    iter4: Iterable[_T4],
+    iter5: Iterable[_T5],
+    **tqdm_kwargs: Unpack[_TqdmThreadKwargs],
+) -> list[_R]: ...
+@overload
+def interpreter_map(
+    fn: Callable[..., _R],
+    iter1: Iterable[Any],
+    iter2: Iterable[Any],
+    iter3: Iterable[Any],
+    iter4: Iterable[Any],
+    iter5: Iterable[Any],
+    iter6: Iterable[Any],
+    *iterables: Iterable[Any],
+    **tqdm_kwargs: Unpack[_TqdmThreadKwargs],
+) -> list[_R]: ...
