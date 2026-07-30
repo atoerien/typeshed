@@ -30,7 +30,7 @@ waitress~=3.0.1
 defusedxml==0.7.*
 flake8-simplify==0.30.*
 assertpy==1.1.*
-tqdm[slack,telegram]==4.69.*
+tqdm[slack,telegram]==4.70.*
 uWSGI==2.0.*
 datauri==1.1.*
 zxcvbn==4.5.*
@@ -54,7 +54,7 @@ nanoid==2.0.0
 flake8-bugbear==25.11.29
 chevron==0.14.*
 keyboard==0.13.*
-Jetson.GPIO==2.1.12
+Jetson.GPIO==2.1.13
 django-import-export==4.4.*
 entrypoints==0.4.*
 pycocotools==2.0.*
@@ -173,7 +173,7 @@ requests[socks]~=2.33.0
 pyfarmhash==0.4.*
 atheris==3.1.*
 click-default-group==1.2.*
-grpcio~=1.82.1
+grpcio~=1.83.0
 pywin32==312.*
 python-jenkins~=1.8.3
 lupa==2.6.*
@@ -201,6 +201,7 @@ first==2.0.*
 pyasn1==0.6.*
 python-nmap==0.7.*
 python-http-client==3.3.7
+geojson==3.3.0
 punq==0.8.*
 resampy==0.4.*
 setuptools==83.0.*
