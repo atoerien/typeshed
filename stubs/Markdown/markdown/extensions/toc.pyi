@@ -114,6 +114,7 @@ class TocTreeprocessor(Treeprocessor):
     def run(self, doc: Element) -> None: ...
 
 class TocExtension(Extension):
+    """Table of Contents Extension to Python-Markdown. """
     TreeProcessorClass: type[TocTreeprocessor]
     def __init__(self, **kwargs) -> None: ...
     md: Markdown

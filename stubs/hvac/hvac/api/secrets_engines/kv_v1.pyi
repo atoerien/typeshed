@@ -1,3 +1,5 @@
+"""KvV1 methods module."""
+
 from typing import Any
 
 from hvac.api.vault_api_base import VaultApiBase
@@ -48,5 +50,47 @@ class KvV1(VaultApiBase):
         ...
     def create_or_update_secret(
         self, path: str, secret: dict[str, Any], method: str | None = None, mount_point: str = "secret"
-    ): ...
-    def delete_secret(self, path: str, mount_point: str = "secret"): ...
+    ):
+        """
+        Store a secret at the specified location.
+
+        If the value does not yet exist, the calling token must have an ACL policy granting the create capability.
+        If the value already exists, the calling token must have an ACL policy granting the update capability.
+
+        Supported methods:
+            POST: /{mount_point}/{path}. Produces: 204 (empty body)
+            PUT: /{mount_point}/{path}. Produces: 204 (empty body)
+
+        :param path: Specifies the path of the secrets to create/update. This is specified as part of the URL.
+        :type path: str | unicode
+        :param secret: Specifies keys, paired with associated values, to be held at the given location. Multiple
+            key/value pairs can be specified, and all will be returned on a read operation. A key called ttl will
+            trigger some special behavior. See the Vault KV secrets engine documentation for details.
+        :type secret: dict
+        :param method: Optional parameter to explicitly request a POST (create) or PUT (update) request to the selected
+            kv secret engine. If no argument is provided for this parameter, hvac attempts to intelligently determine
+            which method is appropriate.
+        :type method: str | unicode
+        :param mount_point: The "path" the secret engine was mounted on.
+        :type mount_point: str | unicode
+        :return: The response of the create_or_update_secret request.
+        :rtype: requests.Response
+        """
+        ...
+    def delete_secret(self, path: str, mount_point: str = "secret"):
+        """
+        Delete the secret at the specified location.
+
+        Supported methods:
+            DELETE: /{mount_point}/{path}. Produces: 204 (empty body)
+
+
+        :param path: Specifies the path of the secret to delete.
+            This is specified as part of the URL.
+        :type path: str | unicode
+        :param mount_point: The "path" the secret engine was mounted on.
+        :type mount_point: str | unicode
+        :return: The response of the delete_secret request.
+        :rtype: requests.Response
+        """
+        ...

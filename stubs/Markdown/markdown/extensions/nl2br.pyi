@@ -10,6 +10,8 @@ from markdown.extensions import Extension
 
 BR_RE: str
 
-class Nl2BrExtension(Extension): ...
+class Nl2BrExtension(Extension):
+    """Newline-to-break extension for Python-Markdown. """
+    ...
 
 def makeExtension(**kwargs) -> Nl2BrExtension: ...
