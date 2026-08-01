@@ -7687,7 +7687,14 @@ class OptionMenu(Menubutton):
             value: str,
             *values: str,
             command: Callable[[str], object] | None = ...,
-        ) -> None: ...
+        ) -> None:
+            """
+            Construct an optionmenu widget with the parent MASTER, with
+            the option textvariable set to VARIABLE, the initially selected
+            value VALUE, the other menu values VALUES and an additional
+            keyword argument command.
+            """
+            ...
     # configure, config, cget are inherited from Menubutton
     # destroy and __getitem__ are overridden, signature does not change
 
