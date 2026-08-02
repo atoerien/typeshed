@@ -138,7 +138,7 @@ jsonnet==0.22.*
 pyinstaller==6.21.*
 xmldiff==3.0.*
 PyScreeze==1.0.1
-peewee==4.2.6
+peewee==4.3.0
 ratelimit==2.2.*
 protobuf~=7.34.1
 django-filter==26.1.*
