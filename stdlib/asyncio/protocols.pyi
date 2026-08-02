@@ -170,11 +170,27 @@ class BufferedProtocol(BaseProtocol):
 class DatagramProtocol(BaseProtocol):
     """Interface for datagram protocol."""
     __slots__ = ()
-    def connection_made(self, transport: transports.DatagramTransport) -> None: ...  # type: ignore[override]
+    def connection_made(self, transport: transports.DatagramTransport) -> None:
+        """
+        Called when a connection is made.
+
+        The argument is the transport representing the pipe connection.
+        To receive data, wait for data_received() calls.
+        When the connection is closed, connection_lost() is called.
+        """
+        ...
     # addr is a tuple[str, int] for IPv4 or tuple[str, int, int, int] for IPv6.
     # It can also be a tuple[int, int] for unusual protocols like socket.AF_NETLINK.
-    def datagram_received(self, data: bytes, addr: tuple[Any, ...]) -> None: ...
-    def error_received(self, exc: Exception) -> None: ...
+    def datagram_received(self, data: bytes, addr: tuple[Any, ...]) -> None:
+        """Called when some datagram is received."""
+        ...
+    def error_received(self, exc: Exception) -> None:
+        """
+        Called when a send or receive operation raises an OSError.
+
+        (Other than BlockingIOError or InterruptedError.)
+        """
+        ...
 
 class SubprocessProtocol(BaseProtocol):
     """Interface for protocol for subprocess calls."""
