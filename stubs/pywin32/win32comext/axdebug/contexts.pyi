@@ -1,3 +1,5 @@
+"""A module for managing the AXDebug I*Contexts"""
+
 from _typeshed import Incomplete
 
 from win32comext.axdebug import gateways
