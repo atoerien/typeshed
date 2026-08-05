@@ -98,6 +98,13 @@ class DateSearchWithDetection:
                returns a list of detected language codes.
         :type detect_languages_function: function
 
+        :param strategy:
+               The search strategy to use: "split" (default) translates the text and splits it
+               into chunks that are likely to contain dates, while "ngram" tries to parse the
+               longest possible sequences of tokens as dates. The "ngram" strategy tends to
+               produce more predictable results, at the cost of more parse attempts.
+        :type strategy: str
+
         :return: a dict mapping keys to two letter language code and a list of tuples of pairs:
                 substring representing date expressions and corresponding :mod:`datetime.datetime` object.
             For example:

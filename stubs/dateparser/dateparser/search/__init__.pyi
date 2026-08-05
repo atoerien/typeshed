@@ -40,6 +40,13 @@ def search_dates(
         Note: detect_languages_function is only uses if `languages` are not provided.
     :type detect_languages_function: function
 
+    :param strategy:
+        The search strategy to use: "split" (default) translates the text and splits it
+        into chunks that are likely to contain dates, while "ngram" tries to parse the
+        longest possible sequences of tokens as dates. The "ngram" strategy tends to
+        produce more predictable results, at the cost of more parse attempts.
+    :type strategy: str
+
     :return: Returns list of tuples containing:
         substrings representing date and/or time, corresponding :mod:`datetime.datetime`
         object and detected language if *add_detected_language* is True.
@@ -95,6 +102,13 @@ def search_dates(
         and returns a list of detected language codes.
         Note: detect_languages_function is only uses if `languages` are not provided.
     :type detect_languages_function: function
+
+    :param strategy:
+        The search strategy to use: "split" (default) translates the text and splits it
+        into chunks that are likely to contain dates, while "ngram" tries to parse the
+        longest possible sequences of tokens as dates. The "ngram" strategy tends to
+        produce more predictable results, at the cost of more parse attempts.
+    :type strategy: str
 
     :return: Returns list of tuples containing:
         substrings representing date and/or time, corresponding :mod:`datetime.datetime`
