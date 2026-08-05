@@ -469,12 +469,12 @@ class tqdm(Comparable, Generic[_T]):
         ...
 
     iterable: Incomplete
-    disable: Incomplete
+    disable: bool | None
     pos: Incomplete
     n: Incomplete
-    total: Incomplete
+    total: float | int | None
     leave: Incomplete
-    desc: Incomplete
+    desc: str
     fp: Incomplete
     ncols: Incomplete
     nrows: Incomplete
