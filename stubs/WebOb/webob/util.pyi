@@ -1,18 +1,8 @@
 from collections.abc import Callable
 from typing import AnyStr
 
-def html_escape(s: object) -> str:
-    """
-    HTML-escape a string or object
-
-    This converts any non-string objects passed into it to strings
-    (actually, using ``unicode()``).  All values returned are
-    non-unicode strings (using ``&#num;`` entities for all non-ASCII
-    characters).
-
-    None is treated specially, and returns the empty string.
-    """
-    ...
+def html_escape(s: object) -> str: ...
+def urljoin(base: str, url: str | None) -> str: ...
 def header_docstring(header: str, rfc_section: str) -> str: ...
 def warn_deprecation(text: str, version: str, stacklevel: int) -> None: ...
 
