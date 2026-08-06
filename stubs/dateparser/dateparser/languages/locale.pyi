@@ -40,11 +40,6 @@ class Locale:
             If True, timezone is stripped from date string.
         :type strip_timezone: bool
 
-        :param ignore_surrounding_text:
-            If True, tokens that the locale does not recognise are ignored at
-            the edges of the date string (``IGNORE_SURROUNDING_TEXT`` setting).
-        :type ignore_surrounding_text: bool
-
         :return: boolean value representing if the locale is applicable for the date string or not.
         """
         ...
@@ -62,12 +57,6 @@ class Locale:
         :param keep_formatting:
             If True, retain formatting of the date string after translation.
         :type keep_formatting: bool
-
-        :param ignore_surrounding_text:
-            If True, tokens that the locale does not recognise are dropped from
-            the edges of the date string before translation
-            (``IGNORE_SURROUNDING_TEXT`` setting).
-        :type ignore_surrounding_text: bool
 
         :return: translated date string.
         """

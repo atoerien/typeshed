@@ -133,7 +133,23 @@ class OAuth2Client:
         """
         ...
     def ensure_active_token(self, token=None): ...
-    def revoke_token(self, url, token=None, token_type_hint=None, body=None, auth=None, headers=None, **kwargs): ...
+    def revoke_token(self, url, token=None, token_type_hint=None, body=None, auth=None, headers=None, **kwargs):
+        """
+        Revoke token method defined via `RFC7009`_.
+
+        :param url: Revoke Token endpoint, must be HTTPS.
+        :param token: The token to be revoked.
+        :param token_type_hint: The type of the token that to be revoked.
+                                It can be "access_token" or "refresh_token".
+        :param body: Optional application/x-www-form-urlencoded body to add the
+                     include in the token request. Prefer kwargs over body.
+        :param auth: An auth tuple or method as accepted by requests.
+        :param headers: Dict to default request headers with.
+        :return: Revocation Response
+
+        .. _`RFC7009`: https://tools.ietf.org/html/rfc7009
+        """
+        ...
     def introspect_token(
         self,
         url: str,
@@ -143,7 +159,36 @@ class OAuth2Client:
         auth=None,
         headers=None,
         **kwargs,
-    ): ...
-    def register_compliance_hook(self, hook_type, hook) -> None: ...
+    ):
+        """
+        Implementation of OAuth 2.0 Token Introspection defined via `RFC7662`_.
+
+        :param url: Introspection Endpoint, must be HTTPS.
+        :param token: The token to be introspected.
+        :param token_type_hint: The type of the token that to be revoked.
+                                It can be "access_token" or "refresh_token".
+        :param body: Optional application/x-www-form-urlencoded body to add the
+                     include in the token request. Prefer kwargs over body.
+        :param auth: An auth tuple or method as accepted by requests.
+        :param headers: Dict to default request headers with.
+        :return: Introspection Response
+
+        .. _`RFC7662`: https://tools.ietf.org/html/rfc7662
+        """
+        ...
+    def register_compliance_hook(self, hook_type, hook) -> None:
+        """
+        Register a hook for request/response tweaking.
+
+        Available hooks are:
+
+        * access_token_response: invoked before token parsing.
+        * refresh_token_request: invoked before refreshing token.
+        * refresh_token_response: invoked before refresh token parsing.
+        * protected_request: invoked before making a request.
+        * revoke_token_request: invoked before revoking a token.
+        * introspect_token_request: invoked before introspecting a token.
+        """
+        ...
     def parse_response_token(self, resp): ...
     def __del__(self) -> None: ...
