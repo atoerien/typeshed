@@ -315,7 +315,8 @@ class IMAP4:
             """
             ...
 
-    if sys.version_info >= (3, 15):
+    if sys.version_info >= (3, 13):
+        # Default was fixed in Python 3.13.15, 3.14.7
         def list(self, directory: str = "", pattern: str = "*") -> tuple[str, _AnyResponseData]: ...
     else:
         def list(self, directory: str = '""', pattern: str = "*") -> tuple[str, _AnyResponseData]:
@@ -354,7 +355,8 @@ class IMAP4:
         """
         ...
 
-    if sys.version_info >= (3, 15):
+    if sys.version_info >= (3, 13):
+        # Default was fixed in Python 3.13.15, 3.14.7
         def lsub(self, directory: str = "", pattern: str = "*") -> _CommandResults: ...
     else:
         def lsub(self, directory: str = '""', pattern: str = "*") -> _CommandResults:
@@ -446,7 +448,8 @@ class IMAP4:
         """
         ...
 
-    if sys.version_info >= (3, 15):
+    if sys.version_info >= (3, 13):
+        # Parameter "mailbox" was added in Python 3.13.15, 3.14.7
         def setannotation(self, mailbox: str | bytes, *args: str) -> _CommandResults: ...
     else:
         def setannotation(self, *args: str) -> _CommandResults:

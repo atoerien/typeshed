@@ -399,42 +399,14 @@ class DocTestRunner:
     if sys.version_info >= (3, 13):
         skips: int
     test: DocTest
-    def __init__(self, checker: OutputChecker | None = None, verbose: bool | None = None, optionflags: int = 0) -> None:
-        """
-        Create a new test runner.
+    def __init__(self, checker: OutputChecker | None = None, verbose: bool | None = None, optionflags: int = 0) -> None: ...
+    if sys.version_info >= (3, 15):
+        def report_skip(self, out: _Out, test: DocTest, example: Example) -> None: ...
 
-        Optional keyword arg `checker` is the `OutputChecker` that
-        should be used to compare the expected outputs and actual
-        outputs of doctest examples.
-
-        Optional keyword arg 'verbose' prints lots of stuff if true,
-        only failures if false; by default, it's true iff '-v' is in
-        sys.argv.
-
-        Optional argument `optionflags` can be used to control how the
-        test runner compares expected output to actual output, and how
-        it displays failures.  See the documentation for `testmod` for
-        more information.
-        """
-        ...
-    def report_start(self, out: _Out, test: DocTest, example: Example) -> None:
-        """
-        Report that the test runner is about to process the given
-        example.  (Only displays a message if verbose=True)
-        """
-        ...
-    def report_success(self, out: _Out, test: DocTest, example: Example, got: str) -> None:
-        """
-        Report that the given example ran successfully.  (Only
-        displays a message if verbose=True)
-        """
-        ...
-    def report_failure(self, out: _Out, test: DocTest, example: Example, got: str) -> None:
-        """Report that the given example failed."""
-        ...
-    def report_unexpected_exception(self, out: _Out, test: DocTest, example: Example, exc_info: ExcInfo) -> None:
-        """Report that the given example raised an unexpected exception."""
-        ...
+    def report_start(self, out: _Out, test: DocTest, example: Example) -> None: ...
+    def report_success(self, out: _Out, test: DocTest, example: Example, got: str) -> None: ...
+    def report_failure(self, out: _Out, test: DocTest, example: Example, got: str) -> None: ...
+    def report_unexpected_exception(self, out: _Out, test: DocTest, example: Example, exc_info: ExcInfo) -> None: ...
     def run(
         self, test: DocTest, compileflags: int | None = None, out: _Out | None = None, clear_globs: bool = True
     ) -> TestResults:
