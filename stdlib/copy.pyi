@@ -66,14 +66,26 @@ class _SupportsReplace(Protocol[_RT_co]):
 # None in CPython but non-None in Jython
 PyStringMap: Any
 
-def copy(x: _T) -> _T: ...
+def copy(x: _T) -> _T:
+    """
+    Shallow copy operation on arbitrary Python objects.
+
+    See the module's __doc__ string for more info.
+    """
+    ...
 
 if sys.version_info >= (3, 15):
     def deepcopy(x: _T, memo: dict[int, Any] | None = None) -> _T: ...
 
 else:
     # Note: memo and _nil are internal kwargs.
-    def deepcopy(x: _T, memo: dict[int, Any] | None = None, _nil: Any = []) -> _T: ...
+    def deepcopy(x: _T, memo: dict[int, Any] | None = None, _nil: Any = []) -> _T:
+        """
+        Deep copy operation on arbitrary Python objects.
+
+        See the module's __doc__ string for more info.
+        """
+        ...
 
 if sys.version_info >= (3, 13):
     __all__ += ["replace"]

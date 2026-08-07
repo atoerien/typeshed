@@ -317,7 +317,15 @@ class IMAP4:
 
     if sys.version_info >= (3, 13):
         # Default was fixed in Python 3.13.15, 3.14.7
-        def list(self, directory: str = "", pattern: str = "*") -> tuple[str, _AnyResponseData]: ...
+        def list(self, directory: str = "", pattern: str = "*") -> tuple[str, _AnyResponseData]:
+            """
+            List mailbox names in directory matching pattern.
+
+            (typ, [data]) = <instance>.list(directory='""', pattern='*')
+
+            'data' is list of LIST responses.
+            """
+            ...
     else:
         def list(self, directory: str = '""', pattern: str = "*") -> tuple[str, _AnyResponseData]:
             """
@@ -357,7 +365,15 @@ class IMAP4:
 
     if sys.version_info >= (3, 13):
         # Default was fixed in Python 3.13.15, 3.14.7
-        def lsub(self, directory: str = "", pattern: str = "*") -> _CommandResults: ...
+        def lsub(self, directory: str = "", pattern: str = "*") -> _CommandResults:
+            """
+            List 'subscribed' mailbox names in directory matching pattern.
+
+            (typ, [data, ...]) = <instance>.lsub(directory='""', pattern='*')
+
+            'data' are tuples of message part envelope and data.
+            """
+            ...
     else:
         def lsub(self, directory: str = '""', pattern: str = "*") -> _CommandResults:
             """
@@ -450,7 +466,12 @@ class IMAP4:
 
     if sys.version_info >= (3, 13):
         # Parameter "mailbox" was added in Python 3.13.15, 3.14.7
-        def setannotation(self, mailbox: str | bytes, *args: str) -> _CommandResults: ...
+        def setannotation(self, mailbox: str | bytes, *args: str) -> _CommandResults:
+            """
+            (typ, [data]) = <instance>.setannotation(mailbox[, entry, attribute]+)
+            Set ANNOTATIONs.
+            """
+            ...
     else:
         def setannotation(self, *args: str) -> _CommandResults:
             """

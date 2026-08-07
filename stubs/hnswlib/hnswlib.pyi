@@ -97,7 +97,7 @@ class Index:
     def knn_query(
         self, data: ArrayLike, k: int = 1, num_threads: int = -1, filter: Callable[[int], bool] | None = None
     ) -> tuple[NDArray[np.uint64], NDArray[np.float32]]:
-        """knn_query(self: hnswlib.Index, data: object, k: typing.SupportsInt | typing.SupportsIndex = 1, num_threads: typing.SupportsInt | typing.SupportsIndex = -1, filter: collections.abc.Callable[[typing.SupportsInt | typing.SupportsIndex], bool] = None) -> object"""
+        """knn_query(self: hnswlib.Index, data: object, k: typing.SupportsInt | typing.SupportsIndex = 1, num_threads: typing.SupportsInt | typing.SupportsIndex = -1, filter: collections.abc.Callable[[int], bool] = None) -> object"""
         ...
     def load_index(self, path_to_index: str, max_elements: int = 0, allow_replace_delete: bool = False) -> None:
         """load_index(self: hnswlib.Index, path_to_index: str, max_elements: typing.SupportsInt | typing.SupportsIndex = 0, allow_replace_deleted: bool = False) -> None"""
