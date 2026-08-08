@@ -189,11 +189,9 @@ class HTMLRepr(Repr):
 class HTMLDoc(Doc):
     """Formatter class for HTML documentation."""
     _repr_instance: HTMLRepr
-    repr = _repr_instance.repr
-    escape = _repr_instance.escape
-    def page(self, title: str, contents: str) -> str:
-        """Format an HTML page."""
-        ...
+    repr = _repr_instance.repr  # pyrefly: ignore [unknown-name]
+    escape = _repr_instance.escape  # pyrefly: ignore [unknown-name]
+    def page(self, title: str, contents: str) -> str: ...
     if sys.version_info >= (3, 11):
         def heading(self, title: str, extras: str = "") -> str:
             """Format a page heading."""
@@ -357,16 +355,10 @@ class TextRepr(Repr):
 class TextDoc(Doc):
     """Formatter class for text documentation."""
     _repr_instance: TextRepr
-    repr = _repr_instance.repr
-    def bold(self, text: str) -> str:
-        """Format a string in bold by overstriking."""
-        ...
-    def indent(self, text: str, prefix: str = "    ") -> str:
-        """Indent text by prepending a given prefix to each line."""
-        ...
-    def section(self, title: str, contents: str) -> str:
-        """Format a section with a given heading."""
-        ...
+    repr = _repr_instance.repr  # pyrefly: ignore [unknown-name]
+    def bold(self, text: str) -> str: ...
+    def indent(self, text: str, prefix: str = "    ") -> str: ...
+    def section(self, title: str, contents: str) -> str: ...
     def formattree(
         self, tree: list[tuple[type, tuple[type, ...]] | list[Any]], modname: str, parent: type | None = None, prefix: str = ""
     ) -> str:

@@ -16,9 +16,7 @@ class PayPalPayeeInput:
         """Returns a dictionary representing the input object, to pass as variables to a GraphQL mutation."""
         ...
     @staticmethod
-    def builder() -> Builder:
-        """Creates a builder instance for fluent construction of PayPalPayeeInput objects."""
-        ...
+    def builder() -> Builder: ...  # pyrefly: ignore [unknown-name]
 
     class Builder:
         def __init__(self) -> None: ...

@@ -180,19 +180,8 @@ class SSCursor(Cursor):
         ...
     def scroll(self, value: int, mode: str = "relative") -> None: ...
 
-class DictCursor(DictCursorMixin, Cursor):
-    """A cursor which returns results as a dictionary"""
-    ...
+class DictCursor(DictCursorMixin, Cursor): ...  # type: ignore[misc]  # pyrefly: ignore [inconsistent-inheritance]
 
-class SSDictCursor(DictCursorMixin, SSCursor):  # type: ignore[misc]
-    """An unbuffered cursor, which returns results as a dictionary"""
-    def fetchall_unbuffered(self) -> Iterator[dict[str, Any]]:
-        """
-        Fetch all, implemented as a generator, which isn't to standard,
-        however, it doesn't make sense to return everything in a list, as that
-        would use ridiculous memory for large result sets.
-        """
-        ...
-    def read_next(self) -> dict[str, Any] | None:
-        """Read next row."""
-        ...
+class SSDictCursor(DictCursorMixin, SSCursor):  # type: ignore[misc]  # pyrefly: ignore [inconsistent-inheritance]
+    def fetchall_unbuffered(self) -> Iterator[dict[str, Any]]: ...  # type: ignore[override]
+    def read_next(self) -> dict[str, Any] | None: ...  # type: ignore[override]

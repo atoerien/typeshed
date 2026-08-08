@@ -13,7 +13,7 @@ class OKPKey(AsymmetricKey):
     """Key class of the ``OKP`` key type."""
     kty: str
     REQUIRED_JSON_FIELDS: ClassVar[list[str]]
-    PUBLIC_KEY_FIELDS = REQUIRED_JSON_FIELDS
+    PUBLIC_KEY_FIELDS = REQUIRED_JSON_FIELDS  # pyrefly: ignore [unknown-name]
     PRIVATE_KEY_FIELDS: ClassVar[list[str]]
     PUBLIC_KEY_CLS: ClassVar[tuple[type, ...]]
     PRIVATE_KEY_CLS: ClassVar[tuple[type, ...]]
