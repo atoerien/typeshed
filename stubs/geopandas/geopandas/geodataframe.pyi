@@ -32,6 +32,65 @@ from .plotting import GeoplotAccessor
 crs_mismatch_error: str
 
 class GeoDataFrame(GeoPandasBase, pd.DataFrame):  # type: ignore[misc]  # pyrefly: ignore [inconsistent-inheritance]
+    """
+    A GeoDataFrame object is a pandas.DataFrame that has one or more columns
+    containing geometry.
+
+    In addition to the standard DataFrame constructor arguments,
+    GeoDataFrame also accepts the following keyword arguments:
+
+    Parameters
+    ----------
+    crs : value (optional)
+        Coordinate Reference System of the geometry objects. Can be anything accepted by
+        :meth:`pyproj.CRS.from_user_input() <pyproj.crs.CRS.from_user_input>`,
+        such as an authority string (eg "EPSG:4326") or a WKT string.
+    geometry : str or array-like (optional)
+        Value to use as the active geometry column.
+        If str, treated as column name to use. If array-like, it will be
+        added as new column named 'geometry' on the GeoDataFrame and set as the
+        active geometry column.
+
+        Note that if ``geometry`` is a (Geo)Series with a
+        name, the name will not be used, a column named "geometry" will still be
+        added. To preserve the name, you can use :meth:`~GeoDataFrame.rename_geometry`
+        to update the geometry column name.
+
+    Examples
+    --------
+    Constructing GeoDataFrame from a dictionary.
+
+    >>> from shapely.geometry import Point
+    >>> d = {'col1': ['name1', 'name2'], 'geometry': [Point(1, 2), Point(2, 1)]}
+    >>> gdf = geopandas.GeoDataFrame(d, crs="EPSG:4326")
+    >>> gdf
+        col1     geometry
+    0  name1  POINT (1 2)
+    1  name2  POINT (2 1)
+
+    Notice that the inferred dtype of 'geometry' columns is geometry.
+
+    >>> gdf.dtypes
+    col1          object
+    geometry    geometry
+    dtype: object
+
+    Constructing GeoDataFrame from a pandas DataFrame with a column of WKT geometries:
+
+    >>> import pandas as pd
+    >>> d = {'col1': ['name1', 'name2'], 'wkt': ['POINT (1 2)', 'POINT (2 1)']}
+    >>> df = pd.DataFrame(d)
+    >>> gs = geopandas.GeoSeries.from_wkt(df['wkt'])
+    >>> gdf = geopandas.GeoDataFrame(df, geometry=gs, crs="EPSG:4326")
+    >>> gdf
+        col1          wkt     geometry
+    0  name1  POINT (1 2)  POINT (1 2)
+    1  name2  POINT (2 1)  POINT (2 1)
+
+    See Also
+    --------
+    GeoSeries : Series object designed to store shapely geometry objects
+    """
     # Override the weird annotation of DataFrame.__new__ in pandas-stubs
     @overload
     def __new__(

@@ -313,6 +313,12 @@ else:
 
 # Does not actually inherit from Canvas, but dynamically gets all methods of Canvas
 class ScrolledCanvas(Canvas, Frame):  # type: ignore[misc]  # pyrefly: ignore [inconsistent-inheritance]
+    """
+    Modeled after the scrolled canvas class from Grayons's Tkinter book.
+
+    Used as the default canvas, which pops up automatically when
+    using turtle graphics functions or the Turtle class.
+    """
     bg: str
     hscroll: Scrollbar
     vscroll: Scrollbar
@@ -2283,6 +2289,11 @@ class TPen:
     ht = hideturtle
 
 class RawTurtle(TPen, TNavigator):  # type: ignore[misc]  # Conflicting methods in base classes  # pyrefly: ignore [inconsistent-inheritance]
+    """
+    Animation part of the RawTurtle.
+    Puts RawTurtle upon a TurtleScreen and provides tools for
+    its animation.
+    """
     screen: TurtleScreen
     screens: ClassVar[list[TurtleScreen]]
     def __init__(

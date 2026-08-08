@@ -1332,7 +1332,9 @@ class Mapping(Collection[_KT], Generic[_KT, _VT_co]):
         """D.get(k[,d]) -> D[k] if k in D, else d.  d defaults to None."""
         ...
     @overload
-    def get(self, key: _KT, default: _VT_co, /) -> _VT_co: ...  # type: ignore[misc] # pyright: ignore[reportGeneralTypeIssues] # Covariant type as parameter  # pyrefly: ignore [invalid-variance]
+    def get(self, key: _KT, default: _VT_co, /) -> _VT_co:
+        """D.get(k[,d]) -> D[k] if k in D, else d.  d defaults to None."""
+        ...
     @overload
     def get(self, key: _KT, default: _T, /) -> _VT_co | _T:
         """D.get(k[,d]) -> D[k] if k in D, else d.  d defaults to None."""

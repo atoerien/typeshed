@@ -19,7 +19,14 @@ class PayPalPurchaseUnitInput:
         """Returns a dictionary representing the input object, to pass as variables to a GraphQL mutation."""
         ...
     @staticmethod
-    def builder(amount: MonetaryAmountInput) -> Builder: ...  # pyrefly: ignore [unknown-name]
+    def builder(amount: MonetaryAmountInput) -> Builder:
+        """
+        Creates a builder instance for fluent construction of PayPalPurchaseUnit objects.
+
+        Args:
+        amount (MonetaryAmountInput): The total order amount. The amount must be a positive number.
+        """
+        ...
 
     class Builder:
         def __init__(self, amount: MonetaryAmountInput) -> None: ...

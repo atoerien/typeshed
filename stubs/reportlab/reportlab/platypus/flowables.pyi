@@ -374,6 +374,14 @@ class _Container(_ContainerSpace):
     def copyContent(self, content: _FlowableSublist | None = None) -> None: ...
 
 class PTOContainer(_Container, Flowable):  # pyrefly: ignore [inconsistent-inheritance]
+    """
+    PTOContainer(contentList,trailerList,headerList)
+
+    A container for flowables decorated with trailer & header lists.
+    If the split operation would be called then the trailer and header
+    lists are injected before and after the split. This allows specialist
+    "please turn over" and "continued from previous" like behaviours.
+    """
     def __init__(
         self, content: _FlowableSublist | None, trailer: _FlowableSublist | None = None, header: _FlowableSublist | None = None
     ) -> None: ...
@@ -431,6 +439,7 @@ class PlacedStory(Flowable):
 class _FindSplitterMixin: ...
 
 class ImageAndFlowables(_Container, _FindSplitterMixin, Flowable):  # pyrefly: ignore [inconsistent-inheritance]
+    """combine a list of flowables and an Image"""
     imageHref: str | None
     def __init__(
         self,

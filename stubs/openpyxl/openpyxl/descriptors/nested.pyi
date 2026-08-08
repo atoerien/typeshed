@@ -274,6 +274,7 @@ class NestedMinMax(Nested[_M], MinMax[_M, _N]):  # type: ignore[misc]  # pyrefly
     ) -> None: ...
 
 class EmptyTag(Nested[bool], Bool[_N]):  # type: ignore[misc]  # pyrefly: ignore [inconsistent-inheritance]
+    """Boolean if a tag exists or not."""
     @overload
     def __init__(self: EmptyTag[Literal[True]], name: str | None = None, *, allow_none: Literal[True]) -> None: ...
     @overload

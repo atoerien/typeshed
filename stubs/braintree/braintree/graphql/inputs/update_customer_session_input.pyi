@@ -28,7 +28,14 @@ class UpdateCustomerSessionInput:
     ) -> None: ...
     def to_graphql_variables(self) -> _GraphqlVariables: ...
     @staticmethod
-    def builder(session_id: str) -> Builder: ...  # pyrefly: ignore [unknown-name]
+    def builder(session_id: str) -> Builder:
+        """
+        Creates a builder instance for fluent construction of UpdateCustomerSessionInput objects.
+
+        Args:
+            session_id (str): ID of the customer session to be updated.
+        """
+        ...
 
     class Builder:
         def __init__(self, session_id: str) -> None: ...
