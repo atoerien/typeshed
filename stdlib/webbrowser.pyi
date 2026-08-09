@@ -12,40 +12,12 @@ class Error(Exception): ...
 
 def register(
     name: str, klass: Callable[[], BaseBrowser] | None, instance: BaseBrowser | None = None, *, preferred: bool = False
-) -> None:
-    """Register a browser connector."""
-    ...
-def get(using: str | None = None) -> BaseBrowser:
-    """Return a browser launcher instance appropriate for the environment."""
-    ...
-def open(url: str, new: int = 0, autoraise: bool = True) -> bool:
-    """
-    Display url using the default browser.
-
-    If possible, open url in a location determined by new.
-    - 0: the same browser window (the default).
-    - 1: a new browser window.
-    - 2: a new browser page ("tab").
-    If possible, autoraise raises the window (the default) or not.
-
-    If opening the browser succeeds, return True.
-    If there is a problem, return False.
-    """
-    ...
-def open_new(url: str) -> bool:
-    """
-    Open url in a new window of the default browser.
-
-    If not possible, then open url in the only browser window.
-    """
-    ...
-def open_new_tab(url: str) -> bool:
-    """
-    Open url in a new page ("tab") of the default browser.
-
-    If not possible, then the behavior becomes equivalent to open_new().
-    """
-    ...
+) -> None: ...
+def get(using: str | None = None) -> BaseBrowser: ...
+def open(url: str, new: int = 0, autoraise: bool = True) -> bool: ...
+def open_new(url: str) -> bool: ...
+def open_new_tab(url: str) -> bool: ...
+def register_standard_browsers() -> None: ...
 
 class BaseBrowser:
     """Parent class for all browsers. Do not use directly."""
