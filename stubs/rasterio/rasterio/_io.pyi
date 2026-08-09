@@ -678,8 +678,8 @@ class DatasetWriterBase(DatasetReaderBase):
         """
         Write a colormap for a band to the dataset.
 
-        A colormap maps pixel values of a single-band dataset to RGB or
-        RGBA colors.
+        A colormap maps pixel values of a dataset band to RGB or RGBA
+        colors.
 
         Parameters
         ----------

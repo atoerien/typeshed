@@ -257,6 +257,10 @@ def reproject(
     init_dest_nodata: bool
         Flag to specify initialization of nodata in destination;
         prevents overwrite of previous warps. Defaults to True.
+    tolerance : float, optional
+        The maximum error tolerance in input pixels when
+        approximating the warp transformation. Default: 0.125,
+        or one-eigth of a pixel.
     warp_mem_limit : int, optional
         The warp operation memory limit in MB. Larger values allow the
         warp operation to be carried out in fewer chunks. The amount of

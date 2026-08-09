@@ -88,8 +88,17 @@ class InspectLoader(Loader):
         """
         ...
     @abstractmethod
-    def get_source(self, fullname: str) -> str | None: ...
-    def exec_module(self, module: types.ModuleType) -> None: ...
+    def get_source(self, fullname: str) -> str | None:
+        """
+        Abstract method which should return the source code for the
+        module.  The fullname is a str.  Returns a str.
+
+        Raises ImportError if the module cannot be found.
+        """
+        ...
+    def exec_module(self, module: types.ModuleType) -> None:
+        """Execute the module."""
+        ...
 
     if sys.version_info >= (3, 15):
         @staticmethod
@@ -102,7 +111,14 @@ class InspectLoader(Loader):
         @staticmethod
         def source_to_code(
             data: ReadableBuffer | str | _ast.Module | _ast.Expression | _ast.Interactive, path: bytes | StrPath = "<string>"
-        ) -> types.CodeType: ...
+        ) -> types.CodeType:
+            """
+            Compile 'data' into a code object.
+
+            The 'data' argument can be anything that compile() can handle. The'path'
+            argument should be where the data was retrieved (when applicable).
+            """
+            ...
 
 class ExecutionLoader(InspectLoader):
     """
