@@ -643,12 +643,56 @@ class Misc:
     if sys.version_info >= (3, 15):
         __iter__: ClassVar[None]  # prevent using __getitem__ for iteration
 
-    def destroy(self) -> None: ...
-    def deletecommand(self, name: str) -> None: ...
-    def tk_strictMotif(self, boolean=None): ...
-    def tk_bisque(self) -> None: ...
-    def tk_setPalette(self, *args, **kw) -> None: ...
-    def wait_variable(self, name: str | Variable = "PY_VAR") -> None: ...
+    def destroy(self) -> None:
+        """
+        Internal function.
+
+        Delete all Tcl commands created for
+        this widget in the Tcl interpreter.
+        """
+        ...
+    def deletecommand(self, name: str) -> None:
+        """
+        Internal function.
+
+        Delete the Tcl command provided in NAME.
+        """
+        ...
+    def tk_strictMotif(self, boolean=None):
+        """
+        Set Tcl internal variable, whether the look and feel
+        should adhere to Motif.
+
+        A parameter of 1 means adhere to Motif (e.g. no color
+        change if mouse passes over slider).
+        Returns the set value.
+        """
+        ...
+    def tk_bisque(self) -> None:
+        """Change the color scheme to light brown as used in Tk 3.6 and before."""
+        ...
+    def tk_setPalette(self, *args, **kw) -> None:
+        """
+        Set a new color scheme for all widget elements.
+
+        A single color as argument will cause that all colors of Tk
+        widget elements are derived from this.
+        Alternatively several keyword parameters and its associated
+        colors can be given. The following keywords are valid:
+        activeBackground, foreground, selectColor,
+        activeForeground, highlightBackground, selectBackground,
+        background, highlightColor, selectForeground,
+        disabledForeground, insertBackground, troughColor.
+        """
+        ...
+    def wait_variable(self, name: str | Variable = "PY_VAR") -> None:
+        """
+        Wait until the variable is modified.
+
+        A parameter of type IntVar, StringVar, DoubleVar or
+        BooleanVar must be given.
+        """
+        ...
     waitvar = wait_variable
     def wait_window(self, window: Misc | None = None) -> None:
         """
