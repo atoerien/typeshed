@@ -209,6 +209,9 @@ def patch_thread(
         best-effort attempt and, on certain implementations, may not detect all
         locks. It is important to monkey-patch extremely early in the startup process.
         Setting this to False is not recommended, especially on Python 2.
+        This also replaces the lock :mod:`concurrent.futures.thread` registers
+        with :func:`os.register_at_fork`, which deadlocks or switches greenlets
+        mid-fork.
 
     .. caution::
         Monkey-patching :mod:`thread` and using
@@ -224,6 +227,9 @@ def patch_thread(
         Add *logging* and *existing_locks* params.
     .. versionchanged:: 1.3a2
         ``Event`` defaults to True.
+    .. versionchanged:: 26.8.0
+        *existing_locks* imports :mod:`concurrent.futures.thread` and replaces
+        its ``_global_shutdown_lock``.
     """
     ...
 def patch_socket(dns: bool = True, aggressive: bool = True) -> None:

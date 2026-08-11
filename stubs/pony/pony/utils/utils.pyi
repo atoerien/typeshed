@@ -110,6 +110,7 @@ class HashableDict(dict[Incomplete, Incomplete]):
     update: Incomplete
 
 class IntegerGenerator:
+    """pickleable version of itertools.count() with fixed step=1"""
     val: int
     def __init__(self, firstval: int = 0) -> None: ...
     def __iter__(self): ...
