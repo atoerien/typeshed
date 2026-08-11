@@ -1,8 +1,13 @@
-from _typeshed import Incomplete
 from collections.abc import Mapping, Sequence
+from typing import TypedDict, type_check_only
 
 from docker.context.context import Context
 from docker.tls import TLSConfig
+
+@type_check_only
+class _ContextKwargs(TypedDict, total=False):
+    base_url: str
+    tls: TLSConfig
 
 class ContextAPI:
     """
@@ -95,19 +100,8 @@ class ContextAPI:
         ...
     @classmethod
     def kwargs_from_context(
-        cls, name: str | None = None, environment: Mapping[str, str | None] | None = None
-    ) -> dict[str, Incomplete]:
-        """
-        Build ``base_url`` / ``tls`` kwargs from a Docker CLI context.
-
-        Mirrors the Docker CLI: if ``name`` is not given, honours the
-        ``DOCKER_CONTEXT`` env var, then the ``currentContext`` field in
-        ``~/.docker/config.json``, defaulting to the built-in ``default``
-        context (local socket / named pipe). On a host with Docker Desktop
-        this resolves to the ``desktop-linux`` (or equivalent) context, so
-        client construction targets Docker Desktop out of the box.
-        """
-        ...
+        cls, name: str | None = None, environment: Mapping[str, str | None] | None = None  # TODO: Use SupportsGet
+    ) -> _ContextKwargs: ...
     @classmethod
     def set_current_context(cls, name: str = "default") -> None: ...
     @classmethod
