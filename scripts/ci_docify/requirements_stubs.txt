@@ -8,7 +8,7 @@ s2clientprotocol==5.*
 yt-dlp==2026.7.4
 simple-websocket==1.1.*
 tzdata==2026.*
-pony==0.7.*
+pony~=0.7.20
 rfc3339-validator==0.1.*
 xdgenvpy==3.0.*
 pyjks==20.0.*
@@ -69,7 +69,7 @@ jsonschema[format]~=4.26.0
 binaryornot==0.4.*
 flake8-docstrings==1.7.*
 click-log==0.4.*
-gevent==26.7.*
+gevent==26.8.*
 xlrd==2.0.*
 boltons==26.1.*
 docker==7.2.*
@@ -125,7 +125,6 @@ toml==0.10.*
 fpdf2==2.8.4
 WebTest==3.0.*
 whatthepatch==1.0.*
-icalendar==6.3.2
 PyMySQL==1.2.*
 grpcio-status==1.*
 inifile==0.4.*
