@@ -14,4 +14,9 @@ __all__ = [
 
 CCompiler = base.Compiler
 
-def show_compilers() -> None: ...
+def show_compilers() -> None:
+    """
+    Print list of available compilers (used by the "--help-compiler"
+    options to "build", "build_ext", "build_clib").
+    """
+    ...

@@ -31,5 +31,14 @@ class Compiler(base.Compiler):
     shared_lib_format: ClassVar[str]
     dylib_lib_format: ClassVar[str]
     xcode_stub_lib_format: ClassVar[str]
-    def configure_system(self) -> None: ...
+    def configure_system(self) -> None:
+        """
+        Configure this compiler from the interpreter's build configuration.
+
+        Applies the compiler, flag, and archiver settings CPython recorded in
+        sysconfig when it was built -- honoring the usual environment-variable
+        overrides (CC, CXX, CFLAGS, LDSHARED, AR, RANLIB, …) -- so extensions
+        build consistently with the interpreter.
+        """
+        ...
     def runtime_library_dir_option(self, dir: str) -> str | list[str]: ...  # type: ignore[override]

@@ -46,7 +46,14 @@ class Command:
     force: bool | None
     help: bool
     finalized: bool
-    def __init__(self, dist: Distribution) -> None: ...
+    def __init__(self, dist: Distribution) -> None:
+        """
+        Create and initialize a new Command object.  Most importantly,
+        invokes the 'initialize_options()' method, which is the real
+        initializer and depends on the actual command being
+        instantiated.
+        """
+        ...
     def ensure_finalized(self) -> None: ...
     @abstractmethod
     def initialize_options(self) -> None:
@@ -225,7 +232,9 @@ class Command:
         """Move a file respecting dry-run flag."""
         ...
 
-    def spawn(self, cmd: Sequence[StrOrBytesPath], search_path: Unused = True, level: Unused = 1) -> None: ...
+    def spawn(self, cmd: Sequence[StrOrBytesPath], search_path: Unused = True, level: Unused = 1) -> None:
+        """Spawn an external command respecting dry-run flag."""
+        ...
 
     @overload
     def make_archive(

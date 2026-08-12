@@ -16,7 +16,12 @@ _StrPathT = TypeVar("_StrPathT", bound=StrPath)
 _StrOrBytesT = TypeVar("_StrOrBytesT", str, bytes)
 
 def strip_module(filename): ...
-def sorted_walk(dir: GenericPath[_StrOrBytesT]) -> Iterator[tuple[_StrOrBytesT, list[_StrOrBytesT], list[_StrOrBytesT]]]: ...
+def sorted_walk(dir: GenericPath[_StrOrBytesT]) -> Iterator[tuple[_StrOrBytesT, list[_StrOrBytesT], list[_StrOrBytesT]]]:
+    """
+    Do os.walk in a reproducible way,
+    independent of indeterministic filesystem readdir order
+    """
+    ...
 def write_stub(resource, pyfile) -> None: ...
 
 class bdist_egg(Command):

@@ -37,16 +37,20 @@ def get_config_var(name: str) -> int | str | None:
     ...
 
 @overload
-def get_config_vars() -> dict[str, str | int]: ...
-@overload
-def get_config_vars(arg: str, /, *args: str) -> list[str | int | None]: ...
+def get_config_vars() -> dict[str, str | int]:
+    """
+    With no arguments, return a dictionary of all configuration
+    variables relevant for the current platform.  Generally this includes
+    everything needed to build extensions and install both pure modules and
+    extensions.  On Unix, this means every variable defined in Python's
+    installed Makefile; on Windows it's a much smaller set.
 
     With arguments, return a list of values that result from looking up
     each argument in the configuration variable dictionary.
     """
     ...
 @overload
-def get_config_vars(arg: str, /, *args: str) -> list[str | int]:
+def get_config_vars(arg: str, /, *args: str) -> list[str | int | None]:
     """
     With no arguments, return a dictionary of all configuration
     variables relevant for the current platform.  Generally this includes
@@ -98,7 +102,7 @@ def customize_compiler(compiler: CCompiler) -> None:
     """
     Do any platform-specific customization of a CCompiler instance.
 
-    Mainly needed on Unix, so we can plug in the information that
-    varies across Unices and is stored in Python's Makefile.
+    Retained for backward compatibility; the behavior now lives on the
+    compiler itself, so this simply delegates to ``configure_system``.
     """
     ...
