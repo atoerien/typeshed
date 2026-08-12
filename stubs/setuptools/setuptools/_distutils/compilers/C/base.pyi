@@ -6,7 +6,7 @@ for the Distutils compiler abstraction model.
 """
 
 from _typeshed import BytesPath, Incomplete, StrOrBytesPath, StrPath, Unused
-from collections.abc import Callable, Iterable, MutableSequence, Sequence
+from collections.abc import Callable, Iterable, Sequence
 from subprocess import _ENV
 from typing import ClassVar, Final, Literal, TypeAlias, TypeVar, overload
 from typing_extensions import TypeVarTuple, Unpack, deprecated
@@ -31,6 +31,7 @@ class Compiler:
     attributes may be varied on a per-compilation or per-link basis.
     """
     compiler_type: ClassVar[str]
+    description: ClassVar[str]
     executables: ClassVar[dict[str, Incomplete]]
 
     # Subclasses that rely on the standard filename generation methods
@@ -216,54 +217,12 @@ class Compiler:
         a symbol on the current platform.  The optional arguments can
         be used to augment the compilation environment.
 
-        The libraries argument is a list of flags to be passed to the
-        linker to make additional symbol definitions available for
-        linking.
-
-        The includes and include_dirs arguments are deprecated.
-        Usually, supplying include files with function declarations
-        will cause function detection to fail even in cases where the
-        symbol is available for linking.
-        """
-        ...
-
-    def library_dir_option(self, dir: str) -> str:
-        """
-        Return the compiler option to add 'dir' to the list of
-        directories searched for libraries.
-        """
-        ...
-    def library_option(self, lib: str) -> str:
-        """
-        Return the compiler option to add 'lib' to the list of libraries
-        linked into the shared library or executable.
-        """
-        ...
-    def runtime_library_dir_option(self, dir: str) -> str | list[str]:
-        """
-        Return the compiler option to add 'dir' to the list of
-        directories searched for runtime libraries.
-        """
-        ...
-    def set_executables(self, **kwargs: str) -> None:
-        """
-        Define the executables (and options for them) that will be run
-        to perform the various stages of compilation.  The exact set of
-        executables that may be specified here depends on the compiler
-        class (via the 'executables' class attribute), but most will have:
-          compiler      the C/C++ compiler
-          linker_so     linker used to create shared objects and libraries
-          linker_exe    linker used to create binary executables
-          archiver      static library creator
-
-        On platforms with a command-line (Unix, DOS/Windows), each of these
-        is a string that will be split into executable name and (optional)
-        list of arguments.  (Splitting the string is done similarly to how
-        Unix shells operate: words are delimited by spaces, but quotes and
-        backslashes can override this.  See
-        'distutils.util.split_quoted()'.)
-        """
-        ...
+    def library_dir_option(self, dir: str) -> str: ...
+    def library_option(self, lib: str) -> str: ...
+    def runtime_library_dir_option(self, dir: str) -> str | list[str]: ...
+    def initialize(self, plat_name: str | None = None) -> None: ...
+    def configure_system(self) -> None: ...
+    def set_executables(self, **kwargs: str) -> None: ...
     def set_executable(self, key: str, value) -> None: ...
     def compile(
         self,
@@ -505,14 +464,8 @@ class Compiler:
     def execute(
         self, func: Callable[[Unpack[_Ts]], Unused], args: tuple[Unpack[_Ts]], msg: str | None = None, level: int = 1
     ) -> None: ...
-
-    @overload
-    def spawn(self, cmd: Sequence[StrOrBytesPath], *, search_path: Literal[False], env: _ENV | None = None) -> None: ...
-    @overload
-    def spawn(
-        self, cmd: MutableSequence[bytes | StrPath], *, search_path: Literal[True] = True, env: _ENV | None = None
-    ) -> None: ...
-
+    def call(self, cmd: Sequence[StrOrBytesPath], *, env: _ENV | None = None, **kwargs) -> None: ...
+    def spawn(self, cmd: Sequence[StrOrBytesPath], *, env: _ENV | None = None, **kwargs) -> None: ...
     def mkpath(self, name: str, mode: int = 0o777) -> None: ...
 
     @overload
@@ -539,12 +492,8 @@ def get_default_compiler(osname: str | None = None, platform: str | None = None)
 
 compiler_class: dict[str, tuple[str, str, str]]
 
-def show_compilers() -> None:
-    """
-    Print list of available compilers (used by the "--help-compiler"
-    options to "build", "build_ext", "build_clib").
-    """
-    ...
+def show_compilers() -> None: ...
+def get_compilers() -> dict[str, type[Compiler]]: ...
 def new_compiler(
     plat: str | None = None, compiler: str | None = None, verbose: bool = False, force: bool = False
 ) -> Compiler:

@@ -7,8 +7,8 @@ in the distutils.command package.
 
 from _typeshed import BytesPath, StrOrBytesPath, StrPath, Unused
 from abc import abstractmethod
-from collections.abc import Callable, MutableSequence, Sequence
-from typing import Any, ClassVar, Literal, TypeVar, overload
+from collections.abc import Callable, Sequence
+from typing import Any, ClassVar, TypeVar, overload
 from typing_extensions import TypeVarTuple, Unpack
 
 from .dist import Distribution
@@ -42,14 +42,11 @@ class Command:
         list[tuple[str, str, str]]
         | list[tuple[str, str | None, str]]
     ]
-    def __init__(self, dist: Distribution) -> None:
-        """
-        Create and initialize a new Command object.  Most importantly,
-        invokes the 'initialize_options()' method, which is the real
-        initializer and depends on the actual command being
-        instantiated.
-        """
-        ...
+    verbose: bool
+    force: bool | None
+    help: bool
+    finalized: bool
+    def __init__(self, dist: Distribution) -> None: ...
     def ensure_finalized(self) -> None: ...
     @abstractmethod
     def initialize_options(self) -> None:
@@ -228,14 +225,7 @@ class Command:
         """Move a file respecting dry-run flag."""
         ...
 
-    @overload
-    def spawn(self, cmd: Sequence[StrOrBytesPath], search_path: Literal[False], level: Unused = 1) -> None:
-        """Spawn an external command respecting dry-run flag."""
-        ...
-    @overload
-    def spawn(self, cmd: MutableSequence[bytes | StrPath], search_path: Literal[True] = True, level: Unused = 1) -> None:
-        """Spawn an external command respecting dry-run flag."""
-        ...
+    def spawn(self, cmd: Sequence[StrOrBytesPath], search_path: Unused = True, level: Unused = 1) -> None: ...
 
     @overload
     def make_archive(
