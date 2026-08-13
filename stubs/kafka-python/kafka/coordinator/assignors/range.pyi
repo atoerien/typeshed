@@ -1,8 +1,5 @@
-from _typeshed import Incomplete
-
 from kafka.coordinator.assignors.abstract import AbstractPartitionAssignor
-
-log: Incomplete
+from kafka.protocol.consumer.metadata import ConsumerProtocolSubscription
 
 class RangePartitionAssignor(AbstractPartitionAssignor):
     """
@@ -24,8 +21,8 @@ class RangePartitionAssignor(AbstractPartitionAssignor):
     name: str
     version: int
     @classmethod
-    def assign(cls, cluster, group_subscriptions): ...
+    def assign(cls, cluster, members): ...
     @classmethod
-    def metadata(cls, topics): ...
+    def metadata(cls, topics) -> ConsumerProtocolSubscription: ...
     @classmethod
-    def on_assignment(cls, assignment) -> None: ...
+    def on_assignment(cls, assignment, generation) -> None: ...

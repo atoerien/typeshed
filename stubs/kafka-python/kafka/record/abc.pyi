@@ -1,6 +1,7 @@
 import abc
 
 class ABCRecord(metaclass=abc.ABCMeta):
+    __slots__ = ()
     @property
     @abc.abstractmethod
     def size_in_bytes(self):
@@ -74,6 +75,7 @@ class ABCRecord(metaclass=abc.ABCMeta):
         ...
 
 class ABCRecordBatchBuilder(metaclass=abc.ABCMeta):
+    __slots__ = ()
     @abc.abstractmethod
     def append(self, offset, timestamp, key, value, headers=None):
         """
@@ -114,10 +116,7 @@ class ABCRecordBatchBuilder(metaclass=abc.ABCMeta):
         ...
 
 class ABCRecordBatch(metaclass=abc.ABCMeta):
-    """
-    For v2 encapsulates a RecordBatch, for v0/v1 a single (maybe
-    compressed) message.
-    """
+    __slots__ = ()
     @abc.abstractmethod
     def __iter__(self):
         """
@@ -151,6 +150,7 @@ class ABCRecordBatch(metaclass=abc.ABCMeta):
         ...
 
 class ABCRecords(metaclass=abc.ABCMeta):
+    __slots__ = ()
     @abc.abstractmethod
     def __init__(self, buffer):
         """

@@ -1,5 +1,5 @@
 class Quota:
-    """An upper or lower bound for metrics"""
+    __slots__ = ("_bound", "_upper")
     def __init__(self, bound, is_upper) -> None: ...
     @staticmethod
     def upper_bound(upper_bound): ...

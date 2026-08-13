@@ -1,11 +1,15 @@
 class Sensor:
-    """
-    A sensor applies a continuous sequence of numerical values
-    to a set of associated metrics. For example a sensor on
-    message size would record a sequence of message sizes using
-    the `record(double)` api and would maintain a set
-    of metrics about request sizes such as the average or max.
-    """
+    __slots__ = (
+        "_lock",
+        "_registry",
+        "_name",
+        "_parents",
+        "_metrics",
+        "_stats",
+        "_config",
+        "_inactive_sensor_expiration_time_ms",
+        "_last_record_time",
+    )
     def __init__(self, registry, name, parents, config, inactive_sensor_expiration_time_seconds) -> None: ...
     @property
     def name(self):

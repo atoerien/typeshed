@@ -9,16 +9,8 @@ class Secret(Model):
     """A secret."""
     id_attribute: str
     @property
-    def name(self): ...
-    def remove(self):
-        """
-        Remove this secret.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If secret failed to remove.
-        """
-        ...
+    def name(self) -> str: ...
+    def remove(self) -> bool: ...
 
 class SecretCollection(Collection[Secret]):
     """Secrets on the Docker server."""
@@ -26,37 +18,8 @@ class SecretCollection(Collection[Secret]):
     # Please keep in sync with docker.api.secret.SecretApiMixin.create_secret
     def create(  # type: ignore[override]
         self, *, name: str, data: bytes, labels: dict[str, Incomplete] | None = None, driver: DriverConfig | None = None
-    ):
-        """
-        Create a secret
-
-        Args:
-            name (string): Name of the secret
-            data (bytes): Secret data to be stored
-            labels (dict): A mapping of labels to assign to the secret
-            driver (DriverConfig): A custom driver configuration. If
-                unspecified, the default ``internal`` driver will be used
-
-        Returns (dict): ID of the newly created secret
-        """
-        ...
-    def get(self, secret_id: str):
-        """
-        Get a secret.
-
-        Args:
-            secret_id (str): Secret ID.
-
-        Returns:
-            (:py:class:`Secret`): The secret.
-
-        Raises:
-            :py:class:`docker.errors.NotFound`
-                If the secret does not exist.
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
+    ) -> Secret: ...
+    def get(self, secret_id: str) -> Secret: ...
     # Please keep in sync with docker.api.secret.SecretApiMixin.secrets
     def list(self, *, filters: dict[str, Incomplete] | None = None) -> _list[Secret]:
         """

@@ -1,7 +1,3 @@
-from _typeshed import Incomplete
-
-logger: Incomplete
-
 class Metrics:
     """
     A registry of sensors and metrics.

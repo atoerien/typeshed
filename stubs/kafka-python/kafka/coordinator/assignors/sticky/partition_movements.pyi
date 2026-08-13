@@ -1,8 +1,6 @@
 from _typeshed import Incomplete
 from typing import NamedTuple
 
-log: Incomplete
-
 class ConsumerPair(NamedTuple):
     """ConsumerPair(src_member_id, dst_member_id)"""
     src_member_id: Incomplete

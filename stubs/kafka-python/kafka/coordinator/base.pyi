@@ -1,17 +1,10 @@
 import abc
-import threading
 from _typeshed import Incomplete
-from typing import ClassVar
+from typing import ClassVar, Final
+from typing_extensions import deprecated
 
 from kafka import errors as Errors
-
-log: Incomplete
-heartbeat_log: Incomplete
-
-class MemberState:
-    UNJOINED: str
-    REBALANCING: str
-    STABLE: str
+from kafka.structs import ConsumerGroupMetadata
 
 class Generation:
     NO_GENERATION: ClassVar[Generation]
@@ -19,16 +12,11 @@ class Generation:
     member_id: Incomplete
     protocol: Incomplete
     def __init__(self, generation_id, member_id, protocol) -> None: ...
-    def has_member_id(self):
-        """
-        True if this generation has a valid member id, False otherwise.
-        A member might have an id before it becomes part of a group generation.
-        """
-        ...
-    def __eq__(self, other): ...
+    def has_member_id(self) -> bool: ...
+    def is_lost(self) -> bool: ...
+    def __eq__(self, other) -> bool: ...
 
-class UnjoinedGroupException(Errors.KafkaError):
-    retriable: bool
+class UnjoinedGroupException(Errors.KafkaError): ...
 
 class BaseCoordinator(metaclass=abc.ABCMeta):
     """
@@ -72,29 +60,9 @@ class BaseCoordinator(metaclass=abc.ABCMeta):
     rejoin_needed: bool
     rejoining: bool
     state: Incomplete
-    join_future: Incomplete
     coordinator_id: Incomplete
-    def __init__(self, client, **configs) -> None:
-        """
-        Keyword Arguments:
-            group_id (str): name of the consumer group to join for dynamic
-                partition assignment (if enabled), and to use for fetching and
-                committing offsets. Default: 'kafka-python-default-group'
-            session_timeout_ms (int): The timeout used to detect failures when
-                using Kafka's group management facilities. Default: 30000
-            heartbeat_interval_ms (int): The expected time in milliseconds
-                between heartbeats to the consumer coordinator when using
-                Kafka's group management feature. Heartbeats are used to ensure
-                that the consumer's session stays active and to facilitate
-                rebalancing when new consumers join or leave the group. The
-                value must be set lower than session_timeout_ms, but typically
-                should be set no higher than 1/3 of that value. It can be
-                adjusted even lower to control the expected time for normal
-                rebalances. Default: 3000
-            retry_backoff_ms (int): Milliseconds to backoff when retrying on
-                errors. Default: 100.
-        """
-        ...
+    DEFAULT_SESSION_TIMEOUT_MS_PRE_KIP_735: Final = 30000
+    def __init__(self, client, **configs) -> None: ...
     @property
     def group_id(self): ...
     @property
@@ -110,121 +78,33 @@ class BaseCoordinator(metaclass=abc.ABCMeta):
         """
         ...
     @abc.abstractmethod
-    def group_protocols(self):
-        """
-        Return the list of supported group protocols and metadata.
-
-        This list is submitted by each group member via a JoinGroupRequest.
-        The order of the protocols in the list indicates the preference of the
-        protocol (the first entry is the most preferred). The coordinator takes
-        this preference into account when selecting the generation protocol
-        (generally more preferred protocols will be selected as long as all
-        members support them and there is no disagreement on the preference).
-
-        Note: metadata must be type bytes or support an encode() method
-
-        Returns:
-            list: [(protocol, metadata), ...]
-        """
-        ...
-    def coordinator_unknown(self):
-        """
-        Check if we know who the coordinator is and have an active connection
-
-        Side-effect: reset coordinator_id to None if connection failed
-
-        Returns:
-            bool: True if the coordinator is unknown
-        """
-        ...
-    def coordinator(self):
-        """
-        Get the current coordinator
-
-        Returns: the current coordinator id or None if it is unknown
-        """
-        ...
-    def connected(self):
-        """Return True iff the coordinator node is connected"""
-        ...
-    def ensure_coordinator_ready(self, timeout_ms=None):
-        """
-        Block until the coordinator for this group is known.
-
-        Keyword Arguments:
-            timeout_ms (numeric, optional): Maximum number of milliseconds to
-                block waiting to find coordinator. Default: None.
-
-        Returns: True is coordinator found before timeout_ms, else False
-        """
-        ...
+    def group_protocols(self): ...
+    def coordinator_unknown(self): ...
+    def coordinator(self): ...
+    def stable(self) -> bool: ...
+    def ensure_coordinator_ready(self, timeout_ms=None) -> bool: ...
+    async def ensure_coordinator_ready_async(self, timeout_ms=None) -> bool: ...
     def lookup_coordinator(self): ...
-    def need_rejoin(self):
-        """
-        Check whether the group should be rejoined (e.g. if metadata changes)
-
-        Returns:
-            bool: True if it should, False otherwise
-        """
-        ...
-    def poll_heartbeat(self) -> None:
-        """
-        Check the status of the heartbeat thread (if it is active) and indicate
-        the liveness of the client. This must be called periodically after
-        joining with :meth:`.ensure_active_group` to ensure that the member stays
-        in the group. If an interval of time longer than the provided rebalance
-        timeout (max_poll_interval_ms) expires without calling this method, then
-        the client will proactively leave the group.
-
-        Raises: RuntimeError for unexpected errors raised from the heartbeat thread
-        """
-        ...
-    def time_to_next_heartbeat(self):
-        """
-        Returns seconds (float) remaining before next heartbeat should be sent
-
-        Note: Returns infinite if group is not joined
-        """
-        ...
-    def ensure_active_group(self, timeout_ms=None):
-        """
-        Ensure that the group is active (i.e. joined and synced)
-
-        Keyword Arguments:
-            timeout_ms (numeric, optional): Maximum number of milliseconds to
-                block waiting to join group. Default: None.
-
-        Returns: True if group initialized before timeout_ms, else False
-        """
-        ...
-    def join_group(self, timeout_ms=None): ...
-    def coordinator_dead(self, error) -> None:
-        """Mark the current coordinator as dead."""
-        ...
-    def generation_if_stable(self):
-        """
-        Get the current generation state if the group is stable.
-
-        Returns: the current generation or None if the group is unjoined/rebalancing
-        """
-        ...
+    def need_rejoin(self): ...
+    def poll_heartbeat(self) -> None: ...
+    def time_to_next_heartbeat(self): ...
+    def ensure_active_group(self, timeout_ms=None) -> bool: ...
+    async def ensure_active_group_async(self, timeout_ms=None) -> bool: ...
+    async def join_group_async(self, timeout_ms=None) -> bool: ...
+    def coordinator_dead(self, error) -> None: ...
+    def generation_if_stable(self): ...
+    def group_metadata(self) -> ConsumerGroupMetadata: ...
+    @deprecated("Deprecated. Use `coordinator.generation_if_stable()` instead.")
     def generation(self): ...
     def rebalance_in_progress(self): ...
     def reset_generation(self, member_id="") -> None:
         """Reset the generation and member_id because we have fallen out of the group."""
         ...
     def request_rejoin(self) -> None: ...
-    def __del__(self) -> None: ...
-    def close(self, timeout_ms=None) -> None:
-        """
-        Close the coordinator, leave the current group,
-        and reset local generation / member_id
-        """
-        ...
+    def close(self, timeout_ms=None) -> None: ...
     def is_dynamic_member(self): ...
-    def maybe_leave_group(self, timeout_ms=None) -> None:
-        """Leave the current group and reset local generation/memberId."""
-        ...
+    def maybe_leave_group(self, reason=None, timeout_ms=None) -> None: ...
+    async def maybe_leave_group_async(self, reason=None, timeout_ms=None) -> None: ...
 
 class GroupCoordinatorMetrics:
     heartbeat: Incomplete
@@ -234,15 +114,3 @@ class GroupCoordinatorMetrics:
     join_latency: Incomplete
     sync_latency: Incomplete
     def __init__(self, heartbeat, metrics, prefix, tags=None) -> None: ...
-
-class HeartbeatThread(threading.Thread):
-    name: Incomplete
-    coordinator: Incomplete
-    enabled: bool
-    closed: bool
-    failed: Incomplete
-    def __init__(self, coordinator) -> None: ...
-    def enable(self) -> None: ...
-    def disable(self) -> None: ...
-    def close(self, timeout_ms=None) -> None: ...
-    def run(self) -> None: ...

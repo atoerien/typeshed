@@ -8,8 +8,7 @@ class BucketSizing:
     LINEAR: int
 
 class Percentiles(AbstractSampledStat, AbstractCompoundStat):
-    """A compound stat that reports one or more percentiles"""
-    bin_scheme: Incomplete
+    __slots__ = ("_initial_value", "_samples", "_current", "_percentiles", "_buckets", "_bin_scheme")
     def __init__(self, size_in_bytes, bucketing, max_val, min_val: float = 0.0, percentiles=None) -> None: ...
     def stats(self): ...
     def value(self, config, now, quantile): ...

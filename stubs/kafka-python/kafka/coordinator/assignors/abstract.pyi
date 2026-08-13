@@ -1,7 +1,9 @@
 import abc
-from _typeshed import Incomplete
+from enum import IntEnum
 
-log: Incomplete
+class RebalanceProtocol(IntEnum):
+    EAGER = 0
+    COOPERATIVE = 1
 
 class AbstractPartitionAssignor(metaclass=abc.ABCMeta):
     """
@@ -10,9 +12,8 @@ class AbstractPartitionAssignor(metaclass=abc.ABCMeta):
     """
     @property
     @abc.abstractmethod
-    def name(self):
-        """.name should be a string identifying the assignor"""
-        ...
+    def name(self): ...
+    def supported_protocols(self) -> list[RebalanceProtocol]: ...
     @abc.abstractmethod
     def assign(self, cluster, members):
         """
@@ -41,14 +42,4 @@ class AbstractPartitionAssignor(metaclass=abc.ABCMeta):
         """
         ...
     @abc.abstractmethod
-    def on_assignment(self, assignment):
-        """
-        Callback that runs on each assignment.
-
-        This method can be used to update internal state, if any, of the
-        partition assignor.
-
-        Arguments:
-            assignment (MemberAssignment): the member's assignment
-        """
-        ...
+    def on_assignment(self, assignment, generation): ...
