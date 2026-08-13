@@ -22,6 +22,23 @@ class DictReporter(AbstractMetricsReporter):
     def init(self, metrics) -> None: ...
     def metric_change(self, metric) -> None: ...
     def metric_removal(self, metric): ...
-    def get_category(self, metric) -> str: ...
+    def get_category(self, metric) -> str:
+        """
+        Return a string category for the metric.
+
+        The category is made up of this reporter's prefix and the
+        metric's group and tags.
+
+        Examples:
+            prefix = 'foo', group = 'bar', tags = {'a': 1, 'b': 2}
+            returns: 'foo.bar.a=1,b=2'
+
+            prefix = 'foo', group = 'bar', tags = None
+            returns: 'foo.bar'
+
+            prefix = None, group = 'bar', tags = None
+            returns: 'bar'
+        """
+        ...
     def configure(self, configs) -> None: ...
     def close(self) -> None: ...

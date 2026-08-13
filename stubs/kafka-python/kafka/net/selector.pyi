@@ -17,6 +17,7 @@ class KernelEvent:
     def __await__(self) -> Generator[Self]: ...
 
 class TaskState(enum.Enum):
+    """An enumeration."""
     CREATED = "created"
     SCHEDULED = "scheduled"
     UNSCHEDULED = "unscheduled"
@@ -47,10 +48,38 @@ class NetworkSelector:
     DEFAULT_CONFIG: dict[str, Incomplete]
     config: dict[str, Incomplete]
     def __init__(self, **configs) -> None: ...
-    def run_forever(self) -> None: ...
-    def start(self) -> None: ...
-    def stop(self, timeout_ms=None) -> None: ...
-    def run(self, coro, *args): ...
+    def run_forever(self) -> None:
+        """
+        Run the event loop until stop() is called. Intended to be driven by
+        a dedicated IO thread. Wake-ups from other threads must go through
+        call_soon_threadsafe() so the select() loop returns promptly.
+        """
+        ...
+    def start(self) -> None:
+        """Spawn a daemon IO thread that owns the event loop. Idempotent."""
+        ...
+    def stop(self, timeout_ms=None) -> None:
+        """
+        Signal run_forever() to exit and join the IO thread.
+
+        Blocks the caller until the IO thread terminates (or ``timeout_ms``
+        elapses). Pending cross-thread ``run()`` waiters are failed with
+        KafkaConnectionError. Idempotent; safe to call from any thread
+        other than the IO thread itself.
+        """
+        ...
+    def run(self, coro, *args):
+        """
+        Schedules coro on the event loop, blocks until complete, returns value or raises.
+
+        If an IO thread is running (via start()), the caller thread blocks on
+        a cross-thread Event while the coroutine runs on the IO thread. Safe
+        to call concurrently from multiple caller threads.
+
+        If no IO thread is running, falls back to driving the loop on the
+        caller thread (legacy behavior).
+        """
+        ...
     def drain(self, scheduled: bool = False) -> None: ...
     def call_at(self, when, task) -> Task: ...
     def call_later(self, delay, task) -> Task: ...

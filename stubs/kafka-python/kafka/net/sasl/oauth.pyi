@@ -13,6 +13,18 @@ class SaslMechanismOAuth(SaslMechanism):
     def auth_details(self): ...
 
 class AbstractTokenProvider(abc.ABC, metaclass=abc.ABCMeta):
+    """
+    A Token Provider must be used for the SASL OAuthBearer protocol.
+
+    The implementation should ensure token reuse so that multiple
+    calls at connect time do not create multiple tokens. The implementation
+    should also periodically refresh the token in order to guarantee
+    that each call returns an unexpired token. A timeout error should
+    be returned after a short period of inactivity so that the
+    broker can log debugging info and retry.
+
+    Token Providers MUST implement the token() method
+    """
     def __init__(self, **config) -> None: ...
     @abc.abstractmethod
     def token(self):

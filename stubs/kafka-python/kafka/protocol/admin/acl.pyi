@@ -5,6 +5,13 @@ from kafka.protocol.api_message import ApiMessage
 from kafka.protocol.data_container import DataContainer
 
 class CreateAclsRequest(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 0 was removed in Apache Kafka 4.0, Version 1 is the new baseline.
+      // Version 1 adds resource pattern type.
+      // Version 2 enables flexible versions.
+      // Version 3 adds user resource type.
+    """
     class AclCreation(DataContainer):
         resource_type: int
         resource_name: str
@@ -28,13 +35,23 @@ class CreateAclsRequest(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     creations: list[AclCreation]
     def __init__(self, *args, creations: list[AclCreation] = ..., version: int | None = None, **kwargs) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -50,6 +67,13 @@ class CreateAclsRequest(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class CreateAclsResponse(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 0 was removed in Apache Kafka 4.0, Version 1 is the new baseline.
+      // Starting in version 1, on quota violation, brokers send out responses before throttling.
+      // Version 2 enables flexible versions.
+      // Version 3 adds user resource type.
+    """
     class AclCreationResult(DataContainer):
         error_code: int
         error_message: str | None
@@ -58,7 +82,12 @@ class CreateAclsResponse(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     throttle_time_ms: int
     results: list[AclCreationResult]
@@ -67,7 +96,12 @@ class CreateAclsResponse(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -83,6 +117,13 @@ class CreateAclsResponse(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class DeleteAclsRequest(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 0 was removed in Apache Kafka 4.0, Version 1 is the new baseline.
+      // Version 1 adds the pattern type.
+      // Version 2 enables flexible versions.
+      // Version 3 adds the user resource type.
+    """
     class DeleteAclsFilter(DataContainer):
         resource_type_filter: int
         resource_name_filter: str | None
@@ -106,13 +147,23 @@ class DeleteAclsRequest(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     filters: list[DeleteAclsFilter]
     def __init__(self, *args, filters: list[DeleteAclsFilter] = ..., version: int | None = None, **kwargs) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -128,6 +179,14 @@ class DeleteAclsRequest(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class DeleteAclsResponse(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 0 was removed in Apache Kafka 4.0, Version 1 is the new baseline.
+      // Version 1 adds the resource pattern type.
+      // Starting in version 1, on quota violation, brokers send out responses before throttling.
+      // Version 2 enables flexible versions.
+      // Version 3 adds the user resource type.
+    """
     class DeleteAclsFilterResult(DataContainer):
         class DeleteAclsMatchingAcl(DataContainer):
             error_code: int
@@ -156,7 +215,12 @@ class DeleteAclsResponse(ApiMessage):
             ) -> None: ...
             @property
             def version(self) -> int | None: ...
-            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                """
+                Use meta=True to include top-level version; meta='all' to include all internal versions
+                json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                """
+                ...
 
         error_code: int
         error_message: str | None
@@ -172,7 +236,12 @@ class DeleteAclsResponse(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     throttle_time_ms: int
     filter_results: list[DeleteAclsFilterResult]
@@ -186,7 +255,12 @@ class DeleteAclsResponse(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -202,6 +276,13 @@ class DeleteAclsResponse(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class DescribeAclsRequest(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 0 was removed in Apache Kafka 4.0, Version 1 is the new baseline.
+      // Version 1 adds resource pattern type.
+      // Version 2 enables flexible versions.
+      // Version 3 adds user resource type.
+    """
     resource_type_filter: int
     resource_name_filter: str | None
     pattern_type_filter: int
@@ -224,7 +305,12 @@ class DescribeAclsRequest(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -240,6 +326,14 @@ class DescribeAclsRequest(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class DescribeAclsResponse(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 0 was removed in Apache Kafka 4.0, Version 1 is the new baseline.
+      // Version 1 adds PatternType.
+      // Starting in version 1, on quota violation, brokers send out responses before throttling.
+      // Version 2 enables flexible versions.
+      // Version 3 adds user resource type.
+    """
     class DescribeAclsResource(DataContainer):
         class AclDescription(DataContainer):
             principal: str
@@ -258,7 +352,12 @@ class DescribeAclsResponse(ApiMessage):
             ) -> None: ...
             @property
             def version(self) -> int | None: ...
-            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                """
+                Use meta=True to include top-level version; meta='all' to include all internal versions
+                json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                """
+                ...
 
         resource_type: int
         resource_name: str
@@ -276,7 +375,12 @@ class DescribeAclsResponse(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     throttle_time_ms: int
     error_code: int
@@ -294,7 +398,12 @@ class DescribeAclsResponse(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -310,6 +419,11 @@ class DescribeAclsResponse(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class ACLResourceType(IntEnum):
+    """
+    Type of kafka resource to set ACL for
+
+    The ANY value is only valid in a filter context
+    """
     UNKNOWN = 0
     ANY = 1
     TOPIC = 2
@@ -319,6 +433,11 @@ class ACLResourceType(IntEnum):
     DELEGATION_TOKEN = 6
 
 class ACLOperation(IntEnum):
+    """
+    Type of operation
+
+    The ANY value is only valid in a filter context
+    """
     UNKNOWN = 0
     ANY = 1
     ALL = 2
@@ -336,12 +455,24 @@ class ACLOperation(IntEnum):
     DESCRIBE_TOKENS = 14
 
 class ACLPermissionType(IntEnum):
+    """
+    An enumerated type of permissions
+
+    The ANY value is only valid in a filter context
+    """
     UNKNOWN = 0
     ANY = 1
     DENY = 2
     ALLOW = 3
 
 class ACLResourcePatternType(IntEnum):
+    """
+    An enumerated type of resource patterns
+
+    More details on the pattern types and how they work
+    can be found in KIP-290 (Support for prefixed ACLs)
+    https://cwiki.apache.org/confluence/display/KAFKA/KIP-290%3A+Support+for+Prefixed+ACLs
+    """
     UNKNOWN = 0
     ANY = 1
     MATCH = 2

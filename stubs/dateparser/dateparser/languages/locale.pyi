@@ -34,7 +34,26 @@ class Locale:
         strip_timezone: bool = False,
         settings: Settings | None = None,
         ignore_surrounding_text: bool = False,
-    ) -> bool: ...
+    ) -> bool:
+        """
+        Check if the locale is applicable to translate date string.
+
+        :param date_string:
+            A string representing date and/or time in a recognizably valid format.
+        :type date_string: str
+
+        :param strip_timezone:
+            If True, timezone is stripped from date string.
+        :type strip_timezone: bool
+
+        :param ignore_surrounding_text:
+            If True, tokens that the locale does not recognise are ignored at
+            the edges of the date string (``IGNORE_SURROUNDING_TEXT`` setting).
+        :type ignore_surrounding_text: bool
+
+        :return: boolean value representing if the locale is applicable for the date string or not.
+        """
+        ...
     def count_applicability(self, text: str, strip_timezone: bool = False, settings: Settings | None = None) -> list[int]: ...
     @staticmethod
     def clean_dictionary(dictionary: Mapping[_K, _V], threshold: int = 2) -> Mapping[_K, _V]: ...
@@ -44,7 +63,27 @@ class Locale:
         keep_formatting: bool = False,
         settings: Settings | None = None,
         ignore_surrounding_text: bool = False,
-    ) -> str: ...
+    ) -> str:
+        """
+        Translate the date string to its English equivalent.
+
+        :param date_string:
+            A string representing date and/or time in a recognizably valid format.
+        :type date_string: str
+
+        :param keep_formatting:
+            If True, retain formatting of the date string after translation.
+        :type keep_formatting: bool
+
+        :param ignore_surrounding_text:
+            If True, tokens that the locale does not recognise are dropped from
+            the edges of the date string before translation
+            (``IGNORE_SURROUNDING_TEXT`` setting).
+        :type ignore_surrounding_text: bool
+
+        :return: translated date string.
+        """
+        ...
     def translate_search(self, search_string: str, settings: Settings | None = None) -> tuple[list[str], list[str]]: ...
     def get_wordchars_for_detection(self, settings: Settings) -> set[str]: ...
     def to_parserinfo(self, base_cls: type = ...): ...

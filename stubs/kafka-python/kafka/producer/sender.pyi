@@ -2,6 +2,11 @@ import threading
 from _typeshed import Incomplete
 
 class Sender(threading.Thread):
+    """
+    The background thread that handles the sending of produce requests to the
+    Kafka cluster. This thread makes metadata requests to renew its view of the
+    cluster and then sends produce requests to the appropriate nodes.
+    """
     DEFAULT_CONFIG: dict[str, Incomplete]
     config: dict[str, Incomplete]
     name: Incomplete

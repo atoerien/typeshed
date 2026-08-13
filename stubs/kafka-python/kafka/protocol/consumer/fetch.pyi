@@ -6,6 +6,49 @@ from kafka.protocol.api_message import ApiMessage
 from kafka.protocol.data_container import DataContainer
 
 class FetchRequest(ApiMessage):
+    """
+    Notes from json schema:
+      // Versions 0-3 were removed in Apache Kafka 4.0, Version 4 is the new baseline.
+      //
+      // Version 1 is the same as version 0.
+      // Starting in Version 2, the requester must be able to handle Kafka Log
+      // Message format version 1.
+      // Version 3 adds MaxBytes.  Starting in version 3, the partition ordering in
+      // the request is now relevant.  Partitions will be processed in the order
+      // they appear in the request.
+      //
+      // Version 4 adds IsolationLevel.  Starting in version 4, the requestor must be
+      // able to handle Kafka log message format version 2.
+      //
+      // Version 5 adds LogStartOffset to indicate the earliest available offset of
+      // partition data that can be consumed.
+      //
+      // Version 6 is the same as version 5.
+      //
+      // Version 7 adds incremental fetch request support.
+      //
+      // Version 8 is the same as version 7.
+      //
+      // Version 9 adds CurrentLeaderEpoch, as described in KIP-320.
+      //
+      // Version 10 indicates that we can use the ZStd compression algorithm, as
+      // described in KIP-110.
+      // Version 12 adds flexible versions support as well as epoch validation through
+      // the `LastFetchedEpoch` field
+      //
+      // Version 13 replaces topic names with topic IDs (KIP-516). May return UNKNOWN_TOPIC_ID error code.
+      //
+      // Version 14 is the same as version 13 but it also receives a new error called OffsetMovedToTieredStorageException(KIP-405)
+      //
+      // Version 15 adds the ReplicaState which includes new field ReplicaEpoch and the ReplicaId. Also,
+      // deprecate the old ReplicaId field and set its default value to -1. (KIP-903)
+      //
+      // Version 16 is the same as version 15 (KIP-951).
+      //
+      // Version 17 adds directory id support from KIP-853
+      //
+      // Version 18 adds high-watermark from KIP-1166
+    """
     class ReplicaState(DataContainer):
         replica_id: int
         replica_epoch: int
@@ -14,7 +57,12 @@ class FetchRequest(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     class FetchTopic(DataContainer):
         class FetchPartition(DataContainer):
@@ -42,7 +90,12 @@ class FetchRequest(ApiMessage):
             ) -> None: ...
             @property
             def version(self) -> int | None: ...
-            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                """
+                Use meta=True to include top-level version; meta='all' to include all internal versions
+                json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                """
+                ...
 
         topic: str
         topic_id: uuid.UUID
@@ -58,7 +111,12 @@ class FetchRequest(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     class ForgottenTopic(DataContainer):
         topic: str
@@ -75,7 +133,12 @@ class FetchRequest(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     cluster_id: str | None
     replica_id: int
@@ -109,7 +172,12 @@ class FetchRequest(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -127,6 +195,42 @@ class FetchRequest(ApiMessage):
     def min_version_for_isolation_level(cls, il): ...
 
 class FetchResponse(ApiMessage):
+    """
+    Notes from json schema:
+      // Versions 0-3 were removed in Apache Kafka 4.0, Version 4 is the new baseline.
+      //
+      // Version 1 adds throttle time. Version 2 and 3 are the same as version 1.
+      //
+      // Version 4 adds features for transactional consumption.
+      //
+      // Version 5 adds LogStartOffset to indicate the earliest available offset of
+      // partition data that can be consumed.
+      //
+      // Starting in version 6, we may return KAFKA_STORAGE_ERROR as an error code.
+      //
+      // Version 7 adds incremental fetch request support.
+      //
+      // Starting in version 8, on quota violation, brokers send out responses before throttling.
+      //
+      // Version 9 is the same as version 8.
+      //
+      // Version 10 indicates that the response data can use the ZStd compression
+      // algorithm, as described in KIP-110.
+      // Version 12 adds support for flexible versions, epoch detection through the `TruncationOffset` field,
+      // and leader discovery through the `CurrentLeader` field
+      //
+      // Version 13 replaces the topic name field with topic ID (KIP-516).
+      //
+      // Version 14 is the same as version 13 but it also receives a new error called OffsetMovedToTieredStorageException (KIP-405)
+      //
+      // Version 15 is the same as version 14 (KIP-903).
+      //
+      // Version 16 adds the 'NodeEndpoints' field (KIP-951).
+      //
+      // Version 17 no changes to the response (KIP-853).
+      //
+      // Version 18 no changes to the response (KIP-1166)
+    """
     class FetchableTopicResponse(DataContainer):
         class PartitionData(DataContainer):
             class EpochEndOffset(DataContainer):
@@ -137,7 +241,12 @@ class FetchResponse(ApiMessage):
                 ) -> None: ...
                 @property
                 def version(self) -> int | None: ...
-                def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+                def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                    """
+                    Use meta=True to include top-level version; meta='all' to include all internal versions
+                    json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                    """
+                    ...
 
             class LeaderIdAndEpoch(DataContainer):
                 leader_id: int
@@ -147,7 +256,12 @@ class FetchResponse(ApiMessage):
                 ) -> None: ...
                 @property
                 def version(self) -> int | None: ...
-                def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+                def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                    """
+                    Use meta=True to include top-level version; meta='all' to include all internal versions
+                    json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                    """
+                    ...
 
             class SnapshotId(DataContainer):
                 end_offset: int
@@ -157,7 +271,12 @@ class FetchResponse(ApiMessage):
                 ) -> None: ...
                 @property
                 def version(self) -> int | None: ...
-                def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+                def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                    """
+                    Use meta=True to include top-level version; meta='all' to include all internal versions
+                    json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                    """
+                    ...
 
             class AbortedTransaction(DataContainer):
                 producer_id: int
@@ -167,7 +286,12 @@ class FetchResponse(ApiMessage):
                 ) -> None: ...
                 @property
                 def version(self) -> int | None: ...
-                def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+                def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                    """
+                    Use meta=True to include top-level version; meta='all' to include all internal versions
+                    json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                    """
+                    ...
 
             partition_index: int
             error_code: int
@@ -199,7 +323,12 @@ class FetchResponse(ApiMessage):
             ) -> None: ...
             @property
             def version(self) -> int | None: ...
-            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                """
+                Use meta=True to include top-level version; meta='all' to include all internal versions
+                json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                """
+                ...
 
         topic: str
         topic_id: uuid.UUID
@@ -215,7 +344,12 @@ class FetchResponse(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     class NodeEndpoint(DataContainer):
         node_id: int
@@ -234,7 +368,12 @@ class FetchResponse(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     throttle_time_ms: int
     error_code: int
@@ -254,7 +393,12 @@ class FetchResponse(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int

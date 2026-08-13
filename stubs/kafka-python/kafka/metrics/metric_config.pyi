@@ -1,6 +1,7 @@
 from _typeshed import Incomplete
 
 class MetricConfig:
+    """Configuration values for metrics"""
     __slots__ = ("quota", "_samples", "event_window", "time_window_ms", "tags")
     quota: Incomplete
     event_window: Incomplete

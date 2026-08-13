@@ -4,6 +4,10 @@ from kafka.protocol.api_message import ApiMessage
 from kafka.protocol.data_container import DataContainer
 
 class AlterClientQuotasRequest(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 1 enables flexible versions.
+    """
     class EntryData(DataContainer):
         class EntityData(DataContainer):
             entity_type: str
@@ -13,7 +17,12 @@ class AlterClientQuotasRequest(ApiMessage):
             ) -> None: ...
             @property
             def version(self) -> int | None: ...
-            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                """
+                Use meta=True to include top-level version; meta='all' to include all internal versions
+                json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                """
+                ...
 
         class OpData(DataContainer):
             key: str
@@ -24,7 +33,12 @@ class AlterClientQuotasRequest(ApiMessage):
             ) -> None: ...
             @property
             def version(self) -> int | None: ...
-            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                """
+                Use meta=True to include top-level version; meta='all' to include all internal versions
+                json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                """
+                ...
 
         entity: list[EntityData]
         ops: list[OpData]
@@ -33,7 +47,12 @@ class AlterClientQuotasRequest(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     entries: list[EntryData]
     validate_only: bool
@@ -42,7 +61,12 @@ class AlterClientQuotasRequest(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -58,6 +82,10 @@ class AlterClientQuotasRequest(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class AlterClientQuotasResponse(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 1 enables flexible versions.
+    """
     class EntryData(DataContainer):
         class EntityData(DataContainer):
             entity_type: str
@@ -67,7 +95,12 @@ class AlterClientQuotasResponse(ApiMessage):
             ) -> None: ...
             @property
             def version(self) -> int | None: ...
-            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                """
+                Use meta=True to include top-level version; meta='all' to include all internal versions
+                json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                """
+                ...
 
         error_code: int
         error_message: str | None
@@ -83,7 +116,12 @@ class AlterClientQuotasResponse(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     throttle_time_ms: int
     entries: list[EntryData]
@@ -92,7 +130,12 @@ class AlterClientQuotasResponse(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -108,6 +151,10 @@ class AlterClientQuotasResponse(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class DescribeClientQuotasRequest(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 1 enables flexible versions.
+    """
     class ComponentData(DataContainer):
         entity_type: str
         match_type: int
@@ -123,7 +170,12 @@ class DescribeClientQuotasRequest(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     components: list[ComponentData]
     strict: bool
@@ -132,7 +184,12 @@ class DescribeClientQuotasRequest(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -148,6 +205,10 @@ class DescribeClientQuotasRequest(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class DescribeClientQuotasResponse(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 1 enables flexible versions.
+    """
     class EntryData(DataContainer):
         class EntityData(DataContainer):
             entity_type: str
@@ -157,7 +218,12 @@ class DescribeClientQuotasResponse(ApiMessage):
             ) -> None: ...
             @property
             def version(self) -> int | None: ...
-            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                """
+                Use meta=True to include top-level version; meta='all' to include all internal versions
+                json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                """
+                ...
 
         class ValueData(DataContainer):
             key: str
@@ -165,7 +231,12 @@ class DescribeClientQuotasResponse(ApiMessage):
             def __init__(self, *args, key: str = ..., value: float = ..., version: int | None = None, **kwargs) -> None: ...
             @property
             def version(self) -> int | None: ...
-            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                """
+                Use meta=True to include top-level version; meta='all' to include all internal versions
+                json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                """
+                ...
 
         entity: list[EntityData]
         values: list[ValueData]
@@ -174,7 +245,12 @@ class DescribeClientQuotasResponse(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     throttle_time_ms: int
     error_code: int
@@ -192,7 +268,12 @@ class DescribeClientQuotasResponse(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int

@@ -1,4 +1,11 @@
 class Sensor:
+    """
+    A sensor applies a continuous sequence of numerical values
+    to a set of associated metrics. For example a sensor on
+    message size would record a sequence of message sizes using
+    the `record(double)` api and would maintain a set
+    of metrics about request sizes such as the average or max.
+    """
     __slots__ = (
         "_lock",
         "_registry",

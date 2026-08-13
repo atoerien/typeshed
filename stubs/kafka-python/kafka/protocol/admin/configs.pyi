@@ -4,6 +4,11 @@ from kafka.protocol.api_message import ApiMessage
 from kafka.protocol.data_container import DataContainer
 
 class AlterConfigsRequest(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 1 is the same as version 0.
+      // Version 2 enables flexible versions.
+    """
     class AlterConfigsResource(DataContainer):
         class AlterableConfig(DataContainer):
             name: str
@@ -11,7 +16,12 @@ class AlterConfigsRequest(ApiMessage):
             def __init__(self, *args, name: str = ..., value: str | None = ..., version: int | None = None, **kwargs) -> None: ...
             @property
             def version(self) -> int | None: ...
-            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                """
+                Use meta=True to include top-level version; meta='all' to include all internal versions
+                json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                """
+                ...
 
         resource_type: int
         resource_name: str
@@ -27,7 +37,12 @@ class AlterConfigsRequest(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     resources: list[AlterConfigsResource]
     validate_only: bool
@@ -36,7 +51,12 @@ class AlterConfigsRequest(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -52,6 +72,11 @@ class AlterConfigsRequest(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class AlterConfigsResponse(ApiMessage):
+    """
+    Notes from json schema:
+      // Starting in version 1, on quota violation brokers send out responses before throttling.
+      // Version 2 enables flexible versions.
+    """
     class AlterConfigsResourceResponse(DataContainer):
         error_code: int
         error_message: str | None
@@ -69,7 +94,12 @@ class AlterConfigsResponse(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     throttle_time_ms: int
     responses: list[AlterConfigsResourceResponse]
@@ -83,7 +113,12 @@ class AlterConfigsResponse(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -99,6 +134,13 @@ class AlterConfigsResponse(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class DescribeConfigsRequest(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 0 was removed in Apache Kafka 4.0, Version 1 is the new baseline.
+      // Version 1 adds IncludeSynonyms and removes IsDefault.
+      // Version 2 is the same as version 1.
+      // Version 4 enables flexible versions.
+    """
     class DescribeConfigsResource(DataContainer):
         resource_type: int
         resource_name: str
@@ -114,7 +156,12 @@ class DescribeConfigsRequest(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     resources: list[DescribeConfigsResource]
     include_synonyms: bool
@@ -130,7 +177,12 @@ class DescribeConfigsRequest(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -146,6 +198,13 @@ class DescribeConfigsRequest(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class DescribeConfigsResponse(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 0 was removed in Apache Kafka 4.0, Version 1 is the new baseline.
+      // Version 1 adds ConfigSource and the synonyms.
+      // Starting in version 2, on quota violation, brokers send out responses before throttling.
+      // Version 4 enables flexible versions.
+    """
     class DescribeConfigsResult(DataContainer):
         class DescribeConfigsResourceResult(DataContainer):
             class DescribeConfigsSynonym(DataContainer):
@@ -157,7 +216,12 @@ class DescribeConfigsResponse(ApiMessage):
                 ) -> None: ...
                 @property
                 def version(self) -> int | None: ...
-                def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+                def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                    """
+                    Use meta=True to include top-level version; meta='all' to include all internal versions
+                    json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                    """
+                    ...
 
             name: str
             value: str | None
@@ -185,7 +249,12 @@ class DescribeConfigsResponse(ApiMessage):
             ) -> None: ...
             @property
             def version(self) -> int | None: ...
-            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                """
+                Use meta=True to include top-level version; meta='all' to include all internal versions
+                json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                """
+                ...
 
         error_code: int
         error_message: str | None
@@ -205,7 +274,12 @@ class DescribeConfigsResponse(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     throttle_time_ms: int
     results: list[DescribeConfigsResult]
@@ -214,7 +288,12 @@ class DescribeConfigsResponse(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -230,6 +309,10 @@ class DescribeConfigsResponse(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class IncrementalAlterConfigsRequest(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 1 is the first flexible version.
+    """
     class AlterConfigsResource(DataContainer):
         class AlterableConfig(DataContainer):
             name: str
@@ -246,7 +329,12 @@ class IncrementalAlterConfigsRequest(ApiMessage):
             ) -> None: ...
             @property
             def version(self) -> int | None: ...
-            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                """
+                Use meta=True to include top-level version; meta='all' to include all internal versions
+                json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                """
+                ...
 
         resource_type: int
         resource_name: str
@@ -262,7 +350,12 @@ class IncrementalAlterConfigsRequest(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     resources: list[AlterConfigsResource]
     validate_only: bool
@@ -271,7 +364,12 @@ class IncrementalAlterConfigsRequest(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -287,6 +385,10 @@ class IncrementalAlterConfigsRequest(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class IncrementalAlterConfigsResponse(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 1 is the first flexible version.
+    """
     class AlterConfigsResourceResponse(DataContainer):
         error_code: int
         error_message: str | None
@@ -304,7 +406,12 @@ class IncrementalAlterConfigsResponse(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     throttle_time_ms: int
     responses: list[AlterConfigsResourceResponse]
@@ -318,7 +425,12 @@ class IncrementalAlterConfigsResponse(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -334,11 +446,21 @@ class IncrementalAlterConfigsResponse(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class ListConfigResourcesRequest(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 0 is used as ListClientMetricsResourcesRequest which only lists client metrics resources.
+      // Version 1 adds ResourceTypes field (KIP-1142). If there is no specified ResourceTypes, it should return all configuration resources.
+    """
     resource_types: list[int]
     def __init__(self, *args, resource_types: list[int] = ..., version: int | None = None, **kwargs) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -354,6 +476,11 @@ class ListConfigResourcesRequest(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class ListConfigResourcesResponse(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 0 is used as ListClientMetricsResourcesResponse which returns all client metrics resources.
+      // Version 1 adds ResourceType to ConfigResources (KIP-1142).
+    """
     class ConfigResource(DataContainer):
         resource_name: str
         resource_type: int
@@ -362,7 +489,12 @@ class ListConfigResourcesResponse(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     throttle_time_ms: int
     error_code: int
@@ -378,7 +510,12 @@ class ListConfigResourcesResponse(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int

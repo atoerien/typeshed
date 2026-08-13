@@ -1,6 +1,7 @@
 from enum import IntEnum
 
 class ApiKey(IntEnum):
+    """An enumeration."""
     Produce = 0
     Fetch = 1
     ListOffsets = 2

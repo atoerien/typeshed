@@ -1,3 +1,10 @@
+"""
+ACL management mixin for KafkaAdminClient.
+
+Also defines ACL data types: ResourceType, ACLOperation, ACLPermissionType,
+ACLResourcePatternType, ACLFilter, ACL, ResourcePatternFilter, ResourcePattern.
+"""
+
 from _typeshed import Incomplete
 from collections.abc import Sequence
 from enum import IntEnum
@@ -11,16 +18,57 @@ class _CreateAclsResult(TypedDict):
     failed: list[type[KafkaError]]
 
 class ACLAdminMixin:
+    """Mixin providing ACL management methods for KafkaAdminClient."""
     config: dict[Incomplete, Incomplete]
-    def describe_acls(self, acl_filter: ACLFilter) -> tuple[list[ACL], type[KafkaError]]: ...
-    def create_acls(self, acls: Sequence[ACL]) -> _CreateAclsResult: ...
-    def delete_acls(self, acl_filters: Sequence[ACLFilter]) -> list[tuple[ACLFilter, list[ACL], type[KafkaError]]]: ...
+    def describe_acls(self, acl_filter: ACLFilter) -> tuple[list[ACL], type[KafkaError]]:
+        """
+        Describe a set of ACLs
+
+        Used to return a set of ACLs matching the supplied ACLFilter.
+        The cluster must be configured with an authorizer for this to work, or
+        you will get a SecurityDisabledError
+
+        Arguments:
+            acl_filter: an ACLFilter object
+
+        Returns:
+            tuple of a list of matching ACL objects and a KafkaError (NoError if successful)
+        """
+        ...
+    def create_acls(self, acls: Sequence[ACL]) -> _CreateAclsResult:
+        """
+        Create a list of ACLs
+
+        This endpoint only accepts a list of concrete ACL objects, no ACLFilters.
+        Throws TopicAlreadyExistsError if topic is already present.
+
+        Arguments:
+            acls: a list of ACL objects
+
+        Returns:
+            dict of successes and failures
+        """
+        ...
+    def delete_acls(self, acl_filters: Sequence[ACLFilter]) -> list[tuple[ACLFilter, list[ACL], type[KafkaError]]]:
+        """
+        Delete a set of ACLs
+
+        Deletes all ACLs matching the list of input ACLFilter
+
+        Arguments:
+            acl_filters: a list of ACLFilter
+
+        Returns:
+            a list of 3-tuples corresponding to the list of input filters.
+                 The tuples hold (the input ACLFilter, list of affected ACLs, KafkaError instance)
+        """
+        ...
 
 class ResourceType(IntEnum):
     """
-    Type of kafka resource to set ACL for
+    Type of kafka resource to set ACL for.
 
-    The ANY value is only valid in a filter context
+    The ANY value is only valid in a filter context.
     """
     UNKNOWN = 0
     ANY = 1
@@ -33,9 +81,9 @@ class ResourceType(IntEnum):
 
 class ACLOperation(IntEnum):
     """
-    Type of operation
+    Type of operation.
 
-    The ANY value is only valid in a filter context
+    The ANY value is only valid in a filter context.
     """
     UNKNOWN = 0
     ANY = 1
@@ -55,9 +103,9 @@ class ACLOperation(IntEnum):
 
 class ACLPermissionType(IntEnum):
     """
-    An enumerated type of permissions
+    An enumerated type of permissions.
 
-    The ANY value is only valid in a filter context
+    The ANY value is only valid in a filter context.
     """
     UNKNOWN = 0
     ANY = 1
@@ -66,11 +114,10 @@ class ACLPermissionType(IntEnum):
 
 class ACLResourcePatternType(IntEnum):
     """
-    An enumerated type of resource patterns
+    An enumerated type of resource patterns.
 
     More details on the pattern types and how they work
-    can be found in KIP-290 (Support for prefixed ACLs)
-    https://cwiki.apache.org/confluence/display/KAFKA/KIP-290%3A+Support+for+Prefixed+ACLs
+    can be found in KIP-290 (Support for prefixed ACLs).
     """
     UNKNOWN = 0
     ANY = 1
@@ -88,6 +135,7 @@ class ResourcePatternFilter:
     def __hash__(self) -> int: ...
 
 class ResourcePattern(ResourcePatternFilter):
+    """A resource pattern to apply the ACL to."""
     resource_name: str
     def __init__(
         self,
@@ -98,15 +146,7 @@ class ResourcePattern(ResourcePatternFilter):
     def validate(self) -> None: ...
 
 class ACLFilter:
-    """
-    Represents a filter to use with describing and deleting ACLs
-
-    The difference between this class and the ACL class is mainly that
-    we allow using ANY with the operation, permission, and resource type objects
-    to fetch ALCs matching any of the properties.
-
-    To make a filter matching any principal, set principal to None
-    """
+    """Represents a filter to use with describing and deleting ACLs."""
     principal: str | None
     host: str | None
     operation: ACLOperation
@@ -125,26 +165,7 @@ class ACLFilter:
     def __hash__(self) -> int: ...
 
 class ACL(ACLFilter):
-    """
-    Represents a concrete ACL for a specific ResourcePattern
-
-    In kafka an ACL is a 4-tuple of (principal, host, operation, permission_type)
-    that limits who can do what on a specific resource (or since KIP-290 a resource pattern)
-
-    Terminology:
-    Principal -> This is the identifier for the user. Depending on the authorization method used (SSL, SASL etc)
-        the principal will look different. See http://kafka.apache.org/documentation/#security_authz for details.
-        The principal must be on the format "User:<name>" or kafka will treat it as invalid. It's possible to use
-        other principal types than "User" if using a custom authorizer for the cluster.
-    Host -> This must currently be an IP address. It cannot be a range, and it cannot be a domain name.
-        It can be set to "*", which is special cased in kafka to mean "any host"
-    Operation -> Which client operation this ACL refers to. Has different meaning depending
-        on the resource type the ACL refers to. See https://docs.confluent.io/current/kafka/authorization.html#acl-format
-        for a list of which combinations of resource/operation that unlocks which kafka APIs
-    Permission Type: Whether this ACL is allowing or denying access
-    Resource Pattern -> This is a representation of the resource or resource pattern that the ACL
-        refers to. See the ResourcePattern class for details.
-    """
+    """Represents a concrete ACL for a specific ResourcePattern."""
     resource_pattern: ResourcePattern
     def __init__(
         self,

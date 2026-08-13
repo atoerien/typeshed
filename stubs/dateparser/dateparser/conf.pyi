@@ -22,6 +22,7 @@ class Settings:
     * `RELATIVE_BASE`
     * `STRICT_PARSING`
     * `REQUIRE_PARTS`
+    * `IGNORE_SURROUNDING_TEXT`
     * `SKIP_TOKENS`
     * `NORMALIZE`
     * `RETURN_TIME_AS_PERIOD`

@@ -473,10 +473,7 @@ class ElectLeadersRequest_v1(Request):
     ALIASES: dict[str, str]
 
 class ElectionType(IntEnum):
-    """
-    Leader election type
-    
-    """
+    """Leader election type"""
     PREFERRED = 0
     UNCLEAN = 1
 

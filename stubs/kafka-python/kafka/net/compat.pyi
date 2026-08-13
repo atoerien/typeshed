@@ -1,4 +1,11 @@
 class KafkaNetClient:
+    """
+    Drop-in replacement for KafkaClient backed by KafkaConnectionManager.
+
+    Provides the KafkaClient API surface that existing consumer/producer/admin
+    code depends on. Goal: shrink over time as components transition to using
+    KafkaConnectionManager directly (fire-and-forget via _request_buffer).
+    """
     def __init__(self, net=None, manager=None, **configs) -> None: ...
     @property
     def cluster(self): ...

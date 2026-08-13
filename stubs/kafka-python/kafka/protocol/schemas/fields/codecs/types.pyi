@@ -4,6 +4,13 @@ from collections.abc import Iterable
 from typing import ClassVar, Final, Literal
 
 class FixedCodec:
+    """
+    Base class for fixed-size codecs. Subclasses define fmt and size.
+
+    The Kafka protocol uses big-endian ('>') byte order for all fixed-size
+    types. This prefix is applied here so subclasses only specify the type
+    format character (e.g., 'i' for 32-bit signed int).
+    """
     fmt: ClassVar[str | None]
     size: ClassVar[int | None]
     batchable: ClassVar[bool]
@@ -15,11 +22,15 @@ class FixedCodec:
     @classmethod
     def decode(cls, data, compact: bool = False): ...
     @classmethod
-    def decode_from(cls, data, pos) -> tuple[Incomplete, Incomplete]: ...
+    def decode_from(cls, data, pos) -> tuple[Incomplete, Incomplete]:
+        """Decode from a buffer at pos. Returns (value, new_pos)."""
+        ...
     @classmethod
     def emit_encode_into(cls, ctx, val_expr, indent, compact: bool = False) -> None: ...
     @classmethod
-    def emit_decode_from(cls, ctx, var_name, indent, compact: bool = False) -> None: ...
+    def emit_decode_from(cls, ctx, var_name, indent, compact: bool = False) -> None:
+        """Emit decode for a single fixed field (unbatched fallback)."""
+        ...
 
 class Int8(FixedCodec):
     fmt: ClassVar[str]
@@ -101,7 +112,9 @@ class UnsignedVarInt32:
     @classmethod
     def emit_encode_into(cls, ctx, val_expr, indent, compact: bool = False) -> None: ...
     @classmethod
-    def emit_decode_from(cls, ctx, var_name, indent) -> None: ...
+    def emit_decode_from(cls, ctx, var_name, indent) -> None:
+        """Emit inline unsigned varint decode. Result in var_name, pos advanced."""
+        ...
 
 class VarInt32:
     fmt: ClassVar[str]

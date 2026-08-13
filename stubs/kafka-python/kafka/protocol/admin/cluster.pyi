@@ -5,6 +5,13 @@ from kafka.protocol.api_message import ApiMessage
 from kafka.protocol.data_container import DataContainer
 
 class DescribeClusterRequest(ApiMessage):
+    """
+    Notes from json schema:
+      //
+      // Version 1 adds EndpointType for KIP-919 support.
+      // Version 2 adds IncludeFencedBrokers for KIP-1073 support.
+      //
+    """
     include_cluster_authorized_operations: bool
     endpoint_type: int
     include_fenced_brokers: bool
@@ -19,7 +26,12 @@ class DescribeClusterRequest(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -35,6 +47,14 @@ class DescribeClusterRequest(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class DescribeClusterResponse(ApiMessage):
+    """
+    Notes from json schema:
+      //
+      // Version 1 adds the EndpointType field, and makes MISMATCHED_ENDPOINT_TYPE and
+      // UNSUPPORTED_ENDPOINT_TYPE valid top-level response error codes.
+      // Version 2 adds IsFenced field to Brokers for KIP-1073 support.
+      //
+    """
     class DescribeClusterBroker(DataContainer):
         broker_id: int
         host: str
@@ -54,7 +74,12 @@ class DescribeClusterResponse(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     throttle_time_ms: int
     error_code: int
@@ -80,7 +105,12 @@ class DescribeClusterResponse(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -98,6 +128,15 @@ class DescribeClusterResponse(ApiMessage):
     def json_patch(cls, json): ...
 
 class DescribeLogDirsRequest(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 0 was removed in Apache Kafka 4.0, Version 1 is the new baseline.
+      // Version 1 is the same as version 0.
+      // Version 2 is the first flexible version.
+      // Version 3 is the same as version 2 (new field in response).
+      // Version 4 is the same as version 2 (new fields in response).
+      // Version 5 is the same as version 2 (new fields in response).
+    """
     class DescribableLogDirTopic(DataContainer):
         topic: str
         partitions: list[int]
@@ -106,7 +145,12 @@ class DescribeLogDirsRequest(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     topics: list[DescribableLogDirTopic] | None
     def __init__(
@@ -114,7 +158,12 @@ class DescribeLogDirsRequest(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -130,6 +179,15 @@ class DescribeLogDirsRequest(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class DescribeLogDirsResponse(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 0 was removed in Apache Kafka 4.0, Version 1 is the new baseline.
+      // Starting in version 1, on quota violation, brokers send out responses before throttling.
+      // Version 2 is the first flexible version.
+      // Version 3 adds the top-level ErrorCode field
+      // Version 4 adds the TotalBytes and UsableBytes fields
+      // Version 5 adds IsCordoned field
+    """
     class DescribeLogDirsResult(DataContainer):
         class DescribeLogDirsTopic(DataContainer):
             class DescribeLogDirsPartition(DataContainer):
@@ -149,7 +207,12 @@ class DescribeLogDirsResponse(ApiMessage):
                 ) -> None: ...
                 @property
                 def version(self) -> int | None: ...
-                def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+                def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                    """
+                    Use meta=True to include top-level version; meta='all' to include all internal versions
+                    json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                    """
+                    ...
 
             name: str
             partitions: list[DescribeLogDirsPartition]
@@ -163,7 +226,12 @@ class DescribeLogDirsResponse(ApiMessage):
             ) -> None: ...
             @property
             def version(self) -> int | None: ...
-            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                """
+                Use meta=True to include top-level version; meta='all' to include all internal versions
+                json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                """
+                ...
 
         error_code: int
         log_dir: str
@@ -185,7 +253,12 @@ class DescribeLogDirsResponse(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     throttle_time_ms: int
     error_code: int
@@ -201,7 +274,12 @@ class DescribeLogDirsResponse(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -217,6 +295,13 @@ class DescribeLogDirsResponse(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class AlterReplicaLogDirsRequest(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 0 was removed in Apache Kafka 4.0, Version 1 is the new baseline.
+      //
+      // Version 1 is the same as version 0.
+      // Version 2 enables flexible versions.
+    """
     class AlterReplicaLogDir(DataContainer):
         class AlterReplicaLogDirTopic(DataContainer):
             name: str
@@ -226,7 +311,12 @@ class AlterReplicaLogDirsRequest(ApiMessage):
             ) -> None: ...
             @property
             def version(self) -> int | None: ...
-            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                """
+                Use meta=True to include top-level version; meta='all' to include all internal versions
+                json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                """
+                ...
 
         path: str
         topics: list[AlterReplicaLogDirTopic]
@@ -235,13 +325,23 @@ class AlterReplicaLogDirsRequest(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     dirs: list[AlterReplicaLogDir]
     def __init__(self, *args, dirs: list[AlterReplicaLogDir] = ..., version: int | None = None, **kwargs) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -257,6 +357,12 @@ class AlterReplicaLogDirsRequest(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class AlterReplicaLogDirsResponse(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 0 was removed in Apache Kafka 4.0, Version 1 is the new baseline.
+      // Starting in version 1, on quota violation brokers send out responses before throttling.
+      // Version 2 enables flexible versions.
+    """
     class AlterReplicaLogDirTopicResult(DataContainer):
         class AlterReplicaLogDirPartitionResult(DataContainer):
             partition_index: int
@@ -266,7 +372,12 @@ class AlterReplicaLogDirsResponse(ApiMessage):
             ) -> None: ...
             @property
             def version(self) -> int | None: ...
-            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                """
+                Use meta=True to include top-level version; meta='all' to include all internal versions
+                json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                """
+                ...
 
         topic_name: str
         partitions: list[AlterReplicaLogDirPartitionResult]
@@ -280,7 +391,12 @@ class AlterReplicaLogDirsResponse(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     throttle_time_ms: int
     results: list[AlterReplicaLogDirTopicResult]
@@ -294,7 +410,12 @@ class AlterReplicaLogDirsResponse(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -310,13 +431,23 @@ class AlterReplicaLogDirsResponse(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class DescribeQuorumRequest(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 1 adds additional fields in the response. The request is unchanged (KIP-836).
+      // Version 2 adds additional fields in the response. The request is unchanged (KIP-853).
+    """
     class TopicData(DataContainer):
         class PartitionData(DataContainer):
             partition_index: int
             def __init__(self, *args, partition_index: int = ..., version: int | None = None, **kwargs) -> None: ...
             @property
             def version(self) -> int | None: ...
-            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                """
+                Use meta=True to include top-level version; meta='all' to include all internal versions
+                json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                """
+                ...
 
         topic_name: str
         partitions: list[PartitionData]
@@ -325,13 +456,23 @@ class DescribeQuorumRequest(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     topics: list[TopicData]
     def __init__(self, *args, topics: list[TopicData] = ..., version: int | None = None, **kwargs) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -347,6 +488,11 @@ class DescribeQuorumRequest(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class DescribeQuorumResponse(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 1 adds LastFetchTimeStamp and LastCaughtUpTimestamp in ReplicaState (KIP-836).
+      // Version 2 adds ErrorMessage, Nodes, ErrorMessage in PartitionData, ReplicaDirectoryId in ReplicaState (KIP-853).
+    """
     class TopicData(DataContainer):
         class PartitionData(DataContainer):
             class ReplicaState(DataContainer):
@@ -368,7 +514,12 @@ class DescribeQuorumResponse(ApiMessage):
                 ) -> None: ...
                 @property
                 def version(self) -> int | None: ...
-                def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+                def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                    """
+                    Use meta=True to include top-level version; meta='all' to include all internal versions
+                    json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                    """
+                    ...
 
             partition_index: int
             error_code: int
@@ -394,7 +545,12 @@ class DescribeQuorumResponse(ApiMessage):
             ) -> None: ...
             @property
             def version(self) -> int | None: ...
-            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                """
+                Use meta=True to include top-level version; meta='all' to include all internal versions
+                json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                """
+                ...
 
         topic_name: str
         partitions: list[PartitionData]
@@ -403,7 +559,12 @@ class DescribeQuorumResponse(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     class Node(DataContainer):
         class Listener(DataContainer):
@@ -415,7 +576,12 @@ class DescribeQuorumResponse(ApiMessage):
             ) -> None: ...
             @property
             def version(self) -> int | None: ...
-            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+            def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+                """
+                Use meta=True to include top-level version; meta='all' to include all internal versions
+                json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+                """
+                ...
 
         node_id: int
         listeners: list[Listener]
@@ -424,7 +590,12 @@ class DescribeQuorumResponse(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     error_code: int
     error_message: str | None
@@ -442,7 +613,12 @@ class DescribeQuorumResponse(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -458,6 +634,12 @@ class DescribeQuorumResponse(ApiMessage):
     def with_header(self, correlation_id: int = 0, client_id: str = "kafka-python") -> None: ...
 
 class UpdateFeaturesRequest(ApiMessage):
+    """
+    Notes from json schema:
+      // Version 1 adds validate only field.
+      //
+      // Version 2 changes the response to not return feature level results.
+    """
     class FeatureUpdateKey(DataContainer):
         feature: str
         max_version_level: int
@@ -475,7 +657,12 @@ class UpdateFeaturesRequest(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     timeout_ms: int
     feature_updates: list[FeatureUpdateKey]
@@ -491,7 +678,12 @@ class UpdateFeaturesRequest(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int
@@ -522,7 +714,12 @@ class UpdateFeaturesResponse(ApiMessage):
         ) -> None: ...
         @property
         def version(self) -> int | None: ...
-        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+        def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+            """
+            Use meta=True to include top-level version; meta='all' to include all internal versions
+            json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+            """
+            ...
 
     throttle_time_ms: int
     error_code: int
@@ -540,7 +737,12 @@ class UpdateFeaturesResponse(ApiMessage):
     ) -> None: ...
     @property
     def version(self) -> int | None: ...
-    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]: ...
+    def to_dict(self, meta: bool = False, json: bool = True) -> dict[Incomplete, Incomplete]:
+        """
+        Use meta=True to include top-level version; meta='all' to include all internal versions
+        json=False to return raw encoding; json=True (default) to convert values to be json-serializable
+        """
+        ...
     name: str
     type: str
     API_KEY: int

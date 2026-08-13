@@ -58,11 +58,34 @@ class TransactionManager:
         metadata=None,
     ) -> None: ...
     def initialize_transactions(self): ...
-    def init_producer_id(self) -> None: ...
+    def init_producer_id(self) -> None:
+        """
+        Idempotent (non-transactional) producer: enqueue an InitProducerIdHandler.
+
+        Drives UNINITIALIZED -> INITIALIZING; the handler completes the
+        transition to READY on success. No-op outside UNINITIALIZED so
+        repeated calls from the sender's run loop are safe.
+        """
+        ...
     def begin_transaction(self) -> None: ...
     def begin_commit(self): ...
     def begin_abort(self): ...
-    def send_offsets_to_transaction(self, offsets, group_metadata: str | ConsumerGroupMetadata): ...
+    def send_offsets_to_transaction(self, offsets, group_metadata: str | ConsumerGroupMetadata):
+        """
+        Send consumer-group offsets as part of the current transaction.
+
+        Arguments:
+            offsets ({TopicPartition: OffsetAndMetadata}): offsets to commit.
+            group_metadata (ConsumerGroupMetadata or str): full group metadata
+                from KafkaConsumer.group_metadata() (preferred - enables
+                broker-side fencing per KIP-447), or a bare group_id string
+                for backwards compatibility (broker treats it as v0-v2).
+
+        Returns:
+            FutureRecordMetadata-style Future that completes once the offsets
+            are durably committed (or fails fatally).
+        """
+        ...
     def maybe_add_partition_to_transaction(self, topic_partition) -> None: ...
     def is_send_to_partition_allowed(self, tp): ...
     def has_producer_id(self, producer_id=None) -> bool: ...
@@ -80,7 +103,40 @@ class TransactionManager:
     ERROR_CLASS_NEEDS_PRODUCER_ID_RESET: Final = "NEEDS_PRODUCER_ID_RESET"
     def classify_batch_error(
         self, error, batch, log_start_offset=-1
-    ) -> Literal["FATAL", "RETRIABLE", "NEEDS_EPOCH_BUMP", "NEEDS_PRODUCER_ID_RESET", "ABORTABLE"]: ...
+    ) -> Literal["FATAL", "RETRIABLE", "NEEDS_EPOCH_BUMP", "NEEDS_PRODUCER_ID_RESET", "ABORTABLE"]:
+        """
+        Categorize a batch-completion error into a recovery outcome.
+
+        Used by the Sender to decide what to do with a failed batch. This
+        method does not mutate any state - it is a pure classification
+        helper. The caller is responsible for dispatching to the
+        appropriate recovery path.
+
+        Arguments:
+            error (type or BaseException): The error class or instance.
+            batch (ProducerBatch): The batch that failed.
+            log_start_offset (int): log_start_offset from the broker's
+                PartitionProduceResponse, or -1 if unknown / client-side
+                failure. Used for KAFKA-5793 retention detection.
+
+        Returns one of:
+            ERROR_CLASS_RETRIABLE          - caller should retry the batch
+            ERROR_CLASS_ABORTABLE          - transactional producer only;
+                                              abort the transaction
+            ERROR_CLASS_FATAL              - unrecoverable; transition to
+                                              fatal error and fail the batch
+            ERROR_CLASS_NEEDS_EPOCH_BUMP   - recoverable via KIP-360 epoch
+                                              bump (only when broker supports
+                                              InitProducerIdRequest v3+)
+            ERROR_CLASS_NEEDS_PRODUCER_ID_RESET - non-transactional pre-KIP-360
+                                                   fallback: reset the
+                                                   producer id entirely
+
+        Note: this classification is for transactional/idempotent producers
+        only. Non-idempotent producers don't call this; the Sender uses
+        simpler retry/fail logic for them.
+        """
+        ...
     def is_aborting(self) -> bool: ...
     def transition_to_abortable_error(self, exc) -> None: ...
     def transition_to_fatal_error(self, exc) -> None: ...
@@ -88,13 +144,67 @@ class TransactionManager:
     def is_partition_pending_add(self, partition) -> bool: ...
     def has_producer_id_and_epoch(self, producer_id, producer_epoch) -> bool: ...
     def set_producer_id_and_epoch(self, producer_id_and_epoch) -> None: ...
-    def reset_producer_id(self) -> None: ...
-    def bump_producer_id_and_epoch(self) -> None: ...
+    def reset_producer_id(self) -> None:
+        """
+        This method is used when the producer needs to reset its internal state because of an irrecoverable exception
+        from the broker.
+
+        We need to reset the producer id and associated state when we have sent a batch to the broker, but we either get
+        a non-retriable exception or we run out of retries, or the batch expired in the producer queue after it was already
+        sent to the broker.
+
+        In all of these cases, we don't know whether batch was actually committed on the broker, and hence whether the
+        sequence number was actually updated. If we don't reset the producer state, we risk the chance that all future
+        messages will return an OutOfOrderSequenceNumberError.
+
+        Note that we can't reset the producer state for the transactional producer as this would mean bumping the epoch
+        for the same producer id. This might involve aborting the ongoing transaction during the initProducerIdRequest,
+        and the user would not have any way of knowing this happened. So for the transactional producer,
+        it's best to return the produce error to the user and let them abort the transaction and close the producer explicitly.
+        """
+        ...
+    def bump_producer_id_and_epoch(self) -> None:
+        """
+        KIP-360: recover from a transient producer-state error by bumping
+        the epoch.
+
+        Transitions to BUMPING_PRODUCER_EPOCH and enqueues an
+        InitProducerIdRequest v3+ carrying the current producer_id/epoch.
+        When the broker responds with the bumped epoch, _complete_epoch_bump
+        transitions back to READY and the sender resumes producing under
+        the new epoch. Records in the accumulator that haven't been drained
+        yet will be stamped with the new epoch on the next drain.
+
+        TODO (KAFKA-5793 full): in-flight batches at the moment of the bump
+        are lost--their futures fail. Adding in-place rewrite of the
+        closed batch buffer (producer_id/epoch/base_sequence fields + CRC
+        recompute) would let us retry them under the new epoch without
+        losing records.
+
+        Requires broker >= 2.5 (InitProducerIdRequest v3+). On older
+        brokers, Sender falls back to reset_producer_id / fatal instead
+        via classify_batch_error.
+
+        Idempotent: if we're already in BUMPING_PRODUCER_EPOCH, this is a
+        no-op. This matters because with max_in_flight > 1, multiple
+        in-flight batches may all fail with the same epoch-bump-triggering
+        error in quick succession; only the first should drive the bump.
+        """
+        ...
     def sequence_number(self, tp): ...
     def increment_sequence_number(self, tp, increment) -> None: ...
     def set_sequence_number(self, tp, sequence) -> None: ...
     def reset_sequence_for_partition(self, tp) -> None: ...
-    def update_last_acked_offset(self, tp, base_offset, record_count) -> None: ...
+    def update_last_acked_offset(self, tp, base_offset, record_count) -> None:
+        """
+        Record the offset of the last successfully-produced record for tp.
+
+        Called from the sender on each successful batch completion. The
+        last acked offset is used to detect whether a subsequent
+        UnknownProducerIdError reflects retention (safe to retry) vs. real
+        data loss (fatal). See KAFKA-5793.
+        """
+        ...
     def last_acked_offset(self, tp): ...
     def next_request_handler(self, has_incomplete_batches): ...
     def retry(self, request) -> None: ...

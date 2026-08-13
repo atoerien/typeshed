@@ -49,14 +49,111 @@ class StickyAssignmentExecutor:
     def get_final_assignment(self, member_id): ...
 
 class StickyPartitionAssignor(AbstractPartitionAssignor):
+    """
+    https://cwiki.apache.org/confluence/display/KAFKA/KIP-54+-+Sticky+Partition+Assignment+Strategy
+
+    The sticky assignor serves two purposes. First, it guarantees an assignment that is as balanced as possible, meaning either:
+    - the numbers of topic partitions assigned to consumers differ by at most one; or
+    - each consumer that has 2+ fewer topic partitions than some other consumer cannot get any of those topic partitions transferred to it.
+
+    Second, it preserved as many existing assignment as possible when a reassignment occurs.
+    This helps in saving some of the overhead processing when topic partitions move from one consumer to another.
+
+    Starting fresh it would work by distributing the partitions over consumers as evenly as possible.
+    Even though this may sound similar to how round robin assignor works, the second example below shows that it is not.
+    During a reassignment it would perform the reassignment in such a way that in the new assignment
+    - topic partitions are still distributed as evenly as possible, and
+    - topic partitions stay with their previously assigned consumers as much as possible.
+
+    The first goal above takes precedence over the second one.
+
+    Example 1.
+    Suppose there are three consumers C0, C1, C2,
+    four topics t0, t1, t2, t3, and each topic has 2 partitions,
+    resulting in partitions t0p0, t0p1, t1p0, t1p1, t2p0, t2p1, t3p0, t3p1.
+    Each consumer is subscribed to all three topics.
+
+    The assignment with both sticky and round robin assignors will be:
+    - C0: [t0p0, t1p1, t3p0]
+    - C1: [t0p1, t2p0, t3p1]
+    - C2: [t1p0, t2p1]
+
+    Now, let's assume C1 is removed and a reassignment is about to happen. The round robin assignor would produce:
+    - C0: [t0p0, t1p0, t2p0, t3p0]
+    - C2: [t0p1, t1p1, t2p1, t3p1]
+
+    while the sticky assignor would result in:
+    - C0 [t0p0, t1p1, t3p0, t2p0]
+    - C2 [t1p0, t2p1, t0p1, t3p1]
+    preserving all the previous assignments (unlike the round robin assignor).
+
+
+    Example 2.
+    There are three consumers C0, C1, C2,
+    and three topics t0, t1, t2, with 1, 2, and 3 partitions respectively.
+    Therefore, the partitions are t0p0, t1p0, t1p1, t2p0, t2p1, t2p2.
+    C0 is subscribed to t0;
+    C1 is subscribed to t0, t1;
+    and C2 is subscribed to t0, t1, t2.
+
+    The round robin assignor would come up with the following assignment:
+    - C0 [t0p0]
+    - C1 [t1p0]
+    - C2 [t1p1, t2p0, t2p1, t2p2]
+
+    which is not as balanced as the assignment suggested by sticky assignor:
+    - C0 [t0p0]
+    - C1 [t1p0, t1p1]
+    - C2 [t2p0, t2p1, t2p2]
+
+    Now, if consumer C0 is removed, these two assignors would produce the following assignments.
+    Round Robin (preserves 3 partition assignments):
+    - C1 [t0p0, t1p1]
+    - C2 [t1p0, t2p0, t2p1, t2p2]
+
+    Sticky (preserves 5 partition assignments):
+    - C1 [t1p0, t1p1, t0p0]
+    - C2 [t2p0, t2p1, t2p2]
+    """
     DEFAULT_GENERATION_ID: Final = -1
     name: str
     version: int
     member_assignment: Incomplete | None
     generation: int
     def __init__(self) -> None: ...
-    def assign(self, cluster, members) -> dict[Incomplete, ConsumerProtocolAssignment]: ...
+    def assign(self, cluster, members) -> dict[Incomplete, ConsumerProtocolAssignment]:
+        """
+        Performs group assignment given cluster metadata and member subscriptions
+
+        Arguments:
+            cluster (ClusterMetadata): cluster metadata
+            members ([JoinGroupResponseMember]): decoded metadata for each member in the group.
+
+        Returns:
+          dict: {member_id: ConsumerProtocolAssignment}
+        """
+        ...
     @classmethod
-    def parse_member_metadata(cls, metadata) -> StickyAssignorMemberMetadataV1: ...
+    def parse_member_metadata(cls, metadata) -> StickyAssignorMemberMetadataV1:
+        """
+        Parses member metadata into a python object.
+        This implementation only serializes and deserializes the StickyAssignorMemberMetadataV1 user data,
+        since no StickyAssignor written in Python was deployed ever in the wild with version V0, meaning that
+        there is no need to support backward compatibility with V0.
+
+        Arguments:
+          metadata (ConsumerProtocolSubscription): decoded subscription for a member of the group.
+
+        Returns:
+          parsed metadata (StickyAssignorMemberMetadataV1)
+        """
+        ...
     def metadata(self, topics) -> ConsumerProtocolSubscription: ...
-    def on_assignment(self, assignment, generation) -> None: ...
+    def on_assignment(self, assignment, generation) -> None:
+        """
+        Callback that runs on each assignment. Updates assignor's state.
+
+        Arguments:
+          assignment: MemberAssignment
+        """
+        ...

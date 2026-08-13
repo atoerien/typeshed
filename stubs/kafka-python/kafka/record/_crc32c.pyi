@@ -14,9 +14,11 @@ CRC_INIT: int
 def crc_update(crc, data):
     """
     Update CRC-32C checksum with data.
+
     Args:
         crc: 32-bit checksum to update as long.
-        data: byte array, string or iterable over bytes.
+        data: bytes, bytearray, memoryview, array.array("B"), or any
+            iterable yielding ints in [0, 255].
     Returns:
         32-bit updated CRC-32C as long.
     """

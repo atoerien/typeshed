@@ -116,6 +116,10 @@ class ABCRecordBatchBuilder(metaclass=abc.ABCMeta):
         ...
 
 class ABCRecordBatch(metaclass=abc.ABCMeta):
+    """
+    For v2 encapsulates a RecordBatch, for v0/v1 a single (maybe
+    compressed) message.
+    """
     __slots__ = ()
     @abc.abstractmethod
     def __iter__(self):
