@@ -1,26 +1,14 @@
-from _typeshed import Incomplete
+from typing import Literal, TypeVar
 
-def add_to_uri(token, uri) -> str:
-    """
-    Add a Bearer Token to the request URI.
-    Not recommended, use only if client can't use authorization header or body.
+_K = TypeVar("_K")
 
-    http://www.example.com/path?access_token=h480djs93hd8
-    """
-    ...
-def add_to_headers(token, headers=None):
-    """
-    Add a Bearer Token to the request URI.
-    Recommended method of passing bearer tokens.
-
-    Authorization: Bearer h480djs93hd8
-    """
-    ...
-def add_to_body(token, body=None) -> str:
-    """
-    Add a Bearer Token to the request body.
-
-    access_token=h480djs93hd8
-    """
-    ...
-def add_bearer_token(token, uri, headers, body, placement: str = "header") -> tuple[Incomplete, Incomplete, Incomplete]: ...
+def add_to_uri(token: str, uri: str) -> str: ...
+def add_to_headers(token: str, headers: dict[str, _K] | None = None) -> dict[str, _K | str]: ...
+def add_to_body(token: str, body: str | None = None) -> str: ...
+def add_bearer_token(
+    token: str,
+    uri: str,
+    headers: dict[str, _K],
+    body: str,
+    placement: Literal["uri", "url", "query", "header", "headers", "body"] = "header",
+) -> tuple[str, dict[str, _K | str], str]: ...
