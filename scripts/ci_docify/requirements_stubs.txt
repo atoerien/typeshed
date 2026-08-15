@@ -137,7 +137,7 @@ django-filter==26.1.*
 seaborn==0.13.2
 dockerfile-parse==2.0.*
 PySocks==1.7.1
-pyphen==0.17.2
+pyphen==0.18.0
 Send2Trash==2.1.*
 pycocotools==2.0.*
 simplejson==4.1.*
