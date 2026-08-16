@@ -292,9 +292,37 @@ if sys.version_info >= (3, 11):
         ...
 
 @overload
-def _compare_digest(a: ReadableBuffer, b: ReadableBuffer, /) -> bool: ...
+def _compare_digest(a: ReadableBuffer, b: ReadableBuffer, /) -> bool:
+    """
+    Return 'a == b'.
+
+    This function uses an approach designed to prevent
+    timing analysis, making it appropriate for cryptography.
+
+    a and b must both be of the same type: either str (ASCII only),
+    or any bytes-like object.
+
+    Note: If a and b are of different lengths, or if an error occurs,
+    a timing attack could theoretically reveal information about the
+    types and lengths of a and b--but not their values.
+    """
+    ...
 @overload
-def _compare_digest(a: str, b: str, /) -> bool: ...
+def _compare_digest(a: str, b: str, /) -> bool:
+    """
+    Return 'a == b'.
+
+    This function uses an approach designed to prevent
+    timing analysis, making it appropriate for cryptography.
+
+    a and b must both be of the same type: either str (ASCII only),
+    or any bytes-like object.
+
+    Note: If a and b are of different lengths, or if an error occurs,
+    a timing attack could theoretically reveal information about the
+    types and lengths of a and b--but not their values.
+    """
+    ...
 
 if sys.version_info >= (3, 14):
     def is_none(a: object, /) -> TypeIs[None]:
