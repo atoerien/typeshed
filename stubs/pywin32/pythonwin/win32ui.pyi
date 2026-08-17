@@ -1,3 +1,5 @@
+"""A module, encapsulating the Microsoft Foundation Classes."""
+
 from _typeshed import FileDescriptorOrPath, Incomplete, OptExcInfo, Unused
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from types import TracebackType
