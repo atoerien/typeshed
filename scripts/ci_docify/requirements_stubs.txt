@@ -21,7 +21,7 @@ pyasn1==0.6.*
 assertpy==1.1.*
 pika==1.4.*
 html5lib[all]==1.1.*
-Pygments==2.20.*
+Pygments==2.21.*
 flake8==7.3.*
 greenlet==3.5.*
 parsimonious==0.11.*
@@ -87,7 +87,7 @@ oauthlib==3.3.*
 dateparser[fasttext,langdetect]==1.4.2
 Flask-Cors==6.0.3
 xmltodict~=1.0.1
-rasterio==1.5.0
+rasterio==1.5.1
 workalendar==17.0.*
 docker==7.2.*
 flake8-bugbear==25.11.29
@@ -108,7 +108,7 @@ click-web==0.8.*
 PyMeeus==0.5.*
 qrcode[pil]==8.2.*
 untangle==1.2.*
-pyfarmhash==0.4.*
+pyfarmhash==0.5.*
 python-http-client==3.3.7
 reportlab[pycairo]==4.5.1
 mysqlclient==2.2.*
@@ -198,7 +198,7 @@ grpcio~=1.83.0
 pywin32==312.*
 WebOb~=1.8.11
 ratelimit==2.2.*
-kafka-python==3.0.10
+kafka-python==3.0.11
 datauri==1.1.*
 colorama==0.4.*
 xdgenvpy==3.0.*
