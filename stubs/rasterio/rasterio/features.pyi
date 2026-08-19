@@ -169,19 +169,19 @@ def rasterize(
     dst_kwds: dict[str, Any] | None = None,
 ) -> NDArray[Any]:
     """
-    Return an image array with input geometries burned in.
+    Burn vector shapes into an array.
 
-    Warnings will be raised for any invalid or empty geometries, and
-    an exception will be raised if there are no valid shapes
+    Warnings or exceptions (optionally) will be raised for any invalid
+    shape, and an exception will be raised if there are no valid shapes
     to rasterize.
 
     Parameters
     ----------
-    shapes : iterable of (`geometry`, `value`) pairs or geometries
-        The `geometry` can either be an object that implements the geo
-        interface or GeoJSON-like object. If no `value` is provided
-        the `default_value` will be used. If `value` is `None` the
-        `fill` value will be used.
+    shapes : iterable of shapes or shape, value pairs
+        The `shape` can be an object that implements the geo interface
+        or a GeoJSON-like object. If no `value` is provided the
+        `default_value` will be used. If `value` is `None` the `fill`
+        value will be used.
     out_shape : tuple or list with 2 integers
         Shape of output :class:`numpy.ndarray`.
     fill : int or float, optional
@@ -253,14 +253,21 @@ def rasterize(
     ...
 def bounds(geometry: Geometry, north_up: bool = True, transform: Affine | None = None) -> tuple[float, float, float, float]:
     """
-    Return a (left, bottom, right, top) bounding box.
+    Get the bounding box (left, bottom, right, top) of the geometry.
 
-    From Fiona 1.4.8. Modified to return bbox from geometry if available.
+    If north_up is True and transform is not defined, the GeoJSON "bbox"
+    attribute of the input geometry will be directly used.
 
     Parameters
     ----------
     geometry: GeoJSON-like feature (implements __geo_interface__),
-              feature collection, or geometry.
+        feature collection, or geometry.
+    north_up : bool, optional
+        Whether the bounding box should be oriented north-up (the
+        default), or flipped south-up.
+    transform : Affine, optional
+        If provided, the geometry's coordinates will be transformed
+        prior to bounding box calculation.
 
     Returns
     -------

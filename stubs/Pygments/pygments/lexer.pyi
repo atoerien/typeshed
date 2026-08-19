@@ -200,7 +200,7 @@ class include(str):
     """Indicates that a state should include rules from another state."""
     ...
 class _inherit:
-    """Indicates the a state should inherit from its superclass."""
+    """Indicates that a state should inherit from its superclass."""
     ...
 
 inherit: Incomplete

@@ -173,4 +173,17 @@ def terminal_encoding(term: Any) -> str:
 class UnclosingTextIOWrapper(TextIOWrapper):
     def close(self) -> None: ...
 
-def html_escape(string: str, quote: bool = True) -> str: ...
+def html_escape(string: str, quote: bool = True) -> str:
+    """
+    Return a safe version of the passed `string`,
+    and an empty string if `None`.
+
+    `NoneType` is not supported by `html.escape`, as `html.escape`
+    uses the built-in `replace` function on `string`, so we need to
+    check for it first.
+
+    Optional flag quote is true by default, which also escapes
+    double and single quotes.
+    See https://docs.python.org/3/library/html.html#html.escape for more details.
+    """
+    ...
