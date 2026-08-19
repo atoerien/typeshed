@@ -1,5 +1,5 @@
 from builtins import list as _list
-from typing import Any
+from typing import Any, Literal
 
 from .resource import Collection, Model
 
@@ -7,75 +7,14 @@ class Node(Model):
     """A node in a swarm."""
     id_attribute: str
     @property
-    def version(self):
-        """
-        The version number of the service. If this is not the same as the
-        server, the :py:meth:`update` function will not work and you will
-        need to call :py:meth:`reload` before calling it again.
-        """
-        ...
-    def update(self, node_spec):
-        """
-        Update the node's configuration.
-
-        Args:
-            node_spec (dict): Configuration settings to update. Any values
-                not provided will be removed. Default: ``None``
-
-        Returns:
-            `True` if the request went through.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-
-        Example:
-
-            >>> node_spec = {'Availability': 'active',
-                             'Name': 'node-name',
-                             'Role': 'manager',
-                             'Labels': {'foo': 'bar'}
-                            }
-            >>> node.update(node_spec)
-        """
-        ...
-    def remove(self, force: bool = False):
-        """
-        Remove this node from the swarm.
-
-        Args:
-            force (bool): Force remove an active node. Default: `False`
-
-        Returns:
-            `True` if the request was successful.
-
-        Raises:
-            :py:class:`docker.errors.NotFound`
-                If the node doesn't exist in the swarm.
-
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
+    def version(self) -> int: ...
+    def update(self, node_spec) -> Literal[True]: ...
+    def remove(self, force: bool = False) -> Literal[True]: ...
 
 class NodeCollection(Collection[Node]):
     """Nodes on the Docker server."""
     model: type[Node]
-    def get(self, node_id):
-        """
-        Get a node.
-
-        Args:
-            node_id (string): ID of the node to be inspected.
-
-        Returns:
-            A :py:class:`Node` object.
-
-        Raises:
-            :py:class:`docker.errors.APIError`
-                If the server returns an error.
-        """
-        ...
+    def get(self, node_id) -> Node: ...
     # Please keep in sync with docker.api.swarm.SwarmApiMixin.nodes
     def list(self, filters: dict[str, Any] | None = None) -> _list[Node]:
         """
