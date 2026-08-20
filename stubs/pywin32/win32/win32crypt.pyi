@@ -1,3 +1,5 @@
+"""Support for Windows cryptography functions"""
+
 from _typeshed import Incomplete, ReadableBuffer
 from collections.abc import Iterable, Sequence
 from typing import Literal, overload

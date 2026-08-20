@@ -13,7 +13,9 @@ REDIRECT_TO: Final[str]
 GLOB_MAGIC_RE: Final[Pattern[str]]
 hop_headers: set[str]
 
-def is_glob_pattern(value: str) -> bool: ...
+def is_glob_pattern(value: str) -> bool:
+    """Return True if the string should be treated as a glob pattern."""
+    ...
 def load_entry_point(distribution: str, group: str, name: str) -> type[object]: ...
 def load_class(
     uri: str | object, default: str = "gunicorn.workers.sync.SyncWorker", section: str = "gunicorn.workers"
