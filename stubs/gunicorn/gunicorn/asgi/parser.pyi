@@ -90,6 +90,8 @@ class InvalidChunkExtension(ParseError):
     """Invalid chunk extension per RFC 9112."""
     ...
 
+RFC9110_5_3_SINGLETON_FIELDS: Final[frozenset[bytes]]
+
 class PythonProtocol:
     """
     Callback-based HTTP/1.1 parser (pure Python fallback).
