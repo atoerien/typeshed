@@ -36,7 +36,6 @@ retry==0.9.*
 RPi.GPIO==0.7.*
 jmespath==1.1.*
 geojson==3.3.0
-fpdf2==2.8.4
 hnswlib==0.8.*
 boltons==26.1.*
 pyaudio==0.2.*
@@ -150,7 +149,7 @@ tabulate==0.10.*
 setuptools==84.0.*
 watchpoints==0.2.5
 hdbcli==2.29.*
-gunicorn==26.0.0
+gunicorn==26.1.0
 mock==5.2.*
 pyjks==20.0.*
 behave==1.3.*
