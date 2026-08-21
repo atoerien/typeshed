@@ -23,6 +23,7 @@ from docutils.writers import Writer, _WriterParts
 __docformat__: Final = "reStructuredText"
 
 class Publisher:
+    """A facade encapsulating the high-level logic of a Docutils system."""
     document: nodes.document | None
     reader: Reader[Incomplete]
     parser: Parser
@@ -291,7 +292,9 @@ def publish_cmdline_to_binary(
     description: str = ...,
     destination=None,
     destination_class: type[Output] = ...,
-): ...
+):
+    'Set up & run a `Publisher` for command-line-based file I/O (input and\noutput file paths taken automatically from the command line).\nAlso return the output as `bytes`.\n\nThis is just like publish_cmdline, except that it uses\nio.BinaryFileOutput instead of io.FileOutput.\n\nParameters: see `publish_programmatically()` for the remainder.\n\n- `argv`: Command-line argument list to use instead of ``sys.argv[1:]``.\n- `usage`: Usage string, output if there\'s a problem parsing the command\n  line.\n- `description`: Program description, output for the "--help" option\n  (along with command-line option descriptions).\n\nDeprecated. Use `publish_cmdline()` (works with `bytes` since\nDocutils\xa00.20). Will be removed in Docutils 0.24.'
+    ...
 def publish_programmatically(
     source_class: type[Input[Incomplete]],
     source,
@@ -344,7 +347,7 @@ def publish_programmatically(
       - `io.FileInput`: Path to the input file, opened if no `source`
         supplied.
 
-      - `io.StringInput`: Optional.  Path to the file or name of the
+      - `io.StringInput`: Optional.  Path to the file or description of the
         object that produced `source`.  Only used for diagnostic output.
 
     * `destination_class` **required**: The class for dynamically created

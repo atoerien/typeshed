@@ -1,3 +1,13 @@
+"""
+webencodings.custom
+~~~~~~~~~~~~~~~~~~~
+
+An implementation of custom "replacement" and "x-user-defined" encodings.
+
+:copyright: Copyright 2012 by Simon Sapin
+:license: BSD, see LICENSE for details.
+"""
+
 import codecs
 from _codecs import _CharMap
 from _typeshed import ReadableBuffer

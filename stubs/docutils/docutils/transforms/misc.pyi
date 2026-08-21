@@ -30,9 +30,12 @@ class ClassAttribute(Transform):
 
 class Transitions(Transform):
     """
-    Move transitions at the end of sections up the tree.  Complain
-    on transitions after a title, subtitle, meta, or decoration element,
-    at the beginning or end of the document, and after another transition.
+    Post-process <transition> elements.
+
+    Move transitions at the end of sections up the tree.
+    Warn on transitions at the beginning or end of the document or
+    a section (ignoring title, decoration, or invisible elements),
+    and after another transition.
 
     For example, transform this::
 

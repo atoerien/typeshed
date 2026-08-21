@@ -33,7 +33,9 @@ class Container(Model):
         """The image of the container."""
         ...
     @property
-    def labels(self) -> dict[str, str]: ...
+    def labels(self) -> dict[str, str]:
+        """The labels of a container as dictionary."""
+        ...
     @property
     def status(self) -> str:
         """The status of the container. For example, ``running``, or ``exited``."""

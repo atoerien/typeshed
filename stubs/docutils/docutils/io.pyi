@@ -199,15 +199,15 @@ class FileInput(Input[IO[str]]):
     ) -> None:
         """
         :Parameters:
-            - `source`: either a file-like object (which is read directly), or
-              `None` (which implies `sys.stdin` if no `source_path` given).
-            - `source_path`: a path to a file, which is opened for reading.
-            - `encoding`: the expected text encoding of the input file.
+            - `source`: either a file-like object (with `read()` and `close()`
+              methods) or None (use source indicated by `source_path`).
+            - `source_path`: a path to a file (which is opened for reading
+              if `source` is None) or `None` (implies `sys.stdin`).
+            - `encoding`: the text encoding of the input file.
             - `error_handler`: the encoding error handler to use.
             - `autoclose`: close automatically after read (except when
-              `sys.stdin` is the source).
-            - `mode`: how the file is to be opened (see standard function
-              `open`). The default is read only ('r').
+              the source is `sys.stdin`).
+            - `mode`: how the file is to be opened. Default is read only ('r').
         """
         ...
     def read(self) -> str:

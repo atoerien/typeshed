@@ -232,7 +232,13 @@ class Connection:
     # Thread safe strategies return a (status, result, response, request) tuple instead of a bare status
     def unbind(
         self, controls: _ControlSequence | None = None
-    ) -> Literal[True] | tuple[Literal[True], _Result, _Response, _Request]: ...
+    ) -> Literal[True] | tuple[Literal[True], _Result, _Response, _Request]:
+        """
+        Unbind the connected user. Unbind implies closing session as per RFC4511 (4.3)
+
+        :param controls: LDAP controls to send along with the bind operation
+        """
+        ...
     def search(
         self,
         search_base: str,

@@ -19,10 +19,28 @@ class BaseStrategy:
     referral_cache: Incomplete
     thread_safe: bool
     def __init__(self, ldap_connection) -> None: ...
-    def open(self, reset_usage: bool = True, read_server_info: bool = True) -> None: ...
-    def close(self) -> None: ...
-    def send(self, message_type, request, controls: _ControlSequence | None = None): ...
-    def get_response(self, message_id, timeout=None, get_request: bool = False): ...
+    def open(self, reset_usage: bool = True, read_server_info: bool = True) -> None:
+        """Open a socket to a server. Choose a server from the server pool if available"""
+        ...
+    def close(self) -> None:
+        """Close connection"""
+        ...
+    def send(self, message_type, request, controls: _ControlSequence | None = None):
+        """
+        Send an LDAP message
+        Returns the message_id
+        """
+        ...
+    def get_response(self, message_id, timeout=None, get_request: bool = False):
+        """
+        Get response LDAP messages
+        Responses are returned by the underlying connection strategy
+        Check if message_id LDAP message is still outstanding and wait for timeout to see if it appears in _get_response
+        Result is stored in connection.result
+        Responses without result is stored in connection.response
+        A tuple (responses, result) is returned
+        """
+        ...
     @staticmethod
     def compute_ldap_message_size(data):
         """

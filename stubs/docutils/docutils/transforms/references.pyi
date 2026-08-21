@@ -10,6 +10,17 @@ from docutils.transforms import Transform
 __docformat__: Final = "reStructuredText"
 
 class SectionIDs(Transform):
+    """
+    Add identifiers to sections.
+
+    If the "legacy_ids" configuration setting is False, the rST parser
+    does not generate identifiers for implicit targets (e.g. sections)
+    in order to give explicit targets preferential access to identifiers
+    matching their reference name.
+
+    However, the `parts.Contents` transform and most writers
+    expect sections to have an identifier, so this transform adds them.
+    """
     default_priority: ClassVar[int]
     def apply(self) -> None: ...
 

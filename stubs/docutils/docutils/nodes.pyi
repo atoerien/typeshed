@@ -158,7 +158,46 @@ class Node:
         descend: bool = True,
         siblings: bool = False,
         ascend: bool = False,
-    ) -> Generator[_N]: ...
+    ) -> Generator[_N]:
+        """
+        Return an iterator yielding nodes following `self`:
+
+        * self (if `include_self` is true)
+        * all descendants in tree traversal order (if `descend` is true)
+        * the following siblings (if `siblings` is true) and their
+          descendants (if also `descend` is true)
+        * the following siblings of the parent (if `ascend` is true) and
+          their descendants (if also `descend` is true), and so on.
+
+        If `condition` is not None, the iterator yields only nodes
+        for which ``condition(node)`` is true.
+        If `condition` is a type (or tuple of types) ``cls``, it is equivalent
+        to a function consisting of ``return isinstance(node, cls)``.
+
+        If `ascend` is true, assume `siblings` to be true as well.
+
+        If the tree structure is modified during iteration, the result
+        is undefined.
+
+        For example, given the following tree::
+
+            <paragraph>
+                <emphasis>      <--- emphasis.traverse() and
+                    <strong>    <--- strong.traverse() are called.
+                        Foo
+                    Bar
+                <reference name="Baz" refid="baz">
+                    Baz
+
+        Then tuple(emphasis.traverse()) equals ::
+
+            (<emphasis>, <strong>, <#text: Foo>, <#text: Bar>)
+
+        and list(strong.traverse(ascend=True) equals ::
+
+            [<strong>, <#text: Foo>, <#text: Bar>, <reference>, <#text: Baz>]
+        """
+        ...
     @overload
     def findall(
         self,
@@ -179,9 +218,9 @@ class Node:
           their descendants (if also `descend` is true), and so on.
 
         If `condition` is not None, the iterator yields only nodes
-        for which ``condition(node)`` is true.  If `condition` is a
-        type ``cls``, it is equivalent to a function consisting
-        of ``return isinstance(node, cls)``.
+        for which ``condition(node)`` is true.
+        If `condition` is a type (or tuple of types) ``cls``, it is equivalent
+        to a function consisting of ``return isinstance(node, cls)``.
 
         If `ascend` is true, assume `siblings` to be true as well.
 
@@ -217,7 +256,13 @@ class Node:
         descend: bool = True,
         siblings: bool = False,
         ascend: bool = False,
-    ) -> list[_N]: ...
+    ) -> list[_N]:
+        """
+        Return list of nodes following `self`.
+
+        For looping, Node.findall() is faster and more memory efficient.
+        """
+        ...
     @overload
     @deprecated("The `nodes.Node.traverse()` is deprecated. Use `Node.findall()` instead.")
     def traverse(
@@ -243,7 +288,15 @@ class Node:
         descend: bool = True,
         siblings: bool = False,
         ascend: bool = False,
-    ) -> _N | None: ...
+    ) -> _N | None:
+        """
+        Return the first node in the iterator returned by findall(),
+        or None if the iterable is empty.
+
+        Parameter list is the same as of `findall()`.  Note that `include_self`
+        defaults to False, though.
+        """
+        ...
     @overload
     def next_node(
         self,
@@ -905,12 +958,80 @@ class document(Root, Structural, Element):
     def asdom(self, dom: Any | None = None) -> Any:
         """Return a DOM representation of this document."""
         ...
-    def set_id(self, node: Element, msgnode: Element | None = None, suggested_prefix: str = "") -> str: ...
+    def set_id(self, node: Element, msgnode: Element | None = None, suggested_prefix: str = "") -> str:
+        """
+        Check/set identifiers of element `node`. Return last identifier.
+
+        Check `node`s identifiers for duplicates,
+        create a new identifier if there are none.
+        Update `document.ids` and `document.nameids`.
+
+        Provisional.
+        """
+        ...
     def create_id(self, node: Element, suggested_prefix: str = "") -> str: ...
     @deprecated("`nodes.document.set_name_id_map()` will be removed in Docutils 1.0.")
-    def set_name_id_map(self, node: Element, id: str, msgnode: Element | None = None, explicit: bool = False) -> None: ...
-    def set_duplicate_name(self, node: Element, name: str, msgnode: Element, explicit: bool) -> None: ...
-    def note_names(self, node: Element, msgnode: Element | None = None, explicit: bool = False) -> None: ...
+    def set_name_id_map(self, node: Element, id: str, msgnode: Element | None = None, explicit: bool = False) -> None:
+        """Deprecated. Will be removed in Docutils 1.0."""
+        ...
+    def set_duplicate_name(self, node: Element, name: str, msgnode: Element, explicit: bool) -> None:
+        """
+        Handle name conflicts according to the `rST specification`__.
+
+        Called by `self.note_names()` when the reference name `name`
+        of the element `node` is already registered in `self.names`.
+
+        `self.names` maps names to elements.  The value ``None`` indicates
+        that the name is a "dupname" (i.e. the document contains two or
+        more elements with the same name and target type).
+
+        `self.nametypes` maps names to booleans representing the target type
+        (True = "explicit", False = "implicit").
+
+        The following state transition table shows how the values
+        of `self.names` ("name") and `self.nametypes` ("type") items
+        with key `name` change and which actions are performed.
+
+        "Old" is the element with conflicting reference name,
+        "new" is the element specified by the argument `node`.
+        The "Input type" is specified by the argument `explicit`.
+
+        ========  ====  ========  ====  ========  ===============  =======
+        Input     Old State       New State       Action
+        --------  --------------  --------------  ------------------------
+        type      name  type      name  type      invalidate [#]_  report
+        ========  ====  ========  ====  ========  ===============  =======
+        explicit  old   explicit  None  explicit  new,old [#ex]_   WARNING
+        implicit  old   explicit  old   explicit  new              INFO
+        explicit  old   implicit  new   explicit  old              INFO
+        implicit  old   implicit  None  implicit  new,old [#ex]_   INFO
+        explicit  None  explicit  None  explicit  new              WARNING
+        implicit  None  explicit  None  explicit  new              INFO
+        explicit  None  implicit  new   explicit
+        implicit  None  implicit  None  implicit  new              INFO
+        ========  ====  ========  ====  ========  ===============  =======
+
+        .. [#] When "invalidating" an element, `name` is transferred from
+           the element's "name" attribute to its "dupnames" attribute.
+
+        .. [#ex] If both "old" and "new" refer to identical URIs or
+           reference names, keep the old state and only invalidate "new".
+
+        __ https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html
+           #implicit-hyperlink-targets
+
+        Provisional.
+        """
+        ...
+    def note_names(self, node: Element, msgnode: Element | None = None, explicit: bool = False) -> None:
+        """
+        Register the reference names of the element `node`.
+
+        Update `self.names` and `self.nametypes`
+        for each name in the "names" attribute of `node`.
+        In case of name conflicts, call `self.set_duplicate_name()`.
+        """
+        ...
     def has_name(self, name: str) -> bool: ...
     def note_implicit_target(self, target: Element, msgnode: Element | None = None) -> None: ...
     def note_explicit_target(self, target: Element, msgnode: Element | None = None) -> None: ...
@@ -987,11 +1108,37 @@ class footer(Decorative, Element): ...
 
 # Structural Elements
 
-class section(Structural, Element): ...
-class topic(Structural, Element): ...
-class sidebar(Structural, Element): ...
+class section(Structural, Element):
+    """
+    Document section__. The main unit of hierarchy.
+
+    __ https://docutils.sourceforge.io/docs/ref/doctree.html#section
+    """
+    ...
+class topic(Structural, Element):
+    """
+    Topics__ are non-recursive, mini-sections.
+
+    __ https://docutils.sourceforge.io/docs/ref/doctree.html#topic
+    """
+    ...
+class sidebar(Structural, Element):
+    """
+    Sidebars__ are like parallel documents providing related material.
+
+    A sidebar is typically offset by a border and "floats" to the side
+    of the page
+
+    __ https://docutils.sourceforge.io/docs/ref/doctree.html#sidebar
+    """
+    ...
 
 class transition(Structural, Element):
+    """
+    Transitions__ represent "semantic breaks".
+
+    __ https://docutils.sourceforge.io/docs/ref/doctree.html#transition
+    """
     ignored_siblings: ClassVar[tuple[type[Element], ...]]
 
 # Body Elements

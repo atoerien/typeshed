@@ -32,6 +32,10 @@ class _PostParams(_GetParams, total=False):
     content_type: str
 
 class TestResponse(Response):
+    """
+    Instances of this class are returned by
+    :class:`~webtest.app.TestApp` methods.
+    """
     # NOTE: The way WebTest creates responses the request is always set
     #       we could've used `MaybeNone`, but it seems more pragmatic
     #       to just assume that this is always set.

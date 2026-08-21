@@ -29,17 +29,19 @@ class SectNum(Transform):
 
 class Contents(Transform):
     """
+    Generate a table of contents (ToC)
+
     This transform generates a table of contents from the entire document tree
-    or from a single branch.  It locates "section" elements and builds them
-    into a nested bullet list, which is placed within a "topic" created by the
+    or from a single branch.  It locates <section> elements and builds them
+    into a nested bullet list, which is placed within a <topic> created by the
     contents directive.  A title is either explicitly specified, taken from
     the appropriate language module, or omitted (local table of contents).
     The depth may be specified.  Two-way references between the table of
     contents and section titles are generated (requires Writer support).
 
-    This transform requires a startnode, which contains generation
-    options and provides the location for the generated table of contents (the
-    startnode is replaced by the table of contents "topic").
+    This transform requires a startnode, a <pending> element which contains
+    generation options and provides the location for the generated ToC (the
+    startnode is replaced by the table of contents <bullet_list>).
     """
     default_priority: ClassVar[int]
     toc_id: Incomplete

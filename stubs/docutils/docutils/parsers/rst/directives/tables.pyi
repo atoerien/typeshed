@@ -50,7 +50,7 @@ class CSVTable(Table):
         """
         CSV dialect used for the "header" option data.
 
-        Deprecated. Will be removed in Docutils 0.22.
+        Deprecated. Will be removed in Docutils 1.0.
         """
         delimiter: str
         quotechar: str

@@ -170,6 +170,9 @@ class LuaRuntime:
       Note: Not supported on 64bit LuaJIT.
       (default: None, i.e. no limitation. New in Lupa 2.0)
 
+    * ``string_hash_seed``: hash seed for Lua strings.
+      (default: randomly initialised. Ignored in Lua < 5.5.)
+
     Example usage::
 
       >>> from lupa import LuaRuntime

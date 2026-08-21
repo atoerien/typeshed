@@ -307,7 +307,10 @@ class LaTeXTranslator(nodes.NodeVisitor):
         self, node: nodes.Element, set_anchor: bool = True, protect: bool = False, newline: bool = False, pre_nl: bool = False
     ) -> list[str]:
         r"""
-        Return label definitions for all ids of `node`.
+        Return label definitions for IDs of `node`.
+
+        Make labels for all IDs that are either explicit or referenced in
+        the document (i.e. not for section headings that are not referenced).
 
         If `set_anchor` is True, an anchor is set with \phantomsection.
         If `protect` is True, the \label cmd is made robust.
@@ -467,7 +470,7 @@ class LaTeXTranslator(nodes.NodeVisitor):
     def visit_literal(self, node: nodes.literal) -> None: ...
     def depart_literal(self, node: nodes.literal) -> None: ...
     def is_plaintext(self, node) -> bool:
-        """Check whether a node can be typeset verbatim"""
+        """Check whether `node` contains only text"""
         ...
     def visit_literal_block(self, node: nodes.literal_block) -> None:
         """
