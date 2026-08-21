@@ -433,20 +433,4 @@ class ConfigParser(RawConfigParser):
         """
         ...
 
-class ConfigDeprecationWarning(FutureWarning):
-    """Warning for deprecated configuration file features."""
-    ...
-
-def get_default_settings(*components: SettingsSpec) -> Values:
-    """
-    Return default runtime settings for `components`.
-
-    Return a `frontend.Values` instance with defaults for generic Docutils
-    settings and settings from the `components` (`SettingsSpec` instances).
-
-    This corresponds to steps 1 and 2 in the `runtime settings priority`__.
-
-    __ https://docutils.sourceforge.io/docs/api/runtime-settings.html
-       #settings-priority
-    """
-    ...
+def get_default_settings(*components: SettingsSpec | type[SettingsSpec]) -> Values: ...

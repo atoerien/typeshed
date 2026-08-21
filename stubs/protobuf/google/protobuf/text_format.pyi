@@ -259,53 +259,8 @@ def Parse(
     allow_field_number: bool = False,
     descriptor_pool: DescriptorPool | None = None,
     allow_unknown_field: bool = False,
-) -> _M:
-    """
-    Parses a text representation of a protocol message into a message.
-
-    NOTE: for historical reasons this function does not clear the input
-    message. This is different from what the binary msg.ParseFrom(...) does.
-    If text contains a field already set in message, the value is appended if the
-    field is repeated. Otherwise, an error is raised.
-
-    Example::
-
-      a = MyProto()
-      a.repeated_field.append('test')
-      b = MyProto()
-
-      # Repeated fields are combined
-      text_format.Parse(repr(a), b)
-      text_format.Parse(repr(a), b) # repeated_field contains ["test", "test"]
-
-      # Non-repeated fields cannot be overwritten
-      a.singular_field = 1
-      b.singular_field = 2
-      text_format.Parse(repr(a), b) # ParseError
-
-      # Binary version:
-      b.ParseFromString(a.SerializeToString()) # repeated_field is now "test"
-
-    Caller is responsible for clearing the message as needed.
-
-    Args:
-      text (str): Message text representation.
-      message (Message): A protocol buffer message to merge into.
-      allow_unknown_extension: if True, skip over missing extensions and keep
-        parsing
-      allow_field_number: if True, both field number and field name are allowed.
-      descriptor_pool (DescriptorPool): Descriptor pool used to resolve Any types.
-      allow_unknown_field: if True, skip over unknown field and keep
-        parsing. Avoid to use this option if possible. It may hide some
-        errors (e.g. spelling error on field name)
-
-    Returns:
-      Message: The same message passed as argument.
-
-    Raises:
-      ParseError: On text parsing problems.
-    """
-    ...
+    max_recursion_depth: int | None = None,
+) -> _M: ...
 def Merge(
     text: str | bytes,
     message: _M,
@@ -313,32 +268,8 @@ def Merge(
     allow_field_number: bool = False,
     descriptor_pool: DescriptorPool | None = None,
     allow_unknown_field: bool = False,
-) -> _M:
-    """
-    Parses a text representation of a protocol message into a message.
-
-    Like Parse(), but allows repeated values for a non-repeated field, and uses
-    the last one. This means any non-repeated, top-level fields specified in text
-    replace those in the message.
-
-    Args:
-      text (str): Message text representation.
-      message (Message): A protocol buffer message to merge into.
-      allow_unknown_extension: if True, skip over missing extensions and keep
-        parsing
-      allow_field_number: if True, both field number and field name are allowed.
-      descriptor_pool (DescriptorPool): Descriptor pool used to resolve Any types.
-      allow_unknown_field: if True, skip over unknown field and keep
-        parsing. Avoid to use this option if possible. It may hide some
-        errors (e.g. spelling error on field name)
-
-    Returns:
-      Message: The same message passed as argument.
-
-    Raises:
-      ParseError: On text parsing problems.
-    """
-    ...
+    max_recursion_depth: int | None = None,
+) -> _M: ...
 def MergeLines(
     lines: Iterable[str | bytes],
     message: _M,
@@ -346,30 +277,8 @@ def MergeLines(
     allow_field_number: bool = False,
     descriptor_pool: DescriptorPool | None = None,
     allow_unknown_field: bool = False,
-) -> _M:
-    """
-    Parses a text representation of a protocol message into a message.
-
-    See Merge() for more details.
-
-    Args:
-      lines: An iterable of lines of a message's text representation.
-      message: A protocol buffer message to merge into.
-      allow_unknown_extension: if True, skip over missing extensions and keep
-        parsing
-      allow_field_number: if True, both field number and field name are allowed.
-      descriptor_pool: A DescriptorPool used to resolve Any types.
-      allow_unknown_field: if True, skip over unknown field and keep
-        parsing. Avoid to use this option if possible. It may hide some
-        errors (e.g. spelling error on field name)
-
-    Returns:
-      The same message passed as argument.
-
-    Raises:
-      ParseError: On text parsing problems.
-    """
-    ...
+    max_recursion_depth: int | None = None,
+) -> _M: ...
 
 class _Parser:
     """Text format parser for protocol message."""
@@ -377,12 +286,15 @@ class _Parser:
     allow_field_number: bool
     descriptor_pool: DescriptorPool | None
     allow_unknown_field: bool
+    max_recursion_depth: int | None
+    recursion_depth: int
     def __init__(
         self,
         allow_unknown_extension: bool = False,
         allow_field_number: bool = False,
         descriptor_pool: DescriptorPool | None = None,
         allow_unknown_field: bool = False,
+        max_recursion_depth: int | None = None,
     ) -> None: ...
     def ParseLines(self, lines: Iterable[str | bytes], message: _M) -> _M:
         """Parses a text representation of a protocol message into a message."""

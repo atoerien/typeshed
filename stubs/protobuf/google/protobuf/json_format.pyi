@@ -44,62 +44,18 @@ def MessageToJson(
     descriptor_pool: DescriptorPool | None = None,
     ensure_ascii: bool = True,
     always_print_fields_with_no_presence: bool = False,
-) -> str:
-    """
-    Converts protobuf message to JSON format.
-
-    Args:
-      message: The protocol buffers message instance to serialize.
-      always_print_fields_with_no_presence: If True, fields without presence
-        (implicit presence scalars, repeated fields, and map fields) will always
-        be serialized. Any field that supports presence is not affected by this
-        option (including singular message fields and oneof fields).
-      preserving_proto_field_name: If True, use the original proto field names as
-        defined in the .proto file. If False, convert the field names to
-        lowerCamelCase.
-      indent: The JSON object will be pretty-printed with this indent level. An
-        indent level of 0 or negative will only insert newlines. If the indent
-        level is None, no newlines will be inserted.
-      sort_keys: If True, then the output will be sorted by field names.
-      use_integers_for_enums: If true, print integers instead of enum names.
-      descriptor_pool: A Descriptor Pool for resolving types. If None use the
-        default.
-      ensure_ascii: If True, strings with non-ASCII characters are escaped. If
-        False, Unicode strings are returned unchanged.
-
-    Returns:
-      A string containing the JSON formatted protocol buffer message.
-    """
-    ...
+    *,
+    unquote_int64_if_possible: bool = False,
+) -> str: ...
 def MessageToDict(
     message: Message,
     always_print_fields_with_no_presence: bool = False,
     preserving_proto_field_name: bool = False,
     use_integers_for_enums: bool = False,
     descriptor_pool: DescriptorPool | None = None,
-) -> dict[str, Any]:
-    """
-    Converts protobuf message to a dictionary.
-
-    When the dictionary is encoded to JSON, it conforms to ProtoJSON spec.
-
-    Args:
-      message: The protocol buffers message instance to serialize.
-      always_print_fields_with_no_presence: If True, fields without presence
-        (implicit presence scalars, repeated fields, and map fields) will always
-        be serialized. Any field that supports presence is not affected by this
-        option (including singular message fields and oneof fields).
-      preserving_proto_field_name: If True, use the original proto field names as
-        defined in the .proto file. If False, convert the field names to
-        lowerCamelCase.
-      use_integers_for_enums: If true, print integers instead of enum names.
-      descriptor_pool: A Descriptor Pool for resolving types. If None use the
-        default.
-
-    Returns:
-      A dict representation of the protocol buffer message.
-    """
-    ...
+    *,
+    unquote_int64_if_possible: bool = False,
+) -> dict[str, Any]: ...
 def Parse(
     text: bytes | str,
     message: _MessageT,

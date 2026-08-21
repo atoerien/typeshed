@@ -2,6 +2,8 @@
 
 from _typeshed import Incomplete
 
+from ..protocol.convert import _ControlSequence
+
 SEARCH_CONTROLS: Incomplete
 SERVER_ENCODING: str
 
@@ -43,4 +45,4 @@ class MockBaseStrategy:
         """
         ...
     def equal(self, dn, attribute_type, value_to_check): ...
-    def send(self, message_type, request, controls=None): ...
+    def send(self, message_type, request, controls: _ControlSequence | None = None): ...

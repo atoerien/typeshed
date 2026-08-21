@@ -13,8 +13,8 @@ from _typeshed import Incomplete, StrPath
 from typing import Final
 from typing_extensions import deprecated
 
-from docutils import SettingsSpec
-from docutils.io import FileInput, Input, Output
+from docutils import SettingsSpec, nodes
+from docutils.io import Input, Output
 from docutils.parsers import Parser
 from docutils.readers import Reader
 from docutils.utils import SystemMessage
@@ -23,15 +23,14 @@ from docutils.writers import Writer, _WriterParts
 __docformat__: Final = "reStructuredText"
 
 class Publisher:
-    """A facade encapsulating the high-level logic of a Docutils system."""
-    document: Incomplete | None
+    document: nodes.document | None
     reader: Reader[Incomplete]
     parser: Parser
     writer: Writer[Incomplete]
     source: Input[Incomplete]
-    source_class: Incomplete
+    source_class: type[Input[Incomplete]]
     destination: Output | None
-    destination_class: Incomplete
+    destination_class: type[Output]
     settings: dict[str, Incomplete]
     def __init__(
         self,
@@ -39,9 +38,9 @@ class Publisher:
         parser: Parser | None = None,
         writer: Writer[Incomplete] | None = None,
         source: Input[Incomplete] | None = None,
-        source_class=...,
+        source_class: type[Input[Incomplete]] = ...,
         destination: Output | None = None,
-        destination_class=...,
+        destination_class: type[Output] = ...,
         settings: dict[str, Incomplete] | None = None,
     ) -> None:
         """
@@ -210,7 +209,7 @@ def publish_string(
 def publish_parts(
     source,
     source_path: StrPath | None = None,
-    source_class=...,
+    source_class: type[Input[Incomplete]] = ...,
     destination_path: StrPath | None = None,
     reader=None,
     reader_name: str | None = None,
@@ -244,7 +243,7 @@ def publish_parts(
 def publish_doctree(
     source,
     source_path: StrPath | None = None,
-    source_class=...,
+    source_class: type[Input[Incomplete]] = ...,
     reader=None,
     reader_name: str | None = None,
     parser=None,
@@ -291,15 +290,13 @@ def publish_cmdline_to_binary(
     usage: str = "%prog [options] [<source> [<destination>]]",
     description: str = ...,
     destination=None,
-    destination_class=...,
-):
-    'Set up & run a `Publisher` for command-line-based file I/O (input and\noutput file paths taken automatically from the command line).\nAlso return the output as `bytes`.\n\nThis is just like publish_cmdline, except that it uses\nio.BinaryFileOutput instead of io.FileOutput.\n\nParameters: see `publish_programmatically()` for the remainder.\n\n- `argv`: Command-line argument list to use instead of ``sys.argv[1:]``.\n- `usage`: Usage string, output if there\'s a problem parsing the command\n  line.\n- `description`: Program description, output for the "--help" option\n  (along with command-line option descriptions).\n\nDeprecated. Use `publish_cmdline()` (works with `bytes` since\nDocutils\xa00.20). Will be removed in Docutils 0.24.'
-    ...
+    destination_class: type[Output] = ...,
+): ...
 def publish_programmatically(
-    source_class: type[FileInput],
+    source_class: type[Input[Incomplete]],
     source,
     source_path: StrPath | None,
-    destination_class,
+    destination_class: type[Output],
     destination,
     destination_path: StrPath | None,
     reader,
