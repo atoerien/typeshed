@@ -61,7 +61,9 @@ class RLock:
     __enter__ = acquire
     def __exit__(
         self, exc_type: type[BaseException] | None, exc_value: BaseException | None, exc_tb: TracebackType | None, /
-    ) -> None: ...
+    ) -> None:
+        """Release the lock."""
+        ...
     if sys.version_info >= (3, 14):
         def locked(self) -> bool:
             """
@@ -147,7 +149,9 @@ if sys.version_info >= (3, 13):
             ...
         def __exit__(
             self, exc_type: type[BaseException] | None, exc_value: BaseException | None, exc_tb: TracebackType | None, /
-        ) -> None: ...
+        ) -> None:
+            """Release the lock."""
+            ...
 
     LockType = lock
 else:
