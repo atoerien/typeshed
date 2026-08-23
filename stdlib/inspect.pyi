@@ -353,28 +353,18 @@ def isgeneratorfunction(obj: Callable[..., Generator[Any, Any, Any]]) -> bool:
     """
     ...
 @overload
-def isgeneratorfunction(obj: Callable[_P, Any]) -> TypeGuard[Callable[_P, GeneratorType[Any, Any, Any]]]:
-    """
-    Return true if the object is a user-defined generator function.
-
-    Generator function objects provide the same attributes as functions.
-    See help(isfunction) for a list of attributes.
-    """
-    ...
+def isgeneratorfunction(obj: Callable[_P, Any]) -> TypeGuard[Callable[_P, Generator[Any, Any, Any]]]: ...
 @overload
-def isgeneratorfunction(obj: object) -> TypeGuard[Callable[..., GeneratorType[Any, Any, Any]]]:
-    """
-    Return true if the object is a user-defined generator function.
-
-    Generator function objects provide the same attributes as functions.
-    See help(isfunction) for a list of attributes.
-    """
-    ...
+def isgeneratorfunction(obj: object) -> TypeGuard[Callable[..., Generator[Any, Any, Any]]]: ...
 
 @overload
-def iscoroutinefunction(obj: Callable[..., Coroutine[Any, Any, Any]]) -> bool:
-    """
-    Return true if the object is a coroutine function.
+def iscoroutinefunction(obj: Callable[..., Coroutine[Any, Any, Any]]) -> bool: ...
+@overload
+def iscoroutinefunction(obj: Callable[_P, Awaitable[_T]]) -> TypeGuard[Callable[_P, Coroutine[Any, Any, _T]]]: ...
+@overload
+def iscoroutinefunction(obj: Callable[_P, object]) -> TypeGuard[Callable[_P, Coroutine[Any, Any, Any]]]: ...
+@overload
+def iscoroutinefunction(obj: object) -> TypeGuard[Callable[..., Coroutine[Any, Any, Any]]]: ...
 
     Coroutine functions are normally defined with "async def" syntax, but may
     be marked via markcoroutinefunction.
@@ -445,23 +435,9 @@ def isasyncgenfunction(obj: Callable[..., AsyncGenerator[Any, Any]]) -> bool:
     """
     ...
 @overload
-def isasyncgenfunction(obj: Callable[_P, Any]) -> TypeGuard[Callable[_P, AsyncGeneratorType[Any, Any]]]:
-    """
-    Return true if the object is an asynchronous generator function.
-
-    Asynchronous generator functions are defined with "async def"
-    syntax and have "yield" expressions in their body.
-    """
-    ...
+def isasyncgenfunction(obj: Callable[_P, Any]) -> TypeGuard[Callable[_P, AsyncGenerator[Any, Any]]]: ...
 @overload
-def isasyncgenfunction(obj: object) -> TypeGuard[Callable[..., AsyncGeneratorType[Any, Any]]]:
-    """
-    Return true if the object is an asynchronous generator function.
-
-    Asynchronous generator functions are defined with "async def"
-    syntax and have "yield" expressions in their body.
-    """
-    ...
+def isasyncgenfunction(obj: object) -> TypeGuard[Callable[..., AsyncGenerator[Any, Any]]]: ...
 
 @type_check_only
 class _SupportsSet(Protocol[_T_contra, _V_contra]):

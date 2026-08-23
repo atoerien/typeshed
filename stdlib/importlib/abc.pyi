@@ -260,25 +260,12 @@ class FileLoader(_bootstrap_external.FileLoader, ResourceLoader, ExecutionLoader
     """
     name: str
     path: str
-    def __init__(self, fullname: str, path: str) -> None:
-        """
-        Cache the module name and the path to the file found by the
-        finder.
-        """
-        ...
-    def get_data(self, path: str) -> bytes:
-        """Return the data from path as raw bytes."""
-        ...
-    def get_filename(self, fullname: str | None = None) -> str:
-        """Return the path to the source file as found by the finder."""
-        ...
-    def load_module(self, fullname: str | None = None) -> types.ModuleType:
-        """
-        Load a module from a file.
-
-        This method is deprecated.  Use exec_module() instead.
-        """
-        ...
+    def __init__(self, fullname: str, path: str) -> None: ...
+    def get_data(self, path: str) -> bytes: ...
+    def get_filename(self, fullname: str | None = None) -> str: ...
+    if sys.version_info < (3, 15):
+        @deprecated("Deprecated since Python 3.10; removed in Python 3.15. Use `exec_module()` instead.")
+        def load_module(self, fullname: str | None = None) -> types.ModuleType: ...
 
 if sys.version_info < (3, 11):
     class ResourceReader(metaclass=ABCMeta):
