@@ -24,7 +24,18 @@ def __import__(
     locals: Mapping[str, object] | None = None,
     fromlist: Sequence[str] | None = (),
     level: int = 0,
-) -> ModuleType: ...
+) -> ModuleType:
+    """
+    Import a module.
+
+    The 'globals' argument is used to infer where the import is occurring from
+    to handle relative imports. The 'locals' argument is ignored. The
+    'fromlist' argument specifies what should exist as attributes on the module
+    being imported (e.g. ``from module import <fromlist>``).  The 'level'
+    argument represents the package location to import from in a relative
+    import (e.g. ``from ..pkg import mod`` would have a 'level' of 2).
+    """
+    ...
 
 # TODO: Revise the protocol for 'loader' param
 def spec_from_loader(
@@ -129,13 +140,23 @@ class BuiltinImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader)
         """Return False as built-in modules are never packages."""
         ...
     @classmethod
-    def get_code(cls, fullname: str) -> None: ...
+    def get_code(cls, fullname: str) -> None:
+        """Return None as built-in modules do not have code objects."""
+        ...
     @classmethod
-    def get_source(cls, fullname: str) -> None: ...
+    def get_source(cls, fullname: str) -> None:
+        """Return None as built-in modules do not have source code."""
+        ...
     if sys.version_info < (3, 15):
         @classmethod
         @deprecated("Deprecated since Python 3.10; removed in Python 3.15. Use `exec_module()` instead.")
-        def load_module(cls, fullname: str) -> types.ModuleType: ...
+        def load_module(cls, fullname: str) -> types.ModuleType:
+            """
+            Load the specified module into sys.modules and return it.
+
+            This method is deprecated.  Use loader.exec_module() instead.
+            """
+            ...
     # Loader
     if sys.version_info < (3, 12):
         @staticmethod
@@ -189,13 +210,23 @@ class FrozenImporter(importlib.abc.MetaPathFinder, importlib.abc.InspectLoader):
         """Return True if the frozen module is a package."""
         ...
     @classmethod
-    def get_code(cls, fullname: str) -> None: ...
+    def get_code(cls, fullname: str) -> None:
+        """Return the code object for the frozen module."""
+        ...
     @classmethod
-    def get_source(cls, fullname: str) -> None: ...
+    def get_source(cls, fullname: str) -> None:
+        """Return None as frozen modules do not have source code."""
+        ...
     if sys.version_info < (3, 15):
         @classmethod
         @deprecated("Deprecated since Python 3.10; removed in Python 3.15. Use `exec_module()` instead.")
-        def load_module(cls, fullname: str) -> types.ModuleType: ...
+        def load_module(cls, fullname: str) -> types.ModuleType:
+            """
+            Load a frozen module.
+
+            This method is deprecated.  Use exec_module() instead.
+            """
+            ...
     # Loader
     if sys.version_info < (3, 12):
         @staticmethod

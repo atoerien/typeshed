@@ -42,7 +42,9 @@ if sys.version_info >= (3, 11):
             ...
         @overload
         @deprecated("Deprecated since Python 3.12; removed in Python 3.15. Use `anchor` parameter instead.")
-        def files(package: Anchor | None = None) -> Traversable: ...
+        def files(package: Anchor | None = None) -> Traversable:
+            """Get a Traversable resource for an anchor."""
+            ...
 
     else:
         def files(package: Package) -> Traversable:
