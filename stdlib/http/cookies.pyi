@@ -187,9 +187,20 @@ class BaseCookie(dict[str, Morsel[_T]], Generic[_T]):
         ...
     __str__ = output
     @deprecated("Deprecated; will be removed in Python 3.19. Use `output()` instead.")
-    def js_output(self, attrs: Container[str] | None = None) -> str: ...
-    def load(self, rawdata: str | SupportsItems[str, str | Morsel[Any]]) -> None: ...
-    def __setitem__(self, key: str, value: str | Morsel[_T]) -> None: ...
+    def js_output(self, attrs: Container[str] | None = None) -> str:
+        """Return a string suitable for JavaScript."""
+        ...
+    def load(self, rawdata: str | SupportsItems[str, str | Morsel[Any]]) -> None:
+        """
+        Load cookies from a string (presumably HTTP_COOKIE) or
+        from a dictionary.  Loading cookies from a dictionary 'd'
+        is equivalent to calling:
+            map(Cookie.__setitem__, d.keys(), d.values())
+        """
+        ...
+    def __setitem__(self, key: str, value: str | Morsel[_T]) -> None:
+        """Dictionary style assignment."""
+        ...
 
 class SimpleCookie(BaseCookie[str]):
     """

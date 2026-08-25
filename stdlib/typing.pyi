@@ -1985,10 +1985,14 @@ class NamedTuple(tuple[Any, ...]):
         def __init__(self, typename: str, fields: Iterable[tuple[str, Any]], /) -> None: ...
     else:
         @overload
-        def __init__(self, typename: str, fields: Iterable[tuple[str, Any]], /) -> None: ...
+        def __init__(self, typename: str, fields: Iterable[tuple[str, Any]], /) -> None:
+            """Initialize self.  See help(type(self)) for accurate signature."""
+            ...
         @overload
         @deprecated("Creating a typing.NamedTuple using keyword arguments is deprecated; support removed in Python 3.15")
-        def __init__(self, typename: str, fields: None = None, /, **kwargs: Any) -> None: ...
+        def __init__(self, typename: str, fields: None = None, /, **kwargs: Any) -> None:
+            """Initialize self.  See help(type(self)) for accurate signature."""
+            ...
 
     @final
     @classmethod
