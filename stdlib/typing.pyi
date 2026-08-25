@@ -1981,15 +1981,14 @@ class NamedTuple(tuple[Any, ...]):
     if sys.version_info >= (3, 12):
         __orig_bases__: ClassVar[tuple[Any, ...]]
 
-    @overload
-    def __init__(self, typename: str, fields: Iterable[tuple[str, Any]], /) -> None:
-        """Initialize self.  See help(type(self)) for accurate signature."""
-        ...
-    @overload
-    @deprecated("Creating a typing.NamedTuple using keyword arguments is deprecated and support will be removed in Python 3.15")
-    def __init__(self, typename: str, fields: None = None, /, **kwargs: Any) -> None:
-        """Initialize self.  See help(type(self)) for accurate signature."""
-        ...
+    if sys.version_info >= (3, 15):
+        def __init__(self, typename: str, fields: Iterable[tuple[str, Any]], /) -> None: ...
+    else:
+        @overload
+        def __init__(self, typename: str, fields: Iterable[tuple[str, Any]], /) -> None: ...
+        @overload
+        @deprecated("Creating a typing.NamedTuple using keyword arguments is deprecated; support removed in Python 3.15")
+        def __init__(self, typename: str, fields: None = None, /, **kwargs: Any) -> None: ...
 
     @final
     @classmethod
