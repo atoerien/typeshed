@@ -51,7 +51,7 @@ gevent==26.8.*
 psutil==7.2.2
 WebTest==3.0.*
 pycurl==7.47.0
-peewee==4.3.0
+peewee==4.4.0
 passpy==1.0.*
 whatthepatch==1.0.*
 mypy-extensions==1.1.*
