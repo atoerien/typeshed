@@ -11,6 +11,7 @@ from collections.abc import Iterable
 from typing import ClassVar
 
 from gunicorn.config import Config
+from gunicorn.http.message import Request
 from gunicorn.http2.connection import _H2Connection
 from gunicorn.http2.request import HTTP2Request
 from gunicorn.http2.stream import HTTP2Stream
@@ -36,60 +37,13 @@ class AsyncHTTP2Connection:
     max_header_list_size: int
     h2_conn: _H2Connection
 
-    def __init__(self, cfg: Config, reader: StreamReader, writer: StreamWriter, client_addr: _AddressType) -> None:
-        """
-        Initialize an async HTTP/2 server connection.
-
-        Args:
-            cfg: Gunicorn configuration object
-            reader: asyncio StreamReader
-            writer: asyncio StreamWriter
-            client_addr: Client address tuple (host, port)
-
-        Raises:
-            HTTP2NotAvailable: If h2 library is not installed
-        """
-        ...
-    async def initiate_connection(self) -> None:
-        """
-        Send initial HTTP/2 settings to client.
-
-        Should be called after the SSL handshake completes and
-        before processing any data.
-        """
-        ...
-    async def receive_data(self, timeout: float | None = None) -> list[HTTP2Request]:
-        """
-        Receive data and return completed requests.
-
-        Args:
-            timeout: Optional timeout in seconds for read operation
-
-        Returns:
-            list: List of HTTP2Request objects for completed requests
-
-        Raises:
-            HTTP2ConnectionError: On protocol or connection errors
-            asyncio.TimeoutError: If timeout expires
-        """
-        ...
-    async def send_informational(self, stream_id: int, status: int, headers: Iterable[tuple[str, Incomplete]]) -> None:
-        """
-        Send an informational response (1xx) on a stream.
-
-        This is used for 103 Early Hints and other 1xx responses.
-        Informational responses are sent before the final response
-        and do not end the stream.
-
-        Args:
-            stream_id: The stream ID
-            status: HTTP status code (100-199)
-            headers: List of (name, value) header tuples
-
-        Raises:
-            HTTP2Error: If status is not in 1xx range
-        """
-        ...
+    def __init__(self, cfg: Config, reader: StreamReader, writer: StreamWriter, client_addr: _AddressType) -> None: ...
+    async def initiate_connection(self) -> None: ...
+    async def initiate_upgrade(
+        self, settings_header: bytes | None, http1_req: Request, body: bytes | None = b""
+    ) -> HTTP2Request: ...
+    async def receive_data(self, timeout: float | None = None) -> list[HTTP2Request]: ...
+    async def send_informational(self, stream_id: int, status: int, headers: Iterable[tuple[str, Incomplete]]) -> None: ...
     async def send_response(
         self, stream_id: int, status: int, headers: Iterable[tuple[str, Incomplete]], body: bytes | None = None
     ) -> bool:

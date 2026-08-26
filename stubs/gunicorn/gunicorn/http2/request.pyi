@@ -9,6 +9,7 @@ from collections.abc import Iterator
 from typing import Literal
 
 from gunicorn.config import Config
+from gunicorn.http.message import HeaderPolicy
 from gunicorn.http2.stream import HTTP2Stream
 
 from .._types import _AddressType
@@ -72,14 +73,7 @@ class HTTP2Body:
         """Close the body stream."""
         ...
 
-class HTTP2Request:
-    """
-    HTTP/2 request wrapper compatible with gunicorn Request interface.
-
-    Wraps an HTTP2Stream to provide the same interface as the HTTP/1.x
-    Request class, allowing workers to handle HTTP/2 requests using
-    existing code paths.
-    """
+class HTTP2Request(HeaderPolicy):
     stream: HTTP2Stream
     cfg: Config
     peer_addr: _AddressType

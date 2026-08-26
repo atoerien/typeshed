@@ -164,17 +164,10 @@ class PythonProtocol:
         permit_unconventional_http_version: bool = False,
         proxy_protocol: Literal["off", "v1", "v2", "auto"] = "off",
     ) -> None: ...
-    def feed(self, data: Iterable[SupportsIndex]) -> None:
-        """
-        Process data, fire callbacks synchronously.
-
-        Args:
-            data: bytes or bytearray of incoming data
-
-        Raises:
-            ParseError: If the HTTP request is malformed
-        """
-        ...
+    def feed(self, data: Iterable[SupportsIndex]) -> None: ...
+    def remaining(self) -> bytes: ...
+    @property
+    def remaining_truncated(self) -> Literal[False]: ...
     @property
     def proxy_protocol_info(self) -> _ProxyProtocolInfo | _ProxyProtocolInfoUnknown | None:
         """Return proxy protocol info if parsed."""
