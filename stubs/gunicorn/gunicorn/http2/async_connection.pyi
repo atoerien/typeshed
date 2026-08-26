@@ -37,13 +37,78 @@ class AsyncHTTP2Connection:
     max_header_list_size: int
     h2_conn: _H2Connection
 
-    def __init__(self, cfg: Config, reader: StreamReader, writer: StreamWriter, client_addr: _AddressType) -> None: ...
-    async def initiate_connection(self) -> None: ...
+    def __init__(self, cfg: Config, reader: StreamReader, writer: StreamWriter, client_addr: _AddressType) -> None:
+        """
+        Initialize an async HTTP/2 server connection.
+
+        Args:
+            cfg: Gunicorn configuration object
+            reader: asyncio StreamReader
+            writer: asyncio StreamWriter
+            client_addr: Client address tuple (host, port)
+
+        Raises:
+            HTTP2NotAvailable: If h2 library is not installed
+        """
+        ...
+    async def initiate_connection(self) -> None:
+        """
+        Send initial HTTP/2 settings to client.
+
+        Should be called after the SSL handshake completes and
+        before processing any data.
+        """
+        ...
     async def initiate_upgrade(
         self, settings_header: bytes | None, http1_req: Request, body: bytes | None = b""
-    ) -> HTTP2Request: ...
-    async def receive_data(self, timeout: float | None = None) -> list[HTTP2Request]: ...
-    async def send_informational(self, stream_id: int, status: int, headers: Iterable[tuple[str, Incomplete]]) -> None: ...
+    ) -> HTTP2Request:
+        """
+        Switch a connection to HTTP/2 after an Upgrade: h2c request.
+
+        The async twin of HTTP2Connection.initiate_upgrade. The upgraded
+        request becomes stream 1 (RFC 7540 section 3.2): h2 opens it in the
+        state machine, and the matching gunicorn stream is built here from the
+        HTTP/1 request that carried the upgrade, so the worker sees an
+        ordinary HTTP/2 request.
+
+        The body is passed in rather than read off the request: the callback
+        parser hands body chunks to the protocol, not to the request object.
+
+        Returns the HTTP2Request for stream 1.
+        """
+        ...
+    async def receive_data(self, timeout: float | None = None) -> list[HTTP2Request]:
+        """
+        Receive data and return completed requests.
+
+        Args:
+            timeout: Optional timeout in seconds for read operation
+
+        Returns:
+            list: List of HTTP2Request objects for completed requests
+
+        Raises:
+            HTTP2ConnectionError: On protocol or connection errors
+            asyncio.TimeoutError: If timeout expires
+        """
+        ...
+    async def send_informational(self, stream_id: int, status: int, headers: Iterable[tuple[str, Incomplete]]) -> None:
+        """
+        Send an informational response (1xx) on a stream.
+
+        This is used for 103 Early Hints and other 1xx responses.
+        Informational responses are sent before the final response
+        and do not end the stream.
+
+        Args:
+            stream_id: The stream ID
+            status: HTTP status code (100-199)
+            headers: List of (name, value) header tuples
+
+        Raises:
+            HTTP2Error: If status is not in 1xx range
+        """
+        ...
     async def send_response(
         self, stream_id: int, status: int, headers: Iterable[tuple[str, Incomplete]], body: bytes | None = None
     ) -> bool:

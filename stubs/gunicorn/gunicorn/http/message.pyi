@@ -42,6 +42,14 @@ RFC9110_6_5_1_FORBIDDEN_TRAILER: Final[frozenset[str]]
 RFC9110_5_3_SINGLETON_FIELDS: Final[frozenset[str]]
 
 class HeaderPolicy:
+    """
+    Header policy shared by every request path.
+
+    Applies to HTTP/1 (both parsers) and HTTP/2 alike, so a rule added here
+    cannot be enforced on one protocol and quietly skipped on another.
+    Requires ``self.cfg``, ``self.peer_addr``, ``self.scheme`` and
+    ``self.version`` to be set before any header is applied.
+    """
     scheme: str | None
     version: tuple[int, int] | None
 

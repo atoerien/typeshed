@@ -37,15 +37,88 @@ class HTTP2ServerConnection:
     max_header_list_size: int
     h2_conn: _H2Connection
 
-    def __init__(self, cfg: Config, sock: SSLSocket, client_addr: _AddressType) -> None: ...
-    def initiate_connection(self) -> None: ...
-    def initiate_upgrade(self, settings_header: bytes | None, http1_req: Request, body: bytes | None = None) -> HTTP2Request: ...
-    def receive_data(self, data: bytes | None = None) -> list[HTTP2Request]: ...
-    def send_informational(self, stream_id: int, status: int, headers: Iterable[tuple[str, Incomplete]]) -> None: ...
+    def __init__(self, cfg: Config, sock: SSLSocket, client_addr: _AddressType) -> None:
+        """
+        Initialize an HTTP/2 server connection.
+
+        Args:
+            cfg: Gunicorn configuration object
+            sock: SSL socket with completed handshake
+            client_addr: Client address tuple (host, port)
+
+        Raises:
+            HTTP2NotAvailable: If h2 library is not installed
+        """
+        ...
+    def initiate_connection(self) -> None:
+        """
+        Send initial HTTP/2 settings to client.
+
+        Should be called after the SSL handshake completes and
+        before processing any data.
+        """
+        ...
+    def initiate_upgrade(self, settings_header: bytes | None, http1_req: Request, body: bytes | None = None) -> HTTP2Request:
+        """
+        Switch a connection to HTTP/2 after an Upgrade: h2c request.
+
+        The upgraded request becomes stream 1 (RFC 7540 section 3.2). h2
+        opens it in the state machine; the matching gunicorn stream is built
+        here from the HTTP/1 request that carried the upgrade, so the worker
+        sees an ordinary HTTP/2 request.
+
+        ``body`` is the request payload. A caller that has to drain it before
+        collecting the bytes pipelined behind the request passes it here;
+        leaving it None reads it off the request.
+
+        Returns the HTTP2Request for stream 1.
+        """
+        ...
+    def receive_data(self, data: bytes | None = None) -> list[HTTP2Request]:
+        """
+        Process received data and return completed requests.
+
+        Args:
+            data: Optional bytes to process. If None, reads from socket.
+
+        Returns:
+            list: List of HTTP2Request objects for completed requests
+
+        Raises:
+            HTTP2ConnectionError: On protocol or connection errors
+        """
+        ...
+    def send_informational(self, stream_id: int, status: int, headers: Iterable[tuple[str, Incomplete]]) -> None:
+        """
+        Send an informational response (1xx) on a stream.
+
+        This is used for 103 Early Hints and other 1xx responses.
+        Informational responses are sent before the final response
+        and do not end the stream.
+
+        Args:
+            stream_id: The stream ID
+            status: HTTP status code (100-199)
+            headers: List of (name, value) header tuples
+
+        Raises:
+            HTTP2Error: If status is not in 1xx range
+        """
+        ...
     def send_response_headers(
         self, stream_id: int, status: int, headers: Iterable[tuple[str, Incomplete]], end_stream: bool = False
-    ) -> bool: ...
-    def end_stream(self, stream_id: int, trailers: Iterable[tuple[str, Incomplete]] | None = None) -> bool: ...
+    ) -> bool:
+        """
+        Send response headers on a stream without ending it.
+
+        Returns False if the stream is already gone. Split out of
+        send_response() so a response can be streamed: headers first, then
+        any number of data frames, then end_stream().
+        """
+        ...
+    def end_stream(self, stream_id: int, trailers: Iterable[tuple[str, Incomplete]] | None = None) -> bool:
+        """Close the sending half of a stream, with trailers if given."""
+        ...
     def send_response(
         self, stream_id: int, status: int, headers: Iterable[tuple[str, Incomplete]], body: bytes | None = None
     ) -> bool:

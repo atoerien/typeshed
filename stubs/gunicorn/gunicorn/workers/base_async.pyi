@@ -22,7 +22,17 @@ class AsyncWorker(base.Worker):
         addr: _AddressType,
         preface: bytes | None = b"",
         upgrade: tuple[bytes | None, Request, bytes | None] | None = None,
-    ) -> None: ...
+    ) -> None:
+        """
+        Handle an HTTP/2 connection.
+
+        Processes multiplexed HTTP/2 streams until the connection closes.
+
+        ``preface`` carries connection preface bytes already read off the
+        socket during cleartext negotiation. They have left the socket, so
+        they have to be replayed into the HTTP/2 state machine here.
+        """
+        ...
     def handle_http2_request(
         self, listener_name: _AddressType, req: Request, sock: socket.socket, addr: _AddressType, h2_conn: HTTP2ServerConnection
     ) -> None:

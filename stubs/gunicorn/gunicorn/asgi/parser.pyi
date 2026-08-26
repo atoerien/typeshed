@@ -164,10 +164,31 @@ class PythonProtocol:
         permit_unconventional_http_version: bool = False,
         proxy_protocol: Literal["off", "v1", "v2", "auto"] = "off",
     ) -> None: ...
-    def feed(self, data: Iterable[SupportsIndex]) -> None: ...
-    def remaining(self) -> bytes: ...
+    def feed(self, data: Iterable[SupportsIndex]) -> None:
+        """
+        Process data, fire callbacks synchronously.
+
+        Args:
+            data: bytes or bytearray of incoming data
+
+        Raises:
+            ParseError: If the HTTP request is malformed
+        """
+        ...
+    def remaining(self) -> bytes:
+        """
+        Bytes fed after the completed message (b'' if none or not complete).
+
+        Matches the accessor H1CProtocol gained in 0.6.8, so a caller does not
+        have to know which parser it holds. Nothing extra is buffered here:
+        feed() leaves the state loop once the message completes, and both the
+        content-length and chunked paths delete what they consume.
+        """
+        ...
     @property
-    def remaining_truncated(self) -> Literal[False]: ...
+    def remaining_truncated(self) -> Literal[False]:
+        """Always False: this parser keeps the whole tail, uncapped."""
+        ...
     @property
     def proxy_protocol_info(self) -> _ProxyProtocolInfo | _ProxyProtocolInfoUnknown | None:
         """Return proxy protocol info if parsed."""

@@ -74,6 +74,13 @@ class HTTP2Body:
         ...
 
 class HTTP2Request(HeaderPolicy):
+    """
+    HTTP/2 request wrapper compatible with gunicorn Request interface.
+
+    Wraps an HTTP2Stream to provide the same interface as the HTTP/1.x
+    Request class, allowing workers to handle HTTP/2 requests using
+    existing code paths.
+    """
     stream: HTTP2Stream
     cfg: Config
     peer_addr: _AddressType

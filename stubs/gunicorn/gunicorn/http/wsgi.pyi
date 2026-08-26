@@ -54,7 +54,15 @@ def create(
     cfg: Config,
     response_class: type[Response] | None = None,
     response_args: tuple[Incomplete, ...] = (),
-) -> tuple[Response, _EnvironType]: ...
+) -> tuple[Response, _EnvironType]:
+    """
+    Build the (response, environ) pair for a request.
+
+    ``response_class`` and ``response_args`` let a protocol supply its own
+    writer: HTTP/2 passes HTTP2Response so the body is framed as HTTP/2
+    instead of HTTP/1, while everything else here stays the same.
+    """
+    ...
 @overload
 def create(
     req: Request,
@@ -64,7 +72,15 @@ def create(
     cfg: Config,
     response_class: type[Incomplete],
     response_args: tuple[Incomplete, ...] = (),
-) -> tuple[Incomplete, _EnvironType]: ...
+) -> tuple[Incomplete, _EnvironType]:
+    """
+    Build the (response, environ) pair for a request.
+
+    ``response_class`` and ``response_args`` let a protocol supply its own
+    writer: HTTP/2 passes HTTP2Response so the body is framed as HTTP/2
+    instead of HTTP/1, while everything else here stays the same.
+    """
+    ...
 
 class Response:
     req: Request
