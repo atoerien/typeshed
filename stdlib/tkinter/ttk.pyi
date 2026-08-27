@@ -690,7 +690,7 @@ class Entry(Widget, tkinter.Entry):
         exportselection: bool = True,
         font: _FontDescription = "TkTextFont",
         foreground: str = "",
-        invalidcommand: str | list[str] | tuple[str, ...] | Callable[[], bool] = "",
+        invalidcommand: str | list[str] | tuple[str, ...] | Callable[[], object] = "",
         justify: Literal["left", "center", "right"] = "left",
         name: str = ...,
         show: str = "",
@@ -731,7 +731,7 @@ class Entry(Widget, tkinter.Entry):
         exportselection: bool = ...,
         font: _FontDescription = ...,
         foreground: str = ...,
-        invalidcommand: str | list[str] | tuple[str, ...] | Callable[[], bool] = ...,
+        invalidcommand: str | list[str] | tuple[str, ...] | Callable[[], object] = ...,
         justify: Literal["left", "center", "right"] = ...,
         show: str = ...,
         state: str = ...,
@@ -785,7 +785,7 @@ class Entry(Widget, tkinter.Entry):
         exportselection: bool = ...,
         font: _FontDescription = ...,
         foreground: str = ...,
-        invalidcommand: str | list[str] | tuple[str, ...] | Callable[[], bool] = ...,
+        invalidcommand: str | list[str] | tuple[str, ...] | Callable[[], object] = ...,
         justify: Literal["left", "center", "right"] = ...,
         show: str = ...,
         state: str = ...,
@@ -864,7 +864,7 @@ class Combobox(Entry):
         font: _FontDescription = ...,  # undocumented
         foreground: str = ...,  # undocumented
         height: int = 10,
-        invalidcommand: str | list[str] | tuple[str, ...] | Callable[[], bool] = ...,  # undocumented
+        invalidcommand: str | list[str] | tuple[str, ...] | Callable[[], object] = ...,  # undocumented
         justify: Literal["left", "center", "right"] = "left",
         name: str = ...,
         postcommand: Callable[[], object] | str = "",
@@ -904,7 +904,7 @@ class Combobox(Entry):
         font: _FontDescription = ...,
         foreground: str = ...,
         height: int = ...,
-        invalidcommand: str | list[str] | tuple[str, ...] | Callable[[], bool] = ...,
+        invalidcommand: str | list[str] | tuple[str, ...] | Callable[[], object] = ...,
         justify: Literal["left", "center", "right"] = ...,
         postcommand: Callable[[], object] | str = ...,
         show=...,
@@ -961,7 +961,7 @@ class Combobox(Entry):
         font: _FontDescription = ...,
         foreground: str = ...,
         height: int = ...,
-        invalidcommand: str | list[str] | tuple[str, ...] | Callable[[], bool] = ...,
+        invalidcommand: str | list[str] | tuple[str, ...] | Callable[[], object] = ...,
         justify: Literal["left", "center", "right"] = ...,
         postcommand: Callable[[], object] | str = ...,
         show=...,
@@ -2363,7 +2363,7 @@ class Spinbox(Entry):
         format: str = "",
         from_: float = 0,
         increment: float = 1,
-        invalidcommand: str | list[str] | tuple[str, ...] | Callable[[], bool] = ...,  # undocumented
+        invalidcommand: str | list[str] | tuple[str, ...] | Callable[[], object] = ...,  # undocumented
         justify: Literal["left", "center", "right"] = ...,  # undocumented
         name: str = ...,
         show=...,  # undocumented
@@ -2407,7 +2407,7 @@ class Spinbox(Entry):
         format: str = ...,
         from_: float = ...,
         increment: float = ...,
-        invalidcommand: str | list[str] | tuple[str, ...] | Callable[[], bool] = ...,
+        invalidcommand: str | list[str] | tuple[str, ...] | Callable[[], object] = ...,
         justify: Literal["left", "center", "right"] = ...,
         show=...,
         state: str = ...,
