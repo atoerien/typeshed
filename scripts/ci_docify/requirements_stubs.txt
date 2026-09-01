@@ -77,7 +77,7 @@ Flask-Migrate==4.1.*
 punq==0.8.*
 auth0-python==4.10.*
 Jetson.GPIO==2.1.13
-regex==2026.7.19
+regex==2026.8.31
 lzstring==1.0.*
 PyYAML==6.0.*
 uWSGI==2.0.*
@@ -179,7 +179,7 @@ python-jenkins~=1.8.3
 tqdm[slack,telegram]==4.70.*
 click-log==0.4.*
 unidiff==0.7.*
-jwcrypto==1.5.8
+jwcrypto==1.5.9
 python-xlib==0.33.*
 singledispatch==4.1.*
 qrbill==1.2.*
@@ -206,4 +206,4 @@ xdgenvpy==3.0.*
 geopandas==1.1.4
 PyScreeze==1.0.1
 click-spinner==0.1.11
-python-crontab==3.3.*
+python-crontab==3.4.*
