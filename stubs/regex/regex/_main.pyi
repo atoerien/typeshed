@@ -1512,10 +1512,33 @@ class Match(Generic[AnyStr]):
         """
         ...
 
-    def capturesdict(self) -> dict[str, list[AnyStr]]: ...
-    def detach_string(self) -> None: ...
-    def allcaptures(self) -> tuple[list[AnyStr], ...]: ...
-    def allspans(self) -> tuple[list[tuple[int, int]], ...]: ...
+    def capturesdict(self) -> dict[str, list[AnyStr]]:
+        """
+        capturesdict() --> dict.
+        Return a dictionary containing the captures of all the named subgroups of the
+        match, keyed by the subgroup name.
+        """
+        ...
+    def detach_string(self) -> None:
+        """
+        detach_string()
+        Detaches the target string from the match object. The 'string' attribute
+        will become None.
+        """
+        ...
+    def allcaptures(self) -> tuple[list[AnyStr], ...]:
+        """
+        allcaptures() --> list of strings or tuple of list of strings.
+        Return the captures of all the groups of the match and the whole match.
+        """
+        ...
+    def allspans(self) -> tuple[list[tuple[int, int]], ...]:
+        """
+        allspans() --> list of 2-tuple of ints or tuple of list of 2-tuple of ints.
+        Return the spans (a 2-tuple of the indices of the start and end) of all the
+        captures of all the groups of the match and the whole match.
+        """
+        ...
 
     @overload
     def __getitem__(self, key: Literal[0], /) -> AnyStr: ...

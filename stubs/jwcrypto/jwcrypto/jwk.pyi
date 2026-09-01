@@ -70,6 +70,7 @@ class UnimplementedAKPAlgorithm:
 ImplementedAKPAlgorithms: Sequence[str]
 
 class _AKPAlg(NamedTuple):
+    """AKPAlg(pubkey, privkey)"""
     pubkey: UnimplementedAKPAlgorithm
     privkey: UnimplementedAKPAlgorithm
 

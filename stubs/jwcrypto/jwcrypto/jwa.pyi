@@ -29,7 +29,9 @@ class JWAAlgorithm(metaclass=ABCMeta):
         ...
     @property
     @abstractmethod
-    def algorithm_use(self) -> str: ...
+    def algorithm_use(self) -> str:
+        """One of 'sig', 'kex', 'enc'"""
+        ...
     status: Literal["active", "deprecated", "prohibited"]
     deprecated_by: str | None
     @property

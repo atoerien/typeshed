@@ -26,6 +26,12 @@ class InvalidCEKeyLength(JWException):
     def __init__(self, expected: int, obtained: int) -> None: ...
 
 class InvalidJWEData(JWException):
+    """
+    Invalid JWE Object.
+
+    This exception is raised when the JWE Object is invalid and/or
+    improperly formatted.
+    """
     def __init__(self, message: str | None = None, exception: BaseException | None = None) -> None: ...
 
 class InvalidJWEOperation(JWException):

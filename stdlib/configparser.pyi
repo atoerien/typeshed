@@ -640,12 +640,62 @@ class RawConfigParser(_Parser):
         """
         Return a list of (name, value) tuples for each option in a section.
 
-    def values(self) -> ValuesView[SectionProxy]: ...
-    def popitem(self) -> tuple[str, SectionProxy]: ...
-    def set(self, section: _SectionName, option: str, value: str | None = None) -> None: ...
-    def write(self, fp: SupportsWrite[str], space_around_delimiters: bool = True) -> None: ...
-    def remove_option(self, section: _SectionName, option: str) -> bool: ...
-    def remove_section(self, section: _SectionName) -> bool: ...
+        All % interpolations are expanded in the return values, based on the
+        defaults passed into the constructor, unless the optional argument
+        `raw` is true.  Additional substitutions may be provided using the
+        `vars` argument, which must be a dictionary whose contents overrides
+        any pre-existing defaults.
+
+        The section DEFAULT is special.
+        """
+        ...
+    @overload
+    def items(self, section: _SectionName, raw: bool = False, vars: _Section | None = None) -> list[tuple[str, str]]:
+        """
+        Return a list of (name, value) tuples for each option in a section.
+
+        All % interpolations are expanded in the return values, based on the
+        defaults passed into the constructor, unless the optional argument
+        `raw` is true.  Additional substitutions may be provided using the
+        `vars` argument, which must be a dictionary whose contents overrides
+        any pre-existing defaults.
+
+        The section DEFAULT is special.
+        """
+        ...
+
+    def values(self) -> ValuesView[SectionProxy]:
+        """D.values() -> an object providing a view on D's values"""
+        ...
+    def popitem(self) -> tuple[str, SectionProxy]:
+        """
+        Remove a section from the parser and return it as
+        a (section_name, section_proxy) tuple. If no section is present, raise
+        KeyError.
+
+        The section DEFAULT is never returned because it cannot be removed.
+        """
+        ...
+    def set(self, section: _SectionName, option: str, value: str | None = None) -> None:
+        """Set an option."""
+        ...
+    def write(self, fp: SupportsWrite[str], space_around_delimiters: bool = True) -> None:
+        """
+        Write an .ini-format representation of the configuration state.
+
+        If `space_around_delimiters` is True (the default), delimiters
+        between keys and values are surrounded by spaces.
+
+        Please note that comments in the original configuration file are not
+        preserved when writing the configuration back.
+        """
+        ...
+    def remove_option(self, section: _SectionName, option: str) -> bool:
+        """Remove an option."""
+        ...
+    def remove_section(self, section: _SectionName) -> bool:
+        """Remove a file section."""
+        ...
     def optionxform(self, optionstr: str) -> str: ...
     @property
     def converters(self) -> ConverterMapping: ...
