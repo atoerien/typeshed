@@ -239,55 +239,29 @@ class _LoaderBasics:
             ...
 
 class SourceLoader(_LoaderBasics):
-    def path_mtime(self, path: str) -> float:
-        """
-        Optional method that returns the modification time (an int) for the
-        specified path (a str).
+    def path_mtime(self, path: str) -> float: ...
+    def set_data(self, path: str, data: bytes) -> None: ...
+    def get_source(self, fullname: str) -> str | None: ...
+    def path_stats(self, path: str) -> Mapping[str, Any]: ...
+    if sys.version_info >= (3, 15):
+        def source_to_code(
+            self,
+            data: ReadableBuffer | str | _ast.Module | _ast.Expression | _ast.Interactive,
+            path: bytes | StrPath,
+            fullname: str | None = None,
+            *,
+            _optimize: int = -1,
+        ) -> types.CodeType: ...
+    else:
+        def source_to_code(
+            self,
+            data: ReadableBuffer | str | _ast.Module | _ast.Expression | _ast.Interactive,
+            path: bytes | StrPath,
+            *,
+            _optimize: int = -1,
+        ) -> types.CodeType: ...
 
-        Raises OSError when the path cannot be handled.
-        """
-        ...
-    def set_data(self, path: str, data: bytes) -> None:
-        """
-        Optional method which writes data (bytes) to a file path (a str).
-
-        Implementing this method allows for the writing of bytecode files.
-        """
-        ...
-    def get_source(self, fullname: str) -> str | None:
-        """Concrete implementation of InspectLoader.get_source."""
-        ...
-    def path_stats(self, path: str) -> Mapping[str, Any]:
-        """
-        Optional method returning a metadata dict for the specified
-        path (a str).
-
-        Possible keys:
-        - 'mtime' (mandatory) is the numeric timestamp of last source
-          code modification;
-        - 'size' (optional) is the size in bytes of the source code.
-
-        Implementing this method allows the loader to read bytecode files.
-        Raises OSError when the path cannot be handled.
-        """
-        ...
-    def source_to_code(
-        self, data: ReadableBuffer | str | _ast.Module | _ast.Expression | _ast.Interactive, path: bytes | StrPath
-    ) -> types.CodeType:
-        """
-        Return the code object compiled from source.
-
-        The 'data' argument can be any object type that compile() supports.
-        """
-        ...
-    def get_code(self, fullname: str) -> types.CodeType | None:
-        """
-        Concrete implementation of InspectLoader.get_code.
-
-        Reading of bytecode requires path_stats to be implemented. To write
-        bytecode, set_data must also be implemented.
-        """
-        ...
+    def get_code(self, fullname: str) -> types.CodeType | None: ...
 
 class FileLoader:
     """
@@ -320,26 +294,8 @@ class FileLoader:
             ...
 
 class SourceFileLoader(importlib.abc.FileLoader, FileLoader, importlib.abc.SourceLoader, SourceLoader):  # type: ignore[misc]  # incompatible method arguments in base classes
-    """Concrete implementation of SourceLoader using the file system."""
-    def set_data(self, path: str, data: ReadableBuffer, *, _mode: int = 0o666) -> None:
-        """Write bytes data to a file."""
-        ...
-    def path_stats(self, path: str) -> Mapping[str, Any]:
-        """Return the metadata for the path."""
-        ...
-    def source_to_code(  # type: ignore[override]  # incompatible with InspectLoader.source_to_code
-        self,
-        data: ReadableBuffer | str | _ast.Module | _ast.Expression | _ast.Interactive,
-        path: bytes | StrPath,
-        *,
-        _optimize: int = -1,
-    ) -> types.CodeType:
-        """
-        Return the code object compiled from source.
-
-        The 'data' argument can be any object type that compile() supports.
-        """
-        ...
+    def set_data(self, path: str, data: ReadableBuffer, *, _mode: int = 0o666) -> None: ...
+    def path_stats(self, path: str) -> Mapping[str, Any]: ...
 
 class SourcelessFileLoader(importlib.abc.FileLoader, FileLoader, _LoaderBasics):
     """Loader which handles sourceless file imports."""

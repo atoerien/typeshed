@@ -1,8 +1,9 @@
 from abc import ABCMeta, abstractmethod
 from collections.abc import Mapping
-from typing import ClassVar
+from typing import ClassVar, Literal
 
 default_max_pbkdf2_iterations: int
+default_warn_deprecated_algorithms: bool
 default_enforce_hmac_key_length: bool
 
 class JWAAlgorithm(metaclass=ABCMeta):
@@ -28,9 +29,9 @@ class JWAAlgorithm(metaclass=ABCMeta):
         ...
     @property
     @abstractmethod
-    def algorithm_use(self) -> str:
-        """One of 'sig', 'kex', 'enc'"""
-        ...
+    def algorithm_use(self) -> str: ...
+    status: Literal["active", "deprecated", "prohibited"]
+    deprecated_by: str | None
     @property
     def input_keysize(self) -> int:
         """The input key size"""
