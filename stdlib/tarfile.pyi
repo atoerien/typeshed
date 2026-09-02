@@ -1719,7 +1719,6 @@ class TarInfo:
         "_link_target",
     )
     name: str
-    path: str
     size: int
     mtime: int | float
     chksum: int
@@ -1766,9 +1765,12 @@ class TarInfo:
         ...
 
     @property
-    def linkpath(self) -> str:
-        """In pax headers, "linkname" is called "linkpath"."""
-        ...
+    def path(self) -> str: ...
+    @path.setter
+    def path(self, name: str) -> None: ...
+
+    @property
+    def linkpath(self) -> str: ...
     @linkpath.setter
     def linkpath(self, linkname: str) -> None:
         """In pax headers, "linkname" is called "linkpath"."""
