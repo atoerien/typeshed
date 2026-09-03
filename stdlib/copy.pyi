@@ -94,7 +94,14 @@ if sys.version_info >= (3, 13):
 
     def replace(
         obj: _SupportsReplace[_P, _RT_co], /, *_: _P.args, **changes: _P.kwargs  # does not accept positional arguments at runtime
-    ) -> _RT_co: ...
+    ) -> _RT_co:
+        """
+        Return a new object replacing specified fields with new values.
+
+        This is especially useful for immutable objects, like named tuples or
+        frozen dataclasses.
+        """
+        ...
 
 class Error(Exception): ...
 
