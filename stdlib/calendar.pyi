@@ -282,7 +282,7 @@ class HTMLCalendar(Calendar):
         ...
     if sys.version_info >= (3, 15):
         def formatmonthpage(
-            self, theyear: int, themonth: int, width: int = 3, css: str | None = "calendar.css", encoding: str | None = None
+            self, theyear: int, themonth: int, *, css: str | None = "calendar.css", encoding: str | None = None
         ) -> bytes: ...
 
     def formatyear(self, theyear: int, width: int = 3) -> str:
