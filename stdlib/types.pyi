@@ -864,8 +864,6 @@ if sys.version_info >= (3, 15):
 
     @final
     class LazyImportType:
-        @property
-        def __name__(self) -> str: ...
         def resolve(self) -> Any: ...
 
 @final
