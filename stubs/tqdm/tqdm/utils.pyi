@@ -107,6 +107,13 @@ def envwrap(
         - ./`pyproject.toml::tool.name.{app.func.a,func.a,app.a,a}`
     - signature (`def foo(a=1)`)
 
+    Typecasting precedence (descending):
+    - if `convert_config=False`: unconverted config file value
+    - typehint
+    - default value's type
+    - `types[...]`
+    - unconverted
+
     Parameters
     ----------
     name:
@@ -119,6 +126,8 @@ def envwrap(
         Consider using `types=collections.defaultdict(lambda: ast.literal_eval)`.
     is_method:
         Whether to use `functools.partialmethod`. If (default: False) use `functools.partial`.
+    convert_config:
+        Whether (default: True) to typecast config file values (see precedence above).
 
     Examples
     --------
