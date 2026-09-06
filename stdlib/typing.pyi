@@ -2220,31 +2220,15 @@ if sys.version_info >= (3, 12):
 
     @final
     class TypeAliasType:
-        """
-        Type alias.
+        if sys.version_info >= (3, 15):
+            def __new__(
+                cls, name: str, value: Any, *, type_params: tuple[_TypeParameter, ...] = (), qualname: str | None = None
+            ) -> Self: ...
+            @property
+            def __qualname__(self) -> str: ...
+        else:
+            def __new__(cls, name: str, value: Any, *, type_params: tuple[_TypeParameter, ...] = ()) -> Self: ...
 
-        Type aliases are created through the type statement::
-
-            type Alias = int
-
-        In this example, Alias and int will be treated equivalently by static
-        type checkers.
-
-        At runtime, Alias is an instance of TypeAliasType. The __name__
-        attribute holds the name of the type alias. The value of the type alias
-        is stored in the __value__ attribute. It is evaluated lazily, so the
-        value is computed only if the attribute is accessed.
-
-        Type aliases can also be generic::
-
-            type ListOrSet[T] = list[T] | set[T]
-
-        In this case, the type parameters of the alias are stored in the
-        __type_params__ attribute.
-
-        See PEP 695 for more information.
-        """
-        def __new__(cls, name: str, value: Any, *, type_params: tuple[_TypeParameter, ...] = ()) -> Self: ...
         @property
         def __value__(self) -> Any: ...  # AnnotationForm
         @property
@@ -2253,9 +2237,6 @@ if sys.version_info >= (3, 12):
         def __parameters__(self) -> tuple[Any, ...]: ...  # AnnotationForm
         @property
         def __name__(self) -> str: ...
-        if sys.version_info >= (3, 15):
-            @property
-            def __qualname__(self) -> str: ...
         # It's writable on types, but not on instances of TypeAliasType.
         @property
         def __module__(self) -> str | None: ...  # type: ignore[override]
