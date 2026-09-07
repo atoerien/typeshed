@@ -795,6 +795,7 @@ class ViewMetadata(NamedTuple):
     sql: Incomplete
 
 class QueryEvent(NamedTuple):
+    """QueryEvent(sql, params, duration, exception)"""
     sql: str
     params: Incomplete
     duration: float

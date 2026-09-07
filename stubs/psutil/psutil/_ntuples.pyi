@@ -125,6 +125,7 @@ if sys.platform == "win32":
 else:
     # if LINUX or MACOS or BSD:
     class pheap(NamedTuple):
+        """pheap(heap_used, mmap_used)"""
         heap_used: int
         mmap_used: int
 

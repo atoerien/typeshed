@@ -10,6 +10,7 @@ Request = httpx2.Request
 Response = httpx2.Response
 
 class OAuth1Auth(Auth, ClientAuth):
+    """Signs the httpx2 request using OAuth 1 (RFC5849)."""
     requires_request_body: bool
     def auth_flow(self, request: Request) -> Generator[Request, Response]: ...
 

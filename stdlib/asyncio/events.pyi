@@ -454,7 +454,60 @@ class AbstractEventLoop:
             ssl_handshake_timeout: float | None = None,
             ssl_shutdown_timeout: float | None = None,
             start_serving: bool = True,
-        ) -> Server: ...
+        ) -> Server:
+            """
+            A coroutine which creates a TCP server bound to host and port.
+
+            The return value is a Server object which can be used to stop
+            the service.
+
+            If host is an empty string or None all interfaces are assumed
+            and a list of multiple sockets will be returned (most likely
+            one for IPv4 and another one for IPv6). The host parameter can also be
+            a sequence (e.g. list) of hosts to bind to.
+
+            family can be set to either AF_INET or AF_INET6 to force the
+            socket to use IPv4 or IPv6. If not set it will be determined
+            from host (defaults to AF_UNSPEC).
+
+            flags is a bitmask for getaddrinfo().
+
+            sock can optionally be specified in order to use a preexisting
+            socket object.
+
+            backlog is the maximum number of queued connections passed to
+            listen() (defaults to 100).
+
+            ssl can be set to an SSLContext to enable SSL over the
+            accepted connections.
+
+            reuse_address tells the kernel to reuse a local socket in
+            TIME_WAIT state, without waiting for its natural timeout to
+            expire. If not specified will automatically be set to True on
+            UNIX.
+
+            reuse_port tells the kernel to allow this endpoint to be bound to
+            the same port as other existing endpoints are bound to, so long as
+            they all set this flag when being created. This option is not
+            supported on Windows.
+
+            keep_alive set to True keeps connections active by enabling the
+            periodic transmission of messages.
+
+            ssl_handshake_timeout is the time in seconds that an SSL server
+            will wait for completion of the SSL handshake before aborting the
+            connection. Default is 60s.
+
+            ssl_shutdown_timeout is the time in seconds that an SSL server
+            will wait for completion of the SSL shutdown procedure
+            before aborting the connection. Default is 30s.
+
+            start_serving set to True (default) causes the created server
+            to start accepting connections immediately.  When set to False,
+            the user should await Server.start_serving() or Server.serve_forever()
+            to make the server to start accepting connections.
+            """
+            ...
         @overload
         @abstractmethod
         async def create_server(
@@ -474,7 +527,60 @@ class AbstractEventLoop:
             ssl_handshake_timeout: float | None = None,
             ssl_shutdown_timeout: float | None = None,
             start_serving: bool = True,
-        ) -> Server: ...
+        ) -> Server:
+            """
+            A coroutine which creates a TCP server bound to host and port.
+
+            The return value is a Server object which can be used to stop
+            the service.
+
+            If host is an empty string or None all interfaces are assumed
+            and a list of multiple sockets will be returned (most likely
+            one for IPv4 and another one for IPv6). The host parameter can also be
+            a sequence (e.g. list) of hosts to bind to.
+
+            family can be set to either AF_INET or AF_INET6 to force the
+            socket to use IPv4 or IPv6. If not set it will be determined
+            from host (defaults to AF_UNSPEC).
+
+            flags is a bitmask for getaddrinfo().
+
+            sock can optionally be specified in order to use a preexisting
+            socket object.
+
+            backlog is the maximum number of queued connections passed to
+            listen() (defaults to 100).
+
+            ssl can be set to an SSLContext to enable SSL over the
+            accepted connections.
+
+            reuse_address tells the kernel to reuse a local socket in
+            TIME_WAIT state, without waiting for its natural timeout to
+            expire. If not specified will automatically be set to True on
+            UNIX.
+
+            reuse_port tells the kernel to allow this endpoint to be bound to
+            the same port as other existing endpoints are bound to, so long as
+            they all set this flag when being created. This option is not
+            supported on Windows.
+
+            keep_alive set to True keeps connections active by enabling the
+            periodic transmission of messages.
+
+            ssl_handshake_timeout is the time in seconds that an SSL server
+            will wait for completion of the SSL handshake before aborting the
+            connection. Default is 60s.
+
+            ssl_shutdown_timeout is the time in seconds that an SSL server
+            will wait for completion of the SSL shutdown procedure
+            before aborting the connection. Default is 30s.
+
+            start_serving set to True (default) causes the created server
+            to start accepting connections immediately.  When set to False,
+            the user should await Server.start_serving() or Server.serve_forever()
+            to make the server to start accepting connections.
+            """
+            ...
         @overload
         @abstractmethod
         async def create_server(
@@ -636,7 +742,57 @@ class AbstractEventLoop:
             ssl_handshake_timeout: float | None = None,
             ssl_shutdown_timeout: float | None = None,
             start_serving: bool = True,
-        ) -> Server: ...
+        ) -> Server:
+            """
+            A coroutine which creates a TCP server bound to host and port.
+
+            The return value is a Server object which can be used to stop
+            the service.
+
+            If host is an empty string or None all interfaces are assumed
+            and a list of multiple sockets will be returned (most likely
+            one for IPv4 and another one for IPv6). The host parameter can also be
+            a sequence (e.g. list) of hosts to bind to.
+
+            family can be set to either AF_INET or AF_INET6 to force the
+            socket to use IPv4 or IPv6. If not set it will be determined
+            from host (defaults to AF_UNSPEC).
+
+            flags is a bitmask for getaddrinfo().
+
+            sock can optionally be specified in order to use a preexisting
+            socket object.
+
+            backlog is the maximum number of queued connections passed to
+            listen() (defaults to 100).
+
+            ssl can be set to an SSLContext to enable SSL over the
+            accepted connections.
+
+            reuse_address tells the kernel to reuse a local socket in
+            TIME_WAIT state, without waiting for its natural timeout to
+            expire. If not specified will automatically be set to True on
+            UNIX.
+
+            reuse_port tells the kernel to allow this endpoint to be bound to
+            the same port as other existing endpoints are bound to, so long as
+            they all set this flag when being created. This option is not
+            supported on Windows.
+
+            ssl_handshake_timeout is the time in seconds that an SSL server
+            will wait for completion of the SSL handshake before aborting the
+            connection. Default is 60s.
+
+            ssl_shutdown_timeout is the time in seconds that an SSL server
+            will wait for completion of the SSL shutdown procedure
+            before aborting the connection. Default is 30s.
+
+            start_serving set to True (default) causes the created server
+            to start accepting connections immediately.  When set to False,
+            the user should await Server.start_serving() or Server.serve_forever()
+            to make the server to start accepting connections.
+            """
+            ...
         @overload
         @abstractmethod
         async def create_server(
@@ -655,7 +811,57 @@ class AbstractEventLoop:
             ssl_handshake_timeout: float | None = None,
             ssl_shutdown_timeout: float | None = None,
             start_serving: bool = True,
-        ) -> Server: ...
+        ) -> Server:
+            """
+            A coroutine which creates a TCP server bound to host and port.
+
+            The return value is a Server object which can be used to stop
+            the service.
+
+            If host is an empty string or None all interfaces are assumed
+            and a list of multiple sockets will be returned (most likely
+            one for IPv4 and another one for IPv6). The host parameter can also be
+            a sequence (e.g. list) of hosts to bind to.
+
+            family can be set to either AF_INET or AF_INET6 to force the
+            socket to use IPv4 or IPv6. If not set it will be determined
+            from host (defaults to AF_UNSPEC).
+
+            flags is a bitmask for getaddrinfo().
+
+            sock can optionally be specified in order to use a preexisting
+            socket object.
+
+            backlog is the maximum number of queued connections passed to
+            listen() (defaults to 100).
+
+            ssl can be set to an SSLContext to enable SSL over the
+            accepted connections.
+
+            reuse_address tells the kernel to reuse a local socket in
+            TIME_WAIT state, without waiting for its natural timeout to
+            expire. If not specified will automatically be set to True on
+            UNIX.
+
+            reuse_port tells the kernel to allow this endpoint to be bound to
+            the same port as other existing endpoints are bound to, so long as
+            they all set this flag when being created. This option is not
+            supported on Windows.
+
+            ssl_handshake_timeout is the time in seconds that an SSL server
+            will wait for completion of the SSL handshake before aborting the
+            connection. Default is 60s.
+
+            ssl_shutdown_timeout is the time in seconds that an SSL server
+            will wait for completion of the SSL shutdown procedure
+            before aborting the connection. Default is 30s.
+
+            start_serving set to True (default) causes the created server
+            to start accepting connections immediately.  When set to False,
+            the user should await Server.start_serving() or Server.serve_forever()
+            to make the server to start accepting connections.
+            """
+            ...
         @overload
         @abstractmethod
         async def create_server(
@@ -807,7 +1013,53 @@ class AbstractEventLoop:
             reuse_port: bool | None = None,
             ssl_handshake_timeout: float | None = None,
             start_serving: bool = True,
-        ) -> Server: ...
+        ) -> Server:
+            """
+            A coroutine which creates a TCP server bound to host and port.
+
+            The return value is a Server object which can be used to stop
+            the service.
+
+            If host is an empty string or None all interfaces are assumed
+            and a list of multiple sockets will be returned (most likely
+            one for IPv4 and another one for IPv6). The host parameter can also be
+            a sequence (e.g. list) of hosts to bind to.
+
+            family can be set to either AF_INET or AF_INET6 to force the
+            socket to use IPv4 or IPv6. If not set it will be determined
+            from host (defaults to AF_UNSPEC).
+
+            flags is a bitmask for getaddrinfo().
+
+            sock can optionally be specified in order to use a preexisting
+            socket object.
+
+            backlog is the maximum number of queued connections passed to
+            listen() (defaults to 100).
+
+            ssl can be set to an SSLContext to enable SSL over the
+            accepted connections.
+
+            reuse_address tells the kernel to reuse a local socket in
+            TIME_WAIT state, without waiting for its natural timeout to
+            expire. If not specified will automatically be set to True on
+            UNIX.
+
+            reuse_port tells the kernel to allow this endpoint to be bound to
+            the same port as other existing endpoints are bound to, so long as
+            they all set this flag when being created. This option is not
+            supported on Windows.
+
+            ssl_handshake_timeout is the time in seconds that an SSL server
+            will wait for completion of the SSL handshake before aborting the
+            connection. Default is 60s.
+
+            start_serving set to True (default) causes the created server
+            to start accepting connections immediately.  When set to False,
+            the user should await Server.start_serving() or Server.serve_forever()
+            to make the server to start accepting connections.
+            """
+            ...
         @overload
         @abstractmethod
         async def create_server(
@@ -825,7 +1077,53 @@ class AbstractEventLoop:
             reuse_port: bool | None = None,
             ssl_handshake_timeout: float | None = None,
             start_serving: bool = True,
-        ) -> Server: ...
+        ) -> Server:
+            """
+            A coroutine which creates a TCP server bound to host and port.
+
+            The return value is a Server object which can be used to stop
+            the service.
+
+            If host is an empty string or None all interfaces are assumed
+            and a list of multiple sockets will be returned (most likely
+            one for IPv4 and another one for IPv6). The host parameter can also be
+            a sequence (e.g. list) of hosts to bind to.
+
+            family can be set to either AF_INET or AF_INET6 to force the
+            socket to use IPv4 or IPv6. If not set it will be determined
+            from host (defaults to AF_UNSPEC).
+
+            flags is a bitmask for getaddrinfo().
+
+            sock can optionally be specified in order to use a preexisting
+            socket object.
+
+            backlog is the maximum number of queued connections passed to
+            listen() (defaults to 100).
+
+            ssl can be set to an SSLContext to enable SSL over the
+            accepted connections.
+
+            reuse_address tells the kernel to reuse a local socket in
+            TIME_WAIT state, without waiting for its natural timeout to
+            expire. If not specified will automatically be set to True on
+            UNIX.
+
+            reuse_port tells the kernel to allow this endpoint to be bound to
+            the same port as other existing endpoints are bound to, so long as
+            they all set this flag when being created. This option is not
+            supported on Windows.
+
+            ssl_handshake_timeout is the time in seconds that an SSL server
+            will wait for completion of the SSL handshake before aborting the
+            connection. Default is 60s.
+
+            start_serving set to True (default) causes the created server
+            to start accepting connections immediately.  When set to False,
+            the user should await Server.start_serving() or Server.serve_forever()
+            to make the server to start accepting connections.
+            """
+            ...
         @overload
         @abstractmethod
         async def create_server(
@@ -903,7 +1201,14 @@ class AbstractEventLoop:
             server_hostname: str | None = None,
             ssl_handshake_timeout: float | None = None,
             ssl_shutdown_timeout: float | None = None,
-        ) -> Transport | None: ...
+        ) -> Transport | None:
+            """
+            Upgrade a transport to TLS.
+
+            Return a new transport that *protocol* should start using
+            immediately.
+            """
+            ...
     else:
         @abstractmethod
         async def start_tls(
@@ -915,7 +1220,14 @@ class AbstractEventLoop:
             server_side: bool = False,
             server_hostname: str | None = None,
             ssl_handshake_timeout: float | None = None,
-        ) -> Transport | None: ...
+        ) -> Transport | None:
+            """
+            Upgrade a transport to TLS.
+
+            Return a new transport that *protocol* should start using
+            immediately.
+            """
+            ...
 
     if sys.version_info >= (3, 13):
         async def create_unix_server(
@@ -930,7 +1242,37 @@ class AbstractEventLoop:
             ssl_shutdown_timeout: float | None = None,
             start_serving: bool = True,
             cleanup_socket: bool = True,
-        ) -> Server: ...
+        ) -> Server:
+            """
+            A coroutine which creates a UNIX Domain Socket server.
+
+            The return value is a Server object, which can be used to stop
+            the service.
+
+            path is a str, representing a file system path to bind the
+            server socket to.
+
+            sock can optionally be specified in order to use a preexisting
+            socket object.
+
+            backlog is the maximum number of queued connections passed to
+            listen() (defaults to 100).
+
+            ssl can be set to an SSLContext to enable SSL over the
+            accepted connections.
+
+            ssl_handshake_timeout is the time in seconds that an SSL server
+            will wait for the SSL handshake to complete (defaults to 60s).
+
+            ssl_shutdown_timeout is the time in seconds that an SSL server
+            will wait for the SSL shutdown to finish (defaults to 30s).
+
+            start_serving set to True (default) causes the created server
+            to start accepting connections immediately.  When set to False,
+            the user should await Server.start_serving() or Server.serve_forever()
+            to make the server to start accepting connections.
+            """
+            ...
     elif sys.version_info >= (3, 11):
         async def create_unix_server(
             self,

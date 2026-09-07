@@ -519,7 +519,24 @@ class BaseEventLoop(AbstractEventLoop):
             ssl_handshake_timeout: float | None = None,
             ssl_shutdown_timeout: float | None = None,
             start_serving: bool = True,
-        ) -> Server: ...
+        ) -> Server:
+            """
+            Create a TCP server.
+
+            The host parameter can be a string, in that case the TCP server is
+            bound to host and port.
+
+            The host parameter can also be a sequence of strings and in that case
+            the TCP server is bound to all hosts of the sequence. If a host
+            appears multiple times (possibly indirectly e.g. when hostnames
+            resolve to the same IP address), the server is only bound once to that
+            host.
+
+            Return a Server object which can be used to stop the service.
+
+            This method is a coroutine.
+            """
+            ...
         @overload
         async def create_server(
             self,
@@ -538,7 +555,24 @@ class BaseEventLoop(AbstractEventLoop):
             ssl_handshake_timeout: float | None = None,
             ssl_shutdown_timeout: float | None = None,
             start_serving: bool = True,
-        ) -> Server: ...
+        ) -> Server:
+            """
+            Create a TCP server.
+
+            The host parameter can be a string, in that case the TCP server is
+            bound to host and port.
+
+            The host parameter can also be a sequence of strings and in that case
+            the TCP server is bound to all hosts of the sequence. If a host
+            appears multiple times (possibly indirectly e.g. when hostnames
+            resolve to the same IP address), the server is only bound once to that
+            host.
+
+            Return a Server object which can be used to stop the service.
+
+            This method is a coroutine.
+            """
+            ...
         @overload
         async def create_server(
             self,
@@ -628,7 +662,24 @@ class BaseEventLoop(AbstractEventLoop):
             ssl_handshake_timeout: float | None = None,
             ssl_shutdown_timeout: float | None = None,
             start_serving: bool = True,
-        ) -> Server: ...
+        ) -> Server:
+            """
+            Create a TCP server.
+
+            The host parameter can be a string, in that case the TCP server is
+            bound to host and port.
+
+            The host parameter can also be a sequence of strings and in that case
+            the TCP server is bound to all hosts of the sequence. If a host
+            appears multiple times (possibly indirectly e.g. when hostnames
+            resolve to the same IP address), the server is only bound once to that
+            host.
+
+            Return a Server object which can be used to stop the service.
+
+            This method is a coroutine.
+            """
+            ...
         @overload
         async def create_server(
             self,
@@ -646,7 +697,24 @@ class BaseEventLoop(AbstractEventLoop):
             ssl_handshake_timeout: float | None = None,
             ssl_shutdown_timeout: float | None = None,
             start_serving: bool = True,
-        ) -> Server: ...
+        ) -> Server:
+            """
+            Create a TCP server.
+
+            The host parameter can be a string, in that case the TCP server is
+            bound to host and port.
+
+            The host parameter can also be a sequence of strings and in that case
+            the TCP server is bound to all hosts of the sequence. If a host
+            appears multiple times (possibly indirectly e.g. when hostnames
+            resolve to the same IP address), the server is only bound once to that
+            host.
+
+            Return a Server object which can be used to stop the service.
+
+            This method is a coroutine.
+            """
+            ...
         @overload
         async def create_server(
             self,
@@ -733,7 +801,24 @@ class BaseEventLoop(AbstractEventLoop):
             reuse_port: bool | None = None,
             ssl_handshake_timeout: float | None = None,
             start_serving: bool = True,
-        ) -> Server: ...
+        ) -> Server:
+            """
+            Create a TCP server.
+
+            The host parameter can be a string, in that case the TCP server is
+            bound to host and port.
+
+            The host parameter can also be a sequence of strings and in that case
+            the TCP server is bound to all hosts of the sequence. If a host
+            appears multiple times (possibly indirectly e.g. when hostnames
+            resolve to the same IP address), the server is only bound once to that
+            host.
+
+            Return a Server object which can be used to stop the service.
+
+            This method is a coroutine.
+            """
+            ...
         @overload
         async def create_server(
             self,
@@ -750,7 +835,24 @@ class BaseEventLoop(AbstractEventLoop):
             reuse_port: bool | None = None,
             ssl_handshake_timeout: float | None = None,
             start_serving: bool = True,
-        ) -> Server: ...
+        ) -> Server:
+            """
+            Create a TCP server.
+
+            The host parameter can be a string, in that case the TCP server is
+            bound to host and port.
+
+            The host parameter can also be a sequence of strings and in that case
+            the TCP server is bound to all hosts of the sequence. If a host
+            appears multiple times (possibly indirectly e.g. when hostnames
+            resolve to the same IP address), the server is only bound once to that
+            host.
+
+            Return a Server object which can be used to stop the service.
+
+            This method is a coroutine.
+            """
+            ...
         @overload
         async def create_server(
             self,

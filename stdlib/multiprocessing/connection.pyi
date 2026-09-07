@@ -94,7 +94,9 @@ class Listener:
     else:
         def accept(self) -> Connection[Incomplete, Incomplete] | PipeConnection[Incomplete, Incomplete]: ...
 
-    def close(self) -> None: ...
+    def close(self) -> None:
+        """Close the bound socket or named pipe of `self`."""
+        ...
     # Any: the concrete type depends on the address family and platform
     # (e.g. str or bytes for AF_UNIX), cf. _socket._RetAddress
     @property

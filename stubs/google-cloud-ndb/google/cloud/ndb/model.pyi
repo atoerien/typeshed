@@ -1845,7 +1845,56 @@ class Model(_NotEqualMixin, metaclass=MetaModel):
         force_writes: bool | None = ...,
         _options=...,
         database: str | None = None,
-    ) -> Self | None: ...
+    ) -> Self | None:
+        """
+        Get an instance of Model class by ID.
+
+        This really just a shorthand for ``Key(cls, id, ....).get()``.
+
+        Args:
+            id (Union[int, str]): ID of the entity to load.
+            parent (Optional[key.Key]): Key for the parent of the entity to
+                load.
+            namespace (Optional[str]): Namespace for the entity to load. If not
+                passed, uses the client's value.
+            project (Optional[str]): Project id for the entity to load. If not
+                passed, uses the client's value.
+            app (str): DEPRECATED: Synonym for `project`.
+            read_consistency: Set this to ``ndb.EVENTUAL`` if, instead of
+                waiting for the Datastore to finish applying changes to all
+                returned results, you wish to get possibly-not-current results
+                faster. You can't do this if using a transaction.
+            read_policy: DEPRECATED: Synonym for ``read_consistency``.
+            transaction (bytes): Any results returned will be consistent with
+                the Datastore state represented by this transaction id.
+                Defaults to the currently running transaction. Cannot be used
+                with ``read_consistency=ndb.EVENTUAL``.
+            retries (int): Number of times to retry this operation in the case
+                of transient server errors. Operation will potentially be tried
+                up to ``retries`` + 1 times. Set to ``0`` to try operation only
+                once, with no retries.
+            timeout (float): Override the gRPC timeout, in seconds.
+            deadline (float): DEPRECATED: Synonym for ``timeout``.
+            use_cache (bool): Specifies whether to store entities in in-process
+                cache; overrides in-process cache policy for this operation.
+            use_global_cache (bool): Specifies whether to store entities in
+                global cache; overrides global cache policy for this operation.
+            use_datastore (bool): Specifies whether to store entities in
+                Datastore; overrides Datastore policy for this operation.
+            global_cache_timeout (int): Maximum lifetime for entities in global
+                cache; overrides global cache timeout policy for this
+                operation.
+            use_memcache (bool): DEPRECATED: Synonym for ``use_global_cache``.
+            memcache_timeout (int): DEPRECATED: Synonym for
+                ``global_cache_timeout``.
+            max_memcache_items (int): No longer supported.
+            force_writes (bool): No longer supported.
+            database (Optional[str]): This parameter is ignored. Please set the database on the Client instead.
+
+        Returns:
+            Optional[Model]: The retrieved entity, if one is found.
+        """
+        ...
     @classmethod
     def get_by_id_async(
         cls: type[Model],
@@ -1945,7 +1994,66 @@ class Model(_NotEqualMixin, metaclass=MetaModel):
         force_writes: bool | None = ...,
         _options=...,
         **kw_model_args,
-    ) -> Self: ...
+    ) -> Self:
+        """
+        Transactionally retrieves an existing entity or creates a new one.
+
+        Will attempt to look up an entity with the given ``name`` and
+        ``parent``. If none is found a new entity will be created using the
+        given ``name`` and ``parent``, and passing any ``kw_model_args`` to the
+        constructor the ``Model`` class.
+
+        If not already in a transaction, a new transaction will be created and
+        this operation will be run in that transaction.
+
+        Args:
+            name (str): Name of the entity to load or create.
+            parent (Optional[key.Key]): Key for the parent of the entity to
+                load.
+            namespace (Optional[str]): Namespace for the entity to load. If not
+                passed, uses the client's value.
+            project (Optional[str]): Project id for the entity to load. If not
+                passed, uses the client's value.
+            app (str): DEPRECATED: Synonym for `project`.
+            **kw_model_args: Keyword arguments to pass to the constructor of
+                the model class if an instance for the specified key name does
+                not already exist. If an instance with the supplied ``name``
+                and ``parent`` already exists, these arguments will be
+                discarded.
+            read_consistency: Set this to ``ndb.EVENTUAL`` if, instead of
+                waiting for the Datastore to finish applying changes to all
+                returned results, you wish to get possibly-not-current results
+                faster. You can't do this if using a transaction.
+            read_policy: DEPRECATED: Synonym for ``read_consistency``.
+            transaction (bytes): Any results returned will be consistent with
+                the Datastore state represented by this transaction id.
+                Defaults to the currently running transaction. Cannot be used
+                with ``read_consistency=ndb.EVENTUAL``.
+            retries (int): Number of times to retry this operation in the case
+                of transient server errors. Operation will potentially be tried
+                up to ``retries`` + 1 times. Set to ``0`` to try operation only
+                once, with no retries.
+            timeout (float): Override the gRPC timeout, in seconds.
+            deadline (float): DEPRECATED: Synonym for ``timeout``.
+            use_cache (bool): Specifies whether to store entities in in-process
+                cache; overrides in-process cache policy for this operation.
+            use_global_cache (bool): Specifies whether to store entities in
+                global cache; overrides global cache policy for this operation.
+            use_datastore (bool): Specifies whether to store entities in
+                Datastore; overrides Datastore policy for this operation.
+            global_cache_timeout (int): Maximum lifetime for entities in global
+                cache; overrides global cache timeout policy for this
+                operation.
+            use_memcache (bool): DEPRECATED: Synonym for ``use_global_cache``.
+            memcache_timeout (int): DEPRECATED: Synonym for
+                ``global_cache_timeout``.
+            max_memcache_items (int): No longer supported.
+            force_writes (bool): No longer supported.
+
+        Returns:
+            Model: The entity that was either just retrieved or created.
+        """
+        ...
     @classmethod
     def get_or_insert_async(
         cls: type[Model],

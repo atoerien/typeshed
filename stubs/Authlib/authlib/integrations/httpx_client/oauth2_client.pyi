@@ -15,6 +15,7 @@ Response = httpx2.Response
 __all__ = ["OAuth2Auth", "OAuth2ClientAuth", "AsyncOAuth2Client", "OAuth2Client"]
 
 class OAuth2Auth(Auth, TokenAuth):
+    """Sign requests for OAuth 2.0, currently only bearer token is supported."""
     requires_request_body: bool
     def auth_flow(self, request: Request) -> Generator[Request, Response]: ...
 

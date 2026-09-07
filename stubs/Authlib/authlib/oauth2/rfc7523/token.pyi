@@ -30,7 +30,15 @@ class JWTBearerTokenGenerator:
     @staticmethod
     def get_allowed_scope(client, scope): ...
     @staticmethod
-    def get_sub_value(user) -> str: ...
+    def get_sub_value(user) -> str:
+        """
+        Return user's ID as ``sub`` value in token payload. For instance::
+
+        @staticmethod
+        def get_sub_value(user):
+            return str(user.id)
+        """
+        ...
     def get_token_data(self, grant_type, client, expires_in, user=None, scope=None): ...
     def generate(self, grant_type, client, user=None, scope=None, expires_in=None):
         """

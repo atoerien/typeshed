@@ -119,6 +119,21 @@ def partial_ordering(cls):
     ...
 
 class InstancePartial(functools.partial[Incomplete]):
+    """
+    :class:`functools.partial` is a huge convenience for anyone
+    working with Python's great first-class functions. It allows
+    developers to curry arguments and incrementally create simpler
+    callables for a variety of use cases.
+
+    Unfortunately there's one big gap in its usefulness:
+    methods. Partials just don't get bound as methods and
+    automatically handed a reference to ``self``. The
+    ``InstancePartial`` type remedies this by inheriting from
+    :class:`functools.partial` and implementing the necessary
+    descriptor protocol. There are no other differences in
+    implementation or usage. :class:`CachedInstancePartial`, below,
+    has the same ability, but is slightly more efficient.
+    """
     def __get__(self, obj, obj_type): ...  # type: ignore[override]
 
 class CachedInstancePartial(functools.partial[Incomplete]):
