@@ -367,8 +367,8 @@ class AbstractEventLoop:
         async def create_server(
             self,
             protocol_factory: _ProtocolFactory,
-            host: str | Sequence[str] | None = None,
-            port: int = ...,
+            host: str | Sequence[str] | None,
+            port: int,
             *,
             family: int = AddressFamily.AF_UNSPEC,
             flags: int = AddressInfo.AI_PASSIVE,
@@ -440,12 +440,52 @@ class AbstractEventLoop:
         async def create_server(
             self,
             protocol_factory: _ProtocolFactory,
+            host: str | Sequence[str],
+            port: int | None = None,
+            *,
+            family: int = AddressFamily.AF_UNSPEC,
+            flags: int = AddressInfo.AI_PASSIVE,
+            sock: None = None,
+            backlog: int = 100,
+            ssl: _SSLContext = None,
+            reuse_address: bool | None = None,
+            reuse_port: bool | None = None,
+            keep_alive: bool | None = None,
+            ssl_handshake_timeout: float | None = None,
+            ssl_shutdown_timeout: float | None = None,
+            start_serving: bool = True,
+        ) -> Server: ...
+        @overload
+        @abstractmethod
+        async def create_server(
+            self,
+            protocol_factory: _ProtocolFactory,
+            host: None = None,
+            *,
+            port: int,
+            family: int = AddressFamily.AF_UNSPEC,
+            flags: int = AddressInfo.AI_PASSIVE,
+            sock: None = None,
+            backlog: int = 100,
+            ssl: _SSLContext = None,
+            reuse_address: bool | None = None,
+            reuse_port: bool | None = None,
+            keep_alive: bool | None = None,
+            ssl_handshake_timeout: float | None = None,
+            ssl_shutdown_timeout: float | None = None,
+            start_serving: bool = True,
+        ) -> Server: ...
+        @overload
+        @abstractmethod
+        async def create_server(
+            self,
+            protocol_factory: _ProtocolFactory,
             host: None = None,
             port: None = None,
             *,
             family: int = AddressFamily.AF_UNSPEC,
             flags: int = AddressInfo.AI_PASSIVE,
-            sock: socket = ...,
+            sock: socket,
             backlog: int = 100,
             ssl: _SSLContext = None,
             reuse_address: bool | None = None,
@@ -514,8 +554,8 @@ class AbstractEventLoop:
         async def create_server(
             self,
             protocol_factory: _ProtocolFactory,
-            host: str | Sequence[str] | None = None,
-            port: int = ...,
+            host: str | Sequence[str] | None,
+            port: int,
             *,
             family: int = AddressFamily.AF_UNSPEC,
             flags: int = AddressInfo.AI_PASSIVE,
@@ -583,12 +623,50 @@ class AbstractEventLoop:
         async def create_server(
             self,
             protocol_factory: _ProtocolFactory,
+            host: str | Sequence[str],
+            port: int | None = None,
+            *,
+            family: int = AddressFamily.AF_UNSPEC,
+            flags: int = AddressInfo.AI_PASSIVE,
+            sock: None = None,
+            backlog: int = 100,
+            ssl: _SSLContext = None,
+            reuse_address: bool | None = None,
+            reuse_port: bool | None = None,
+            ssl_handshake_timeout: float | None = None,
+            ssl_shutdown_timeout: float | None = None,
+            start_serving: bool = True,
+        ) -> Server: ...
+        @overload
+        @abstractmethod
+        async def create_server(
+            self,
+            protocol_factory: _ProtocolFactory,
+            host: None = None,
+            *,
+            port: int,
+            family: int = AddressFamily.AF_UNSPEC,
+            flags: int = AddressInfo.AI_PASSIVE,
+            sock: None = None,
+            backlog: int = 100,
+            ssl: _SSLContext = None,
+            reuse_address: bool | None = None,
+            reuse_port: bool | None = None,
+            ssl_handshake_timeout: float | None = None,
+            ssl_shutdown_timeout: float | None = None,
+            start_serving: bool = True,
+        ) -> Server: ...
+        @overload
+        @abstractmethod
+        async def create_server(
+            self,
+            protocol_factory: _ProtocolFactory,
             host: None = None,
             port: None = None,
             *,
             family: int = AddressFamily.AF_UNSPEC,
             flags: int = AddressInfo.AI_PASSIVE,
-            sock: socket = ...,
+            sock: socket,
             backlog: int = 100,
             ssl: _SSLContext = None,
             reuse_address: bool | None = None,
@@ -653,8 +731,8 @@ class AbstractEventLoop:
         async def create_server(
             self,
             protocol_factory: _ProtocolFactory,
-            host: str | Sequence[str] | None = None,
-            port: int = ...,
+            host: str | Sequence[str] | None,
+            port: int,
             *,
             family: int = AddressFamily.AF_UNSPEC,
             flags: int = AddressInfo.AI_PASSIVE,
@@ -717,12 +795,48 @@ class AbstractEventLoop:
         async def create_server(
             self,
             protocol_factory: _ProtocolFactory,
+            host: str | Sequence[str],
+            port: int | None = None,
+            *,
+            family: int = AddressFamily.AF_UNSPEC,
+            flags: int = AddressInfo.AI_PASSIVE,
+            sock: None = None,
+            backlog: int = 100,
+            ssl: _SSLContext = None,
+            reuse_address: bool | None = None,
+            reuse_port: bool | None = None,
+            ssl_handshake_timeout: float | None = None,
+            start_serving: bool = True,
+        ) -> Server: ...
+        @overload
+        @abstractmethod
+        async def create_server(
+            self,
+            protocol_factory: _ProtocolFactory,
+            host: None = None,
+            *,
+            port: int,
+            family: int = AddressFamily.AF_UNSPEC,
+            flags: int = AddressInfo.AI_PASSIVE,
+            sock: None = None,
+            backlog: int = 100,
+            ssl: _SSLContext = None,
+            reuse_address: bool | None = None,
+            reuse_port: bool | None = None,
+            ssl_handshake_timeout: float | None = None,
+            start_serving: bool = True,
+        ) -> Server: ...
+        @overload
+        @abstractmethod
+        async def create_server(
+            self,
+            protocol_factory: _ProtocolFactory,
             host: None = None,
             port: None = None,
             *,
             family: int = AddressFamily.AF_UNSPEC,
             flags: int = AddressInfo.AI_PASSIVE,
-            sock: socket = ...,
+            sock: socket,
             backlog: int = 100,
             ssl: _SSLContext = None,
             reuse_address: bool | None = None,
@@ -789,14 +903,35 @@ class AbstractEventLoop:
             server_hostname: str | None = None,
             ssl_handshake_timeout: float | None = None,
             ssl_shutdown_timeout: float | None = None,
-        ) -> Transport | None:
-            """
-            Upgrade a transport to TLS.
+        ) -> Transport | None: ...
+    else:
+        @abstractmethod
+        async def start_tls(
+            self,
+            transport: BaseTransport,
+            protocol: BaseProtocol,
+            sslcontext: ssl.SSLContext,
+            *,
+            server_side: bool = False,
+            server_hostname: str | None = None,
+            ssl_handshake_timeout: float | None = None,
+        ) -> Transport | None: ...
 
-            Return a new transport that *protocol* should start using
-            immediately.
-            """
-            ...
+    if sys.version_info >= (3, 13):
+        async def create_unix_server(
+            self,
+            protocol_factory: _ProtocolFactory,
+            path: StrPath | None = None,
+            *,
+            sock: socket | None = None,
+            backlog: int = 100,
+            ssl: _SSLContext = None,
+            ssl_handshake_timeout: float | None = None,
+            ssl_shutdown_timeout: float | None = None,
+            start_serving: bool = True,
+            cleanup_socket: bool = True,
+        ) -> Server: ...
+    elif sys.version_info >= (3, 11):
         async def create_unix_server(
             self,
             protocol_factory: _ProtocolFactory,
@@ -840,24 +975,6 @@ class AbstractEventLoop:
             """
             ...
     else:
-        @abstractmethod
-        async def start_tls(
-            self,
-            transport: BaseTransport,
-            protocol: BaseProtocol,
-            sslcontext: ssl.SSLContext,
-            *,
-            server_side: bool = False,
-            server_hostname: str | None = None,
-            ssl_handshake_timeout: float | None = None,
-        ) -> Transport | None:
-            """
-            Upgrade a transport to TLS.
-
-            Return a new transport that *protocol* should start using
-            immediately.
-            """
-            ...
         async def create_unix_server(
             self,
             protocol_factory: _ProtocolFactory,

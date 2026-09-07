@@ -21,6 +21,7 @@ class AssertionClient:
     audience: Incomplete
     claims: Incomplete
     scope: Incomplete
+    client_id: Incomplete
     token_auth: Incomplete
     leeway: Incomplete
     def __init__(
@@ -34,6 +35,7 @@ class AssertionClient:
         claims=None,
         token_placement: str = "header",
         scope=None,
+        client_id=None,
         leeway: int = 60,
         **kwargs,
     ) -> None: ...

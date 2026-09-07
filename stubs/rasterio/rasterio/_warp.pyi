@@ -1,17 +1,17 @@
 """Raster and vector warping and reprojection."""
 
 from collections.abc import Sequence
-from typing import Any, Final
+from typing import Any, Final, overload
+from typing_extensions import deprecated
 
 from affine import Affine as Affine
 from numpy.typing import DTypeLike, NDArray
-from rasterio._io import DatasetReaderBase
+from rasterio._io import DatasetReaderBase, DatasetWriterBase
 from rasterio._typing import CRSInput, Geometry, Indexes, ShapeND, WindowInput, _GDALOption, _NestedScalar
 from rasterio.control import GroundControlPoint
 from rasterio.crs import CRS
 from rasterio.dtypes import dtype_ranges as dtype_ranges
 from rasterio.enums import Resampling
-from rasterio.io import DatasetReader
 from rasterio.rpc import RPC
 
 SUPPORTED_RESAMPLING: Final[list[Resampling]]
@@ -172,7 +172,7 @@ def _suggested_proxy_vrt_doc(
     ...
 
 class WarpedVRTReaderBase(DatasetReaderBase):
-    src_dataset: DatasetReader
+    src_dataset: DatasetReaderBase
     src_crs: CRS
     src_transform: Affine | None
     resampling: Resampling
@@ -182,9 +182,15 @@ class WarpedVRTReaderBase(DatasetReaderBase):
     working_dtype: DTypeLike | None
     warp_extras: dict[str, _GDALOption]
 
+    @overload
+    @deprecated(
+        "Source datasets opened in modes other than 'r' emit a "
+        "RasterioDeprecationWarning and will be disallowed in a future rasterio "
+        "release; reopen the dataset read-only before wrapping it."
+    )
     def __init__(
         self,
-        src_dataset: DatasetReader,
+        src_dataset: DatasetWriterBase,
         src_crs: CRSInput | None = None,
         crs: CRSInput | None = None,
         resampling: Resampling = ...,
@@ -202,71 +208,30 @@ class WarpedVRTReaderBase(DatasetReaderBase):
         warp_mem_limit: int = 0,
         dtype: DTypeLike | None = None,
         **warp_extras: _GDALOption,
-    ) -> None:
-        """
-        Make a virtual warped dataset
+    ) -> None: ...
+    @overload
+    def __init__(
+        self,
+        src_dataset: DatasetReaderBase,
+        src_crs: CRSInput | None = None,
+        crs: CRSInput | None = None,
+        resampling: Resampling = ...,
+        tolerance: float = 0.125,
+        src_nodata: float | None = ...,
+        nodata: float | None = ...,
+        width: int | None = None,
+        height: int | None = None,
+        src_transform: Affine | None = None,
+        transform: Affine | None = None,
+        init_dest_nodata: bool = True,
+        src_alpha: int = 0,
+        dst_alpha: int = 0,
+        add_alpha: bool = False,
+        warp_mem_limit: int = 0,
+        dtype: DTypeLike | None = None,
+        **warp_extras: _GDALOption,
+    ) -> None: ...
 
-        Parameters
-        ----------
-        src_dataset : dataset object
-            The warp source dataset. Must be opened in "r" mode.
-        src_crs : CRS or str, optional
-            Overrides the coordinate reference system of `src_dataset`.
-        src_transfrom : Affine, optional
-            Overrides the transform of `src_dataset`.
-        src_nodata : float, optional
-            Overrides the nodata value of `src_dataset`, which is the
-            default.
-        crs : CRS or str, optional
-            The coordinate reference system at the end of the warp
-            operation.  Default: the crs of `src_dataset`. dst_crs was
-            a deprecated alias for this parameter.
-        transform : Affine, optional
-            The transform for the virtual dataset. Default: will be
-            computed from the attributes of `src_dataset`. dst_transform
-            was a deprecated alias for this parameter.
-        height, width: int, optional
-            The dimensions of the virtual dataset. Defaults: will be
-            computed from the attributes of `src_dataset`. dst_height
-            and dst_width were deprecated alias for these parameters.
-        nodata : float, optional
-            Nodata value for the virtual dataset. Default: the nodata
-            value of `src_dataset` or 0.0. dst_nodata was a deprecated
-            alias for this parameter.
-        resampling : Resampling, optional
-            Warp resampling algorithm. Default: `Resampling.nearest`.
-        tolerance : float, optional
-            The maximum error tolerance in input pixels when
-            approximating the warp transformation. Default: 0.125,
-            or one-eigth of a pixel.
-        src_alpha : int, optional
-            Index of a source band to use as an alpha band for warping.
-        dst_alpha : int, optional
-            Index of a destination band to use as an alpha band for warping.
-        add_alpha : bool, optional
-            Whether to add an alpha masking band to the virtual dataset.
-            Default: False. This option will cause deletion of the VRT
-            nodata value.
-        init_dest_nodata : bool, optional
-            Whether or not to initialize output to `nodata`. Default:
-            True.
-        warp_mem_limit : int, optional
-            The warp operation's memory limit in MB. The default (0)
-            means 64 MB with GDAL 2.2.
-        dtype : str, optional
-            The working data type for warp operation and output.
-        warp_extras : dict, optional
-            GDAL extra warp options. See:
-            https://gdal.org/doxygen/structGDALWarpOptions.html.
-            Also, GDALCreateGenImgProjTransformer2() options.
-            Requires rasterio 1.3+, GDAL 3.2+. See:
-            https://gdal.org/doxygen/gdal__alg_8h.html#a94cd172f78dbc41d6f407d662914f2e3
-
-        Returns
-        -------
-        WarpedVRT
-        """
-        ...
     def read(  # type: ignore[override]
         self,
         indexes: Indexes | None = None,

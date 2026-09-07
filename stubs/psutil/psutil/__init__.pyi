@@ -544,19 +544,13 @@ class Process:
             """
             ...
 
-        def memory_maps(self, grouped: bool = True) -> list[Incomplete]:
-            """
-            Return process' mapped memory regions as a list of namedtuples
-            whose fields are variable depending on the platform.
+        @overload
+        def memory_maps(self, grouped: Literal[True] = True) -> list[_ntp.pmmap_grouped]: ...
+        @overload
+        def memory_maps(self, grouped: Literal[False]) -> list[_ntp.pmmap_ext]: ...
+        @overload
+        def memory_maps(self, grouped: bool) -> list[_ntp.pmmap_grouped] | list[_ntp.pmmap_ext]: ...
 
-            If *grouped* is True the mapped regions with the same 'path'
-            are grouped together and the different memory fields are summed.
-
-            If *grouped* is False every mapped region is shown as a single
-            entity and the namedtuple will also include the mapped region's
-            address space ('addr') and permission set ('perms').
-            """
-            ...
     if sys.platform == "linux":
         def rlimit(self, resource: int, limits: tuple[int, int] | None = None) -> tuple[int, int]: ...
         def cpu_num(self) -> int: ...
