@@ -18,7 +18,6 @@ pika==1.4.*
 gevent==26.8.*
 mysqlclient==2.2.*
 jwcrypto==1.6.0
-binaryornot==0.4.*
 ephem==4.2.*
 rasterio==1.5.1
 python-nmap==0.7.*
