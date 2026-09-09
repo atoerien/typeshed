@@ -189,8 +189,67 @@ class EntityGroup:
     """Model for __entity_group__ metadata. No longer supported by datastore."""
     def __new__(cls, *args, **kwargs): ...
 
-def get_entity_group_version(*args, **kwargs) -> None: ...
-def get_kinds(start=None, end=None): ...
-def get_namespaces(start=None, end=None): ...
-def get_properties_of_kind(kind, start=None, end=None): ...
-def get_representations_of_kind(kind, start=None, end=None): ...
+def get_entity_group_version(*args, **kwargs) -> None:
+    """
+    Return the version of the entity group containing key.
+
+    Raises:
+        :class:google.cloud.ndb.exceptions.NoLongerImplementedError. Always.
+            This method is not supported anymore.
+    """
+    ...
+def get_kinds(start=None, end=None):
+    """
+    Return all kinds in the specified range, for the current namespace.
+
+    Args:
+        start (str): only return kinds >= start if start is not None.
+        end (str): only return kinds < end if end is not None.
+
+    Returns:
+        List[str]: Kind names between the (optional) start and end values.
+    """
+    ...
+def get_namespaces(start=None, end=None):
+    """
+    Return all namespaces in the specified range.
+
+    Args:
+        start (str): only return namespaces >= start if start is not None.
+        end (str): only return namespaces < end if end is not None.
+
+    Returns:
+        List[str]: Namespace names between the (optional) start and end values.
+    """
+    ...
+def get_properties_of_kind(kind, start=None, end=None):
+    """
+    Return all properties of kind in the specified range.
+
+    NOTE: This function does not return unindexed properties.
+
+    Args:
+        kind (str): name of kind whose properties you want.
+        start (str): only return properties >= start if start is not None.
+        end (str): only return properties < end if end is not None.
+
+    Returns:
+        List[str]: Property names of kind between the (optional) start and end
+            values.
+    """
+    ...
+def get_representations_of_kind(kind, start=None, end=None):
+    """
+    Return all representations of properties of kind in the specified range.
+
+    NOTE: This function does not return unindexed properties.
+
+    Args:
+        kind: name of kind whose properties you want.
+        start: only return properties >= start if start is not None.
+        end: only return properties < end if end is not None.
+
+    Returns:
+        dict: map of property names to their list of representations.
+    """
+    ...

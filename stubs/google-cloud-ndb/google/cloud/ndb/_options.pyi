@@ -1,3 +1,5 @@
+"""Support for options."""
+
 class Options:
     __slots__ = (
         "retries",

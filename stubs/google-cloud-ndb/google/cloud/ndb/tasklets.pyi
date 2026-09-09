@@ -75,13 +75,73 @@ class Future:
     """
     info: Incomplete
     def __init__(self, info: str = "Unknown") -> None: ...
-    def done(self): ...
-    def running(self): ...
-    def wait(self) -> None: ...
-    def check_success(self) -> None: ...
-    def set_result(self, result) -> None: ...
-    def set_exception(self, exception) -> None: ...
-    def result(self): ...
+    def done(self):
+        """
+        Get whether future has finished its task.
+
+        Returns:
+            bool: True if task has finished, False otherwise.
+        """
+        ...
+    def running(self):
+        """
+        Get whether future's task is still running.
+
+        Returns:
+            bool: False if task has finished, True otherwise.
+        """
+        ...
+    def wait(self) -> None:
+        """
+        Wait for this future's task to complete.
+
+        This future will be done and will have either a result or an exception
+        after a call to this method.
+        """
+        ...
+    def check_success(self) -> None:
+        """
+        Check whether a future has completed without raising an exception.
+
+        This will wait for the future to finish its task and will then raise
+        the future's exception, if there is one, or else do nothing.
+        """
+        ...
+    def set_result(self, result) -> None:
+        """
+        Set the result for this future.
+
+        Signals that this future has completed its task and sets the result.
+
+        Should not be called from user code.
+        """
+        ...
+    def set_exception(self, exception) -> None:
+        """
+        Set an exception for this future.
+
+        Signals that this future's task has resulted in an exception. The
+        future is considered done but has no result. Once the exception is set,
+        calls to :meth:`done` will return True, and calls to :meth:`result`
+        will raise the exception.
+
+        Should not be called from user code.
+
+        Args:
+            exception (Exception): The exception that was raised.
+        """
+        ...
+    def result(self):
+        """
+        Return the result of this future's task.
+
+        If the task is finished, this will return immediately. Otherwise, this
+        will block until a result is ready.
+
+        Returns:
+            Any: The result
+        """
+        ...
     get_result: Incomplete
     def exception(self):
         """
@@ -163,7 +223,9 @@ class _TaskletFuture(Future):
     context: Incomplete
     waiting_on: Incomplete
     def __init__(self, generator, context, info: str = "Unknown") -> None: ...
-    def cancel(self) -> None: ...
+    def cancel(self) -> None:
+        """Overrides :meth:`Future.cancel`."""
+        ...
 
 class _MultiFuture(Future):
     """

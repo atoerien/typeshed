@@ -663,16 +663,73 @@ class ModelKey(Property):
     .. automethod:: _validate
     """
     def __init__(self) -> None: ...
-    def __get__(self, entity: Model, unused_cls: type[Model] | None = None) -> key_module.Key | list[key_module.Key] | None: ...
+    def __get__(self, entity: Model, unused_cls: type[Model] | None = None) -> key_module.Key | list[key_module.Key] | None:
+        """
+        Descriptor protocol: get the value from the entity.
+
+        Args:
+            entity (Model): An entity to get a value from.
+            unused_cls (type): The class that owns this instance.
+        """
+        ...
 
 class BooleanProperty(Property):
-    def __get__(self, entity: Model, unused_cls: type[Model] | None = None) -> bool | list[bool] | None: ...
+    """
+    A property that contains values of type bool.
+
+    .. automethod:: _validate
+    """
+    def __get__(self, entity: Model, unused_cls: type[Model] | None = None) -> bool | list[bool] | None:
+        """
+        Descriptor protocol: get the value from the entity.
+
+        Args:
+            entity (Model): An entity to get a value from.
+            unused_cls (type): The class that owns this instance.
+        """
+        ...
 
 class IntegerProperty(Property):
-    def __get__(self, entity: Model, unused_cls: type[Model] | None = None) -> int | list[int] | None: ...
+    """
+    A property that contains values of type integer.
+
+    .. note::
+
+        If a value is a :class:`bool`, it will be coerced to ``0`` (for
+        :data:`False`) or ``1`` (for :data:`True`).
+
+    .. automethod:: _validate
+    """
+    def __get__(self, entity: Model, unused_cls: type[Model] | None = None) -> int | list[int] | None:
+        """
+        Descriptor protocol: get the value from the entity.
+
+        Args:
+            entity (Model): An entity to get a value from.
+            unused_cls (type): The class that owns this instance.
+        """
+        ...
 
 class FloatProperty(Property):
-    def __get__(self, entity: Model, unused_cls: type[Model] | None = None) -> float | list[float] | None: ...
+    """
+    A property that contains values of type float.
+
+    .. note::
+
+        If a value is a :class:`bool` or :class:`int`, it will be
+        coerced to a floating point value.
+
+    .. automethod:: _validate
+    """
+    def __get__(self, entity: Model, unused_cls: type[Model] | None = None) -> float | list[float] | None:
+        """
+        Descriptor protocol: get the value from the entity.
+
+        Args:
+            entity (Model): An entity to get a value from.
+            unused_cls (type): The class that owns this instance.
+        """
+        ...
 
 class _CompressedValue(bytes):
     """
@@ -735,7 +792,15 @@ class BlobProperty(Property):
         verbose_name: str | None = None,
         write_empty_list: bool | None = None,
     ) -> None: ...
-    def __get__(self, entity: Model, unused_cls: type[Model] | None = None) -> bytes | list[bytes] | None: ...
+    def __get__(self, entity: Model, unused_cls: type[Model] | None = None) -> bytes | list[bytes] | None:
+        """
+        Descriptor protocol: get the value from the entity.
+
+        Args:
+            entity (Model): An entity to get a value from.
+            unused_cls (type): The class that owns this instance.
+        """
+        ...
 
 class CompressedTextProperty(BlobProperty):
     """
@@ -794,7 +859,15 @@ class TextProperty(Property):
     """
     def __new__(cls, *args, **kwargs): ...
     def __init__(self, *args, **kwargs) -> None: ...
-    def __get__(self, entity: Model, unused_cls: type[Model] | None = None) -> str | list[str] | None: ...
+    def __get__(self, entity: Model, unused_cls: type[Model] | None = None) -> str | list[str] | None:
+        """
+        Descriptor protocol: get the value from the entity.
+
+        Args:
+            entity (Model): An entity to get a value from.
+            unused_cls (type): The class that owns this instance.
+        """
+        ...
 
 class StringProperty(TextProperty):
     """
@@ -882,11 +955,86 @@ class JsonProperty(BlobProperty):
     ) -> None: ...
 
 class User:
+    """
+    Provides the email address, nickname, and ID for a Google Accounts user.
+
+    .. note::
+
+        This class is a port of ``google.appengine.api.users.User``.
+        In the (legacy) Google App Engine standard environment, this
+        constructor relied on several environment variables to provide a
+        fallback for inputs. In particular:
+
+        * ``AUTH_DOMAIN`` for the ``_auth_domain`` argument
+        * ``USER_EMAIL`` for the ``email`` argument
+        * ``USER_ID`` for the ``_user_id`` argument
+        * ``FEDERATED_IDENTITY`` for the (now removed) ``federated_identity``
+          argument
+        * ``FEDERATED_PROVIDER`` for the (now removed) ``federated_provider``
+          argument
+
+        However in the gVisor Google App Engine runtime (e.g. Python 3.7),
+        none of these environment variables will be populated.
+
+    .. note::
+
+        Previous versions of the Google Cloud Datastore API had an explicit
+        ``UserValue`` field. However, the ``google.datastore.v1`` API returns
+        previously stored user values as an ``Entity`` with the meaning set to
+        ``ENTITY_USER=20``.
+
+    .. warning::
+
+        The ``federated_identity`` and ``federated_provider`` are
+        decommissioned and have been removed from the constructor. Additionally
+        ``_strict_mode`` has been removed from the constructor and the
+        ``federated_identity()`` and ``federated_provider()`` methods have been
+        removed from this class.
+
+    Args:
+        email (str): The user's email address.
+        _auth_domain (str): The auth domain for the current application.
+        _user_id (str): The user ID.
+
+    Raises:
+        ValueError: If the ``_auth_domain`` is not passed in.
+        UserNotFoundError: If ``email`` is empty.
+    """
     def __init__(self, email: str | None = None, _auth_domain: str | None = None, _user_id: str | None = None) -> None: ...
-    def nickname(self) -> str: ...
-    def email(self): ...
-    def user_id(self) -> str | None: ...
-    def auth_domain(self) -> str: ...
+    def nickname(self) -> str:
+        """
+        The nickname for this user.
+
+        A nickname is a human-readable string that uniquely identifies a Google
+        user with respect to this application, akin to a username. For some
+        users, this nickname is an email address or part of the email address.
+
+        Returns:
+            str: The nickname of the user.
+        """
+        ...
+    def email(self):
+        """Returns the user's email address."""
+        ...
+    def user_id(self) -> str | None:
+        """
+        Obtains the user ID of the user.
+
+        Returns:
+            Optional[str]: A permanent unique identifying string or
+            :data:`None`. If the email address was set explicitly, this will
+            return :data:`None`.
+        """
+        ...
+    def auth_domain(self) -> str:
+        """
+        Obtains the user's authentication domain.
+
+        Returns:
+            str: The authentication domain. This method is internal and
+            should not be used by client applications.
+        """
+        ...
     def __hash__(self) -> int: ...
     def __eq__(self, other: object) -> bool: ...
     def __lt__(self, other: object) -> bool: ...
@@ -1150,8 +1298,15 @@ class TimeProperty(DateTimeProperty):
     ...
 
 class StructuredProperty(Property):
+    """
+    A Property whose value is itself an entity.
+
+    The values of the sub-entity are indexed and can be queried.
+    """
     def __init__(self, model_class: type, name: str | None = None, **kwargs) -> None: ...
-    def __getattr__(self, attrname: str): ...
+    def __getattr__(self, attrname: str):
+        """Dynamically get a subproperty."""
+        ...
     def IN(self, value: Iterable[object]) -> query_module.DisjunctionNode | query_module.FalseNode: ...  # type: ignore[override]
 
 class LocalStructuredProperty(BlobProperty):
@@ -1185,6 +1340,16 @@ class LocalStructuredProperty(BlobProperty):
     def __init__(self, model_class: type[Model], **kwargs) -> None: ...
 
 class GenericProperty(Property):
+    """
+    A Property whose value can be (almost) any basic type.
+    This is mainly used for Expando and for orphans (values present in
+    Cloud Datastore but not represented in the Model subclass) but can
+    also be used explicitly for properties with dynamically-typed
+    values.
+
+    This supports compressed=True, which is only effective for str
+    values (not for unicode), and implies indexed=False.
+    """
     def __init__(self, name: str | None = None, compressed: bool = False, **kwargs) -> None: ...
 
 class ComputedProperty(GenericProperty):
@@ -1222,7 +1387,16 @@ class ComputedProperty(GenericProperty):
         indexed: bool | None = None,
         repeated: bool | None = None,
         verbose_name: str | None = None,
-    ) -> None: ...
+    ) -> None:
+        """
+        Constructor.
+
+        Args:
+
+        func: A function that takes one argument, the model instance, and
+            returns a calculated value.
+        """
+        ...
 
 class MetaModel(type):
     """
@@ -1560,7 +1734,40 @@ class Model(_NotEqualMixin, metaclass=MetaModel):
         max_memcache_items: int | None = None,
         force_writes: bool | None = None,
         _options=None,
-    ) -> tuple[key_module.Key, key_module.Key]: ...
+    ) -> tuple[key_module.Key, key_module.Key]:
+        """
+        Allocates a range of key IDs for this model class.
+
+        Args:
+            size (int): Number of IDs to allocate. Must be specified.
+            max (int): Maximum ID to allocated. This feature is no longer
+                supported. You must always specify ``size``.
+            parent (key.Key): Parent key for which the IDs will be allocated.
+            retries (int): Number of times to retry this operation in the case
+                of transient server errors. Operation will potentially be tried
+                up to ``retries`` + 1 times. Set to ``0`` to try operation only
+                once, with no retries.
+            timeout (float): Override the gRPC timeout, in seconds.
+            deadline (float): DEPRECATED: Synonym for ``timeout``.
+            use_cache (bool): Specifies whether to store entities in in-process
+                cache; overrides in-process cache policy for this operation.
+            use_global_cache (bool): Specifies whether to store entities in
+                global cache; overrides global cache policy for this operation.
+            use_datastore (bool): Specifies whether to store entities in
+                Datastore; overrides Datastore policy for this operation.
+            global_cache_timeout (int): Maximum lifetime for entities in global
+                cache; overrides global cache timeout policy for this
+                operation.
+            use_memcache (bool): DEPRECATED: Synonym for ``use_global_cache``.
+            memcache_timeout (int): DEPRECATED: Synonym for
+                ``global_cache_timeout``.
+            max_memcache_items (int): No longer supported.
+            force_writes (bool): No longer supported.
+
+        Returns:
+            tuple(key.Key): Keys for the newly allocated IDs.
+        """
+        ...
     @classmethod
     def allocate_ids_async(
         cls: type[Model],
@@ -1579,7 +1786,41 @@ class Model(_NotEqualMixin, metaclass=MetaModel):
         max_memcache_items: int | None = None,
         force_writes: bool | None = None,
         _options=None,
-    ) -> tasklets_module.Future: ...
+    ) -> tasklets_module.Future:
+        """
+        Allocates a range of key IDs for this model class.
+
+        Args:
+            size (int): Number of IDs to allocate. Must be specified.
+            max (int): Maximum ID to allocated. This feature is no longer
+                supported. You must always specify ``size``.
+            parent (key.Key): Parent key for which the IDs will be allocated.
+            retries (int): Number of times to retry this operation in the case
+                of transient server errors. Operation will potentially be tried
+                up to ``retries`` + 1 times. Set to ``0`` to try operation only
+                once, with no retries.
+            timeout (float): Override the gRPC timeout, in seconds.
+            deadline (float): DEPRECATED: Synonym for ``timeout``.
+            use_cache (bool): Specifies whether to store entities in in-process
+                cache; overrides in-process cache policy for this operation.
+            use_global_cache (bool): Specifies whether to store entities in
+                global cache; overrides global cache policy for this operation.
+            use_datastore (bool): Specifies whether to store entities in
+                Datastore; overrides Datastore policy for this operation.
+            global_cache_timeout (int): Maximum lifetime for entities in global
+                cache; overrides global cache timeout policy for this
+                operation.
+            use_memcache (bool): DEPRECATED: Synonym for ``use_global_cache``.
+            memcache_timeout (int): DEPRECATED: Synonym for
+                ``global_cache_timeout``.
+            max_memcache_items (int): No longer supported.
+            force_writes (bool): No longer supported.
+
+        Returns:
+            tasklets.Future: Eventual result is ``tuple(key.Key)``: Keys for
+                the newly allocated IDs.
+        """
+        ...
     @classmethod
     def get_by_id(
         cls,
@@ -1919,7 +2160,17 @@ class Model(_NotEqualMixin, metaclass=MetaModel):
         self,
         include: list[object] | tuple[object, object] | set[object] | None = None,
         exclude: list[object] | tuple[object, object] | set[object] | None = None,
-    ): ...
+    ):
+        """
+        Return a ``dict`` containing the entity's property values.
+
+        Arguments:
+            include (Optional[Union[list, tuple, set]]): Set of property names
+                to include. Default is to include all names.
+            exclude (Optional[Union[list, tuple, set]]): Set of property names
+                to exclude. Default is to not exclude any names.
+        """
+        ...
 
 class Expando(Model):
     """

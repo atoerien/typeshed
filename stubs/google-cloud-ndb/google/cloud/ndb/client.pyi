@@ -56,4 +56,51 @@ class Client:
         global_cache_policy: Callable[[key.Key], bool] | None = None,
         global_cache_timeout_policy: Callable[[key.Key], int] | None = None,
         legacy_data: bool = True,
-    ) -> Generator[context_module.Context]: ...
+    ) -> Generator[context_module.Context]:
+        """
+        Establish a context for a set of NDB calls.
+
+        This method provides a context manager which establishes the runtime
+        state for using NDB.
+
+        For example:
+
+        .. code-block:: python
+
+            from google.cloud import ndb
+
+            client = ndb.Client()
+            with client.context():
+                # Use NDB for some stuff
+                pass
+
+        Use of a context is required--NDB can only be used inside a running
+        context. The context is used to manage the connection to Google Cloud
+        Datastore, an event loop for asynchronous API calls, runtime caching
+        policy, and other essential runtime state.
+
+        Code within an asynchronous context should be single threaded.
+        Internally, a :class:`threading.local` instance is used to track the
+        current event loop.
+
+        In a web application, it is recommended that a single context be used
+        per HTTP request. This can typically be accomplished in a middleware
+        layer.
+
+        Arguments:
+            cache_policy (Optional[Callable[[key.Key], bool]]): The
+                cache policy to use in this context. See:
+                :meth:`~google.cloud.ndb.context.Context.set_cache_policy`.
+            global_cache (Optional[global_cache.GlobalCache]):
+                The global cache for this context. See:
+                :class:`~google.cloud.ndb.global_cache.GlobalCache`.
+            global_cache_policy (Optional[Callable[[key.Key], bool]]): The
+                global cache policy to use in this context. See:
+                :meth:`~google.cloud.ndb.context.Context.set_global_cache_policy`.
+            global_cache_timeout_policy (Optional[Callable[[key.Key], int]]):
+                The global cache timeout to use in this context. See:
+                :meth:`~google.cloud.ndb.context.Context.set_global_cache_timeout_policy`.
+            legacy_data (bool): Set to ``True`` (the default) to write data in
+                a way that can be read by the legacy version of NDB.
+        """
+        ...
