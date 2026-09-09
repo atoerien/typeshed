@@ -61,22 +61,7 @@ class GlobalCache(metaclass=abc.ABCMeta):
         """
         ...
     @abc.abstractmethod
-    def set(self, items, expires: Incomplete | None = ...):
-        """
-        Store entities in the cache.
-
-        Arguments:
-            items (Dict[bytes, Union[bytes, None]]): Mapping of keys to
-                serialized entities.
-            expires (Optional[float]): Number of seconds until value expires.
-
-        Returns:
-            Optional[Dict[bytes, Any]]: May return :data:`None`, or a `dict` mapping
-                keys to arbitrary results. If the result for a key is an instance of
-                `Exception`, the result will be raised as an exception in that key's
-                future.
-        """
-        ...
+    def set(self, items, expires=None): ...
     @abc.abstractmethod
     def delete(self, keys):
         """
@@ -113,23 +98,7 @@ class GlobalCache(metaclass=abc.ABCMeta):
         """
         ...
     @abc.abstractmethod
-    def compare_and_swap(self, items, expires: Incomplete | None = ...):
-        """
-        Like :meth:`set` but using an optimistic transaction.
-
-        Only keys whose values haven't changed since a preceding call to
-        :meth:`watch` will be changed.
-
-        Arguments:
-            items (Dict[bytes, Union[bytes, None]]): Mapping of keys to
-                serialized entities.
-            expires (Optional[float]): Number of seconds until value expires.
-
-        Returns:
-            Dict[bytes, bool]: A mapping of key to result. A key will have a result of
-                :data:`True` if it was changed successfully.
-        """
-        ...
+    def compare_and_swap(self, items, expires=None): ...
     @abc.abstractmethod
     def clear(self):
         """
@@ -150,27 +119,13 @@ class _InProcessGlobalCache(GlobalCache):
     """
     cache: Incomplete
     def __init__(self) -> None: ...
-    def get(self, keys):
-        """Implements :meth:`GlobalCache.get`."""
-        ...
-    def set(self, items, expires: Incomplete | None = ...) -> None:
-        """Implements :meth:`GlobalCache.set`."""
-        ...
-    def delete(self, keys) -> None:
-        """Implements :meth:`GlobalCache.delete`."""
-        ...
-    def watch(self, items) -> None:
-        """Implements :meth:`GlobalCache.watch`."""
-        ...
-    def unwatch(self, keys) -> None:
-        """Implements :meth:`GlobalCache.unwatch`."""
-        ...
-    def compare_and_swap(self, items, expires: Incomplete | None = ...):
-        """Implements :meth:`GlobalCache.compare_and_swap`."""
-        ...
-    def clear(self) -> None:
-        """Implements :meth:`GlobalCache.clear`."""
-        ...
+    def get(self, keys): ...
+    def set(self, items, expires=None) -> None: ...
+    def delete(self, keys) -> None: ...
+    def watch(self, items) -> None: ...
+    def unwatch(self, keys) -> None: ...
+    def compare_and_swap(self, items, expires=None): ...
+    def clear(self) -> None: ...
 
 class RedisCache(GlobalCache):
     """
@@ -205,71 +160,20 @@ class RedisCache(GlobalCache):
     """
     transient_errors: Incomplete
     @classmethod
-    def from_environment(cls, strict_read: bool = ..., strict_write: bool = ...) -> Self:
-        """
-        Generate a class:`RedisCache` from an environment variable.
-
-        This class method looks for the ``REDIS_CACHE_URL`` environment
-        variable and, if it is set, passes its value to ``Redis.from_url`` to
-        construct a ``Redis`` instance which is then used to instantiate a
-        ``RedisCache`` instance.
-
-        Args:
-            strict_read (bool): If :data:`False`, connection errors during read
-                operations will be logged with a warning and treated as cache misses,
-                but will not raise an exception in the application, with connection
-                errors during reads being treated as cache misses. If :data:`True`, in
-                the event of connection errors, cache operations will be retried a
-                number of times before eventually raising the connection error to the
-                application layer, if it does not resolve after retrying. Setting this
-                to :data:`True` will cause NDB operations to take longer to complete if
-                there are transient errors in the cache layer. Default: :data:`False`.
-            strict_write (bool): If :data:`False`, connection errors during write
-                operations will be logged with a warning, but will not raise an
-                exception in the application. If :data:`True`, connection errors during
-                write will be raised as exceptions in the application. Because write
-                operations involve cache invalidation, setting this to :data:`False` may
-                allow other clients to retrieve stale data from the cache. If
-                :data:`True`, in the event of connection errors, cache operations will
-                be retried a number of times before eventually raising the connection
-                error to the application layer, if it does not resolve after retrying.
-                Setting this to :data:`True` will cause NDB operations to take longer to
-                complete if there are transient errors in the cache layer.  Default:
-                :data:`True`.
-
-        Returns:
-            Optional[RedisCache]: A :class:`RedisCache` instance or
-                :data:`None`, if ``REDIS_CACHE_URL`` is not set in the
-                environment.
-        """
-        ...
+    def from_environment(cls, strict_read: bool = False, strict_write: bool = True) -> Self: ...
     redis: Incomplete
     strict_read: Incomplete
     strict_write: Incomplete
-    def __init__(self, redis, strict_read: bool = ..., strict_write: bool = ...) -> None: ...
+    def __init__(self, redis, strict_read: bool = False, strict_write: bool = True) -> None: ...
     @property
     def pipes(self): ...
-    def get(self, keys):
-        """Implements :meth:`GlobalCache.get`."""
-        ...
-    def set(self, items, expires: Incomplete | None = ...) -> None:
-        """Implements :meth:`GlobalCache.set`."""
-        ...
-    def delete(self, keys) -> None:
-        """Implements :meth:`GlobalCache.delete`."""
-        ...
-    def watch(self, items) -> None:
-        """Implements :meth:`GlobalCache.watch`."""
-        ...
-    def unwatch(self, keys) -> None:
-        """Implements :meth:`GlobalCache.watch`."""
-        ...
-    def compare_and_swap(self, items, expires: Incomplete | None = ...):
-        """Implements :meth:`GlobalCache.compare_and_swap`."""
-        ...
-    def clear(self) -> None:
-        """Implements :meth:`GlobalCache.clear`."""
-        ...
+    def get(self, keys): ...
+    def set(self, items, expires=None) -> None: ...
+    def delete(self, keys) -> None: ...
+    def watch(self, items) -> None: ...
+    def unwatch(self, keys) -> None: ...
+    def compare_and_swap(self, items, expires=None): ...
+    def clear(self) -> None: ...
 
 class MemcacheCache(GlobalCache):
     """
@@ -309,73 +213,17 @@ class MemcacheCache(GlobalCache):
 
     transient_errors: Incomplete
     @classmethod
-    def from_environment(cls, max_pool_size: int = ..., strict_read: bool = ..., strict_write: bool = ...) -> Self:
-        """
-        Generate a ``pymemcache.Client`` from an environment variable.
-
-        This class method looks for the ``MEMCACHED_HOSTS`` environment
-        variable and, if it is set, parses the value as a space delimited list of
-        hostnames, optionally with ports. For example:
-
-            "localhost"
-            "localhost:11211"
-            "1.1.1.1:11211 2.2.2.2:11211 3.3.3.3:11211"
-
-        Args:
-            max_pool_size (int): Size of connection pool to be used by client. If set to
-                ``0`` or ``1``, connection pooling will not be used. Default: ``4``
-            strict_read (bool): If :data:`False`, connection errors during read
-                operations will be logged with a warning and treated as cache misses,
-                but will not raise an exception in the application, with connection
-                errors during reads being treated as cache misses. If :data:`True`, in
-                the event of connection errors, cache operations will be retried a
-                number of times before eventually raising the connection error to the
-                application layer, if it does not resolve after retrying. Setting this
-                to :data:`True` will cause NDB operations to take longer to complete if
-                there are transient errors in the cache layer. Default: :data:`False`.
-            strict_write (bool): If :data:`False`, connection errors during write
-                operations will be logged with a warning, but will not raise an
-                exception in the application. If :data:`True`, connection errors during
-                write will be raised as exceptions in the application. Because write
-                operations involve cache invalidation, setting this to :data:`False` may
-                allow other clients to retrieve stale data from the cache. If
-                :data:`True`, in the event of connection errors, cache operations will
-                be retried a number of times before eventually raising the connection
-                error to the application layer, if it does not resolve after retrying.
-                Setting this to :data:`True` will cause NDB operations to take longer to
-                complete if there are transient errors in the cache layer. Default:
-                :data:`True`.
-
-        Returns:
-            Optional[MemcacheCache]: A :class:`MemcacheCache` instance or
-                :data:`None`, if ``MEMCACHED_HOSTS`` is not set in the
-                environment.
-        """
-        ...
+    def from_environment(cls, max_pool_size: int = 4, strict_read: bool = False, strict_write: bool = True) -> Self: ...
     client: Incomplete
     strict_read: Incomplete
     strict_write: Incomplete
-    def __init__(self, client, strict_read: bool = ..., strict_write: bool = ...) -> None: ...
+    def __init__(self, client, strict_read: bool = False, strict_write: bool = True) -> None: ...
     @property
     def caskeys(self): ...
-    def get(self, keys):
-        """Implements :meth:`GlobalCache.get`."""
-        ...
-    def set(self, items, expires: Incomplete | None = ...):
-        """Implements :meth:`GlobalCache.set`."""
-        ...
-    def delete(self, keys) -> None:
-        """Implements :meth:`GlobalCache.delete`."""
-        ...
-    def watch(self, items) -> None:
-        """Implements :meth:`GlobalCache.watch`."""
-        ...
-    def unwatch(self, keys) -> None:
-        """Implements :meth:`GlobalCache.unwatch`."""
-        ...
-    def compare_and_swap(self, items, expires: Incomplete | None = ...):
-        """Implements :meth:`GlobalCache.compare_and_swap`."""
-        ...
-    def clear(self) -> None:
-        """Implements :meth:`GlobalCache.clear`."""
-        ...
+    def get(self, keys): ...
+    def set(self, items, expires=None): ...
+    def delete(self, keys) -> None: ...
+    def watch(self, items) -> None: ...
+    def unwatch(self, keys) -> None: ...
+    def compare_and_swap(self, items, expires=None): ...
+    def clear(self) -> None: ...

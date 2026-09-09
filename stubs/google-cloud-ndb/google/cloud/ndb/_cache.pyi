@@ -70,44 +70,7 @@ class _GlobalCacheGetBatch(_GlobalCacheBatch):
         """
         Add a key to get from the cache.
 
-        Arguments:
-            key (bytes): The key to get from the cache.
-
-        Returns:
-            tasklets.Future: Eventual result will be the entity retrieved from
-                the cache (``bytes``) or ``None``.
-        """
-        ...
-    def done_callback(self, cache_call) -> None:
-        """
-        Process results of call to global cache.
-
-        If there is an exception for the cache call, distribute that to waiting
-        futures, otherwise distribute cache hits or misses to their respective
-        waiting futures.
-        """
-        ...
-    def make_call(self):
-        """Call :method:`GlobalCache.get`."""
-        ...
-    def future_info(self, key):
-        """Generate info string for Future."""
-        ...
-
-def global_set(key, value, expires: Incomplete | None = ..., read: bool = ...):
-    """
-    Store entity in the global cache.
-
-    Args:
-        key (bytes): The key to save.
-        value (bytes): The entity to save.
-        expires (Optional[float]): Number of seconds until value expires.
-        read (bool): Indicates if being set in a read (lookup) context.
-
-    Returns:
-        tasklets.Future: Eventual result will be ``None``.
-    """
-    ...
+def global_set(key, value, expires=None, read: bool = False): ...
 
 class _GlobalCacheSetBatch(_GlobalCacheBatch):
     """Batch for global cache set requests."""

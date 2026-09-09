@@ -540,211 +540,70 @@ class Key:
         ...
     def get(
         self,
-        read_consistency: Incomplete | None = ...,
-        read_policy: Incomplete | None = ...,
-        transaction: Incomplete | None = ...,
-        retries: Incomplete | None = ...,
-        timeout: Incomplete | None = ...,
-        deadline: Incomplete | None = ...,
-        use_cache: Incomplete | None = ...,
-        use_global_cache: Incomplete | None = ...,
-        use_datastore: Incomplete | None = ...,
-        global_cache_timeout: Incomplete | None = ...,
-        use_memcache: Incomplete | None = ...,
-        memcache_timeout: Incomplete | None = ...,
-        max_memcache_items: Incomplete | None = ...,
-        force_writes: Incomplete | None = ...,
-        _options: Incomplete | None = ...,
-    ):
-        """
-        Synchronously get the entity for this key.
-
-        Returns the retrieved :class:`.Model` or :data:`None` if there is no
-        such entity.
-
-        Args:
-            read_consistency: Set this to ``ndb.EVENTUAL`` if, instead of
-                waiting for the Datastore to finish applying changes to all
-                returned results, you wish to get possibly-not-current results
-                faster. You can't do this if using a transaction.
-            transaction (bytes): Any results returned will be consistent with
-                the Datastore state represented by this transaction id.
-                Defaults to the currently running transaction. Cannot be used
-                with ``read_consistency=ndb.EVENTUAL``.
-            retries (int): Number of times to retry this operation in the case
-                of transient server errors. Operation will potentially be tried
-                up to ``retries`` + 1 times. Set to ``0`` to try operation only
-                once, with no retries.
-            timeout (float): Override the gRPC timeout, in seconds.
-            deadline (float): DEPRECATED: Synonym for ``timeout``.
-            use_cache (bool): Specifies whether to store entities in in-process
-                cache; overrides in-process cache policy for this operation.
-            use_global_cache (bool): Specifies whether to store entities in
-                global cache; overrides global cache policy for this operation.
-            use_datastore (bool): Specifies whether to store entities in
-                Datastore; overrides Datastore policy for this operation.
-            global_cache_timeout (int): Maximum lifetime for entities in global
-                cache; overrides global cache timeout policy for this
-                operation.
-            use_memcache (bool): DEPRECATED: Synonym for ``use_global_cache``.
-            memcache_timeout (int): DEPRECATED: Synonym for
-                ``global_cache_timeout``.
-            max_memcache_items (int): No longer supported.
-            read_policy: DEPRECATED: Synonym for ``read_consistency``.
-            force_writes (bool): No longer supported.
-
-        Returns:
-            Union[:class:`.Model`, :data:`None`]
-        """
-        ...
+        read_consistency=None,
+        read_policy=None,
+        transaction=None,
+        retries=None,
+        timeout=None,
+        deadline=None,
+        use_cache=None,
+        use_global_cache=None,
+        use_datastore=None,
+        global_cache_timeout=None,
+        use_memcache=None,
+        memcache_timeout=None,
+        max_memcache_items=None,
+        force_writes=None,
+        _options=None,
+    ): ...
     def get_async(
         self,
-        read_consistency: Incomplete | None = ...,
-        read_policy: Incomplete | None = ...,
-        transaction: Incomplete | None = ...,
-        retries: Incomplete | None = ...,
-        timeout: Incomplete | None = ...,
-        deadline: Incomplete | None = ...,
-        use_cache: Incomplete | None = ...,
-        use_global_cache: Incomplete | None = ...,
-        use_datastore: Incomplete | None = ...,
-        global_cache_timeout: Incomplete | None = ...,
-        use_memcache: Incomplete | None = ...,
-        memcache_timeout: Incomplete | None = ...,
-        max_memcache_items: Incomplete | None = ...,
-        force_writes: Incomplete | None = ...,
-        _options: Incomplete | None = ...,
-    ):
-        """
-        Asynchronously get the entity for this key.
-
-        The result for the returned future will either be the retrieved
-        :class:`.Model` or :data:`None` if there is no such entity.
-
-        Args:
-            read_consistency: Set this to ``ndb.EVENTUAL`` if, instead of
-                waiting for the Datastore to finish applying changes to all
-                returned results, you wish to get possibly-not-current results
-                faster. You can't do this if using a transaction.
-            transaction (bytes): Any results returned will be consistent with
-                the Datastore state represented by this transaction id.
-                Defaults to the currently running transaction. Cannot be used
-                with ``read_consistency=ndb.EVENTUAL``.
-            retries (int): Number of times to retry this operation in the case
-                of transient server errors. Operation will potentially be tried
-                up to ``retries`` + 1 times. Set to ``0`` to try operation only
-                once, with no retries.
-            timeout (float): Override the gRPC timeout, in seconds.
-            deadline (float): DEPRECATED: Synonym for ``timeout``.
-            use_cache (bool): Specifies whether to store entities in in-process
-                cache; overrides in-process cache policy for this operation.
-            use_global_cache (bool): Specifies whether to store entities in
-                global cache; overrides global cache policy for this operation.
-            use_datastore (bool): Specifies whether to store entities in
-                Datastore; overrides Datastore policy for this operation.
-            global_cache_timeout (int): Maximum lifetime for entities in global
-                cache; overrides global cache timeout policy for this
-                operation.
-            use_memcache (bool): DEPRECATED: Synonym for ``use_global_cache``.
-            memcache_timeout (int): DEPRECATED: Synonym for
-                ``global_cache_timeout``.
-            max_memcache_items (int): No longer supported.
-            read_policy: DEPRECATED: Synonym for ``read_consistency``.
-            force_writes (bool): No longer supported.
-
-        Returns:
-            :class:`~google.cloud.ndb.tasklets.Future`
-        """
-        ...
+        read_consistency=None,
+        read_policy=None,
+        transaction=None,
+        retries=None,
+        timeout=None,
+        deadline=None,
+        use_cache=None,
+        use_global_cache=None,
+        use_datastore=None,
+        global_cache_timeout=None,
+        use_memcache=None,
+        memcache_timeout=None,
+        max_memcache_items=None,
+        force_writes=None,
+        _options=None,
+    ): ...
     def delete(
         self,
-        retries: Incomplete | None = ...,
-        timeout: Incomplete | None = ...,
-        deadline: Incomplete | None = ...,
-        use_cache: Incomplete | None = ...,
-        use_global_cache: Incomplete | None = ...,
-        use_datastore: Incomplete | None = ...,
-        global_cache_timeout: Incomplete | None = ...,
-        use_memcache: Incomplete | None = ...,
-        memcache_timeout: Incomplete | None = ...,
-        max_memcache_items: Incomplete | None = ...,
-        force_writes: Incomplete | None = ...,
-        _options: Incomplete | None = ...,
-    ):
-        """
-        Synchronously delete the entity for this key.
-
-        This is a no-op if no such entity exists.
-
-        Note:
-            If in a transaction, the entity can only be deleted at transaction
-            commit time. In that case, this function will schedule the entity
-            to be deleted as part of the transaction and will return
-            immediately, which is effectively the same as calling
-            :meth:`delete_async` and ignoring the returned future. If not in a
-            transaction, this function will block synchronously until the
-            entity is deleted, as one would expect.
-
-        Args:
-            timeout (float): Override the gRPC timeout, in seconds.
-            deadline (float): DEPRECATED: Synonym for ``timeout``.
-            use_cache (bool): Specifies whether to store entities in in-process
-                cache; overrides in-process cache policy for this operation.
-            use_global_cache (bool): Specifies whether to store entities in
-                global cache; overrides global cache policy for this operation.
-            use_datastore (bool): Specifies whether to store entities in
-                Datastore; overrides Datastore policy for this operation.
-            global_cache_timeout (int): Maximum lifetime for entities in global
-                cache; overrides global cache timeout policy for this
-                operation.
-            use_memcache (bool): DEPRECATED: Synonym for ``use_global_cache``.
-            memcache_timeout (int): DEPRECATED: Synonym for
-                ``global_cache_timeout``.
-            max_memcache_items (int): No longer supported.
-            force_writes (bool): No longer supported.
-        """
-        ...
+        retries=None,
+        timeout=None,
+        deadline=None,
+        use_cache=None,
+        use_global_cache=None,
+        use_datastore=None,
+        global_cache_timeout=None,
+        use_memcache=None,
+        memcache_timeout=None,
+        max_memcache_items=None,
+        force_writes=None,
+        _options=None,
+    ): ...
     def delete_async(
         self,
-        retries: Incomplete | None = ...,
-        timeout: Incomplete | None = ...,
-        deadline: Incomplete | None = ...,
-        use_cache: Incomplete | None = ...,
-        use_global_cache: Incomplete | None = ...,
-        use_datastore: Incomplete | None = ...,
-        global_cache_timeout: Incomplete | None = ...,
-        use_memcache: Incomplete | None = ...,
-        memcache_timeout: Incomplete | None = ...,
-        max_memcache_items: Incomplete | None = ...,
-        force_writes: Incomplete | None = ...,
-        _options: Incomplete | None = ...,
-    ):
-        """
-        Schedule deletion of the entity for this key.
-
-        The result of the returned future becomes available once the
-        deletion is complete. In all cases the future's result is :data:`None`
-        (i.e. there is no way to tell whether the entity existed or not).
-
-        Args:
-            timeout (float): Override the gRPC timeout, in seconds.
-            deadline (float): DEPRECATED: Synonym for ``timeout``.
-            use_cache (bool): Specifies whether to store entities in in-process
-                cache; overrides in-process cache policy for this operation.
-            use_global_cache (bool): Specifies whether to store entities in
-                global cache; overrides global cache policy for this operation.
-            use_datastore (bool): Specifies whether to store entities in
-                Datastore; overrides Datastore policy for this operation.
-            global_cache_timeout (int): Maximum lifetime for entities in global
-                cache; overrides global cache timeout policy for this
-                operation.
-            use_memcache (bool): DEPRECATED: Synonym for ``use_global_cache``.
-            memcache_timeout (int): DEPRECATED: Synonym for
-                ``global_cache_timeout``.
-            max_memcache_items (int): No longer supported.
-            force_writes (bool): No longer supported.
-        """
-        ...
+        retries=None,
+        timeout=None,
+        deadline=None,
+        use_cache=None,
+        use_global_cache=None,
+        use_datastore=None,
+        global_cache_timeout=None,
+        use_memcache=None,
+        memcache_timeout=None,
+        max_memcache_items=None,
+        force_writes=None,
+        _options=None,
+    ): ...
     @classmethod
     def from_old_key(cls, old_key) -> None:
         """

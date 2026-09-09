@@ -537,15 +537,15 @@ class Property(ModelAttribute):
     """
     def __init__(
         self,
-        name: str | None = ...,
-        indexed: bool | None = ...,
-        repeated: bool | None = ...,
-        required: bool | None = ...,
+        name: str | None = None,
+        indexed: bool | None = None,
+        repeated: bool | None = None,
+        required: bool | None = None,
         default: object = None,
-        choices: Iterable[object] | None = ...,
-        validator: Callable[[Property, Any], object] | None = ...,
-        verbose_name: str | None = ...,
-        write_empty_list: bool | None = ...,
+        choices: Iterable[object] | None = None,
+        validator: Callable[[Property, Any], object] | None = None,
+        verbose_name: str | None = None,
+        write_empty_list: bool | None = None,
     ) -> None: ...
     def __eq__(self, value: object) -> query_module.FilterNode:
         """FilterNode: Represents the ``=`` comparison."""
@@ -663,73 +663,16 @@ class ModelKey(Property):
     .. automethod:: _validate
     """
     def __init__(self) -> None: ...
-    def __get__(self, entity: Model, unused_cls: type[Model] | None = ...) -> key_module.Key | list[key_module.Key] | None:
-        """
-        Descriptor protocol: get the value from the entity.
-
-        Args:
-            entity (Model): An entity to get a value from.
-            unused_cls (type): The class that owns this instance.
-        """
-        ...
+    def __get__(self, entity: Model, unused_cls: type[Model] | None = None) -> key_module.Key | list[key_module.Key] | None: ...
 
 class BooleanProperty(Property):
-    """
-    A property that contains values of type bool.
-
-    .. automethod:: _validate
-    """
-    def __get__(self, entity: Model, unused_cls: type[Model] | None = ...) -> bool | list[bool] | None:
-        """
-        Descriptor protocol: get the value from the entity.
-
-        Args:
-            entity (Model): An entity to get a value from.
-            unused_cls (type): The class that owns this instance.
-        """
-        ...
+    def __get__(self, entity: Model, unused_cls: type[Model] | None = None) -> bool | list[bool] | None: ...
 
 class IntegerProperty(Property):
-    """
-    A property that contains values of type integer.
-
-    .. note::
-
-        If a value is a :class:`bool`, it will be coerced to ``0`` (for
-        :data:`False`) or ``1`` (for :data:`True`).
-
-    .. automethod:: _validate
-    """
-    def __get__(self, entity: Model, unused_cls: type[Model] | None = ...) -> int | list[int] | None:
-        """
-        Descriptor protocol: get the value from the entity.
-
-        Args:
-            entity (Model): An entity to get a value from.
-            unused_cls (type): The class that owns this instance.
-        """
-        ...
+    def __get__(self, entity: Model, unused_cls: type[Model] | None = None) -> int | list[int] | None: ...
 
 class FloatProperty(Property):
-    """
-    A property that contains values of type float.
-
-    .. note::
-
-        If a value is a :class:`bool` or :class:`int`, it will be
-        coerced to a floating point value.
-
-    .. automethod:: _validate
-    """
-    def __get__(self, entity: Model, unused_cls: type[Model] | None = ...) -> float | list[float] | None:
-        """
-        Descriptor protocol: get the value from the entity.
-
-        Args:
-            entity (Model): An entity to get a value from.
-            unused_cls (type): The class that owns this instance.
-        """
-        ...
+    def __get__(self, entity: Model, unused_cls: type[Model] | None = None) -> float | list[float] | None: ...
 
 class _CompressedValue(bytes):
     """
@@ -781,26 +724,18 @@ class BlobProperty(Property):
     """
     def __init__(
         self,
-        name: str | None = ...,
-        compressed: bool | None = ...,
-        indexed: bool | None = ...,
-        repeated: bool | None = ...,
-        required: bool | None = ...,
-        default: bytes | None = ...,
-        choices: Iterable[bytes] | None = ...,
-        validator: Callable[[Property, Any], object] | None = ...,
-        verbose_name: str | None = ...,
-        write_empty_list: bool | None = ...,
+        name: str | None = None,
+        compressed: bool | None = None,
+        indexed: bool | None = None,
+        repeated: bool | None = None,
+        required: bool | None = None,
+        default: bytes | None = None,
+        choices: Iterable[bytes] | None = None,
+        validator: Callable[[Property, Any], object] | None = None,
+        verbose_name: str | None = None,
+        write_empty_list: bool | None = None,
     ) -> None: ...
-    def __get__(self, entity: Model, unused_cls: type[Model] | None = ...) -> bytes | list[bytes] | None:
-        """
-        Descriptor protocol: get the value from the entity.
-
-        Args:
-            entity (Model): An entity to get a value from.
-            unused_cls (type): The class that owns this instance.
-        """
-        ...
+    def __get__(self, entity: Model, unused_cls: type[Model] | None = None) -> bytes | list[bytes] | None: ...
 
 class CompressedTextProperty(BlobProperty):
     """
@@ -859,15 +794,7 @@ class TextProperty(Property):
     """
     def __new__(cls, *args, **kwargs): ...
     def __init__(self, *args, **kwargs) -> None: ...
-    def __get__(self, entity: Model, unused_cls: type[Model] | None = ...) -> str | list[str] | None:
-        """
-        Descriptor protocol: get the value from the entity.
-
-        Args:
-            entity (Model): An entity to get a value from.
-            unused_cls (type): The class that owns this instance.
-        """
-        ...
+    def __get__(self, entity: Model, unused_cls: type[Model] | None = None) -> str | list[str] | None: ...
 
 class StringProperty(TextProperty):
     """
@@ -941,100 +868,25 @@ class JsonProperty(BlobProperty):
     """
     def __init__(
         self,
-        name: str | None = ...,
-        compressed: bool | None = ...,
-        json_type: type | None = ...,
-        indexed: bool | None = ...,
-        repeated: bool | None = ...,
-        required: bool | None = ...,
+        name: str | None = None,
+        compressed: bool | None = None,
+        json_type: type | None = None,
+        indexed: bool | None = None,
+        repeated: bool | None = None,
+        required: bool | None = None,
         default: object = None,
-        choices: Iterable[object] | None = ...,
-        validator: Callable[[Property, Any], object] | None = ...,
-        verbose_name: str | None = ...,
-        write_empty_list: bool | None = ...,
+        choices: Iterable[object] | None = None,
+        validator: Callable[[Property, Any], object] | None = None,
+        verbose_name: str | None = None,
+        write_empty_list: bool | None = None,
     ) -> None: ...
 
 class User:
-    """
-    Provides the email address, nickname, and ID for a Google Accounts user.
-
-    .. note::
-
-        This class is a port of ``google.appengine.api.users.User``.
-        In the (legacy) Google App Engine standard environment, this
-        constructor relied on several environment variables to provide a
-        fallback for inputs. In particular:
-
-        * ``AUTH_DOMAIN`` for the ``_auth_domain`` argument
-        * ``USER_EMAIL`` for the ``email`` argument
-        * ``USER_ID`` for the ``_user_id`` argument
-        * ``FEDERATED_IDENTITY`` for the (now removed) ``federated_identity``
-          argument
-        * ``FEDERATED_PROVIDER`` for the (now removed) ``federated_provider``
-          argument
-
-        However in the gVisor Google App Engine runtime (e.g. Python 3.7),
-        none of these environment variables will be populated.
-
-    .. note::
-
-        Previous versions of the Google Cloud Datastore API had an explicit
-        ``UserValue`` field. However, the ``google.datastore.v1`` API returns
-        previously stored user values as an ``Entity`` with the meaning set to
-        ``ENTITY_USER=20``.
-
-    .. warning::
-
-        The ``federated_identity`` and ``federated_provider`` are
-        decommissioned and have been removed from the constructor. Additionally
-        ``_strict_mode`` has been removed from the constructor and the
-        ``federated_identity()`` and ``federated_provider()`` methods have been
-        removed from this class.
-
-    Args:
-        email (str): The user's email address.
-        _auth_domain (str): The auth domain for the current application.
-        _user_id (str): The user ID.
-
-    Raises:
-        ValueError: If the ``_auth_domain`` is not passed in.
-        UserNotFoundError: If ``email`` is empty.
-    """
-    def __init__(self, email: str | None = ..., _auth_domain: str | None = ..., _user_id: str | None = ...) -> None: ...
-    def nickname(self) -> str:
-        """
-        The nickname for this user.
-
-        A nickname is a human-readable string that uniquely identifies a Google
-        user with respect to this application, akin to a username. For some
-        users, this nickname is an email address or part of the email address.
-
-        Returns:
-            str: The nickname of the user.
-        """
-        ...
-    def email(self):
-        """Returns the user's email address."""
-        ...
-    def user_id(self) -> str | None:
-        """
-        Obtains the user ID of the user.
-
-        Returns:
-            Optional[str]: A permanent unique identifying string or
-            :data:`None`. If the email address was set explicitly, this will
-            return :data:`None`.
-        """
-        ...
-    def auth_domain(self) -> str:
-        """
-        Obtains the user's authentication domain.
-
-        Returns:
-            str: The authentication domain. This method is internal and
-            should not be used by client applications.
-        """
-        ...
+    def __init__(self, email: str | None = None, _auth_domain: str | None = None, _user_id: str | None = None) -> None: ...
+    def nickname(self) -> str: ...
+    def email(self): ...
+    def user_id(self) -> str | None: ...
+    def auth_domain(self) -> str: ...
     def __hash__(self) -> int: ...
     def __eq__(self, other: object) -> bool: ...
     def __lt__(self, other: object) -> bool: ...
@@ -1119,17 +971,17 @@ class UserProperty(Property):
     """
     def __init__(
         self,
-        name: str | None = ...,
-        auto_current_user: bool | None = ...,
-        auto_current_user_add: bool | None = ...,
-        indexed: bool | None = ...,
-        repeated: bool | None = ...,
-        required: bool | None = ...,
-        default: bytes | None = ...,
-        choices: Iterable[bytes] | None = ...,
-        validator: Callable[[Property, Any], object] | None = ...,
-        verbose_name: str | None = ...,
-        write_empty_list: bool | None = ...,
+        name: str | None = None,
+        auto_current_user: bool | None = None,
+        auto_current_user_add: bool | None = None,
+        indexed: bool | None = None,
+        repeated: bool | None = None,
+        required: bool | None = None,
+        default: bytes | None = None,
+        choices: Iterable[bytes] | None = None,
+        validator: Callable[[Property, Any], object] | None = None,
+        verbose_name: str | None = None,
+        write_empty_list: bool | None = None,
     ) -> None: ...
 
 class KeyProperty(Property):
@@ -1188,16 +1040,16 @@ class KeyProperty(Property):
     """
     def __init__(
         self,
-        name: str | None = ...,
-        kind: type[Model] | str | None = ...,
-        indexed: bool | None = ...,
-        repeated: bool | None = ...,
-        required: bool | None = ...,
-        default: key_module.Key | None = ...,
-        choices: Iterable[key_module.Key] | None = ...,
-        validator: Callable[[Property, key_module.Key], key_module.Key] | None = ...,
-        verbose_name: str | None = ...,
-        write_empty_list: bool | None = ...,
+        name: str | None = None,
+        kind: type[Model] | str | None = None,
+        indexed: bool | None = None,
+        repeated: bool | None = None,
+        required: bool | None = None,
+        default: key_module.Key | None = None,
+        choices: Iterable[key_module.Key] | None = None,
+        validator: Callable[[Property, key_module.Key], key_module.Key] | None = None,
+        verbose_name: str | None = None,
+        write_empty_list: bool | None = None,
     ) -> None: ...
 
 class BlobKeyProperty(Property):
@@ -1264,18 +1116,18 @@ class DateTimeProperty(Property):
     """
     def __init__(
         self,
-        name: str | None = ...,
-        auto_now: bool | None = ...,
-        auto_now_add: bool | None = ...,
-        tzinfo: datetime.tzinfo | None = ...,
-        indexed: bool | None = ...,
-        repeated: bool | None = ...,
-        required: bool | None = ...,
-        default: datetime.datetime | None = ...,
-        choices: Iterable[datetime.datetime] | None = ...,
-        validator: Callable[[Property, Any], object] | None = ...,
-        verbose_name: str | None = ...,
-        write_empty_list: bool | None = ...,
+        name: str | None = None,
+        auto_now: bool | None = None,
+        auto_now_add: bool | None = None,
+        tzinfo: datetime.tzinfo | None = None,
+        indexed: bool | None = None,
+        repeated: bool | None = None,
+        required: bool | None = None,
+        default: datetime.datetime | None = None,
+        choices: Iterable[datetime.datetime] | None = None,
+        validator: Callable[[Property, Any], object] | None = None,
+        verbose_name: str | None = None,
+        write_empty_list: bool | None = None,
     ) -> None: ...
 
 class DateProperty(DateTimeProperty):
@@ -1298,15 +1150,8 @@ class TimeProperty(DateTimeProperty):
     ...
 
 class StructuredProperty(Property):
-    """
-    A Property whose value is itself an entity.
-
-    The values of the sub-entity are indexed and can be queried.
-    """
-    def __init__(self, model_class: type, name: str | None = ..., **kwargs) -> None: ...
-    def __getattr__(self, attrname: str):
-        """Dynamically get a subproperty."""
-        ...
+    def __init__(self, model_class: type, name: str | None = None, **kwargs) -> None: ...
+    def __getattr__(self, attrname: str): ...
     def IN(self, value: Iterable[object]) -> query_module.DisjunctionNode | query_module.FalseNode: ...  # type: ignore[override]
 
 class LocalStructuredProperty(BlobProperty):
@@ -1340,17 +1185,7 @@ class LocalStructuredProperty(BlobProperty):
     def __init__(self, model_class: type[Model], **kwargs) -> None: ...
 
 class GenericProperty(Property):
-    """
-    A Property whose value can be (almost) any basic type.
-    This is mainly used for Expando and for orphans (values present in
-    Cloud Datastore but not represented in the Model subclass) but can
-    also be used explicitly for properties with dynamically-typed
-    values.
-
-    This supports compressed=True, which is only effective for str
-    values (not for unicode), and implies indexed=False.
-    """
-    def __init__(self, name: str | None = ..., compressed: bool = ..., **kwargs) -> None: ...
+    def __init__(self, name: str | None = None, compressed: bool = False, **kwargs) -> None: ...
 
 class ComputedProperty(GenericProperty):
     """
@@ -1383,20 +1218,11 @@ class ComputedProperty(GenericProperty):
     def __init__(
         self,
         func: Callable[[Model], object],
-        name: str | None = ...,
-        indexed: bool | None = ...,
-        repeated: bool | None = ...,
-        verbose_name: str | None = ...,
-    ) -> None:
-        """
-        Constructor.
-
-        Args:
-
-        func: A function that takes one argument, the model instance, and
-            returns a calculated value.
-        """
-        ...
+        name: str | None = None,
+        indexed: bool | None = None,
+        repeated: bool | None = None,
+        verbose_name: str | None = None,
+    ) -> None: ...
 
 class MetaModel(type):
     """
@@ -1719,131 +1545,64 @@ class Model(_NotEqualMixin, metaclass=MetaModel):
     @classmethod
     def allocate_ids(
         cls: type[Model],
-        size: int | None = ...,
-        max: int | None = ...,
-        parent: key_module.Key | None = ...,
-        retries: int | None = ...,
-        timeout: float | None = ...,
-        deadline: float | None = ...,
-        use_cache: bool | None = ...,
-        use_global_cache: bool | None = ...,
-        global_cache_timeout: int | None = ...,
-        use_datastore: bool | None = ...,
-        use_memcache: bool | None = ...,
-        memcache_timeout: int | None = ...,
-        max_memcache_items: int | None = ...,
-        force_writes: bool | None = ...,
-        _options=...,
-    ) -> tuple[key_module.Key, key_module.Key]:
-        """
-        Allocates a range of key IDs for this model class.
-
-        Args:
-            size (int): Number of IDs to allocate. Must be specified.
-            max (int): Maximum ID to allocated. This feature is no longer
-                supported. You must always specify ``size``.
-            parent (key.Key): Parent key for which the IDs will be allocated.
-            retries (int): Number of times to retry this operation in the case
-                of transient server errors. Operation will potentially be tried
-                up to ``retries`` + 1 times. Set to ``0`` to try operation only
-                once, with no retries.
-            timeout (float): Override the gRPC timeout, in seconds.
-            deadline (float): DEPRECATED: Synonym for ``timeout``.
-            use_cache (bool): Specifies whether to store entities in in-process
-                cache; overrides in-process cache policy for this operation.
-            use_global_cache (bool): Specifies whether to store entities in
-                global cache; overrides global cache policy for this operation.
-            use_datastore (bool): Specifies whether to store entities in
-                Datastore; overrides Datastore policy for this operation.
-            global_cache_timeout (int): Maximum lifetime for entities in global
-                cache; overrides global cache timeout policy for this
-                operation.
-            use_memcache (bool): DEPRECATED: Synonym for ``use_global_cache``.
-            memcache_timeout (int): DEPRECATED: Synonym for
-                ``global_cache_timeout``.
-            max_memcache_items (int): No longer supported.
-            force_writes (bool): No longer supported.
-
-        Returns:
-            tuple(key.Key): Keys for the newly allocated IDs.
-        """
-        ...
+        size: int | None = None,
+        max: int | None = None,
+        parent: key_module.Key | None = None,
+        retries: int | None = None,
+        timeout: float | None = None,
+        deadline: float | None = None,
+        use_cache: bool | None = None,
+        use_global_cache: bool | None = None,
+        global_cache_timeout: int | None = None,
+        use_datastore: bool | None = None,
+        use_memcache: bool | None = None,
+        memcache_timeout: int | None = None,
+        max_memcache_items: int | None = None,
+        force_writes: bool | None = None,
+        _options=None,
+    ) -> tuple[key_module.Key, key_module.Key]: ...
     @classmethod
     def allocate_ids_async(
         cls: type[Model],
-        size: int | None = ...,
-        max: int | None = ...,
-        parent: key_module.Key | None = ...,
-        retries: int | None = ...,
-        timeout: float | None = ...,
-        deadline: float | None = ...,
-        use_cache: bool | None = ...,
-        use_global_cache: bool | None = ...,
-        global_cache_timeout: int | None = ...,
-        use_datastore: bool | None = ...,
-        use_memcache: bool | None = ...,
-        memcache_timeout: int | None = ...,
-        max_memcache_items: int | None = ...,
-        force_writes: bool | None = ...,
-        _options=...,
-    ) -> tasklets_module.Future:
-        """
-        Allocates a range of key IDs for this model class.
-
-        Args:
-            size (int): Number of IDs to allocate. Must be specified.
-            max (int): Maximum ID to allocated. This feature is no longer
-                supported. You must always specify ``size``.
-            parent (key.Key): Parent key for which the IDs will be allocated.
-            retries (int): Number of times to retry this operation in the case
-                of transient server errors. Operation will potentially be tried
-                up to ``retries`` + 1 times. Set to ``0`` to try operation only
-                once, with no retries.
-            timeout (float): Override the gRPC timeout, in seconds.
-            deadline (float): DEPRECATED: Synonym for ``timeout``.
-            use_cache (bool): Specifies whether to store entities in in-process
-                cache; overrides in-process cache policy for this operation.
-            use_global_cache (bool): Specifies whether to store entities in
-                global cache; overrides global cache policy for this operation.
-            use_datastore (bool): Specifies whether to store entities in
-                Datastore; overrides Datastore policy for this operation.
-            global_cache_timeout (int): Maximum lifetime for entities in global
-                cache; overrides global cache timeout policy for this
-                operation.
-            use_memcache (bool): DEPRECATED: Synonym for ``use_global_cache``.
-            memcache_timeout (int): DEPRECATED: Synonym for
-                ``global_cache_timeout``.
-            max_memcache_items (int): No longer supported.
-            force_writes (bool): No longer supported.
-
-        Returns:
-            tasklets.Future: Eventual result is ``tuple(key.Key)``: Keys for
-                the newly allocated IDs.
-        """
-        ...
+        size: int | None = None,
+        max: int | None = None,
+        parent: key_module.Key | None = None,
+        retries: int | None = None,
+        timeout: float | None = None,
+        deadline: float | None = None,
+        use_cache: bool | None = None,
+        use_global_cache: bool | None = None,
+        global_cache_timeout: int | None = None,
+        use_datastore: bool | None = None,
+        use_memcache: bool | None = None,
+        memcache_timeout: int | None = None,
+        max_memcache_items: int | None = None,
+        force_writes: bool | None = None,
+        _options=None,
+    ) -> tasklets_module.Future: ...
     @classmethod
     def get_by_id(
         cls,
         id: int | str | None,
-        parent: key_module.Key | None = ...,
-        namespace: str | None = ...,
-        project: str | None = ...,
-        app: str | None = ...,
-        read_consistency: Literal["EVENTUAL"] | None = ...,
-        read_policy: Literal["EVENTUAL"] | None = ...,
-        transaction: bytes | None = ...,
-        retries: int | None = ...,
-        timeout: float | None = ...,
-        deadline: float | None = ...,
-        use_cache: bool | None = ...,
-        use_global_cache: bool | None = ...,
-        global_cache_timeout: int | None = ...,
-        use_datastore: bool | None = ...,
-        use_memcache: bool | None = ...,
-        memcache_timeout: int | None = ...,
-        max_memcache_items: int | None = ...,
-        force_writes: bool | None = ...,
-        _options=...,
+        parent: key_module.Key | None = None,
+        namespace: str | None = None,
+        project: str | None = None,
+        app: str | None = None,
+        read_consistency: Literal["EVENTUAL"] | None = None,
+        read_policy: Literal["EVENTUAL"] | None = None,
+        transaction: bytes | None = None,
+        retries: int | None = None,
+        timeout: float | None = None,
+        deadline: float | None = None,
+        use_cache: bool | None = None,
+        use_global_cache: bool | None = None,
+        global_cache_timeout: int | None = None,
+        use_datastore: bool | None = None,
+        use_memcache: bool | None = None,
+        memcache_timeout: int | None = None,
+        max_memcache_items: int | None = None,
+        force_writes: bool | None = None,
+        _options=None,
         database: str | None = None,
     ) -> Self | None:
         """
@@ -1899,25 +1658,25 @@ class Model(_NotEqualMixin, metaclass=MetaModel):
     def get_by_id_async(
         cls: type[Model],
         id: int | str,
-        parent: key_module.Key | None = ...,
-        namespace: str | None = ...,
-        project: str | None = ...,
-        app: str | None = ...,
-        read_consistency: Literal["EVENTUAL"] | None = ...,
-        read_policy: Literal["EVENTUAL"] | None = ...,
-        transaction: bytes | None = ...,
-        retries: int | None = ...,
-        timeout: float | None = ...,
-        deadline: float | None = ...,
-        use_cache: bool | None = ...,
-        use_global_cache: bool | None = ...,
-        global_cache_timeout: int | None = ...,
-        use_datastore: bool | None = ...,
-        use_memcache: bool | None = ...,
-        memcache_timeout: int | None = ...,
-        max_memcache_items: int | None = ...,
-        force_writes: bool | None = ...,
-        _options=...,
+        parent: key_module.Key | None = None,
+        namespace: str | None = None,
+        project: str | None = None,
+        app: str | None = None,
+        read_consistency: Literal["EVENTUAL"] | None = None,
+        read_policy: Literal["EVENTUAL"] | None = None,
+        transaction: bytes | None = None,
+        retries: int | None = None,
+        timeout: float | None = None,
+        deadline: float | None = None,
+        use_cache: bool | None = None,
+        use_global_cache: bool | None = None,
+        global_cache_timeout: int | None = None,
+        use_datastore: bool | None = None,
+        use_memcache: bool | None = None,
+        memcache_timeout: int | None = None,
+        max_memcache_items: int | None = None,
+        force_writes: bool | None = None,
+        _options=None,
         database: str | None = None,
     ) -> tasklets_module.Future:
         """
@@ -1974,25 +1733,25 @@ class Model(_NotEqualMixin, metaclass=MetaModel):
     def get_or_insert(
         cls,
         _name: str,
-        parent: key_module.Key | None = ...,
-        namespace: str | None = ...,
-        project: str | None = ...,
-        app: str | None = ...,
-        read_consistency: Literal["EVENTUAL"] | None = ...,
-        read_policy: Literal["EVENTUAL"] | None = ...,
-        transaction: bytes | None = ...,
-        retries: int | None = ...,
-        timeout: float | None = ...,
-        deadline: float | None = ...,
-        use_cache: bool | None = ...,
-        use_global_cache: bool | None = ...,
-        global_cache_timeout: int | None = ...,
-        use_datastore: bool | None = ...,
-        use_memcache: bool | None = ...,
-        memcache_timeout: int | None = ...,
-        max_memcache_items: int | None = ...,
-        force_writes: bool | None = ...,
-        _options=...,
+        parent: key_module.Key | None = None,
+        namespace: str | None = None,
+        project: str | None = None,
+        app: str | None = None,
+        read_consistency: Literal["EVENTUAL"] | None = None,
+        read_policy: Literal["EVENTUAL"] | None = None,
+        transaction: bytes | None = None,
+        retries: int | None = None,
+        timeout: float | None = None,
+        deadline: float | None = None,
+        use_cache: bool | None = None,
+        use_global_cache: bool | None = None,
+        global_cache_timeout: int | None = None,
+        use_datastore: bool | None = None,
+        use_memcache: bool | None = None,
+        memcache_timeout: int | None = None,
+        max_memcache_items: int | None = None,
+        force_writes: bool | None = None,
+        _options=None,
         **kw_model_args,
     ) -> Self:
         """
@@ -2058,25 +1817,25 @@ class Model(_NotEqualMixin, metaclass=MetaModel):
     def get_or_insert_async(
         cls: type[Model],
         _name: str,
-        parent: key_module.Key | None = ...,
-        namespace: str | None = ...,
-        project: str | None = ...,
-        app: str | None = ...,
-        read_consistency: Literal["EVENTUAL"] | None = ...,
-        read_policy: Literal["EVENTUAL"] | None = ...,
-        transaction: bytes | None = ...,
-        retries: int | None = ...,
-        timeout: float | None = ...,
-        deadline: float | None = ...,
-        use_cache: bool | None = ...,
-        use_global_cache: bool | None = ...,
-        global_cache_timeout: int | None = ...,
-        use_datastore: bool | None = ...,
-        use_memcache: bool | None = ...,
-        memcache_timeout: int | None = ...,
-        max_memcache_items: int | None = ...,
-        force_writes: bool | None = ...,
-        _options=...,
+        parent: key_module.Key | None = None,
+        namespace: str | None = None,
+        project: str | None = None,
+        app: str | None = None,
+        read_consistency: Literal["EVENTUAL"] | None = None,
+        read_policy: Literal["EVENTUAL"] | None = None,
+        transaction: bytes | None = None,
+        retries: int | None = None,
+        timeout: float | None = None,
+        deadline: float | None = None,
+        use_cache: bool | None = None,
+        use_global_cache: bool | None = None,
+        global_cache_timeout: int | None = None,
+        use_datastore: bool | None = None,
+        use_memcache: bool | None = None,
+        memcache_timeout: int | None = None,
+        max_memcache_items: int | None = None,
+        force_writes: bool | None = None,
+        _options=None,
         **kw_model_args,
     ) -> tasklets_module.Future:
         """
@@ -2158,19 +1917,9 @@ class Model(_NotEqualMixin, metaclass=MetaModel):
         ...
     def to_dict(
         self,
-        include: list[object] | tuple[object, object] | set[object] | None = ...,
-        exclude: list[object] | tuple[object, object] | set[object] | None = ...,
-    ):
-        """
-        Return a ``dict`` containing the entity's property values.
-
-        Arguments:
-            include (Optional[Union[list, tuple, set]]): Set of property names
-                to include. Default is to include all names.
-            exclude (Optional[Union[list, tuple, set]]): Set of property names
-                to exclude. Default is to not exclude any names.
-        """
-        ...
+        include: list[object] | tuple[object, object] | set[object] | None = None,
+        exclude: list[object] | tuple[object, object] | set[object] | None = None,
+    ): ...
 
 class Expando(Model):
     """
@@ -2210,20 +1959,20 @@ class Expando(Model):
 
 def get_multi_async(
     keys: Sequence[key_module.Key],
-    read_consistency: Literal["EVENTUAL"] | None = ...,
-    read_policy: Literal["EVENTUAL"] | None = ...,
-    transaction: bytes | None = ...,
-    retries: int | None = ...,
-    timeout: float | None = ...,
-    deadline: float | None = ...,
-    use_cache: bool | None = ...,
-    use_global_cache: bool | None = ...,
-    global_cache_timeout: int | None = ...,
-    use_datastore: bool | None = ...,
-    use_memcache: bool | None = ...,
-    memcache_timeout: int | None = ...,
-    max_memcache_items: int | None = ...,
-    force_writes: bool | None = ...,
+    read_consistency: Literal["EVENTUAL"] | None = None,
+    read_policy: Literal["EVENTUAL"] | None = None,
+    transaction: bytes | None = None,
+    retries: int | None = None,
+    timeout: float | None = None,
+    deadline: float | None = None,
+    use_cache: bool | None = None,
+    use_global_cache: bool | None = None,
+    global_cache_timeout: int | None = None,
+    use_datastore: bool | None = None,
+    use_memcache: bool | None = None,
+    memcache_timeout: int | None = None,
+    max_memcache_items: int | None = None,
+    force_writes: bool | None = None,
     _options: object = None,
 ) -> list[tasklets_module.Future]:
     """
@@ -2268,20 +2017,20 @@ def get_multi_async(
     ...
 def get_multi(
     keys: Sequence[key_module.Key],
-    read_consistency: Literal["EVENTUAL"] | None = ...,
-    read_policy: Literal["EVENTUAL"] | None = ...,
-    transaction: bytes | None = ...,
-    retries: int | None = ...,
-    timeout: float | None = ...,
-    deadline: float | None = ...,
-    use_cache: bool | None = ...,
-    use_global_cache: bool | None = ...,
-    global_cache_timeout: int | None = ...,
-    use_datastore: bool | None = ...,
-    use_memcache: bool | None = ...,
-    memcache_timeout: int | None = ...,
-    max_memcache_items: int | None = ...,
-    force_writes: bool | None = ...,
+    read_consistency: Literal["EVENTUAL"] | None = None,
+    read_policy: Literal["EVENTUAL"] | None = None,
+    transaction: bytes | None = None,
+    retries: int | None = None,
+    timeout: float | None = None,
+    deadline: float | None = None,
+    use_cache: bool | None = None,
+    use_global_cache: bool | None = None,
+    global_cache_timeout: int | None = None,
+    use_datastore: bool | None = None,
+    use_memcache: bool | None = None,
+    memcache_timeout: int | None = None,
+    max_memcache_items: int | None = None,
+    force_writes: bool | None = None,
     _options: object = None,
 ) -> list[Model | None]:
     """
@@ -2327,17 +2076,17 @@ def get_multi(
     ...
 def put_multi_async(
     entities: list[Model],
-    retries: int | None = ...,
-    timeout: float | None = ...,
-    deadline: float | None = ...,
-    use_cache: bool | None = ...,
-    use_global_cache: bool | None = ...,
-    global_cache_timeout: int | None = ...,
-    use_datastore: bool | None = ...,
-    use_memcache: bool | None = ...,
-    memcache_timeout: int | None = ...,
-    max_memcache_items: int | None = ...,
-    force_writes: bool | None = ...,
+    retries: int | None = None,
+    timeout: float | None = None,
+    deadline: float | None = None,
+    use_cache: bool | None = None,
+    use_global_cache: bool | None = None,
+    global_cache_timeout: int | None = None,
+    use_datastore: bool | None = None,
+    use_memcache: bool | None = None,
+    memcache_timeout: int | None = None,
+    max_memcache_items: int | None = None,
+    force_writes: bool | None = None,
     _options: object = None,
 ) -> list[tasklets_module.Future]:
     """
@@ -2373,17 +2122,17 @@ def put_multi_async(
     ...
 def put_multi(
     entities: list[Model],
-    retries: int | None = ...,
-    timeout: float | None = ...,
-    deadline: float | None = ...,
-    use_cache: bool | None = ...,
-    use_global_cache: bool | None = ...,
-    global_cache_timeout: int | None = ...,
-    use_datastore: bool | None = ...,
-    use_memcache: bool | None = ...,
-    memcache_timeout: int | None = ...,
-    max_memcache_items: int | None = ...,
-    force_writes: bool | None = ...,
+    retries: int | None = None,
+    timeout: float | None = None,
+    deadline: float | None = None,
+    use_cache: bool | None = None,
+    use_global_cache: bool | None = None,
+    global_cache_timeout: int | None = None,
+    use_datastore: bool | None = None,
+    use_memcache: bool | None = None,
+    memcache_timeout: int | None = None,
+    max_memcache_items: int | None = None,
+    force_writes: bool | None = None,
     _options: object = None,
 ) -> list[key_module.Key]:
     """
@@ -2419,17 +2168,17 @@ def put_multi(
     ...
 def delete_multi_async(
     keys: Sequence[key_module.Key],
-    retries: int | None = ...,
-    timeout: float | None = ...,
-    deadline: float | None = ...,
-    use_cache: bool | None = ...,
-    use_global_cache: bool | None = ...,
-    global_cache_timeout: int | None = ...,
-    use_datastore: bool | None = ...,
-    use_memcache: bool | None = ...,
-    memcache_timeout: int | None = ...,
-    max_memcache_items: int | None = ...,
-    force_writes: bool | None = ...,
+    retries: int | None = None,
+    timeout: float | None = None,
+    deadline: float | None = None,
+    use_cache: bool | None = None,
+    use_global_cache: bool | None = None,
+    global_cache_timeout: int | None = None,
+    use_datastore: bool | None = None,
+    use_memcache: bool | None = None,
+    memcache_timeout: int | None = None,
+    max_memcache_items: int | None = None,
+    force_writes: bool | None = None,
     _options: object = None,
 ) -> list[tasklets_module.Future]:
     """
@@ -2465,17 +2214,17 @@ def delete_multi_async(
     ...
 def delete_multi(
     keys: Sequence[key_module.Key],
-    retries: int | None = ...,
-    timeout: float | None = ...,
-    deadline: float | None = ...,
-    use_cache: bool | None = ...,
-    use_global_cache: bool | None = ...,
-    global_cache_timeout: int | None = ...,
-    use_datastore: bool | None = ...,
-    use_memcache: bool | None = ...,
-    memcache_timeout: int | None = ...,
-    max_memcache_items: int | None = ...,
-    force_writes: bool | None = ...,
+    retries: int | None = None,
+    timeout: float | None = None,
+    deadline: float | None = None,
+    use_cache: bool | None = None,
+    use_global_cache: bool | None = None,
+    global_cache_timeout: int | None = None,
+    use_datastore: bool | None = None,
+    use_memcache: bool | None = None,
+    memcache_timeout: int | None = None,
+    max_memcache_items: int | None = None,
+    force_writes: bool | None = None,
     _options: object = None,
 ) -> list[None]:
     """

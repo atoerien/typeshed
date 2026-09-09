@@ -140,7 +140,7 @@ class PropertyOrder:
     """
     name: Incomplete
     reverse: Incomplete
-    def __init__(self, name, reverse: bool = ...) -> None: ...
+    def __init__(self, name, reverse: bool = False) -> None: ...
     def __neg__(self): ...
 
 class RepeatedStructuredPropertyPredicate:
@@ -601,7 +601,7 @@ class QueryOptions(_options.ReadOptions):
     project: Incomplete
     namespace: Incomplete
     database: str | None
-    def __init__(self, config: Incomplete | None = ..., context: Incomplete | None = ..., **kwargs) -> None: ...
+    def __init__(self, config=None, context=None, **kwargs) -> None: ...
 
 class Query:
     """
@@ -651,27 +651,41 @@ class Query:
     database: str | None
     def __init__(
         self,
-        kind: Incomplete | None = ...,
-        filters: Incomplete | None = ...,
-        ancestor: Incomplete | None = ...,
-        order_by: Incomplete | None = ...,
-        orders: Incomplete | None = ...,
-        project: Incomplete | None = ...,
-        app: Incomplete | None = ...,
-        namespace: Incomplete | None = ...,
-        projection: Incomplete | None = ...,
-        distinct_on: Incomplete | None = ...,
-        group_by: Incomplete | None = ...,
-        limit: Incomplete | None = ...,
-        offset: Incomplete | None = ...,
-        keys_only: Incomplete | None = ...,
-        default_options: Incomplete | None = ...,
+        kind=None,
+        filters=None,
+        ancestor=None,
+        order_by=None,
+        orders=None,
+        project=None,
+        app=None,
+        namespace=None,
+        projection=None,
+        distinct_on=None,
+        group_by=None,
+        limit=None,
+        offset=None,
+        keys_only=None,
+        default_options=None,
     ) -> None: ...
     @property
-    def is_distinct(self):
-        """
-        True if results are guaranteed to contain a unique set of property
-        values.
+    def is_distinct(self): ...
+    def filter(self, *filters): ...
+    def order(self, *props): ...
+    def analyze(self): ...
+    def bind(self, *positional, **keyword): ...
+    def fetch(self, limit=None, **kwargs): ...
+    def fetch_async(self, limit=None, **kwargs): ...
+    def run_to_queue(self, queue, conn, options=None, dsquery=None) -> None: ...
+    def iter(self, **kwargs): ...
+    __iter__: Incomplete
+    def map(self, callback, **kwargs): ...
+    def map_async(self, callback, **kwargs) -> None: ...
+    def get(self, **kwargs): ...
+    def get_async(self, **kwargs) -> None: ...
+    def count(self, limit=None, **kwargs): ...
+    def count_async(self, limit=None, **kwargs): ...
+    def fetch_page(self, page_size, **kwargs): ...
+    def fetch_page_async(self, page_size, **kwargs) -> None: ...
 
         This happens when every property in distinct_on is also in projection.
         """
