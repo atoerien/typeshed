@@ -7,8 +7,35 @@ from flask import Flask, Response
 from .requests import FlaskJsonRequest, FlaskOAuth2Request
 
 class AuthorizationServer(_AuthorizationServer):
+    """
+    Flask implementation of :class:`authlib.oauth2.rfc6749.AuthorizationServer`.
+    Initialize it with ``query_client``, ``save_token`` methods and Flask
+    app instance::
+
+        def query_client(client_id):
+            return Client.query.filter_by(client_id=client_id).first()
+
+
+        def save_token(token, request):
+            if request.user:
+                user_id = request.user.id
+            else:
+                user_id = None
+            client = request.client
+            tok = Token(client_id=client.client_id, user_id=user.id, **token)
+            db.session.add(tok)
+            db.session.commit()
+
+
+        server = AuthorizationServer(app, query_client, save_token)
+        # or initialize lazily
+        server = AuthorizationServer()
+        server.init_app(app, query_client, save_token)
+    """
     def __init__(self, app: Flask | None = None, query_client=None, save_token=None) -> None: ...
-    def init_app(self, app: Flask, query_client=None, save_token=None) -> None: ...
+    def init_app(self, app: Flask, query_client=None, save_token=None) -> None:
+        """Initialize later with Flask app instance."""
+        ...
     scopes_supported: Incomplete
     def load_config(self, config) -> None: ...
     def query_client(self, client_id): ...
