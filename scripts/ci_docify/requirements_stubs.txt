@@ -179,7 +179,7 @@ qrbill==1.2.*
 tabulate==0.10.*
 console-menu==0.8.*
 xmldiff==3.0.*
-peewee==4.5.0
+peewee==4.5.1
 hvac==2.4.*
 html5lib[all]==1.1.*
 dockerfile-parse==2.0.*
