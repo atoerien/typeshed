@@ -9,6 +9,7 @@ from _typeshed import (
     OpenBinaryModeWriting,
     OpenTextModeReading,
     OpenTextModeWriting,
+    StrPath,
     SupportsWrite,
     Unused,
 )
@@ -118,12 +119,16 @@ class Output(TransformSpec):
     """
     component_type: ClassVar[str]
     default_destination_path: ClassVar[str | None]
-    encoding: Incomplete
-    error_handler: Incomplete
+    encoding: str | None
+    error_handler: str
     destination: Incomplete
-    destination_path: Incomplete
+    destination_path: StrPath | None
     def __init__(
-        self, destination=None, destination_path=None, encoding: str | None = None, error_handler: str = "strict"
+        self,
+        destination=None,
+        destination_path: StrPath | None = None,
+        encoding: str | None = None,
+        error_handler: str | None = "strict",
     ) -> None: ...
     def write(self, data: str) -> Any:
         """Write `data`. Define in subclasses."""
@@ -141,14 +146,10 @@ class Output(TransformSpec):
         ...
 
 class ErrorOutput:
-    """
-    Wrapper class for file-like error streams with
-    failsafe de- and encoding of `str`, `bytes`, and `Exception` instances.
-    """
-    destination: Incomplete
-    encoding: Incomplete
-    encoding_errors: Incomplete
-    decoding_errors: Incomplete
+    destination: SupportsWrite[str] | SupportsWrite[bytes] | Literal[False]
+    encoding: str
+    encoding_errors: str
+    decoding_errors: str
     def __init__(
         self,
         destination: str | SupportsWrite[str] | SupportsWrite[bytes] | Literal[False] | None = None,
@@ -191,9 +192,9 @@ class FileInput(Input[IO[str]]):
     def __init__(
         self,
         source=None,
-        source_path=None,
+        source_path: StrPath | None = None,
         encoding: str | None = "utf-8",
-        error_handler: str = "strict",
+        error_handler: str | None = "strict",
         autoclose: bool = True,
         mode: OpenTextModeReading | OpenBinaryModeReading = "r",
     ) -> None:
@@ -223,53 +224,19 @@ class FileOutput(Output):
     default_destination_path: ClassVar[str]
     mode: ClassVar[OpenTextModeWriting | OpenBinaryModeWriting]
     opened: bool
-    autoclose: Incomplete
-    destination: Incomplete
-    destination_path: Incomplete
+    autoclose: bool
     def __init__(
         self,
         destination=None,
-        destination_path=None,
-        encoding=None,
-        error_handler: str = "strict",
+        destination_path: StrPath | None = None,
+        encoding: str | None = None,
+        error_handler: str | None = "strict",
         autoclose: bool = True,
-        handle_io_errors=None,
-        mode=None,
-    ) -> None:
-        """
-        :Parameters:
-            - `destination`: either a file-like object (which is written
-              directly) or `None` (which implies `sys.stdout` if no
-              `destination_path` given).
-            - `destination_path`: a path to a file, which is opened and then
-              written.
-            - `encoding`: the text encoding of the output file.
-            - `error_handler`: the encoding error handler to use.
-            - `autoclose`: close automatically after write (except when
-              `sys.stdout` or `sys.stderr` is the destination).
-            - `handle_io_errors`: ignored, deprecated, will be removed.
-            - `mode`: how the file is to be opened (see standard function
-              `open`). The default is 'w', providing universal newline
-              support for text files.
-        """
-        ...
+        handle_io_errors: None = None,
+        mode: OpenTextModeWriting | OpenBinaryModeWriting | None = None,
+    ) -> None: ...
     def open(self) -> None: ...
-    def write(self, data):
-        """
-        Write `data` to a single file, also return it.
-
-        `data` can be a `str` or `bytes` instance.
-        If writing `bytes` fails, an attempt is made to write to
-        the low-level interface ``self.destination.buffer``.
-
-        If `data` is a `str` instance and `self.encoding` and
-        `self.destination.encoding` are  set to different values, `data`
-        is encoded to a `bytes` instance using `self.encoding`.
-
-        Provisional: future versions may raise an error if `self.encoding`
-        and `self.destination.encoding` are set to different values.
-        """
-        ...
+    def write(self, data: str | bytes) -> str | bytes: ...
     def close(self) -> None: ...
 
 @deprecated("The `BinaryFileOutput` is deprecated by `FileOutput` and will be removed in Docutils 0.24.")
@@ -280,13 +247,7 @@ class BinaryFileOutput(FileOutput):
 class StringInput(Input[str]):
     """Input from a `str` or `bytes` instance."""
     default_source_path: ClassVar[str]
-    def read(self):
-        """
-        Return the source as `str` instance.
-
-        Decode, if required (see `Input.decode`).
-        """
-        ...
+    def read(self) -> str: ...
 
 class StringOutput(Output):
     """
@@ -296,23 +257,7 @@ class StringOutput(Output):
     """
     default_destination_path: ClassVar[str]
     destination: str | bytes  # only defined after call to write()
-    def write(self, data):
-        """
-        Store `data` in `self.destination`, and return it.
-
-        If `self.encoding` is set to the pseudo encoding name "unicode",
-        `data` must be a `str` instance and is stored/returned unchanged
-        (cf. `Output.encode`).
-
-        Otherwise, `data` can be a `bytes` or `str` instance and is
-        stored/returned as a `bytes` instance
-        (`str` data is encoded with `self.encode()`).
-
-        Attention: the `output_encoding`_ setting may affect the content
-        of the output (e.g. an encoding declaration in HTML or XML or the
-        representation of characters as LaTeX macro vs. literal character).
-        """
-        ...
+    def write(self, data: str | bytes) -> str | bytes: ...
 
 class NullInput(Input[Any]):
     """Degenerate input: read nothing."""

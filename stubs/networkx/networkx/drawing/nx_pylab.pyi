@@ -31,7 +31,7 @@ from matplotlib.text import Text  # type: ignore[import-not-found]
 from matplotlib.typing import ColorType  # type: ignore[import-not-found]
 from networkx._typing import Array2D
 from networkx.classes.digraph import DiGraph
-from networkx.classes.graph import Graph, _Node
+from networkx.classes.graph import Graph, _EdgeData, _Node, _NodeData
 
 __all__ = [
     "display",
@@ -53,7 +53,7 @@ __all__ = [
     "draw_forceatlas2",
 ]
 
-_G = TypeVar("_G", bound=Graph[Any])
+_G = TypeVar("_G", bound=Graph[Any, Any, Any])
 
 # types from matplotlib
 _FontSize: TypeAlias = Literal["xx-small", "x-small", "small", "medium", "large", "x-large", "xx-large"] | float
@@ -121,7 +121,7 @@ class _DrawNetworkxKwds(TypedDict, Generic[_Node], total=False):
     hide_ticks: bool
 
 def apply_matplotlib_colors(
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     src_attr: str,
     dest_attr: str,
     map: str | Colormap,
@@ -475,7 +475,7 @@ def display(
     """
     ...
 def draw(
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     pos: Mapping[_Node, Collection[float]] | None = None,
     ax: Axes | None = None,
     *,
@@ -540,7 +540,7 @@ def draw(
     """
     ...
 def draw_networkx(
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     pos: Mapping[_Node, Collection[float]] | None = None,
     arrows: bool | None = None,
     with_labels: bool = True,
@@ -701,7 +701,7 @@ def draw_networkx(
     """
     ...
 def draw_networkx_nodes(  # keep in sync with _DrawNetworkxKwds above
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     pos: Mapping[_Node, Collection[float]],
     nodelist: Collection[_Node] | None = None,
     node_size: float | Collection[float] = 300,
@@ -812,7 +812,7 @@ def draw_networkx_nodes(  # keep in sync with _DrawNetworkxKwds above
 
 @overload  # arrows=None -> LineCollection if G is undirected, list[FancyArrowPatch] if G is directed
 def draw_networkx_edges(  # keep in sync with _DrawNetworkxKwds above
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     pos: Mapping[_Node, Collection[float]],
     edgelist: Collection[_Node | Hashable] | None = None,  # (u, v, k) for multigraphs and (u, v) for simple graphs
     width: float | Collection[float] = 1.0,
@@ -999,7 +999,7 @@ def draw_networkx_edges(  # keep in sync with _DrawNetworkxKwds above
     ...
 @overload  # directed graph and arrows=None -> list[FancyArrowPatch]
 def draw_networkx_edges(
-    G: DiGraph[_Node],
+    G: DiGraph[_Node, _NodeData, _EdgeData],
     pos: Mapping[_Node, Collection[float]],
     edgelist: Collection[_Node | Hashable] | None = None,  # (u, v, k) for multigraphs and (u, v) for simple graphs
     width: float | Collection[float] = 1.0,
@@ -1186,7 +1186,7 @@ def draw_networkx_edges(
     ...
 @overload  # arrows=True -> list[FancyArrowPatch]
 def draw_networkx_edges(
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     pos: Mapping[_Node, Collection[float]],
     edgelist: Collection[_Node | Hashable] | None = None,  # (u, v, k) for multigraphs and (u, v) for simple graphs
     width: float | Collection[float] = 1.0,
@@ -1374,7 +1374,7 @@ def draw_networkx_edges(
     ...
 @overload  # arrows=False -> LineCollection
 def draw_networkx_edges(
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     pos: Mapping[_Node, Collection[float]],
     edgelist: Collection[_Node | Hashable] | None = None,  # (u, v, k) for multigraphs and (u, v) for simple graphs
     width: float | Collection[float] = 1.0,
@@ -1557,7 +1557,7 @@ def draw_networkx_edges(
     ...
 
 def draw_networkx_labels(  # keep in sync with _DrawNetworkxKwds above
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     pos: Mapping[_Node, Collection[float]],
     labels: Mapping[_Node, object] | None = None,  # labels are explicitly converted to str
     font_size: _FontSize | Mapping[_Node, _FontSize] = 12,
@@ -1651,7 +1651,7 @@ def draw_networkx_labels(  # keep in sync with _DrawNetworkxKwds above
     ...
 def draw_networkx_edge_labels(
     # TODO: find a way to have a covariant list for params annotated with `something | list[Incomplete]`
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     pos: Mapping[_Node, Collection[float]],
     edge_labels: (
         SupportsItems[
@@ -1772,260 +1772,49 @@ def draw_networkx_edge_labels(
     """
     ...
 def draw_bipartite(
-    G: Graph[_Node], *, ax: Axes | None = None, with_labels: bool = ..., **kwargs: Unpack[_DrawNetworkxKwds[_Node]]
-) -> None:
-    """
-    Draw the graph `G` with a bipartite layout.
-
-    This is a convenience function equivalent to::
-
-        nx.draw(G, pos=nx.bipartite_layout(G), **kwargs)
-
-    Parameters
-    ----------
-    G : graph
-        A networkx graph
-
-    kwargs : optional keywords
-        See `draw_networkx` for a description of optional keywords.
-
-    Raises
-    ------
-    NetworkXError :
-        If `G` is not bipartite.
-
-    Notes
-    -----
-    The layout is computed each time this function is called. For
-    repeated drawing it is much more efficient to call
-    `~networkx.drawing.layout.bipartite_layout` directly and reuse the result::
-
-        >>> G = nx.complete_bipartite_graph(3, 3)
-        >>> pos = nx.bipartite_layout(G)
-        >>> nx.draw(G, pos=pos)  # Draw the original graph
-        >>> # Draw a subgraph, reusing the same node positions
-        >>> nx.draw(G.subgraph([0, 1, 2]), pos=pos, node_color="red")
-
-    Examples
-    --------
-    >>> G = nx.complete_bipartite_graph(2, 5)
-    >>> nx.draw_bipartite(G)
-
-    See Also
-    --------
-    :func:`~networkx.drawing.layout.bipartite_layout`
-    """
-    ...
+    G: Graph[_Node, _NodeData, _EdgeData],
+    *,
+    ax: Axes | None = None,
+    with_labels: bool = ...,
+    **kwargs: Unpack[_DrawNetworkxKwds[_Node]],
+) -> None: ...
 def draw_circular(
-    G: Graph[_Node], *, ax: Axes | None = None, with_labels: bool = ..., **kwargs: Unpack[_DrawNetworkxKwds[_Node]]
-) -> None:
-    """
-    Draw the graph `G` with a circular layout.
-
-    This is a convenience function equivalent to::
-
-        nx.draw(G, pos=nx.circular_layout(G), **kwargs)
-
-    Parameters
-    ----------
-    G : graph
-        A networkx graph
-
-    kwargs : optional keywords
-        See `draw_networkx` for a description of optional keywords.
-
-    Notes
-    -----
-    The layout is computed each time this function is called. For
-    repeated drawing it is much more efficient to call
-    `~networkx.drawing.layout.circular_layout` directly and reuse the result::
-
-        >>> G = nx.complete_graph(5)
-        >>> pos = nx.circular_layout(G)
-        >>> nx.draw(G, pos=pos)  # Draw the original graph
-        >>> # Draw a subgraph, reusing the same node positions
-        >>> nx.draw(G.subgraph([0, 1, 2]), pos=pos, node_color="red")
-
-    Examples
-    --------
-    >>> G = nx.path_graph(5)
-    >>> nx.draw_circular(G)
-
-    See Also
-    --------
-    :func:`~networkx.drawing.layout.circular_layout`
-    """
-    ...
+    G: Graph[_Node, _NodeData, _EdgeData],
+    *,
+    ax: Axes | None = None,
+    with_labels: bool = ...,
+    **kwargs: Unpack[_DrawNetworkxKwds[_Node]],
+) -> None: ...
 def draw_kamada_kawai(
-    G: Graph[_Node], *, ax: Axes | None = None, with_labels: bool = ..., **kwargs: Unpack[_DrawNetworkxKwds[_Node]]
-) -> None:
-    """
-    Draw the graph `G` with a Kamada-Kawai force-directed layout.
-
-    This is a convenience function equivalent to::
-
-        nx.draw(G, pos=nx.kamada_kawai_layout(G), **kwargs)
-
-    Parameters
-    ----------
-    G : graph
-        A networkx graph
-
-    kwargs : optional keywords
-        See `draw_networkx` for a description of optional keywords.
-
-    Notes
-    -----
-    The layout is computed each time this function is called.
-    For repeated drawing it is much more efficient to call
-    `~networkx.drawing.layout.kamada_kawai_layout` directly and reuse the
-    result::
-
-        >>> G = nx.complete_graph(5)
-        >>> pos = nx.kamada_kawai_layout(G)
-        >>> nx.draw(G, pos=pos)  # Draw the original graph
-        >>> # Draw a subgraph, reusing the same node positions
-        >>> nx.draw(G.subgraph([0, 1, 2]), pos=pos, node_color="red")
-
-    Examples
-    --------
-    >>> G = nx.path_graph(5)
-    >>> nx.draw_kamada_kawai(G)
-
-    See Also
-    --------
-    :func:`~networkx.drawing.layout.kamada_kawai_layout`
-    """
-    ...
+    G: Graph[_Node, _NodeData, _EdgeData],
+    *,
+    ax: Axes | None = None,
+    with_labels: bool = ...,
+    **kwargs: Unpack[_DrawNetworkxKwds[_Node]],
+) -> None: ...
 def draw_random(
-    G: Graph[_Node], *, ax: Axes | None = None, with_labels: bool = ..., **kwargs: Unpack[_DrawNetworkxKwds[_Node]]
-) -> None:
-    """
-    Draw the graph `G` with a random layout.
-
-    This is a convenience function equivalent to::
-
-        nx.draw(G, pos=nx.random_layout(G), **kwargs)
-
-    Parameters
-    ----------
-    G : graph
-        A networkx graph
-
-    kwargs : optional keywords
-        See `draw_networkx` for a description of optional keywords.
-
-    Notes
-    -----
-    The layout is computed each time this function is called.
-    For repeated drawing it is much more efficient to call
-    `~networkx.drawing.layout.random_layout` directly and reuse the result::
-
-        >>> G = nx.complete_graph(5)
-        >>> pos = nx.random_layout(G)
-        >>> nx.draw(G, pos=pos)  # Draw the original graph
-        >>> # Draw a subgraph, reusing the same node positions
-        >>> nx.draw(G.subgraph([0, 1, 2]), pos=pos, node_color="red")
-
-    Examples
-    --------
-    >>> G = nx.lollipop_graph(4, 3)
-    >>> nx.draw_random(G)
-
-    See Also
-    --------
-    :func:`~networkx.drawing.layout.random_layout`
-    """
-    ...
+    G: Graph[_Node, _NodeData, _EdgeData],
+    *,
+    ax: Axes | None = None,
+    with_labels: bool = ...,
+    **kwargs: Unpack[_DrawNetworkxKwds[_Node]],
+) -> None: ...
 def draw_spectral(
-    G: Graph[_Node], *, ax: Axes | None = None, with_labels: bool = ..., **kwargs: Unpack[_DrawNetworkxKwds[_Node]]
-) -> None:
-    """
-    Draw the graph `G` with a spectral 2D layout.
-
-    This is a convenience function equivalent to::
-
-        nx.draw(G, pos=nx.spectral_layout(G), **kwargs)
-
-    For more information about how node positions are determined, see
-    `~networkx.drawing.layout.spectral_layout`.
-
-    Parameters
-    ----------
-    G : graph
-        A networkx graph
-
-    kwargs : optional keywords
-        See `draw_networkx` for a description of optional keywords.
-
-    Notes
-    -----
-    The layout is computed each time this function is called.
-    For repeated drawing it is much more efficient to call
-    `~networkx.drawing.layout.spectral_layout` directly and reuse the result::
-
-        >>> G = nx.complete_graph(5)
-        >>> pos = nx.spectral_layout(G)
-        >>> nx.draw(G, pos=pos)  # Draw the original graph
-        >>> # Draw a subgraph, reusing the same node positions
-        >>> nx.draw(G.subgraph([0, 1, 2]), pos=pos, node_color="red")
-
-    Examples
-    --------
-    >>> G = nx.path_graph(5)
-    >>> nx.draw_spectral(G)
-
-    See Also
-    --------
-    :func:`~networkx.drawing.layout.spectral_layout`
-    """
-    ...
+    G: Graph[_Node, _NodeData, _EdgeData],
+    *,
+    ax: Axes | None = None,
+    with_labels: bool = ...,
+    **kwargs: Unpack[_DrawNetworkxKwds[_Node]],
+) -> None: ...
 def draw_spring(
-    G: Graph[_Node], *, ax: Axes | None = None, with_labels: bool = ..., **kwargs: Unpack[_DrawNetworkxKwds[_Node]]
-) -> None:
-    """
-    Draw the graph `G` with a spring layout.
-
-    This is a convenience function equivalent to::
-
-        nx.draw(G, pos=nx.spring_layout(G), **kwargs)
-
-    Parameters
-    ----------
-    G : graph
-        A networkx graph
-
-    kwargs : optional keywords
-        See `draw_networkx` for a description of optional keywords.
-
-    Notes
-    -----
-    `~networkx.drawing.layout.spring_layout` is also the default layout for
-    `draw`, so this function is equivalent to `draw`.
-
-    The layout is computed each time this function is called.
-    For repeated drawing it is much more efficient to call
-    `~networkx.drawing.layout.spring_layout` directly and reuse the result::
-
-        >>> G = nx.complete_graph(5)
-        >>> pos = nx.spring_layout(G)
-        >>> nx.draw(G, pos=pos)  # Draw the original graph
-        >>> # Draw a subgraph, reusing the same node positions
-        >>> nx.draw(G.subgraph([0, 1, 2]), pos=pos, node_color="red")
-
-    Examples
-    --------
-    >>> G = nx.path_graph(20)
-    >>> nx.draw_spring(G)
-
-    See Also
-    --------
-    draw
-    :func:`~networkx.drawing.layout.spring_layout`
-    """
-    ...
+    G: Graph[_Node, _NodeData, _EdgeData],
+    *,
+    ax: Axes | None = None,
+    with_labels: bool = ...,
+    **kwargs: Unpack[_DrawNetworkxKwds[_Node]],
+) -> None: ...
 def draw_shell(
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     nlist: Collection[Collection[_Node]] | None = None,
     *,
     ax: Axes | None = None,
@@ -2076,71 +1865,19 @@ def draw_shell(
     """
     ...
 def draw_planar(
-    G: Graph[_Node], *, ax: Axes | None = None, with_labels: bool = ..., **kwargs: Unpack[_DrawNetworkxKwds[_Node]]
-) -> None:
-    """
-    Draw a planar networkx graph `G` with planar layout.
-
-    This is a convenience function equivalent to::
-
-        nx.draw(G, pos=nx.planar_layout(G), **kwargs)
-
-    Parameters
-    ----------
-    G : graph
-        A planar networkx graph
-
-    kwargs : optional keywords
-        See `draw_networkx` for a description of optional keywords.
-
-    Raises
-    ------
-    NetworkXException
-        When `G` is not planar
-
-    Notes
-    -----
-    The layout is computed each time this function is called.
-    For repeated drawing it is much more efficient to call
-    `~networkx.drawing.layout.planar_layout` directly and reuse the result::
-
-        >>> G = nx.path_graph(5)
-        >>> pos = nx.planar_layout(G)
-        >>> nx.draw(G, pos=pos)  # Draw the original graph
-        >>> # Draw a subgraph, reusing the same node positions
-        >>> nx.draw(G.subgraph([0, 1, 2]), pos=pos, node_color="red")
-
-    Examples
-    --------
-    >>> G = nx.path_graph(4)
-    >>> nx.draw_planar(G)
-
-    See Also
-    --------
-    :func:`~networkx.drawing.layout.planar_layout`
-    """
-    ...
+    G: Graph[_Node, _NodeData, _EdgeData],
+    *,
+    ax: Axes | None = None,
+    with_labels: bool = ...,
+    **kwargs: Unpack[_DrawNetworkxKwds[_Node]],
+) -> None: ...
 def draw_forceatlas2(
-    G: Graph[_Node], *, ax: Axes | None = None, with_labels: bool = ..., **kwargs: Unpack[_DrawNetworkxKwds[_Node]]
-) -> None:
-    """
-    Draw a networkx graph with forceatlas2 layout.
-
-    This is a convenience function equivalent to::
-
-       nx.draw(G, pos=nx.forceatlas2_layout(G), **kwargs)
-
-    Parameters
-    ----------
-    G : graph
-       A networkx graph
-
-    kwargs : optional keywords
-       See networkx.draw_networkx() for a description of optional keywords,
-       with the exception of the pos parameter which is not used by this
-       function.
-    """
-    ...
+    G: Graph[_Node, _NodeData, _EdgeData],
+    *,
+    ax: Axes | None = None,
+    with_labels: bool = ...,
+    **kwargs: Unpack[_DrawNetworkxKwds[_Node]],
+) -> None: ...
 def apply_alpha(
     colors: ColorType | Collection[ColorType] | Collection[float],
     alpha: float | Collection[float],

@@ -20,7 +20,7 @@ from typing import Any, Literal, TypeAlias
 
 import numpy as np
 from networkx._typing import Array1D, Array2D, ArrayLike1D, Seed
-from networkx.classes.graph import Graph, _Node
+from networkx.classes.graph import Graph, _EdgeData, _Node, _NodeData
 from networkx.utils.backends import _dispatchable
 from numpy.typing import NDArray
 
@@ -46,7 +46,7 @@ __all__ = [
 _FloatArrayLike1D: TypeAlias = ArrayLike1D[float, np.number[Any]]  # Any because we don't care about the bit base
 
 def random_layout(
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     center: _FloatArrayLike1D | None = None,
     dim: int = 2,
     seed: Seed | None = None,
@@ -107,65 +107,14 @@ def random_layout(
     """
     ...
 def circular_layout(
-    G: Graph[_Node], scale: float = 1, center: _FloatArrayLike1D | None = None, dim: int = 2, store_pos_as: str | None = None
-) -> dict[_Node, Array1D[np.float64]]:
-    """
-    Position nodes on a circle.
-
-    Parameters
-    ----------
-    G : NetworkX graph or list of nodes
-        A position will be assigned to every node in G.
-
-    scale : number (default: 1)
-        Scale factor for positions.
-
-    center : array-like or None
-        Coordinate pair around which to center the layout.
-
-    dim : int
-        Dimension of layout.
-        If dim>2, the remaining dimensions are set to zero
-        in the returned positions.
-        If dim<2, a ValueError is raised.
-
-    store_pos_as : str, default None
-        If non-None, the position of each node will be stored on the graph as
-        an attribute with this string as its name, which can be accessed with
-        ``G.nodes[...][store_pos_as]``. The function still returns the dictionary.
-
-    Returns
-    -------
-    pos : dict
-        A dictionary of positions keyed by node
-
-    Raises
-    ------
-    ValueError
-        If dim < 2
-
-    Examples
-    --------
-    >>> from pprint import pprint
-    >>> G = nx.path_graph(4)
-    >>> pos = nx.circular_layout(G)
-    >>> # suppress the returned dict and store on the graph directly
-    >>> _ = nx.circular_layout(G, store_pos_as="pos")
-    >>> pprint(nx.get_node_attributes(G, "pos"))
-    {0: array([9.99999986e-01, 2.18556937e-08]),
-     1: array([-3.57647606e-08,  1.00000000e+00]),
-     2: array([-9.9999997e-01, -6.5567081e-08]),
-     3: array([ 1.98715071e-08, -9.99999956e-01])}
-
-
-    Notes
-    -----
-    This algorithm currently only works in two dimensions and does not
-    try to minimize edge crossings.
-    """
-    ...
+    G: Graph[_Node, _NodeData, _EdgeData],
+    scale: float = 1,
+    center: _FloatArrayLike1D | None = None,
+    dim: int = 2,
+    store_pos_as: str | None = None,
+) -> dict[_Node, Array1D[np.float64]]: ...
 def shell_layout(
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     nlist: Collection[Collection[_Node]] | None = None,
     rotate: float | None = None,
     scale: float = 1,
@@ -235,7 +184,7 @@ def shell_layout(
     """
     ...
 def bipartite_layout(
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     nodes: Collection[_Node] | None = None,
     align: Literal["vertical", "horizontal"] = "vertical",
     scale: float = 1,
@@ -321,7 +270,7 @@ def bipartite_layout(
     """
     ...
 def spring_layout(
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     k: float | None = None,
     pos: Mapping[_Node, Collection[float]] | None = None,
     fixed: Collection[_Node] | None = None,
@@ -461,7 +410,7 @@ def spring_layout(
 fruchterman_reingold_layout = spring_layout
 
 def kamada_kawai_layout(
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     dist: Mapping[_Node, Mapping[_Node, float]] | None = None,
     pos: Mapping[_Node, Collection[float]] | None = None,
     weight: str | None = "weight",
@@ -526,7 +475,7 @@ def kamada_kawai_layout(
     """
     ...
 def spectral_layout(
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     weight: str | None = "weight",
     scale: float = 1,
     center: _FloatArrayLike1D | None = None,
@@ -593,57 +542,14 @@ def spectral_layout(
     """
     ...
 def planar_layout(
-    G: Graph[_Node], scale: float = 1, center: _FloatArrayLike1D | None = None, dim: int = 2, store_pos_as: str | None = None
-) -> dict[_Node, Array1D[np.float64]]:
-    """
-    Position nodes without edge intersections.
-
-    Parameters
-    ----------
-    G : NetworkX graph or list of nodes
-        A position will be assigned to every node in G. If G is of type
-        nx.PlanarEmbedding, the positions are selected accordingly.
-
-    scale : number (default: 1)
-        Scale factor for positions.
-
-    center : array-like or None
-        Coordinate pair around which to center the layout.
-
-    dim : int
-        Dimension of layout.
-
-    store_pos_as : str, default None
-        If non-None, the position of each node will be stored on the graph as
-        an attribute with this string as its name, which can be accessed with
-        ``G.nodes[...][store_pos_as]``. The function still returns the dictionary.
-
-    Returns
-    -------
-    pos : dict
-        A dictionary of positions keyed by node
-
-    Raises
-    ------
-    NetworkXException
-        If G is not planar
-
-    Examples
-    --------
-    >>> from pprint import pprint
-    >>> G = nx.path_graph(4)
-    >>> pos = nx.planar_layout(G)
-    >>> # suppress the returned dict and store on the graph directly
-    >>> _ = nx.planar_layout(G, store_pos_as="pos")
-    >>> pprint(nx.get_node_attributes(G, "pos"))
-    {0: array([-0.77777778, -0.33333333]),
-     1: array([ 1.        , -0.33333333]),
-     2: array([0.11111111, 0.55555556]),
-     3: array([-0.33333333,  0.11111111])}
-    """
-    ...
+    G: Graph[_Node, _NodeData, _EdgeData],
+    scale: float = 1,
+    center: _FloatArrayLike1D | None = None,
+    dim: int = 2,
+    store_pos_as: str | None = None,
+) -> dict[_Node, Array1D[np.float64]]: ...
 def spiral_layout(
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     scale: float = 1,
     center: _FloatArrayLike1D | None = None,
     dim: int = 2,
@@ -714,7 +620,7 @@ def spiral_layout(
     """
     ...
 def multipartite_layout(
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     subset_key: str | Mapping[Any, Collection[_Node]] = "subset",  # layers can be "any" hashable
     align: Literal["vertical", "horizontal"] = "vertical",
     scale: float = 1,
@@ -776,7 +682,7 @@ def multipartite_layout(
     """
     ...
 def arf_layout(
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     pos: Mapping[_Node, Collection[float]] | None = None,
     scaling: float = 1,
     a: float = 1.1,
@@ -851,7 +757,7 @@ def arf_layout(
     ...
 @_dispatchable
 def forceatlas2_layout(
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     pos: Mapping[_Node, Collection[float]] | None = None,
     *,
     max_iter: int = 100,
@@ -1006,7 +912,7 @@ def rescale_layout_dict(pos: Mapping[_Node, Collection[float]], scale: float = 1
     """
     ...
 def bfs_layout(
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     start: _Node,
     *,
     align: Literal["vertical", "horizontal"] = "vertical",

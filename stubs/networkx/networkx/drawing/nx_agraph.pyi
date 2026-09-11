@@ -22,7 +22,7 @@ from _typeshed import OpenBinaryModeUpdating, OpenTextModeReading, OpenTextModeW
 from collections.abc import Callable
 from typing import IO, Any, Protocol, TypeVar, type_check_only
 
-from networkx.classes.graph import Graph, _Node
+from networkx.classes.graph import Graph, _EdgeData, _Node, _NodeData
 from networkx.utils.backends import _dispatchable
 from pygraphviz.agraph import AGraph  # type: ignore[import-not-found]  # pyright: ignore[reportMissingImports]
 
@@ -38,79 +38,12 @@ class _SupportsOpen(Protocol[_ModeT_contra, _FileT_co]):
 @_dispatchable
 def from_agraph(
     A: AGraph, create_using: Graph[str] | type[Graph[str]] | None = None  # TODO: add overloads on `create_using`
-) -> Graph[str]:
-    """
-    Returns a NetworkX Graph or DiGraph from a PyGraphviz graph.
-
-    Parameters
-    ----------
-    A : PyGraphviz AGraph
-      A graph created with PyGraphviz
-
-    create_using : NetworkX graph constructor, optional (default=None)
-       Graph type to create. If graph instance, then cleared before populated.
-       If `None`, then the appropriate Graph type is inferred from `A`.
-
-    Examples
-    --------
-    >>> K5 = nx.complete_graph(5)
-    >>> A = nx.nx_agraph.to_agraph(K5)
-    >>> G = nx.nx_agraph.from_agraph(A)
-
-    Notes
-    -----
-    The Graph G will have a dictionary G.graph_attr containing
-    the default graphviz attributes for graphs, nodes and edges.
-
-    Default node attributes will be in the dictionary G.node_attr
-    which is keyed by node.
-
-    Edge attributes will be returned as edge data in G.  With
-    edge_attr=False the edge data will be the Graphviz edge weight
-    attribute or the value 1 if no edge weight attribute is found.
-    """
-    ...
-def to_agraph(N: Graph[_Node]) -> AGraph:
-    """
-    Returns a pygraphviz graph from a NetworkX graph N.
-
-    Parameters
-    ----------
-    N : NetworkX graph
-      A graph created with NetworkX
-
-    Examples
-    --------
-    >>> K5 = nx.complete_graph(5)
-    >>> A = nx.nx_agraph.to_agraph(K5)
-
-    Notes
-    -----
-    If N has an dict N.graph_attr an attempt will be made first
-    to copy properties attached to the graph (see from_agraph)
-    and then updated with the calling arguments if any.
-    """
-    ...
+) -> Graph[str]: ...
+def to_agraph(N: Graph[_Node, _NodeData, _EdgeData]) -> AGraph: ...
 def write_dot(
-    G: Graph[_Node], path: str | IO[str] | IO[bytes] | _SupportsOpen[OpenTextModeWriting, IO[str] | IO[bytes]]
-) -> None:
-    """
-    Write NetworkX graph G to Graphviz dot format on path.
-
-    Parameters
-    ----------
-    G : graph
-       A networkx graph
-    path : filename
-       Filename or file handle to write
-
-    Notes
-    -----
-    To use a specific graph layout, call ``A.layout`` prior to `write_dot`.
-    Note that some graphviz layouts are not guaranteed to be deterministic,
-    see https://gitlab.com/graphviz/graphviz/-/issues/1767 for more info.
-    """
-    ...
+    G: Graph[_Node, _NodeData, _EdgeData],
+    path: str | IO[str] | IO[bytes] | _SupportsOpen[OpenTextModeWriting, IO[str] | IO[bytes]],
+) -> None: ...
 @_dispatchable
 def read_dot(path: str | IO[str] | IO[bytes] | _SupportsOpen[OpenTextModeReading, IO[str] | IO[bytes]]) -> Graph[str]:
     """
@@ -123,86 +56,13 @@ def read_dot(path: str | IO[str] | IO[bytes] | _SupportsOpen[OpenTextModeReading
     """
     ...
 def graphviz_layout(
-    G: Graph[_Node], prog: str = "neato", root: str | None = None, args: str = ""
-) -> dict[_Node, tuple[float, float]]:
-    """
-    Create node positions for G using Graphviz.
-
-    Parameters
-    ----------
-    G : NetworkX graph
-      A graph created with NetworkX
-    prog : string
-      Name of Graphviz layout program
-    root : string, optional
-      Root node for twopi layout
-    args : string, optional
-      Extra arguments to Graphviz layout program
-
-    Returns
-    -------
-    Dictionary of x, y, positions keyed by node.
-
-    Examples
-    --------
-    >>> G = nx.petersen_graph()
-    >>> pos = nx.nx_agraph.graphviz_layout(G)
-    >>> pos = nx.nx_agraph.graphviz_layout(G, prog="dot")
-
-    Notes
-    -----
-    This is a wrapper for pygraphviz_layout.
-
-    Note that some graphviz layouts are not guaranteed to be deterministic,
-    see https://gitlab.com/graphviz/graphviz/-/issues/1767 for more info.
-    """
-    ...
+    G: Graph[_Node, _NodeData, _EdgeData], prog: str = "neato", root: str | None = None, args: str = ""
+) -> dict[_Node, tuple[float, float]]: ...
 def pygraphviz_layout(
-    G: Graph[_Node], prog: str = "neato", root: str | None = None, args: str = ""
-) -> dict[_Node, tuple[float, float]]:
-    """
-    Create node positions for G using Graphviz.
-
-    Parameters
-    ----------
-    G : NetworkX graph
-      A graph created with NetworkX
-    prog : string
-      Name of Graphviz layout program
-    root : string, optional
-      Root node for twopi layout
-    args : string, optional
-      Extra arguments to Graphviz layout program
-
-    Returns
-    -------
-    node_pos : dict
-      Dictionary of x, y, positions keyed by node.
-
-    Examples
-    --------
-    >>> G = nx.petersen_graph()
-    >>> pos = nx.nx_agraph.graphviz_layout(G)
-    >>> pos = nx.nx_agraph.graphviz_layout(G, prog="dot")
-
-    Notes
-    -----
-    If you use complex node objects, they may have the same string
-    representation and GraphViz could treat them as the same node.
-    The layout may assign both nodes a single location. See Issue #1568
-    If this occurs in your case, consider relabeling the nodes just
-    for the layout computation using something similar to::
-
-        >>> H = nx.convert_node_labels_to_integers(G, label_attribute="node_label")
-        >>> H_layout = nx.nx_agraph.pygraphviz_layout(H, prog="dot")
-        >>> G_layout = {H.nodes[n]["node_label"]: p for n, p in H_layout.items()}
-
-    Note that some graphviz layouts are not guaranteed to be deterministic,
-    see https://gitlab.com/graphviz/graphviz/-/issues/1767 for more info.
-    """
-    ...
+    G: Graph[_Node, _NodeData, _EdgeData], prog: str = "neato", root: str | None = None, args: str = ""
+) -> dict[_Node, tuple[float, float]]: ...
 def view_pygraphviz(
-    G: Graph[_Node],
+    G: Graph[_Node, _NodeData, _EdgeData],
     # From implementation looks like Callable could return object since it's always immediately stringified
     # But judging by documentation this seems like an extra runtime safety thing and not intended
     # Leaving as str unless anyone reports a valid use-case

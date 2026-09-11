@@ -129,19 +129,21 @@ TikZ options details:   https://tikz.dev/tikz-actions
 
 from _typeshed import StrPath, SupportsWrite
 from collections.abc import Collection
-from typing import TypeAlias, TypeVar
+from typing import Any, TypeAlias, TypeVar
 
 from networkx.classes.graph import Graph, _Node
 
 __all__ = ["to_latex_raw", "to_latex", "write_latex"]
 
+# The node and edge data types are not bound here: `_NodeData` and `_EdgeData` have
+# defaults, so they could not precede `_PosT`, which has none, in the type parameter list.
 # runtime requires a dict but it doesn't mutate it, we use a bounded typevar as
 # a values type to make type checkers treat the dict covariantely
 _PosT = TypeVar("_PosT", bound=Collection[float] | str)
 _Pos: TypeAlias = str | dict[_Node, _PosT]
 
 def to_latex_raw(
-    G: Graph[_Node],
+    G: Graph[_Node, Any, Any],
     pos: _Pos[_Node, _PosT] = "pos",
     tikz_options: str = "",
     default_node_options: str = "",
@@ -213,7 +215,7 @@ def to_latex_raw(
     """
     ...
 def to_latex(
-    Gbunch: Graph[_Node] | Collection[Graph[_Node]],
+    Gbunch: Graph[_Node, Any, Any] | Collection[Graph[_Node, Any, Any]],
     pos: _Pos[_Node, _PosT] | Collection[_Pos[_Node, _PosT]] = "pos",
     tikz_options: str = "",
     default_node_options: str = "",
@@ -327,7 +329,7 @@ def to_latex(
     """
     ...
 def write_latex(
-    Gbunch: Graph[_Node] | Collection[Graph[_Node]],
+    Gbunch: Graph[_Node, Any, Any] | Collection[Graph[_Node, Any, Any]],
     path: StrPath | SupportsWrite[str],
     *,
     # **options passed to `to_latex`
