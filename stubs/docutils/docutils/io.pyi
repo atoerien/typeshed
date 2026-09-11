@@ -146,6 +146,10 @@ class Output(TransformSpec):
         ...
 
 class ErrorOutput:
+    """
+    Wrapper class for file-like error streams with
+    failsafe de- and encoding of `str`, `bytes`, and `Exception` instances.
+    """
     destination: SupportsWrite[str] | SupportsWrite[bytes] | Literal[False]
     encoding: str
     encoding_errors: str
@@ -234,9 +238,41 @@ class FileOutput(Output):
         autoclose: bool = True,
         handle_io_errors: None = None,
         mode: OpenTextModeWriting | OpenBinaryModeWriting | None = None,
-    ) -> None: ...
+    ) -> None:
+        """
+        :Parameters:
+            - `destination`: either a file-like object (which is written
+              directly) or `None` (which implies `sys.stdout` if no
+              `destination_path` given).
+            - `destination_path`: a path to a file, which is opened and then
+              written.
+            - `encoding`: the text encoding of the output file.
+            - `error_handler`: the encoding error handler to use.
+            - `autoclose`: close automatically after write (except when
+              `sys.stdout` or `sys.stderr` is the destination).
+            - `handle_io_errors`: ignored, deprecated, will be removed.
+            - `mode`: how the file is to be opened (see standard function
+              `open`). The default is 'w', providing universal newline
+              support for text files.
+        """
+        ...
     def open(self) -> None: ...
-    def write(self, data: str | bytes) -> str | bytes: ...
+    def write(self, data: str | bytes) -> str | bytes:
+        """
+        Write `data` to a single file, also return it.
+
+        `data` can be a `str` or `bytes` instance.
+        If writing `bytes` fails, an attempt is made to write to
+        the low-level interface ``self.destination.buffer``.
+
+        If `data` is a `str` instance and `self.encoding` and
+        `self.destination.encoding` are  set to different values, `data`
+        is encoded to a `bytes` instance using `self.encoding`.
+
+        Provisional: future versions may raise an error if `self.encoding`
+        and `self.destination.encoding` are set to different values.
+        """
+        ...
     def close(self) -> None: ...
 
 @deprecated("The `BinaryFileOutput` is deprecated by `FileOutput` and will be removed in Docutils 0.24.")
@@ -247,7 +283,13 @@ class BinaryFileOutput(FileOutput):
 class StringInput(Input[str]):
     """Input from a `str` or `bytes` instance."""
     default_source_path: ClassVar[str]
-    def read(self) -> str: ...
+    def read(self) -> str:
+        """
+        Return the source as `str` instance.
+
+        Decode, if required (see `Input.decode`).
+        """
+        ...
 
 class StringOutput(Output):
     """
@@ -257,7 +299,23 @@ class StringOutput(Output):
     """
     default_destination_path: ClassVar[str]
     destination: str | bytes  # only defined after call to write()
-    def write(self, data: str | bytes) -> str | bytes: ...
+    def write(self, data: str | bytes) -> str | bytes:
+        """
+        Store `data` in `self.destination`, and return it.
+
+        If `self.encoding` is set to the pseudo encoding name "unicode",
+        `data` must be a `str` instance and is stored/returned unchanged
+        (cf. `Output.encode`).
+
+        Otherwise, `data` can be a `bytes` or `str` instance and is
+        stored/returned as a `bytes` instance
+        (`str` data is encoded with `self.encode()`).
+
+        Attention: the `output_encoding`_ setting may affect the content
+        of the output (e.g. an encoding declaration in HTML or XML or the
+        representation of characters as LaTeX macro vs. literal character).
+        """
+        ...
 
 class NullInput(Input[Any]):
     """Degenerate input: read nothing."""

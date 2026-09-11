@@ -24,6 +24,12 @@ class AssertionAuth(OAuth2Auth):
     def ensure_active_token(self): ...
 
 class AssertionSession(AssertionClient, Session):
+    """
+    Constructs a new Assertion Framework for OAuth 2.0 Authorization Grants
+    per RFC7521_.
+
+    .. _RFC7521: https://tools.ietf.org/html/rfc7521
+    """
     token_auth_class = AssertionAuth
     JWT_BEARER_GRANT_TYPE: Incomplete
     ASSERTION_METHODS: Incomplete
@@ -64,4 +70,6 @@ class AssertionSession(AssertionClient, Session):
         verify: VerifyType | None = None,
         cert: CertType = None,
         json: JsonType = None,
-    ) -> Response: ...
+    ) -> Response:
+        """Send request with auto refresh token feature."""
+        ...

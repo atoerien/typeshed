@@ -6,6 +6,7 @@ from requests import PreparedRequest, Response, Session
 from requests.auth import AuthBase
 
 class OAuth1Auth(AuthBase, ClientAuth):
+    """Signs the request using OAuth 1 (RFC5849)."""
     def __call__(self, req: PreparedRequest) -> PreparedRequest: ...
 
 # Incompatible definitions of "auth" in the base classes
@@ -25,6 +26,11 @@ class OAuth1Session(OAuth1Client, Session):  # type: ignore[misc]  # pyrefly: ig
         force_include_body=False,
         **kwargs,
     ) -> None: ...
-    def rebuild_auth(self, prepared_request: PreparedRequest, response: Response) -> None: ...
+    def rebuild_auth(self, prepared_request: PreparedRequest, response: Response) -> None:
+        """
+        When being redirected we should always strip Authorization
+        header, since nonce may not be reused as per OAuth spec.
+        """
+        ...
     @staticmethod
     def handle_error(error_type: str | None, error_description: str | None) -> Never: ...

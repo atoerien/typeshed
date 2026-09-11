@@ -324,7 +324,17 @@ class HeaderRegistry:
         """
         ...
     def __getitem__(self, name: str) -> type[BaseHeader]: ...
-    def __call__(self, name: str, value) -> BaseHeader: ...
+    def __call__(self, name: str, value) -> BaseHeader:
+        """
+        Create a header instance for header 'name' from 'value'.
+
+        Creates a header instance by creating a specialized class for parsing
+        and representing the specified header by combining the factory
+        base_class with a specialized class from the registry or the
+        default_class, and passing the name and value to the constructed
+        class's constructor.
+        """
+        ...
 
 class Address:
     @property

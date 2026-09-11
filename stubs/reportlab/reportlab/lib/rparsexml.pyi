@@ -6,10 +6,6 @@ parsers available.  Constructs the lightest possible in-memory
 representation; parses most files we have seen in pure python very
 quickly.
 
-The output structure is the same as the one produced by pyRXP,
-our validating C-based parser, which was written later.  It will
-use pyRXP if available.
-
 This is used to parse intra-paragraph markup.
 
 Example parse::

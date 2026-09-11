@@ -112,7 +112,62 @@ def circular_layout(
     center: _FloatArrayLike1D | None = None,
     dim: int = 2,
     store_pos_as: str | None = None,
-) -> dict[_Node, Array1D[np.float64]]: ...
+) -> dict[_Node, Array1D[np.float64]]:
+    """
+    Position nodes on a circle.
+
+    Parameters
+    ----------
+    G : NetworkX graph or list of nodes
+        A position will be assigned to every node in G.
+
+    scale : number (default: 1)
+        Scale factor for positions.
+
+    center : array-like or None
+        Coordinate pair around which to center the layout.
+
+    dim : int
+        Dimension of layout.
+        If dim>2, the remaining dimensions are set to zero
+        in the returned positions.
+        If dim<2, a ValueError is raised.
+
+    store_pos_as : str, default None
+        If non-None, the position of each node will be stored on the graph as
+        an attribute with this string as its name, which can be accessed with
+        ``G.nodes[...][store_pos_as]``. The function still returns the dictionary.
+
+    Returns
+    -------
+    pos : dict
+        A dictionary of positions keyed by node
+
+    Raises
+    ------
+    ValueError
+        If dim < 2
+
+    Examples
+    --------
+    >>> from pprint import pprint
+    >>> G = nx.path_graph(4)
+    >>> pos = nx.circular_layout(G)
+    >>> # suppress the returned dict and store on the graph directly
+    >>> _ = nx.circular_layout(G, store_pos_as="pos")
+    >>> pprint(nx.get_node_attributes(G, "pos"))
+    {0: array([9.99999986e-01, 2.18556937e-08]),
+     1: array([-3.57647606e-08,  1.00000000e+00]),
+     2: array([-9.9999997e-01, -6.5567081e-08]),
+     3: array([ 1.98715071e-08, -9.99999956e-01])}
+
+
+    Notes
+    -----
+    This algorithm currently only works in two dimensions and does not
+    try to minimize edge crossings.
+    """
+    ...
 def shell_layout(
     G: Graph[_Node, _NodeData, _EdgeData],
     nlist: Collection[Collection[_Node]] | None = None,
@@ -547,7 +602,54 @@ def planar_layout(
     center: _FloatArrayLike1D | None = None,
     dim: int = 2,
     store_pos_as: str | None = None,
-) -> dict[_Node, Array1D[np.float64]]: ...
+) -> dict[_Node, Array1D[np.float64]]:
+    """
+    Position nodes without edge intersections.
+
+    Parameters
+    ----------
+    G : NetworkX graph or list of nodes
+        A position will be assigned to every node in G. If G is of type
+        nx.PlanarEmbedding, the positions are selected accordingly.
+
+    scale : number (default: 1)
+        Scale factor for positions.
+
+    center : array-like or None
+        Coordinate pair around which to center the layout.
+
+    dim : int
+        Dimension of layout.
+
+    store_pos_as : str, default None
+        If non-None, the position of each node will be stored on the graph as
+        an attribute with this string as its name, which can be accessed with
+        ``G.nodes[...][store_pos_as]``. The function still returns the dictionary.
+
+    Returns
+    -------
+    pos : dict
+        A dictionary of positions keyed by node
+
+    Raises
+    ------
+    NetworkXException
+        If G is not planar
+
+    Examples
+    --------
+    >>> from pprint import pprint
+    >>> G = nx.path_graph(4)
+    >>> pos = nx.planar_layout(G)
+    >>> # suppress the returned dict and store on the graph directly
+    >>> _ = nx.planar_layout(G, store_pos_as="pos")
+    >>> pprint(nx.get_node_attributes(G, "pos"))
+    {0: array([-0.77777778, -0.33333333]),
+     1: array([ 1.        , -0.33333333]),
+     2: array([0.11111111, 0.55555556]),
+     3: array([-0.33333333,  0.11111111])}
+    """
+    ...
 def spiral_layout(
     G: Graph[_Node, _NodeData, _EdgeData],
     scale: float = 1,
