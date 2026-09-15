@@ -150,7 +150,7 @@ Pygments==2.21.*
 decorator==5.2.*
 ratelimit==2.2.*
 zxcvbn==4.5.*
-convertdate==2.4.1
+convertdate==2.5.1
 WebTest==3.0.*
 keyboard==0.13.*
 jsonschema[format]~=4.26.0
