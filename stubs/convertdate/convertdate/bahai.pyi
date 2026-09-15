@@ -1,9 +1,9 @@
 """
 The Bahá'í (Badí) calendar is a solar calendar with 19 months of 19 days.
 
-Every four years, an intercalary period, Ayyam-i-Há, occurs between the 18th and 19th
-months. Dates in this period are returned as month 19, and the month of ‘Alá is always
-reported as month 20.
+An intercalary period, Ayyam-i-Há, occurs between the 18th and 19th months, has
+either four or five days. Dates in this period are returned as month 19, and
+the month of ‘Alá is always reported as month 20.
 
 .. code-block:: python
 
