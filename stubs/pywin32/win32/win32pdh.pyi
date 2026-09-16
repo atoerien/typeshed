@@ -1,5 +1,3 @@
-"""A module, encapsulating the Windows Performance Data Helpers API"""
-
 from _typeshed import Incomplete
 
 import _win32typing

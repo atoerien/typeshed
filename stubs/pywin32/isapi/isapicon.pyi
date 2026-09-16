@@ -1,5 +1,3 @@
-"""Constants needed by ISAPI filters and extensions."""
-
 from typing import Final
 
 HTTP_CONTINUE: Final = 100

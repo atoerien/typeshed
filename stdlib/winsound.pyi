@@ -1,23 +1,3 @@
-"""
-PlaySound(sound, flags) - play a sound
-SND_FILENAME - sound is a wav file name
-SND_ALIAS - sound is a registry sound association name
-SND_LOOP - Play the sound repeatedly; must also specify SND_ASYNC
-SND_MEMORY - sound is a memory image of a wav file
-SND_PURGE - stop all instances of the specified sound
-SND_ASYNC - PlaySound returns immediately
-SND_NODEFAULT - Do not play a default beep if the sound can not be found
-SND_NOSTOP - Do not interrupt any sounds currently playing
-SND_NOWAIT - Return immediately if the sound driver is busy
-SND_APPLICATION - sound is an application-specific alias in the registry.
-SND_SENTRY - Triggers a SoundSentry event when the sound is played.
-SND_SYNC - Play the sound synchronously, default behavior.
-SND_SYSTEM - Assign sound to the audio session for system notification sounds.
-
-Beep(frequency, duration) - Make a beep through the PC speaker.
-MessageBeep(type) - Call Windows MessageBeep.
-"""
-
 import sys
 from _typeshed import ReadableBuffer
 from typing import Final, Literal, overload

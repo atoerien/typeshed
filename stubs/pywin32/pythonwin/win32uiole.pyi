@@ -1,5 +1,3 @@
-"""A module, encapsulating the Microsoft Foundation Classes OLE functionality."""
-
 from typing import Final, Literal
 
 import _win32typing

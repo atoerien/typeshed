@@ -1,5 +1,3 @@
-"""Various Windows specific bits and pieces."""
-
 import subprocess
 import sys
 from collections.abc import Callable

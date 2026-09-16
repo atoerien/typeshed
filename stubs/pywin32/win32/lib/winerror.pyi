@@ -1,9 +1,3 @@
-"""
-Error related constants for win32
-
-Generated from winerror.h and cderror.h
-"""
-
 from typing import Final
 
 ERROR_INSTALL_SERVICE: Final = 1601

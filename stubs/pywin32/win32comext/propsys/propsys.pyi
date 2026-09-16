@@ -1,5 +1,3 @@
-"""A module, encapsulating the Property System interfaces."""
-
 from typing import TypeAlias
 
 import _win32typing

@@ -1,11 +1,3 @@
-"""
-This module provides an interface to the native time zone data on Windows,
-including :py:class:`datetime.tzinfo` implementations.
-
-Attempting to import this module on a non-Windows platform will raise an
-:py:obj:`ImportError`.
-"""
-
 import sys
 from ctypes import _NameTypes, _Pointer, c_wchar
 from datetime import datetime, timedelta

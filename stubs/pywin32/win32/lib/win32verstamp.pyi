@@ -1,5 +1,3 @@
-"""Stamp a Win32 binary with version information."""
-
 from typing import Final
 
 VS_FFI_SIGNATURE: Final = -17890115

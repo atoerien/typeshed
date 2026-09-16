@@ -1,5 +1,3 @@
-"""A module encapsulating the Windows Remote Access Service (RAS) API."""
-
 from _typeshed import Incomplete
 from collections.abc import Callable, Iterable
 from typing import Final, Literal
