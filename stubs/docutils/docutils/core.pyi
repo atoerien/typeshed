@@ -254,7 +254,13 @@ def publish_doctree(
     settings_overrides=None,
     config_section: str | None = None,
     enable_exit_status: bool = False,
-) -> nodes.document: ...
+) -> nodes.document:
+    """
+    Set up & run a `Publisher` for programmatic use. Return a document tree.
+
+    Parameters: see `publish_programmatically()`.
+    """
+    ...
 def publish_from_doctree(
     document,
     destination_path: StrPath | None = None,
