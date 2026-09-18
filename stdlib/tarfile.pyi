@@ -1633,7 +1633,10 @@ class TarFile:
 
 open = TarFile.open
 
-def is_tarfile(name: FileDescriptorOrPath | IO[bytes]) -> bool: ...
+def is_tarfile(name: FileDescriptorOrPath | IO[bytes]) -> bool:
+    """
+    Return True if name points to a tar archive that we
+    are able to handle, else return False.
 
     'name' should be a string, file, or file-like object.
     """

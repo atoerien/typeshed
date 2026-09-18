@@ -727,7 +727,13 @@ else:
         def joinpath(self, *other: StrPath) -> Path: ...
         def __truediv__(self, add: StrPath) -> Path: ...
 
-def is_zipfile(filename: FileDescriptorOrPath | _SupportsReadSeekTell) -> bool: ...
+def is_zipfile(filename: FileDescriptorOrPath | _SupportsReadSeekTell) -> bool:
+    """
+    Quickly see if a file is a ZIP file by checking the magic number.
+
+    The filename argument may be a file or file-like object too.
+    """
+    ...
 
 ZIP64_LIMIT: Final[int]
 ZIP_FILECOUNT_LIMIT: Final[int]

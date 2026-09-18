@@ -57,7 +57,9 @@ class Connection(Generic[_C]):
         (default: None - no timeout)
     :param write_timeout: The timeout for writing to the connection in seconds.
         (default: None - no timeout)
-    :param str charset: Charset to use.
+    :param str charset: Charset to use. "utf8" (or "utf8mb4") is recommended.
+        legacy multibyte encodings may pose security risks.
+        Do not use such encodings for public-facing systems.
     :param str collation: Collation name to use.
     :param sql_mode: Default SQL_MODE to use.
     :param read_default_file:
@@ -99,7 +101,7 @@ class Connection(Generic[_C]):
         an argument.  For the dialog plugin, a prompt(echo, prompt) method can be used
         (if no authenticate method) for returning a string from the user. (experimental)
     :param server_public_key: SHA256 authentication plugin public key value. (default: None)
-    :param binary_prefix: Add _binary prefix on bytes and bytearray. (default: False)
+    :param binary_prefix: **DEPRECATED**
     :param compress: Not supported.
     :param named_pipe: Not supported.
     :param db: **DEPRECATED** Alias for database.
@@ -394,7 +396,7 @@ class Connection(Generic[_C]):
         ...
     def set_character_set(self, charset: str, collation: str | None = None) -> None:
         """
-        Set charaset (and collation)
+        Set charset (and collation)
 
         Send "SET NAMES charset [COLLATE collation]" query.
         Update Connection.encoding based on charset.
@@ -467,6 +469,4 @@ class LoadLocalFile:
     filename: FileDescriptorOrPath
     connection: Connection[Any]
     def __init__(self, filename: FileDescriptorOrPath, connection: Connection[Any]) -> None: ...
-    def send_data(self) -> None:
-        """Send data packets from the local file to the server"""
-        ...
+    def send_data(self) -> None: ...
