@@ -3226,54 +3226,13 @@ class memoryview(Sequence[_I]):
         """Set self[key] to value."""
         ...
 
-    def tobytes(self, order: Literal["C", "F", "A"] | None = "C") -> bytes:
-        """
-        Return the data in the buffer as a byte string.
-
-        Order can be {'C', 'F', 'A'}. When order is 'C' or 'F', the data of the
-        original array is converted to C or Fortran order. For contiguous views,
-        'A' returns an exact copy of the physical memory. In particular, in-memory
-        Fortran order is preserved. For non-contiguous views, the data is converted
-        to C first. order=None is the same as order='C'.
-        """
-        ...
-    def tolist(self) -> list[int]:
-        """Return the data in the buffer as a list of elements."""
-        ...
-    def toreadonly(self) -> memoryview:
-        """Return a readonly version of the memoryview."""
-        ...
-    def release(self) -> None:
-        """Release the underlying buffer exposed by the memoryview object."""
-        ...
-    def hex(self, sep: str | bytes = ..., bytes_per_sep: SupportsIndex = 1) -> str:
-        r"""
-        Return the data in the buffer as a str of hexadecimal numbers.
-
-          sep
-            An optional single character or byte to separate hex bytes.
-          bytes_per_sep
-            How many bytes between separators.  Positive values count from the
-            right, negative values count from the left.
-
-        Example:
-        >>> value = memoryview(b'\xb9\x01\xef')
-        >>> value.hex()
-        'b901ef'
-        >>> value.hex(':')
-        'b9:01:ef'
-        >>> value.hex(':', 2)
-        'b9:01ef'
-        >>> value.hex(':', -2)
-        'b901:ef'
-        """
-        ...
-    def __buffer__(self, flags: int, /) -> memoryview:
-        """Return a buffer object that exposes the underlying memory of the object."""
-        ...
-    def __release_buffer__(self, buffer: memoryview, /) -> None:
-        """Release the buffer object that exposes the underlying memory of the object."""
-        ...
+    def tobytes(self, order: Literal["C", "F", "A"] | None = "C") -> bytes: ...
+    def tolist(self) -> list[int]: ...
+    def toreadonly(self) -> memoryview[_I]: ...
+    def release(self) -> None: ...
+    def hex(self, sep: str | bytes = ..., bytes_per_sep: SupportsIndex = 1) -> str: ...
+    def __buffer__(self, flags: int, /) -> memoryview: ...
+    def __release_buffer__(self, buffer: memoryview, /) -> None: ...
     if sys.version_info >= (3, 14):
         def index(self, value: object, start: SupportsIndex = 0, stop: SupportsIndex = sys.maxsize, /) -> int:
             """
