@@ -2862,7 +2862,9 @@ else:
     @deprecated("Soft deprecated. Use the subprocess module instead.")
     def spawnve(mode: int, path: StrOrBytesPath, argv: _ExecVArgs, env: _ExecEnv, /) -> int: ...
 
-def system(command: StrOrBytesPath) -> int: ...
+def system(command: StrOrBytesPath) -> int:
+    """Execute the command in a subshell."""
+    ...
 
 @final
 class times_result(structseq[float], tuple[float, float, float, float, float]):

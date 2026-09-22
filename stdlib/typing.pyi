@@ -995,6 +995,7 @@ _ReturnT_nd_co = TypeVar("_ReturnT_nd_co", covariant=True)
 
 @runtime_checkable
 class Coroutine(Awaitable[_ReturnT_nd_co], Protocol[_YieldT_co, _SendT_nd_contra, _ReturnT_nd_co]):
+    """Deprecated alias to collections.abc.Coroutine."""
     @abstractmethod
     def send(self, value: _SendT_nd_contra, /) -> _YieldT_co:
         """
