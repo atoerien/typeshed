@@ -257,6 +257,13 @@ class Curl:
             c.setopt(pycurl.URL, "http://www.python.org/")
             c.setopt(pycurl.URL, b"http://www.python.org/")
 
+        - Blob options, that is the ``*_BLOB`` options, accept the same values as
+          string options, plus any object supporting the buffer protocol such as
+          ``bytearray``, ``memoryview`` or ``array.array``. The value is copied, so
+          it does not have to be kept alive. Example::
+
+            c.setopt(pycurl.SSLCERT_BLOB, memoryview(certificate))
+
         - ``HTTP200ALIASES``, ``HTTPHEADER``, ``POSTQUOTE``, ``PREQUOTE``,
           ``PROXYHEADER`` and
           ``QUOTE`` accept a list or tuple of strings. The same rules apply to these
@@ -600,6 +607,11 @@ class Curl:
         Corresponds to `curl_easy_pause`_ in libcurl. The argument should be
         derived from the ``PAUSE_RECV``, ``PAUSE_SEND``, ``PAUSE_ALL`` and
         ``PAUSE_CONT`` constants.
+
+        ``pause()`` may be called from inside one of this handle's callbacks
+        or from the thread running the transfer. Calls from other threads while
+        ``perform()`` is running are rejected with ``pycurl.error``, as libcurl
+        does not support them.
 
         Raises pycurl.error exception upon failure.
 
@@ -1569,88 +1581,305 @@ class CurlMimePart:
 
 @disjoint_base
 class CurlUrl:
+    """
+    CurlUrl(url=None, flags=0) -> New CurlUrl object
+
+    Create a :ref:`curlurlobject` wrapping a libcurl ``CURLU`` URL handle.
+
+    Without arguments the handle is empty. If *url* is given it is parsed with
+    ``setpart(UPART_URL, url, flags)``, so *flags* may be any combination of the
+    ``U_*`` constants.
+
+    The component properties (``scheme``, ``host``, ``port``, ``path``, ``query``,
+    ``fragment``, ``user``, ``password``, ``options`` and, on libcurl 7.65.0 or
+    later, ``zoneid``) read and write the URL parts. A getter returns ``None`` when
+    the part is absent. Assigning ``None`` or using ``del`` removes it. For control
+    over encoding and other flags use :py:meth:`~pycurl.CurlUrl.getpart` and
+    :py:meth:`~pycurl.CurlUrl.setpart`.
+
+    A ``CurlUrl`` can be passed to a :ref:`Curl object <curlobject>` through the
+    ``CURLU`` option.
+
+    Corresponds to `curl_url`_ in libcurl. Requires libcurl 7.62.0 or later.
+
+    Example::
+
+        u = pycurl.CurlUrl("https://example.com/path?a=1")
+        u.host = "example.org"
+        curl.setopt(pycurl.CURLU, u)
+
+    :param url: an optional URL string to parse into the new handle.
+    :param int flags: ``U_*`` flags controlling how *url* is parsed.
+
+    .. _curl_url: https://curl.se/libcurl/c/curl_url.html
+    """
     def __new__(cls, url: str | bytes | None = None, flags: int = 0) -> Self: ...
-    def getpart(self, part: int, flags: int = 0, /) -> str | None: ...
-    def setpart(self, part: int, value: str | bytes | None, flags: int = 0, /) -> None: ...
+    def getpart(self, part: int, flags: int = 0, /) -> str | None:
+        """
+        getpart(part, flags=0) -> str or None
+
+        Return one URL component, or ``None`` when it is absent.
+
+        *part* is one of the ``UPART_*`` constants. *flags* is a combination of the
+        ``U_*`` constants, for example ``U_URLDECODE``. Errors other than an absent
+        part raise ``pycurl.error``.
+
+        Corresponds to `curl_url_get`_ in libcurl.
+
+        .. _curl_url_get: https://curl.se/libcurl/c/curl_url_get.html
+        """
+        ...
+    def setpart(self, part: int, value: str | bytes | None, flags: int = 0, /) -> None:
+        """
+        setpart(part, value, flags=0) -> None
+
+        Set one URL component.
+
+        *part* is one of the ``UPART_*`` constants. *value* is a string or bytes, or
+        ``None`` to remove the part. *flags* is a combination of the ``U_*`` constants,
+        for example ``U_URLENCODE`` or ``U_APPENDQUERY``. On failure ``pycurl.error``
+        is raised.
+
+        Corresponds to `curl_url_set`_ in libcurl.
+
+        .. _curl_url_set: https://curl.se/libcurl/c/curl_url_set.html
+        """
+        ...
     def __copy__(self) -> Self: ...
     def __deepcopy__(self, memo: Unused, /) -> Self: ...
 
     @property
-    def url(self) -> str | None: ...
+    def url(self) -> str | None:
+        """
+        The full URL as a string, or ``None`` if it is incomplete. Corresponds to
+        ``CURLUPART_URL``.
+        """
+        ...
     @url.setter
-    def url(self, value: str | bytes | None) -> None: ...
+    def url(self, value: str | bytes | None) -> None:
+        """
+        The full URL as a string, or ``None`` if it is incomplete. Corresponds to
+        ``CURLUPART_URL``.
+        """
+        ...
     @url.deleter
-    def url(self) -> None: ...
+    def url(self) -> None:
+        """
+        The full URL as a string, or ``None`` if it is incomplete. Corresponds to
+        ``CURLUPART_URL``.
+        """
+        ...
 
     @property
-    def scheme(self) -> str | None: ...
+    def scheme(self) -> str | None:
+        """
+        The URL scheme, or ``None`` if the URL has no scheme. Corresponds to
+        ``CURLUPART_SCHEME``.
+        """
+        ...
     @scheme.setter
-    def scheme(self, value: str | bytes | None) -> None: ...
+    def scheme(self, value: str | bytes | None) -> None:
+        """
+        The URL scheme, or ``None`` if the URL has no scheme. Corresponds to
+        ``CURLUPART_SCHEME``.
+        """
+        ...
     @scheme.deleter
-    def scheme(self) -> None: ...
+    def scheme(self) -> None:
+        """
+        The URL scheme, or ``None`` if the URL has no scheme. Corresponds to
+        ``CURLUPART_SCHEME``.
+        """
+        ...
 
     @property
-    def user(self) -> str | None: ...
+    def user(self) -> str | None:
+        """
+        The user name from the URL userinfo, or ``None`` if not set. Corresponds to
+        ``CURLUPART_USER``.
+        """
+        ...
     @user.setter
-    def user(self, value: str | bytes | None) -> None: ...
+    def user(self, value: str | bytes | None) -> None:
+        """
+        The user name from the URL userinfo, or ``None`` if not set. Corresponds to
+        ``CURLUPART_USER``.
+        """
+        ...
     @user.deleter
-    def user(self) -> None: ...
+    def user(self) -> None:
+        """
+        The user name from the URL userinfo, or ``None`` if not set. Corresponds to
+        ``CURLUPART_USER``.
+        """
+        ...
 
     @property
-    def password(self) -> str | None: ...
+    def password(self) -> str | None:
+        """
+        The password from the URL userinfo, or ``None`` if not set. Corresponds to
+        ``CURLUPART_PASSWORD``.
+        """
+        ...
     @password.setter
-    def password(self, value: str | bytes | None) -> None: ...
+    def password(self, value: str | bytes | None) -> None:
+        """
+        The password from the URL userinfo, or ``None`` if not set. Corresponds to
+        ``CURLUPART_PASSWORD``.
+        """
+        ...
     @password.deleter
-    def password(self) -> None: ...
+    def password(self) -> None:
+        """
+        The password from the URL userinfo, or ``None`` if not set. Corresponds to
+        ``CURLUPART_PASSWORD``.
+        """
+        ...
 
     @property
-    def options(self) -> str | None: ...
+    def options(self) -> str | None:
+        """
+        The options from the URL userinfo, or ``None`` if not set. Corresponds to
+        ``CURLUPART_OPTIONS``.
+        """
+        ...
     @options.setter
-    def options(self, value: str | bytes | None) -> None: ...
+    def options(self, value: str | bytes | None) -> None:
+        """
+        The options from the URL userinfo, or ``None`` if not set. Corresponds to
+        ``CURLUPART_OPTIONS``.
+        """
+        ...
     @options.deleter
-    def options(self) -> None: ...
+    def options(self) -> None:
+        """
+        The options from the URL userinfo, or ``None`` if not set. Corresponds to
+        ``CURLUPART_OPTIONS``.
+        """
+        ...
 
     @property
-    def host(self) -> str | None: ...
+    def host(self) -> str | None:
+        """
+        The host name, or ``None`` if the URL has no host. An IPv6 address is returned
+        in brackets, as it appears in the URL. Corresponds to ``CURLUPART_HOST``.
+        """
+        ...
     @host.setter
-    def host(self, value: str | bytes | None) -> None: ...
+    def host(self, value: str | bytes | None) -> None:
+        """
+        The host name, or ``None`` if the URL has no host. An IPv6 address is returned
+        in brackets, as it appears in the URL. Corresponds to ``CURLUPART_HOST``.
+        """
+        ...
     @host.deleter
-    def host(self) -> None: ...
+    def host(self) -> None:
+        """
+        The host name, or ``None`` if the URL has no host. An IPv6 address is returned
+        in brackets, as it appears in the URL. Corresponds to ``CURLUPART_HOST``.
+        """
+        ...
 
     @property
-    def port(self) -> str | None: ...
+    def port(self) -> str | None:
+        """
+        The port as a string, or ``None`` if the URL has no port. Assigning an int is
+        also accepted. Corresponds to ``CURLUPART_PORT``.
+        """
+        ...
     @port.setter
-    def port(self, value: str | bytes | int | None) -> None: ...
+    def port(self, value: str | bytes | int | None) -> None:
+        """
+        The port as a string, or ``None`` if the URL has no port. Assigning an int is
+        also accepted. Corresponds to ``CURLUPART_PORT``.
+        """
+        ...
     @port.deleter
-    def port(self) -> None: ...
+    def port(self) -> None:
+        """
+        The port as a string, or ``None`` if the URL has no port. Assigning an int is
+        also accepted. Corresponds to ``CURLUPART_PORT``.
+        """
+        ...
 
     @property
-    def path(self) -> str | None: ...
+    def path(self) -> str | None:
+        """The URL path, or ``None`` if not set. Corresponds to ``CURLUPART_PATH``."""
+        ...
     @path.setter
-    def path(self, value: str | bytes | None) -> None: ...
+    def path(self, value: str | bytes | None) -> None:
+        """The URL path, or ``None`` if not set. Corresponds to ``CURLUPART_PATH``."""
+        ...
     @path.deleter
-    def path(self) -> None: ...
+    def path(self) -> None:
+        """The URL path, or ``None`` if not set. Corresponds to ``CURLUPART_PATH``."""
+        ...
 
     @property
-    def query(self) -> str | None: ...
+    def query(self) -> str | None:
+        """
+        The query string, or ``None`` if the URL has no query. Corresponds to
+        ``CURLUPART_QUERY``.
+        """
+        ...
     @query.setter
-    def query(self, value: str | bytes | None) -> None: ...
+    def query(self, value: str | bytes | None) -> None:
+        """
+        The query string, or ``None`` if the URL has no query. Corresponds to
+        ``CURLUPART_QUERY``.
+        """
+        ...
     @query.deleter
-    def query(self) -> None: ...
+    def query(self) -> None:
+        """
+        The query string, or ``None`` if the URL has no query. Corresponds to
+        ``CURLUPART_QUERY``.
+        """
+        ...
 
     @property
-    def fragment(self) -> str | None: ...
+    def fragment(self) -> str | None:
+        """
+        The fragment, or ``None`` if the URL has no fragment. Corresponds to
+        ``CURLUPART_FRAGMENT``.
+        """
+        ...
     @fragment.setter
-    def fragment(self, value: str | bytes | None) -> None: ...
+    def fragment(self, value: str | bytes | None) -> None:
+        """
+        The fragment, or ``None`` if the URL has no fragment. Corresponds to
+        ``CURLUPART_FRAGMENT``.
+        """
+        ...
     @fragment.deleter
-    def fragment(self) -> None: ...
+    def fragment(self) -> None:
+        """
+        The fragment, or ``None`` if the URL has no fragment. Corresponds to
+        ``CURLUPART_FRAGMENT``.
+        """
+        ...
 
     @property
-    def zoneid(self) -> str | None: ...
+    def zoneid(self) -> str | None:
+        """
+        The IPv6 zone id, or ``None`` if not set. Corresponds to ``CURLUPART_ZONEID``.
+        Requires libcurl 7.65.0 or later.
+        """
+        ...
     @zoneid.setter
-    def zoneid(self, value: str | bytes | None) -> None: ...
+    def zoneid(self, value: str | bytes | None) -> None:
+        """
+        The IPv6 zone id, or ``None`` if not set. Corresponds to ``CURLUPART_ZONEID``.
+        Requires libcurl 7.65.0 or later.
+        """
+        ...
     @zoneid.deleter
-    def zoneid(self) -> None: ...
+    def zoneid(self) -> None:
+        """
+        The IPv6 zone id, or ``None`` if not set. Corresponds to ``CURLUPART_ZONEID``.
+        Requires libcurl 7.65.0 or later.
+        """
+        ...
 
 APPCONNECT_TIME_T: Final[int] = ...
 CONNECT_TIME_T: Final[int] = ...

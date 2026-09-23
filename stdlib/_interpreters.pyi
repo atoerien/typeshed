@@ -1,3 +1,8 @@
+"""
+This module provides primitive operations to manage Python interpreters.
+The 'interpreters' module provides a more convenient interface.
+"""
+
 import sys
 import types
 from collections.abc import Callable
@@ -9,8 +14,12 @@ _R = TypeVar("_R")
 _Configs: TypeAlias = Literal["default", "isolated", "legacy", "empty", ""]
 _SharedDict: TypeAlias = dict[str, Any]  # many objects can be shared
 
-class InterpreterError(Exception): ...
-class InterpreterNotFoundError(InterpreterError): ...
+class InterpreterError(Exception):
+    """A cross-interpreter operation failed"""
+    ...
+class InterpreterNotFoundError(InterpreterError):
+    """An interpreter was not found"""
+    ...
 
 if sys.version_info >= (3, 14):
     class NotShareableError(TypeError): ...

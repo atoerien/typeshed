@@ -617,7 +617,7 @@ class Client:
 
                After server shutdown, the client is *not* deallocated by
                JACK, the user (that's you!) is responsible to properly
-               use `close()` to release client ressources.
+               use `close()` to release client resources.
                Alternatively, the `Client` object can be used as a
                *context manager* in a *with statement*, which takes care
                of activating, deactivating and closing the client
@@ -1026,7 +1026,7 @@ class Client:
         ----------
         callback : callable
             User-supplied function that is called whenever an xrun has
-            occured.  It must have this signature::
+            occurred.  It must have this signature::
 
                 callback(delayed_usecs: float) -> None
 
@@ -1489,9 +1489,13 @@ class Port:
         """
         ...
     @property
-    def type(self) -> str: ...
+    def type(self) -> str:
+        """Name of the JACK port type (read-only)."""
+        ...
     @property
-    def uuid(self) -> int: ...
+    def uuid(self) -> int:
+        """The UUID of the JACK port."""
+        ...
     @property
     def is_audio(self) -> bool:
         """This is always ``True``."""
@@ -1562,10 +1566,20 @@ class MidiPort(Port):
         ...
 
 class UnknownPort(Port):
+    """
+    A JACK port with an unknown type
+
+    This class is derived from `Port` and has exactly the same
+    attributes and methods.
+    """
     @property
-    def is_audio(self) -> Literal[False]: ...
+    def is_audio(self) -> Literal[False]:
+        """This is always ``False``."""
+        ...
     @property
-    def is_midi(self) -> Literal[False]: ...
+    def is_midi(self) -> Literal[False]:
+        """This is always ``False``."""
+        ...
 
 class OwnPort(Port):
     """
@@ -1585,15 +1599,90 @@ class OwnPort(Port):
         """Number of connections to or from port."""
         ...
     @property
-    def connections(self) -> list[Port]: ...
-    def is_connected_to(self, port: str | Port) -> bool: ...
-    def connect(self, port: str | Port) -> None: ...
-    def disconnect(self, other: str | Port | None = None) -> None: ...
-    def unregister(self) -> None: ...
-    def get_buffer(self) -> _CBufferType: ...
+    def connections(self) -> list[Port]:
+        """List of ports which the port is connected to."""
+        ...
+    def is_connected_to(self, port: str | Port) -> bool:
+        """
+        Am I *directly* connected to *port*?
+
+        Parameters
+        ----------
+        port : str or Port
+            Full port name or port object.
+        """
+        ...
+    def connect(self, port: str | Port) -> None:
+        """
+        Connect to given port.
+
+        Parameters
+        ----------
+        port : str or Port
+            Full port name or port object.
+
+        See Also
+        --------
+        Client.connect
+        """
+        ...
+    def disconnect(self, other: str | Port | None = None) -> None:
+        """
+        Disconnect this port.
+
+        Parameters
+        ----------
+        other : str or Port
+            Port to disconnect from.
+            By default, disconnect from all connected ports.
+        """
+        ...
+    def unregister(self) -> None:
+        """
+        Unregister port.
+
+        Remove the port from the client, disconnecting any existing
+        connections.  This also removes the port from
+        `Client.inports`, `Client.outports`, `Client.midi_inports` or
+        `Client.midi_outports`.
+        """
+        ...
+    def get_buffer(self) -> _CBufferType:
+        """
+        Get buffer for audio data.
+
+        This returns a buffer holding the memory area associated with
+        the specified port.  For an output port, it will be a memory
+        area that can be written to; for an input port, it will be an
+        area containing the data from the port's connection(s), or
+        zero-filled.  If there are multiple inbound connections, the
+        data will be mixed appropriately.
+
+        Caching output ports is DEPRECATED in JACK 2.0, due to some new
+        optimization (like "pipelining").  Port buffers have to be
+        retrieved in each callback for proper functioning.
+
+        This method shall only be called from within the process
+        callback (see `Client.set_process_callback()`).
+        """
+        ...
     # Returns a numpy.typing.NDArray[numpy.float32], but JACK-Client no longer
     # declares NumPy as a dependency, so we cannot depend on it here.
-    def get_array(self) -> Any: ...
+    def get_array(self) -> Any:
+        """
+        Get audio buffer as NumPy array.
+
+        Make sure to ``import numpy`` before calling this, otherwise the
+        first call might take a long time.
+
+        This method shall only be called from within the process
+        callback (see `Client.set_process_callback()`).
+
+        See Also
+        --------
+        get_buffer
+        """
+        ...
 
 class OwnMidiPort(MidiPort, OwnPort):
     """

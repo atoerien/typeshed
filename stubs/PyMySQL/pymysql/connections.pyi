@@ -295,13 +295,47 @@ class Connection(Generic[_C]):
         ...
     def autocommit(self, value) -> None: ...
     def get_autocommit(self) -> bool: ...
-    def commit(self) -> None: ...
-    def begin(self) -> None: ...
-    def rollback(self) -> None: ...
-    def select_db(self, db) -> None: ...
-    def escape(self, obj: object, mapping: _EscaperMapping = None) -> str: ...
+    def commit(self) -> None:
+        """
+        Commit changes to stable storage.
+
+        See `Connection.commit() <https://www.python.org/dev/peps/pep-0249/#commit>`_
+        in the specification.
+        """
+        ...
+    def begin(self) -> None:
+        """Begin transaction."""
+        ...
+    def rollback(self) -> None:
+        """
+        Roll back the current transaction.
+
+        See `Connection.rollback() <https://www.python.org/dev/peps/pep-0249/#rollback>`_
+        in the specification.
+        """
+        ...
+    def select_db(self, db) -> None:
+        """
+        Set current db.
+
+        :param db: The name of the db.
+        """
+        ...
+    def escape(self, obj: object, mapping: _EscaperMapping = None) -> str:
+        """
+        Escape whatever value is passed.
+
+        Non-standard, for internal use; do not use this in your applications.
+        """
+        ...
     @deprecated("literal() is deprecated and will be removed in the next version.")
-    def literal(self, obj: object) -> str: ...
+    def literal(self, obj: object) -> str:
+        """
+        Alias for escape().
+
+        Non-standard, for internal use; do not use this in your applications.
+        """
+        ...
 
     @overload
     def cursor(self, cursor: None = None) -> _C:
@@ -425,4 +459,9 @@ class MySQLResult:
     def __del__(self) -> None: ...
     first_packet: Incomplete
     def read(self) -> None: ...
-    def init_unbuffered_query(self) -> None: ...
+    def init_unbuffered_query(self) -> None:
+        """
+        :raise OperationalError: If the connection to the MySQL server is lost.
+        :raise InternalError:
+        """
+        ...
