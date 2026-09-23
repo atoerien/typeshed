@@ -14,7 +14,8 @@ an argument are now methods of the result object. Deprecated functions
 
 import builtins
 from _typeshed import Incomplete
-from typing_extensions import disjoint_base
+from typing import overload
+from typing_extensions import deprecated, disjoint_base
 
 import MySQLdb._exceptions
 
@@ -153,354 +154,55 @@ class connection:
     port: Incomplete
     server_capabilities: Incomplete
     def __init__(self, *args, **kwargs) -> None: ...
-    def _get_native_connection(self):
-        """
-        Return the internal MYSQL* wrapped in a PyCapsule object.
-        NOTE: this is a private API introduced ONLY for XTA integration,
-              don't use it for different use cases.
-              This method is supported only for XTA integration and support must
-              be asked to LIXA project: http://www.tiian.org/lixa/
-              Please DO NOT ask support to PyMySQL/mysqlclient-python project.
-        """
-        ...
-    def affected_rows(self):
-        """
-        Return number of rows affected by the last query.
-        Non-standard. Use Cursor.rowcount.
-        """
-        ...
-    def autocommit(self, on):
-        """Set the autocommit mode. True values enable; False value disable."""
-        ...
-    def change_user(self, *args, **kwargs):
-        """
-        Changes the user and causes the database specified by db to
-        become the default (current) database on the connection
-        specified by mysql. In subsequent queries, this database is
-        the default for table references that do not include an
-        explicit database specifier.
+    def _get_native_connection(self): ...
+    def affected_rows(self): ...
+    def autocommit(self, on): ...
+    def change_user(self, *args, **kwargs): ...
+    def character_set_name(self): ...
+    def close(self): ...
+    def commit(self): ...
+    def dump_debug_info(self): ...
+    def errno(self): ...
+    def error(self): ...
+    def escape(self, obj, dict): ...
+    def escape_string(self, s): ...
+    def field_count(self): ...
+    def fileno(self): ...
+    def get_autocommit(self): ...
+    def get_character_set_info(self): ...
+    def get_host_info(self): ...
+    def get_proto_info(self): ...
+    def get_server_info(self): ...
+    def info(self): ...
+    def insert_id(self): ...
+    def kill(self, *args, **kwargs): ...
+    def more_results(self) -> bool: ...
+    def next_result(self): ...
 
-        This function was introduced in MySQL Version 3.23.3.
+    @overload
+    @deprecated("The reconnect parameter of ping() is deprecated.")
+    def ping(self, reconnect: bool) -> None: ...
+    @overload
+    def ping(self) -> None: ...
 
-        Fails unless the connected user can be authenticated or if he
-        doesn't have permission to use the database. In this case the
-        user and database are not changed.
-
-        The db parameter may be set to None if you don't want to have
-        a default database.
-        """
-        ...
-    def character_set_name(self):
-        """
-        Returns the default character set for the current connection.
-        Non-standard.
-        """
-        ...
-    def close(self):
-        """Close the connection. No further activity possible."""
-        ...
-    def commit(self):
-        """Commits the current transaction"""
-        ...
-    def dump_debug_info(self):
-        """
-        Instructs the server to write some debug information to the
-        log. The connected user must have the process privilege for
-        this to work. Non-standard.
-        """
-        ...
-    def errno(self):
-        """
-        Returns the error code for the most recently invoked API function
-        that can succeed or fail. A return value of zero means that no error
-        occurred.
-        """
-        ...
-    def error(self):
-        """
-        Returns the error message for the most recently invoked API function
-        that can succeed or fail. An empty string () is returned if no error
-        occurred.
-        """
-        ...
-    def escape(self, obj, dict):
-        """
-        escape(obj, dict) -- escape any special characters in object obj
-        using mapping dict to provide quoting functions for each type.
-        Returns a SQL literal string.
-        """
-        ...
-    def escape_string(self, s):
-        """
-        escape_string(s) -- quote any SQL-interpreted characters in string s.
-
-        Use connection.escape_string(s), if you use it at all.
-        _mysql.escape_string(s) cannot handle character sets. You are
-        probably better off using connection.escape(o) instead, since
-        it will escape entire sequences as well as strings.
-        """
-        ...
-    def field_count(self):
-        """
-        Returns the number of columns for the most recent query on the
-        connection. Non-standard. Will probably give you bogus results
-        on most cursor classes. Use Cursor.rowcount.
-        """
-        ...
-    def fileno(self):
-        """
-        Return file descriptor of the underlying libmysqlclient connection.
-        This provides raw access to the underlying network connection.
-        """
-        ...
-    def get_autocommit(self):
-        """Get the autocommit mode. True when enable; False when disable."""
-        ...
-    def get_character_set_info(self):
-        """
-        Returns a dict with information about the current character set:
-
-        collation
-            collation name
-        name
-            character set name
-        comment
-            comment or descriptive name
-        dir
-            character set directory
-        mbminlen
-            min. length for multibyte string
-        mbmaxlen
-            max. length for multibyte string
-
-        Not all keys may be present, particularly dir.
-
-        Non-standard.
-        """
-        ...
-    def get_host_info(self):
-        """
-        Returns a string that represents the MySQL client library
-        version. Non-standard.
-        """
-        ...
-    def get_proto_info(self):
-        """
-        Returns an unsigned integer representing the protocol version
-        used by the current connection. Non-standard.
-        """
-        ...
-    def get_server_info(self):
-        """
-        Returns a string that represents the server version number.
-        Non-standard.
-        """
-        ...
-    def info(self):
-        """
-        Retrieves a string providing information about the most
-        recently executed query. Non-standard. Use messages or
-        Cursor.messages.
-        """
-        ...
-    def insert_id(self):
-        """
-        Returns the ID generated for an AUTO_INCREMENT column by the previous
-        query. Use this function after you have performed an INSERT query into a
-        table that contains an AUTO_INCREMENT field.
-
-        Note that this returns 0 if the previous query does not
-        generate an AUTO_INCREMENT value. If you need to save the value for
-        later, be sure to call this immediately after the query
-        that generates the value.
-
-        The ID is updated after INSERT and UPDATE statements that generate
-        an AUTO_INCREMENT value or that set a column value to
-        LAST_INSERT_ID(expr). See section 6.3.5.2 Miscellaneous Functions
-        in the MySQL documentation.
-
-        Also note that the value of the SQL LAST_INSERT_ID() function always
-        contains the most recently generated AUTO_INCREMENT value, and is not
-        reset between queries because the value of that function is maintained
-        in the server.
-        """
-        ...
-    def kill(self, *args, **kwargs):
-        """
-        Asks the server to kill the thread specified by pid.
-        Non-standard. Deprecated.
-        """
-        ...
-    def next_result(self):
-        """
-        If more query results exist, next_result() reads the next query
-        results and returns the status back to application.
-
-        After calling next_result() the state of the connection is as if
-        you had called query() for the next query. This means that you can
-        now call store_result(), warning_count(), affected_rows()
-        , and so forth. 
-
-        Returns 0 if there are more results; -1 if there are no more results
-
-        Non-standard.
-        """
-        ...
-    def ping(self):
-        """
-        Checks whether or not the connection to the server is working.
-
-        This function can be used by clients that remain idle for a
-        long while, to check whether or not the server has closed the
-        connection.
-
-        New in 1.2.2: Accepts an optional reconnect parameter. If True,
-        then the client will attempt reconnection. Note that this setting
-        is persistent. By default, this is on in MySQL<5.0.3, and off
-        thereafter.
-        MySQL 8.0.33 deprecated the MYSQL_OPT_RECONNECT option so reconnect
-        parameter is also deprecated in mysqlclient 2.2.1.
-
-        Non-standard. You should assume that ping() performs an
-        implicit rollback; use only when starting a new transaction.
-        You have been warned.
-        """
-        ...
-    def query(self, query):
-        """
-        Execute a query. store_result() or use_result() will get the
-        result set, if any. Non-standard. Use cursor() to create a cursor,
-        then cursor.execute().
-        """
-        ...
-    def read_query_result(self):
-        """Read result of query sent by send_query()."""
-        ...
-    def rollback(self):
-        """Rolls back the current transaction"""
-        ...
-    def select_db(self, *args, **kwargs):
-        """
-        Causes the database specified by db to become the default
-        (current) database on the connection specified by mysql. In subsequent
-        queries, this database is the default for table references that do not
-        include an explicit database specifier.
-
-        Fails unless the connected user can be authenticated as having
-        permission to use the database.
-
-        Non-standard.
-        """
-        ...
-    def send_query(self, *args, **kwargs):
-        """
-        Send a query. Same to query() except not wait response.
-
-        Use read_query_result() before calling store_result() or use_result()
-        """
-        ...
-    def set_character_set(self, charset: str) -> None:
-        """
-        Sets the default character set for the current connection.
-        Non-standard.
-        """
-        ...
-    def set_server_option(self, option):
-        """
-        set_server_option(option) -- Enables or disables an option
-        for the connection.
-
-        Non-standard.
-        """
-        ...
-    def shutdown(self):
-        """
-        Asks the database server to shut down. The connected user must
-        have shutdown privileges. Non-standard. Deprecated.
-        """
-        ...
-    def sqlstate(self):
-        """
-        Returns a string containing the SQLSTATE error code
-        for the last error. The error code consists of five characters.
-        '00000' means "no error." The values are specified by ANSI SQL
-        and ODBC. For a list of possible values, see section 23
-        Error Handling in MySQL in the MySQL Manual.
-
-        Note that not all MySQL errors are yet mapped to SQLSTATE's.
-        The value 'HY000' (general error) is used for unmapped errors.
-
-        Non-standard.
-        """
-        ...
-    def stat(self):
-        """
-        Returns a character string containing information similar to
-        that provided by the mysqladmin status command. This includes
-        uptime in seconds and the number of running threads,
-        questions, reloads, and open tables. Non-standard.
-        """
-        ...
-    def store_result(self):
-        """
-        Returns a result object acquired by mysql_store_result
-        (results stored in the client). If no results are available,
-        None is returned. Non-standard.
-        """
-        ...
-    def string_literal(self, obj, /) -> str:
-        """
-        string_literal(obj) -- converts object obj into a SQL string literal.
-        This means, any special SQL characters are escaped, and it is enclosed
-        within single quotes. In other words, it performs:
-
-        "'%s'" % escape_string(str(obj))
-
-        Use connection.string_literal(obj), if you use it at all.
-        _mysql.string_literal(obj) cannot handle character sets.
-        """
-        ...
-    def thread_id(self):
-        """
-        Returns the thread ID of the current connection. This value
-        can be used as an argument to kill() to kill the thread.
-
-        If the connection is lost and you reconnect with ping(), the
-        thread ID will change. This means you should not get the
-        thread ID and store it for later. You should get it when you
-        need it.
-
-        Non-standard.
-        """
-        ...
-    def use_result(self):
-        """
-        Returns a result object acquired by mysql_use_result
-        (results stored in the server). If no results are available,
-        None is returned. Non-standard.
-        """
-        ...
-    def discard_result(self) -> None:
-        """
-        Discard current result set.
-
-        This function can be called instead of use_result() or store_result(). Non-standard.
-        """
-        ...
-    def warning_count(self):
-        """
-        Returns the number of warnings generated during execution
-        of the previous SQL statement.
-
-        Non-standard.
-        """
-        ...
-    def __delattr__(self, name: str, /) -> None:
-        """Implement delattr(self, name)."""
-        ...
-    def __setattr__(self, name: str, value, /) -> None:
-        """Implement setattr(self, name, value)."""
-        ...
+    def query(self, query): ...
+    def read_query_result(self): ...
+    def rollback(self): ...
+    def select_db(self, *args, **kwargs): ...
+    def send_query(self, *args, **kwargs): ...
+    def set_character_set(self, charset: str) -> None: ...
+    def set_server_option(self, option): ...
+    def shutdown(self): ...
+    def sqlstate(self): ...
+    def stat(self): ...
+    def store_result(self): ...
+    def string_literal(self, obj, /) -> str: ...
+    def thread_id(self): ...
+    def use_result(self): ...
+    def discard_result(self) -> None: ...
+    def warning_count(self): ...
+    def __delattr__(self, name: str, /) -> None: ...
+    def __setattr__(self, name: str, value, /) -> None: ...
 
 @disjoint_base
 class result:

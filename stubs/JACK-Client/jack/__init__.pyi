@@ -9,9 +9,7 @@ from collections.abc import Callable, Generator, Iterable, Iterator, Sequence
 from typing import Any, Final, Literal, overload, type_check_only
 from typing_extensions import Never, Self
 
-import numpy
 from _cffi_backend import _CDataBase
-from numpy.typing import NDArray
 
 # Aka jack_position_t
 # Actual type: _cffi_backend.__CDataOwn <cdata 'struct _jack_position *'>
@@ -1491,9 +1489,9 @@ class Port:
         """
         ...
     @property
-    def uuid(self) -> int:
-        """The UUID of the JACK port."""
-        ...
+    def type(self) -> str: ...
+    @property
+    def uuid(self) -> int: ...
     @property
     def is_audio(self) -> bool:
         """This is always ``True``."""
@@ -1563,6 +1561,12 @@ class MidiPort(Port):
         """This is always ``True``."""
         ...
 
+class UnknownPort(Port):
+    @property
+    def is_audio(self) -> Literal[False]: ...
+    @property
+    def is_midi(self) -> Literal[False]: ...
+
 class OwnPort(Port):
     """
     A JACK audio port owned by a `Client`.
@@ -1581,88 +1585,15 @@ class OwnPort(Port):
         """Number of connections to or from port."""
         ...
     @property
-    def connections(self) -> list[Port]:
-        """List of ports which the port is connected to."""
-        ...
-    def is_connected_to(self, port: str | Port) -> bool:
-        """
-        Am I *directly* connected to *port*?
-
-        Parameters
-        ----------
-        port : str or Port
-            Full port name or port object.
-        """
-        ...
-    def connect(self, port: str | Port) -> None:
-        """
-        Connect to given port.
-
-        Parameters
-        ----------
-        port : str or Port
-            Full port name or port object.
-
-        See Also
-        --------
-        Client.connect
-        """
-        ...
-    def disconnect(self, other: str | Port | None = None) -> None:
-        """
-        Disconnect this port.
-
-        Parameters
-        ----------
-        other : str or Port
-            Port to disconnect from.
-            By default, disconnect from all connected ports.
-        """
-        ...
-    def unregister(self) -> None:
-        """
-        Unregister port.
-
-        Remove the port from the client, disconnecting any existing
-        connections.  This also removes the port from
-        `Client.inports`, `Client.outports`, `Client.midi_inports` or
-        `Client.midi_outports`.
-        """
-        ...
-    def get_buffer(self) -> _CBufferType:
-        """
-        Get buffer for audio data.
-
-        This returns a buffer holding the memory area associated with
-        the specified port.  For an output port, it will be a memory
-        area that can be written to; for an input port, it will be an
-        area containing the data from the port's connection(s), or
-        zero-filled.  If there are multiple inbound connections, the
-        data will be mixed appropriately.
-
-        Caching output ports is DEPRECATED in JACK 2.0, due to some new
-        optimization (like "pipelining").  Port buffers have to be
-        retrieved in each callback for proper functioning.
-
-        This method shall only be called from within the process
-        callback (see `Client.set_process_callback()`).
-        """
-        ...
-    def get_array(self) -> NDArray[numpy.float32]:
-        """
-        Get audio buffer as NumPy array.
-
-        Make sure to ``import numpy`` before calling this, otherwise the
-        first call might take a long time.
-
-        This method shall only be called from within the process
-        callback (see `Client.set_process_callback()`).
-
-        See Also
-        --------
-        get_buffer
-        """
-        ...
+    def connections(self) -> list[Port]: ...
+    def is_connected_to(self, port: str | Port) -> bool: ...
+    def connect(self, port: str | Port) -> None: ...
+    def disconnect(self, other: str | Port | None = None) -> None: ...
+    def unregister(self) -> None: ...
+    def get_buffer(self) -> _CBufferType: ...
+    # Returns a numpy.typing.NDArray[numpy.float32], but JACK-Client no longer
+    # declares NumPy as a dependency, so we cannot depend on it here.
+    def get_array(self) -> Any: ...
 
 class OwnMidiPort(MidiPort, OwnPort):
     """

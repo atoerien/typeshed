@@ -8,8 +8,8 @@ default, MySQLdb uses the Cursor class.
 from _typeshed import Incomplete
 from collections.abc import Iterable
 from re import Pattern
-from typing import TypeAlias
-from typing_extensions import LiteralString
+from typing import Literal, TypeAlias
+from typing_extensions import LiteralString, Self
 
 from .connections import _Literal
 
@@ -18,22 +18,35 @@ _Arguments: TypeAlias = dict[str, _Literal] | dict[bytes, _Literal] | Iterable[_
 RE_INSERT_VALUES: Pattern[str]
 
 class BaseCursor:
-    """
-    A base for Cursor classes. Useful attributes:
+    max_stmt_length: int
+    max_multi_stmt_length: int
+    max_multi_stmt_count: int
+    executemany_fallback: Literal["loop", "multi"] | None
+    connection: Incomplete
 
-    description
-        A tuple of DB API 7-tuples describing the columns in
-        the last executed query; see PEP-249 for details.
+    warning_count: int
+    description: Incomplete | None
+    description_flags: Incomplete | None
+    rowcount: int
+    arraysize: int
+    lastrowid: Incomplete | None
+    rownumber: Incomplete | None
 
-    description_flags
-        Tuple of column flags for last query, one entry per column
-        in the result set. Values correspond to those in
-        MySQLdb.constants.FLAG. See MySQL documentation (C API)
-        for more information. Non-standard extension.
+    def __init__(self, connection) -> None: ...
+    def close(self) -> None: ...
+    def __enter__(self): ...
+    def __exit__(self, *exc_info: object) -> None: ...
+    def nextset(self): ...
+    def setinputsizes(self, *args) -> None: ...
+    def setoutputsizes(self, *args) -> None: ...
+    def execute(self, query, args=None): ...
+    def mogrify(self, query: str | bytes, args: _Arguments | None = None) -> str: ...
+    def executemany(self, query: LiteralString, args: Iterable[_Arguments]) -> int | None: ...
+    def callproc(self, procname, args=()): ...
+    def __iter__(self) -> Self: ...
+    def __next__(self): ...
 
-    arraysize
-        default number of rows fetchmany() will fetch
-    """
+    # These are all deprecated.
     from ._exceptions import (
         DatabaseError as DatabaseError,
         DataError as DataError,
@@ -48,106 +61,6 @@ class BaseCursor:
         Warning as Warning,
     )
 
-    max_stmt_length: Incomplete
-    connection: Incomplete
-    description: Incomplete
-    description_flags: Incomplete
-    rowcount: int
-    arraysize: int
-    lastrowid: Incomplete
-    rownumber: Incomplete
-    def __init__(self, connection) -> None: ...
-    def close(self) -> None:
-        """Close the cursor. No further queries will be possible."""
-        ...
-    def __enter__(self): ...
-    def __exit__(self, *exc_info: object) -> None: ...
-    def nextset(self):
-        """
-        Advance to the next result set.
-
-        Returns None if there are no more result sets.
-        """
-        ...
-    def setinputsizes(self, *args) -> None:
-        """Does nothing, required by DB API."""
-        ...
-    def setoutputsizes(self, *args) -> None:
-        """Does nothing, required by DB API."""
-        ...
-    def execute(self, query, args=None):
-        """
-        Execute a query.
-
-        query -- string, query to execute on server
-        args -- optional sequence or mapping, parameters to use with query.
-
-        Note: If args is a sequence, then %s must be used as the
-        parameter placeholder in the query. If a mapping is used,
-        %(key)s must be used as the placeholder.
-
-        Returns integer represents rows affected, if any
-        """
-        ...
-    def mogrify(self, query: str | bytes, args: _Arguments | None = None) -> str:
-        """
-        Return query after binding args.
-
-        query -- string, query to mogrify
-        args -- optional sequence or mapping, parameters to use with query.
-
-        Note: If args is a sequence, then %s must be used as the
-        parameter placeholder in the query. If a mapping is used,
-        %(key)s must be used as the placeholder.
-
-        Returns string representing query that would be executed by the server
-        """
-        ...
-    def executemany(self, query: LiteralString, args: Iterable[_Arguments]) -> int | None:
-        """
-        Execute a multi-row query.
-
-        :param query: query to execute on server
-        :param args:  Sequence of sequences or mappings.  It is used as parameter.
-        :return: Number of rows affected, if any.
-
-        This method improves performance on multiple-row INSERT and
-        REPLACE. Otherwise it is equivalent to looping over args with
-        execute().
-        """
-        ...
-    def callproc(self, procname, args=()):
-        """
-        Execute stored procedure procname with args
-
-        procname -- string, name of procedure to execute on server
-
-        args -- Sequence of parameters to use with procedure
-
-        Returns the original args.
-
-        Compatibility warning: PEP-249 specifies that any modified
-        parameters must be returned. This is currently impossible
-        as they are only available by storing them in a server
-        variable and then retrieved by a query. Since stored
-        procedures return zero or more result sets, there is no
-        reliable way to get at OUT or INOUT parameters via callproc.
-        The server variables are named @_procname_n, where procname
-        is the parameter above and n is the position of the parameter
-        (from zero). Once all result sets generated by the procedure
-        have been fetched, you can issue a SELECT @_procname_0, ...
-        query using .execute() to get any OUT or INOUT values.
-
-        Compatibility warning: The act of calling a stored procedure
-        itself creates an empty result set. This appears after any
-        result sets generated by the procedure. This is non-standard
-        behavior with respect to the DB-API. Be sure to use nextset()
-        to advance through all result sets; otherwise you may get
-        disconnected.
-        """
-        ...
-    def __iter__(self): ...
-
 class CursorStoreResultMixIn:
     """
     This is a MixIn class which causes the entire result set to be
@@ -156,32 +69,10 @@ class CursorStoreResultMixIn:
     query, or using CursorUseResultMixIn instead.
     """
     rownumber: Incomplete
-    def fetchone(self):
-        """
-        Fetches a single row from the cursor. None indicates that
-        no more rows are available.
-        """
-        ...
-    def fetchmany(self, size=None):
-        """
-        Fetch up to size rows from the cursor. Result set may be smaller
-        than size. If size is not defined, cursor.arraysize is used.
-        """
-        ...
-    def fetchall(self):
-        """Fetches all available rows from the cursor."""
-        ...
-    def scroll(self, value, mode: str = "relative") -> None:
-        """
-        Scroll the cursor in the result set to a new position according
-        to mode.
-
-        If mode is 'relative' (default), value is taken as offset to
-        the current position in the result set, if set to 'absolute',
-        value states an absolute target position.
-        """
-        ...
-    def __iter__(self): ...
+    def fetchone(self): ...
+    def fetchmany(self, size=None): ...
+    def fetchall(self): ...
+    def scroll(self, value, mode: str = "relative") -> None: ...
 
 class CursorUseResultMixIn:
     """
@@ -192,21 +83,9 @@ class CursorUseResultMixIn:
     the connection.
     """
     rownumber: Incomplete
-    def fetchone(self):
-        """Fetches a single row from the cursor."""
-        ...
-    def fetchmany(self, size=None):
-        """
-        Fetch up to size rows from the cursor. Result set may be smaller
-        than size. If size is not defined, cursor.arraysize is used.
-        """
-        ...
-    def fetchall(self):
-        """Fetches all available rows from the cursor."""
-        ...
-    def __iter__(self): ...
-    def next(self): ...
-    __next__ = next
+    def fetchone(self): ...
+    def fetchmany(self, size=None): ...
+    def fetchall(self): ...
 
 class CursorTupleRowsMixIn:
     """

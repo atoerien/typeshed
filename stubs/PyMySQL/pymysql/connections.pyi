@@ -1,12 +1,13 @@
-from _typeshed import FileDescriptorOrPath, Incomplete, Unused
-from collections.abc import Callable, Mapping
+from _typeshed import Incomplete, Unused
+from collections.abc import Callable
 from socket import _Address, socket as _socket
 from ssl import SSLContext, _PasswordType
-from typing import Any, AnyStr, Generic, Literal, overload
+from typing import Any, Generic, Literal, overload
 from typing_extensions import Self, TypeVar, deprecated
 
 from .charset import charset_by_id as charset_by_id, charset_by_name as charset_by_name
 from .constants import CLIENT as CLIENT, COMMAND as COMMAND, FIELD_TYPE as FIELD_TYPE, SERVER_STATUS as SERVER_STATUS
+from .converters import _EscaperMapping
 from .cursors import Cursor
 from .err import (
     DatabaseError,
@@ -294,47 +295,13 @@ class Connection(Generic[_C]):
         ...
     def autocommit(self, value) -> None: ...
     def get_autocommit(self) -> bool: ...
-    def commit(self) -> None:
-        """
-        Commit changes to stable storage.
-
-        See `Connection.commit() <https://www.python.org/dev/peps/pep-0249/#commit>`_
-        in the specification.
-        """
-        ...
-    def begin(self) -> None:
-        """Begin transaction."""
-        ...
-    def rollback(self) -> None:
-        """
-        Roll back the current transaction.
-
-        See `Connection.rollback() <https://www.python.org/dev/peps/pep-0249/#rollback>`_
-        in the specification.
-        """
-        ...
-    def select_db(self, db) -> None:
-        """
-        Set current db.
-
-        :param db: The name of the db.
-        """
-        ...
-    def escape(self, obj, mapping: Mapping[str, Incomplete] | None = None):
-        """
-        Escape whatever value is passed.
-
-        Non-standard, for internal use; do not use this in your applications.
-        """
-        ...
-    def literal(self, obj):
-        """
-        Alias for escape().
-
-        Non-standard, for internal use; do not use this in your applications.
-        """
-        ...
-    def escape_string(self, s: AnyStr) -> AnyStr: ...
+    def commit(self) -> None: ...
+    def begin(self) -> None: ...
+    def rollback(self) -> None: ...
+    def select_db(self, db) -> None: ...
+    def escape(self, obj: object, mapping: _EscaperMapping = None) -> str: ...
+    @deprecated("literal() is deprecated and will be removed in the next version.")
+    def literal(self, obj: object) -> str: ...
 
     @overload
     def cursor(self, cursor: None = None) -> _C:
@@ -458,15 +425,4 @@ class MySQLResult:
     def __del__(self) -> None: ...
     first_packet: Incomplete
     def read(self) -> None: ...
-    def init_unbuffered_query(self) -> None:
-        """
-        :raise OperationalError: If the connection to the MySQL server is lost.
-        :raise InternalError:
-        """
-        ...
-
-class LoadLocalFile:
-    filename: FileDescriptorOrPath
-    connection: Connection[Any]
-    def __init__(self, filename: FileDescriptorOrPath, connection: Connection[Any]) -> None: ...
-    def send_data(self) -> None: ...
+    def init_unbuffered_query(self) -> None: ...
