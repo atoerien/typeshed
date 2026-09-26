@@ -69,6 +69,14 @@ def timezone(zone: str) -> _UTCclass | StaticTzInfo | DstTzInfo:
     ... except UnknownTimeZoneError:
     ...     print('Unknown')
     Unknown
+
+    Anything that is not a zone name is unknown too.
+
+    >>> try:
+    ...     timezone(False)
+    ... except UnknownTimeZoneError:
+    ...     print('Unknown')
+    Unknown
     """
     ...
 
