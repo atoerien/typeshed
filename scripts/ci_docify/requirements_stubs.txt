@@ -70,7 +70,7 @@ seaborn==0.13.2
 portpicker==1.6.*
 datauri==1.1.*
 PyScreeze==1.0.1
-pytz==2026.3.post1
+pytz==2026.4
 Flask-SocketIO==5.6.*
 pyjks==20.0.*
 s2clientprotocol==5.*
