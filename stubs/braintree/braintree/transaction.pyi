@@ -40,63 +40,10 @@ from braintree.venmo_account import VenmoAccount
 from braintree.visa_checkout_card import VisaCheckoutCard
 
 class Transaction(Resource):
-    """
-    A class representing Braintree Transaction objects.
+    class AchType:
+        SameDay: Final = "same_day"
+        Standard: Final = "standard"
 
-    An example of creating a sale transaction with all available fields::
-
-        result = Transaction.sale({
-            "amount": "100.00",
-            "order_id": "123",
-            "channel": "MyShoppingCartProvider",
-            "processing_merchant_category_code": "5411",
-            "credit_card": {
-                "number": "5105105105105100",
-                "expiration_date": "05/2011",
-                "cvv": "123"
-            },
-            "customer": {
-                "first_name": "Dan",
-                "last_name": "Smith",
-                "company": "Braintree",
-                "email": "dan@example.com",
-                "phone": "419-555-1234",
-                "fax": "419-555-1235",
-                "website": "https://www.braintreepayments.com"
-            },
-            "billing": {
-                "company": "Braintree",
-                "country_name": "United States of America",
-                "extended_address": "Suite 403",
-                "first_name": "Carl",
-                "international_phone": { "country_code": "1", "national_number": "3121234567" },
-                "last_name": "Jones",
-                "locality": "Chicago",
-                "phone_number": "312-123-4567",
-                "postal_code": "60622",
-                "region": "IL",
-                "street_address": "123 E Main St"
-            },
-            "shipping": {
-                "company": "Braintree",
-                "country_name": "United States of America",
-                "extended_address": "Apt 2F",
-                "first_name": "Andrew",
-                "international_phone": { "country_code": "1", "national_number": "3121234567" },
-                "last_name": "Mason",
-                "locality": "Bartlett",
-                "phone_number": "312-123-4567",
-                "postal_code": "60103",
-                "region": "IL",
-                "street_address": "456 W Main St"
-            }
-        })
-
-        print(result.transaction.amount)
-        print(result.transaction.order_id)
-
-    For more information on Transactions, see https://developer.paypal.com/braintree/docs/reference/request/transaction/sale/python
-    """
     class CreatedUsing:
         """
         Constants representing how the transaction was created.  Available types are:

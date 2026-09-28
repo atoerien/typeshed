@@ -1182,6 +1182,7 @@ class InterceptedUnaryUnaryCall(_InterceptedCall[_TRequest, _TResponse], metacla
         request_serializer: _Serializer[_TRequest],
         response_deserializer: _Deserializer[_TResponse],
         loop: asyncio.AbstractEventLoop,
+        registered_call_handle: int = 0,
     ) -> None: ...
 
     # pylint: disable=too-many-arguments
@@ -1599,7 +1600,7 @@ class Metadata(Collection[_MetadatumType]):
     """
     def __init__(self, *args: tuple[_MetadataKey, _MetadataValue]) -> None: ...
     @classmethod
-    def from_tuple(cls, raw_metadata: tuple[_MetadataKey, _MetadataValue]) -> Metadata: ...
+    def from_tuple(cls, raw_metadata: Iterable[_MetadatumType]) -> Self: ...
     def add(self, key: _MetadataKey, value: _MetadataValue) -> None: ...
     def __len__(self) -> int:
         """

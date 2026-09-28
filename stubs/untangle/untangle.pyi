@@ -1,18 +1,6 @@
-"""
-untangle
-
-Converts xml to python objects.
-
-The only method you need to call is parse()
-
-Partially inspired by xml2obj
-(http://code.activestate.com/recipes/149368-xml2obj/)
-
-Author: Christian Stefanescu (http://0chris.com)
-License: MIT License - http://www.opensource.org/licenses/mit-license.php
-"""
-
+from _typeshed import StrPath
 from collections.abc import Iterator, Mapping
+from os import PathLike
 from typing import Any
 from typing_extensions import Self
 from xml.sax import handler, xmlreader
@@ -53,35 +41,9 @@ class Handler(handler.ContentHandler):
     root: Element
     elements: list[Element]
     def __init__(self) -> None: ...
-    def startElement(self, name: str, attributes: xmlreader.AttributesImpl) -> None: ...
+    def startElement(self, name: str, attrs: xmlreader.AttributesImpl) -> None: ...
     def endElement(self, name: str) -> None: ...
-    def characters(self, cdata: str) -> None: ...
+    def characters(self, content: str) -> None: ...
 
-def parse(filename: str, **parser_features: bool) -> Element:
-    """
-    Interprets the given string as a filename, URL or XML data string,
-    parses it and returns a Python object which represents the given
-    document.
-
-    Extra arguments to this function are treated as feature values that are
-    passed to ``parser.setFeature()``. For example, ``feature_external_ges=False``
-    will set ``xml.sax.handler.feature_external_ges`` to False, disabling
-    the parser's inclusion of external general (text) entities such as DTDs.
-
-    Raises ``ValueError`` if the first argument is None / empty string.
-
-    Raises ``AttributeError`` if a requested xml.sax feature is not found in
-    ``xml.sax.handler``.
-
-    Raises ``xml.sax.SAXParseException`` if something goes wrong
-    during parsing.
-
-    Raises ``defusedxml.common.EntitiesForbidden``
-    or ``defusedxml.common.ExternalReferenceForbidden``
-    when a potentially malicious entity load is attempted. See also
-    https://github.com/tiran/defusedxml#attack-vectors
-    """
-    ...
-def is_url(string: str) -> bool:
-    """Checks if the given string starts with 'http(s)'."""
-    ...
+def parse(filename: StrPath | PathLike[bytes], **parser_features: bool) -> Element: ...
+def is_url(string: str) -> bool: ...
