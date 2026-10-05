@@ -13,7 +13,7 @@ pyaudio==0.2.*
 grpcio-reflection==1.*
 Flask-Cors==6.0.3
 rfc3339-validator==0.1.*
-rasterio==1.5.1
+rasterio==1.5.2
 lzstring==1.0.*
 httplib2==0.32.0
 Authlib==1.8.0
@@ -31,7 +31,7 @@ console-menu==0.8.*
 python-jenkins~=1.8.3
 grpcio~=1.84.0
 nanoleafapi==2.1.*
-django-filter==26.1.*
+django-filter==26.2.*
 simple-websocket==1.1.*
 greenlet==3.5.*
 atheris==3.1.*
@@ -130,7 +130,7 @@ objgraph==3.6.*
 www-authenticate==0.9.*
 resampy==0.4.*
 watchpoints==0.2.5
-regex==2026.9.10
+regex==2026.9.29
 jmespath==1.1.*
 google-cloud-ndb==2.4.*
 whatthepatch==1.0.*
