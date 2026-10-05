@@ -18,7 +18,6 @@ def remote_queryset(field: models.Field[Any, Any]) -> QuerySet[Any]:
     ...
 
 class UnknownFieldBehavior(Enum):
-    """An enumeration."""
     RAISE = "raise"
     WARN = "warn"
     IGNORE = "ignore"
