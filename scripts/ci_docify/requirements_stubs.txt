@@ -70,12 +70,12 @@ seaborn==0.13.2
 portpicker==1.6.*
 datauri==1.1.*
 PyScreeze==1.0.1
-pytz==2026.4
+pytz==2026.5
 Flask-SocketIO==5.6.*
 pyjks==20.0.*
 s2clientprotocol==5.*
 click-log==0.4.*
-simplejson==4.1.*
+simplejson==4.2.*
 tensorflow~=2.18.0
 psycopg2==2.9.13
 mypy-extensions==1.1.*
