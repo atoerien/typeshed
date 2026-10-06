@@ -924,9 +924,145 @@ def DocFileTest(
     encoding: str | None = None,
     **options: Any,
 ) -> DocFileCase: ...
-def DocFileSuite(*paths: str, **kw: Any) -> _DocTestSuite: ...
-def script_from_examples(s: str) -> str: ...
-def testsource(module: str | types.ModuleType | None, name: str) -> str: ...
-def debug_src(src: str, pm: bool = False, globs: dict[str, Any] | None = None) -> None: ...
-def debug_script(src: str, pm: bool = False, globs: dict[str, Any] | None = None) -> None: ...
-def debug(module: str | types.ModuleType | None, name: str, pm: bool = False) -> None: ...
+def DocFileSuite(*paths: str, **kw: Any) -> _DocTestSuite:
+    """
+    A unittest suite for one or more doctest files.
+
+    The path to each doctest file is given as a string; the
+    interpretation of that string depends on the keyword argument
+    "module_relative".
+
+    A number of options may be provided as keyword arguments:
+
+    module_relative
+      If "module_relative" is True, then the given file paths are
+      interpreted as os-independent module-relative paths.  By
+      default, these paths are relative to the calling module's
+      directory; but if the "package" argument is specified, then
+      they are relative to that package.  To ensure os-independence,
+      "filename" should use "/" characters to separate path
+      segments, and may not be an absolute path (i.e., it may not
+      begin with "/").
+
+      If "module_relative" is False, then the given file paths are
+      interpreted as os-specific paths.  These paths may be absolute
+      or relative (to the current working directory).
+
+    package
+      A Python package or the name of a Python package whose directory
+      should be used as the base directory for module relative paths.
+      If "package" is not specified, then the calling module's
+      directory is used as the base directory for module relative
+      filenames.  It is an error to specify "package" if
+      "module_relative" is False.
+
+    setUp
+      A set-up function.  This is called before running the
+      tests in each file. The setUp function will be passed a DocTest
+      object.  The setUp function can access the test globals as the
+      globs attribute of the test passed.
+
+    tearDown
+      A tear-down function.  This is called after running the
+      tests in each file.  The tearDown function will be passed a DocTest
+      object.  The tearDown function can access the test globals as the
+      globs attribute of the test passed.
+
+    globs
+      A dictionary containing initial global variables for the tests.
+
+    optionflags
+      A set of doctest option flags expressed as an integer.
+
+    parser
+      A DocTestParser (or subclass) that should be used to extract
+      tests from the files.
+
+    encoding
+      An encoding that will be used to convert the files to unicode.
+    """
+    ...
+def script_from_examples(s: str) -> str:
+    """
+    Extract script from text with examples.
+
+    Converts text with examples to a Python script.  Example input is
+    converted to regular code.  Example output and all other words
+    are converted to comments:
+
+    >>> text = '''
+    ...       Here are examples of simple math.
+    ...
+    ...           Python has super accurate integer addition
+    ...
+    ...           >>> 2 + 2
+    ...           5
+    ...
+    ...           And very friendly error messages:
+    ...
+    ...           >>> 1/0
+    ...           To Infinity
+    ...           And
+    ...           Beyond
+    ...
+    ...           You can use logic if you want:
+    ...
+    ...           >>> if 0:
+    ...           ...    blah
+    ...           ...    blah
+    ...           ...
+    ...
+    ...           Ho hum
+    ...           '''
+
+    >>> print(script_from_examples(text))
+    # Here are examples of simple math.
+    #
+    #     Python has super accurate integer addition
+    #
+    2 + 2
+    # Expected:
+    ## 5
+    #
+    #     And very friendly error messages:
+    #
+    1/0
+    # Expected:
+    ## To Infinity
+    ## And
+    ## Beyond
+    #
+    #     You can use logic if you want:
+    #
+    if 0:
+       blah
+       blah
+    #
+    #     Ho hum
+    <BLANKLINE>
+    """
+    ...
+def testsource(module: str | types.ModuleType | None, name: str) -> str:
+    """
+    Extract the test sources from a doctest docstring as a script.
+
+    Provide the module (or dotted name of the module) containing the
+    test to be debugged and the name (within the module) of the object
+    with the doc string with tests to be debugged.
+    """
+    ...
+def debug_src(src: str, pm: bool = False, globs: dict[str, Any] | None = None) -> None:
+    """Debug a single doctest docstring, in argument `src`"""
+    ...
+def debug_script(src: str, pm: bool = False, globs: dict[str, Any] | None = None) -> None:
+    """Debug a test script.  `src` is the script, as a string."""
+    ...
+def debug(module: str | types.ModuleType | None, name: str, pm: bool = False) -> None:
+    """
+    Debug a single doctest docstring.
+
+    Provide the module (or dotted name of the module) containing the
+    test to be debugged and the name (within the module) of the object
+    with the docstring with tests to be debugged.
+    """
+    ...

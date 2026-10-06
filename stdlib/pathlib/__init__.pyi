@@ -73,7 +73,12 @@ class PurePath(PathLike[str]):
             __slots__ = ("_drv", "_root", "_parts", "_str", "_hash", "_pparts", "_cached_cparts")
     if sys.version_info >= (3, 13):
         parser: ClassVar[ModuleType]
-        def full_match(self, pattern: StrPath, *, case_sensitive: bool | None = None) -> bool: ...
+        def full_match(self, pattern: StrPath, *, case_sensitive: bool | None = None) -> bool:
+            """
+            Return True if this path matches the given glob-style pattern. The
+            pattern is matched against the entire path.
+            """
+            ...
 
     @property
     def parts(self) -> tuple[str, ...]:

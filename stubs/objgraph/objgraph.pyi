@@ -434,7 +434,79 @@ def show_backrefs(
     shortnames: bool = True,
     output: SupportsWrite[str] | None = None,
     extra_node_attrs: Callable[[object], dict[str, str]] | None = None,
-) -> _GraphvizSource | None: ...
+) -> _GraphvizSource | None:
+    """
+    Generate an object reference graph ending at ``objs``.
+
+    The graph will show you what objects refer to ``objs``, directly and
+    indirectly.
+
+    ``objs`` can be a single object, or it can be a list of objects.  If
+    unsure, wrap the single object in a new list.
+
+    ``filename`` if specified, can be the name of a .dot or a image
+    file, whose extension indicates the desired output format; note
+    that output to a specific format is entirely handled by GraphViz:
+    if the desired format is not supported, you just get the .dot
+    file.  If ``filename`` and ``output`` are not specified, ``show_backrefs``
+    will try to display the graph inline (if you're using IPython), otherwise
+    it'll try to produce a .dot file and spawn a viewer (xdot).  If xdot is
+    not available, ``show_backrefs`` will convert the .dot file to a
+    .png and print its name.
+
+    ``output`` if specified, the GraphViz output will be written to this
+    file object. ``output`` and ``filename`` should not both be specified.
+
+    Use ``max_depth`` and ``too_many`` to limit the depth and breadth of the
+    graph.
+
+    Use ``filter`` (a predicate) and ``extra_ignore`` (a list of object IDs) to
+    remove undesired objects from the graph.
+
+    Use ``highlight`` (a predicate) to highlight certain graph nodes in blue.
+
+    Use ``extra_info`` (a function taking one argument and returning a
+    string) to report extra information for objects.
+
+    Use ``extra_node_attrs`` (a function taking the current object as argument,
+    returning a dict of strings) to add extra attributes to the nodes. See
+    https://www.graphviz.org/doc/info/attrs.html for a list of possible node
+    attributes.
+
+    Specify ``refcounts=True`` if you want to see reference counts.
+    These will mostly match the number of arrows pointing to an object,
+    but can be different for various reasons.
+
+    Specify ``shortnames=False`` if you want to see fully-qualified type
+    names ('package.module.ClassName').  By default you get to see only the
+    class name part.
+
+    Examples:
+
+        >>> show_backrefs(obj)
+        >>> show_backrefs([obj1, obj2])
+        >>> show_backrefs(obj, max_depth=5)
+        >>> show_backrefs(obj, filter=lambda x: not inspect.isclass(x))
+        >>> show_backrefs(obj, highlight=inspect.isclass)
+        >>> show_backrefs(obj, extra_ignore=[id(locals())])
+        >>> show_backrefs(obj, extra_node_attrs=lambda x: dict(URL=str(id(x))))
+
+    .. versionchanged:: 1.3
+       New parameters: ``filename``, ``extra_info``.
+
+    .. versionchanged:: 1.5
+       New parameter: ``refcounts``.
+
+    .. versionchanged:: 1.8
+       New parameter: ``shortnames``.
+
+    .. versionchanged:: 2.0
+       New parameter: ``output``.
+
+    .. versionchanged:: 3.5
+       New parameter: ``extra_node_attrs``.
+    """
+    ...
 def show_refs(
     objs: object,
     max_depth: int = 3,
@@ -448,7 +520,76 @@ def show_refs(
     shortnames: bool = True,
     output: SupportsWrite[str] | None = None,
     extra_node_attrs: Callable[[object], dict[str, str]] | None = None,
-) -> _GraphvizSource | None: ...
+) -> _GraphvizSource | None:
+    """
+    Generate an object reference graph starting at ``objs``.
+
+    The graph will show you what objects are reachable from ``objs``, directly
+    and indirectly.
+
+    ``objs`` can be a single object, or it can be a list of objects.  If
+    unsure, wrap the single object in a new list.
+
+    ``filename`` if specified, can be the name of a .dot or a image
+    file, whose extension indicates the desired output format; note
+    that output to a specific format is entirely handled by GraphViz:
+    if the desired format is not supported, you just get the .dot
+    file.  If ``filename`` and ``output`` is not specified, ``show_refs`` will
+    try to display the graph inline (if you're using IPython), otherwise it'll
+    try to produce a .dot file and spawn a viewer (xdot).  If xdot is
+    not available, ``show_refs`` will convert the .dot file to a
+    .png and print its name.
+
+    ``output`` if specified, the GraphViz output will be written to this
+    file object. ``output`` and ``filename`` should not both be specified.
+
+    Use ``max_depth`` and ``too_many`` to limit the depth and breadth of the
+    graph.
+
+    Use ``filter`` (a predicate) and ``extra_ignore`` (a list of object IDs) to
+    remove undesired objects from the graph.
+
+    Use ``highlight`` (a predicate) to highlight certain graph nodes in blue.
+
+    Use ``extra_info`` (a function returning a string) to report extra
+    information for objects.
+
+    Use ``extra_node_attrs`` (a function taking the current object as argument,
+    returning a dict of strings) to add extra attributes to the nodes. See
+    https://www.graphviz.org/doc/info/attrs.html for a list of possible node
+    attributes.
+
+    Specify ``refcounts=True`` if you want to see reference counts.
+
+    Examples:
+
+        >>> show_refs(obj)
+        >>> show_refs([obj1, obj2])
+        >>> show_refs(obj, max_depth=5)
+        >>> show_refs(obj, filter=lambda x: not inspect.isclass(x))
+        >>> show_refs(obj, highlight=inspect.isclass)
+        >>> show_refs(obj, extra_ignore=[id(locals())])
+        >>> show_refs(obj, extra_node_attrs=lambda x: dict(URL=str(id(x))))
+
+    .. versionadded:: 1.1
+
+    .. versionchanged:: 1.3
+       New parameters: ``filename``, ``extra_info``.
+
+    .. versionchanged:: 1.5
+       Follows references from module objects instead of stopping.
+       New parameter: ``refcounts``.
+
+    .. versionchanged:: 1.8
+       New parameter: ``shortnames``.
+
+    .. versionchanged:: 2.0
+       New parameter: ``output``.
+
+    .. versionchanged:: 3.5
+       New parameter: ``extra_node_attrs``.
+    """
+    ...
 def show_chain(
     *chains: list[object], obj: object, predicate: _Filter, max_depth: int = 20, extra_ignore: Iterable[int] = ()
 ) -> None:

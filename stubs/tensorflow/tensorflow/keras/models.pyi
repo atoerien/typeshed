@@ -680,7 +680,40 @@ class Model(Layer[_InputT_contra, _OutputT_co]):
         expand_nested: bool = False,
         show_trainable: bool = False,
         layer_range: list[str] | tuple[str, str] | None = None,
-    ) -> None: ...
+    ) -> None:
+        """
+        Prints a string summary of the network.
+
+        Args:
+            line_length: Total length of printed lines
+                (e.g. set this to adapt the display to different
+                terminal window sizes).
+            positions: Relative or absolute positions of log elements
+                in each line. If not provided, becomes
+                `[0.3, 0.6, 0.70, 1.]`. Defaults to `None`.
+            print_fn: Print function to use. By default, prints to `stdout`.
+                If `stdout` doesn't work in your environment, change to `print`.
+                It will be called on each line of the summary.
+                You can set it to a custom function
+                in order to capture the string summary.
+            expand_nested: Whether to expand the nested models.
+                Defaults to `False`.
+            show_trainable: Whether to show if a layer is trainable.
+                Defaults to `False`.
+            layer_range: a list or tuple of 2 strings,
+                which is the starting layer name and ending layer name
+                (both inclusive) indicating the range of layers to be printed
+                in summary. It also accepts regex patterns instead of exact
+                names. In this case, the start predicate will be
+                the first element that matches `layer_range[0]`
+                and the end predicate will be the last element
+                that matches `layer_range[1]`.
+                By default `None` considers all layers of the model.
+
+        Raises:
+            ValueError: if `summary()` is called before the model is built.
+        """
+        ...
     @property
     def layers(self) -> list[Layer[Incomplete, Incomplete]]: ...
     def get_layer(self, name: str | None = None, index: int | None = None) -> Layer[Incomplete, Incomplete]:

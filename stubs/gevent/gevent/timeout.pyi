@@ -179,7 +179,20 @@ class Timeout(BaseException):
     @classmethod
     def start_new(
         cls, timeout: float | None = None, exception: type[BaseException] | BaseException | None = None, ref: bool = True
-    ) -> Self: ...
+    ) -> Self:
+        """
+        Create a started :class:`Timeout`.
+
+        This is a shortcut, the exact action depends on *timeout*'s type:
+
+        * If *timeout* is a :class:`Timeout`, then call its :meth:`start` method
+          if it's not already begun.
+        * Otherwise, create a new :class:`Timeout` instance, passing (*timeout*, *exception*) as
+          arguments, then call its :meth:`start` method.
+
+        Returns the :class:`Timeout` instance.
+        """
+        ...
     @overload
     @classmethod
     def start_new(cls, timeout: _TimeoutT) -> _TimeoutT:

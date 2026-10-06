@@ -173,21 +173,194 @@ class SFTPClient(BaseSFTP, ClosingContextManager):
         """
         ...
     unlink = remove
-    def rename(self, oldpath: bytes | str, newpath: bytes | str) -> None: ...
-    def posix_rename(self, oldpath: bytes | str, newpath: bytes | str) -> None: ...
-    def mkdir(self, path: bytes | str, mode: int = 511) -> None: ...
-    def rmdir(self, path: bytes | str) -> None: ...
-    def stat(self, path: bytes | str) -> SFTPAttributes: ...
-    def lstat(self, path: bytes | str) -> SFTPAttributes: ...
-    def symlink(self, source: bytes | str, dest: bytes | str) -> None: ...
-    def chmod(self, path: bytes | str, mode: int) -> None: ...
-    def chown(self, path: bytes | str, uid: int, gid: int) -> None: ...
-    def utime(self, path: bytes | str, times: tuple[float, float] | None) -> None: ...
-    def truncate(self, path: bytes | str, size: int) -> None: ...
-    def readlink(self, path: bytes | str) -> str | None: ...
-    def normalize(self, path: bytes | str) -> str: ...
-    def chdir(self, path: bytes | str | None = None) -> None: ...
-    def getcwd(self) -> str | None: ...
+    def rename(self, oldpath: bytes | str, newpath: bytes | str) -> None:
+        """
+        Rename a file or folder from ``oldpath`` to ``newpath``.
+
+        .. note::
+            This method implements 'standard' SFTP ``RENAME`` behavior; those
+            seeking the OpenSSH "POSIX rename" extension behavior should use
+            `posix_rename`.
+
+        :param str oldpath:
+            existing name of the file or folder
+        :param str newpath:
+            new name for the file or folder, must not exist already
+
+        :raises:
+            ``IOError`` -- if ``newpath`` is a folder, or something else goes
+            wrong
+        """
+        ...
+    def posix_rename(self, oldpath: bytes | str, newpath: bytes | str) -> None:
+        """
+        Rename a file or folder from ``oldpath`` to ``newpath``, following
+        posix conventions.
+
+        :param str oldpath: existing name of the file or folder
+        :param str newpath: new name for the file or folder, will be
+            overwritten if it already exists
+
+        :raises:
+            ``IOError`` -- if ``newpath`` is a folder, posix-rename is not
+            supported by the server or something else goes wrong
+
+        :versionadded: 2.2
+        """
+        ...
+    def mkdir(self, path: bytes | str, mode: int = 511) -> None:
+        """
+        Create a folder (directory) named ``path`` with numeric mode ``mode``.
+        The default mode is 0777 (octal).  On some systems, mode is ignored.
+        Where it is used, the current umask value is first masked out.
+
+        :param str path: name of the folder to create
+        :param int mode: permissions (posix-style) for the newly-created folder
+        """
+        ...
+    def rmdir(self, path: bytes | str) -> None:
+        """
+        Remove the folder named ``path``.
+
+        :param str path: name of the folder to remove
+        """
+        ...
+    def stat(self, path: bytes | str) -> SFTPAttributes:
+        """
+        Retrieve information about a file on the remote system.  The return
+        value is an object whose attributes correspond to the attributes of
+        Python's ``stat`` structure as returned by ``os.stat``, except that it
+        contains fewer fields.  An SFTP server may return as much or as little
+        info as it wants, so the results may vary from server to server.
+
+        Unlike a Python `python:stat` object, the result may not be accessed as
+        a tuple.  This is mostly due to the author's slack factor.
+
+        The fields supported are: ``st_mode``, ``st_size``, ``st_uid``,
+        ``st_gid``, ``st_atime``, and ``st_mtime``.
+
+        :param str path: the filename to stat
+        :return:
+            an `.SFTPAttributes` object containing attributes about the given
+            file
+        """
+        ...
+    def lstat(self, path: bytes | str) -> SFTPAttributes:
+        """
+        Retrieve information about a file on the remote system, without
+        following symbolic links (shortcuts).  This otherwise behaves exactly
+        the same as `stat`.
+
+        :param str path: the filename to stat
+        :return:
+            an `.SFTPAttributes` object containing attributes about the given
+            file
+        """
+        ...
+    def symlink(self, source: bytes | str, dest: bytes | str) -> None:
+        """
+        Create a symbolic link to the ``source`` path at ``destination``.
+
+        :param str source: path of the original file
+        :param str dest: path of the newly created symlink
+        """
+        ...
+    def chmod(self, path: bytes | str, mode: int) -> None:
+        """
+        Change the mode (permissions) of a file.  The permissions are
+        unix-style and identical to those used by Python's `os.chmod`
+        function.
+
+        :param str path: path of the file to change the permissions of
+        :param int mode: new permissions
+        """
+        ...
+    def chown(self, path: bytes | str, uid: int, gid: int) -> None:
+        """
+        Change the owner (``uid``) and group (``gid``) of a file.  As with
+        Python's `os.chown` function, you must pass both arguments, so if you
+        only want to change one, use `stat` first to retrieve the current
+        owner and group.
+
+        :param str path: path of the file to change the owner and group of
+        :param int uid: new owner's uid
+        :param int gid: new group id
+        """
+        ...
+    def utime(self, path: bytes | str, times: tuple[float, float] | None) -> None:
+        """
+        Set the access and modified times of the file specified by ``path``.
+        If ``times`` is ``None``, then the file's access and modified times
+        are set to the current time.  Otherwise, ``times`` must be a 2-tuple
+        of numbers, of the form ``(atime, mtime)``, which is used to set the
+        access and modified times, respectively.  This bizarre API is mimicked
+        from Python for the sake of consistency -- I apologize.
+
+        :param str path: path of the file to modify
+        :param tuple times:
+            ``None`` or a tuple of (access time, modified time) in standard
+            internet epoch time (seconds since 01 January 1970 GMT)
+        """
+        ...
+    def truncate(self, path: bytes | str, size: int) -> None:
+        """
+        Change the size of the file specified by ``path``.  This usually
+        extends or shrinks the size of the file, just like the `~file.truncate`
+        method on Python file objects.
+
+        :param str path: path of the file to modify
+        :param int size: the new size of the file
+        """
+        ...
+    def readlink(self, path: bytes | str) -> str | None:
+        """
+        Return the target of a symbolic link (shortcut).  You can use
+        `symlink` to create these.  The result may be either an absolute or
+        relative pathname.
+
+        :param str path: path of the symbolic link file
+        :return: target path, as a `str`
+        """
+        ...
+    def normalize(self, path: bytes | str) -> str:
+        """
+        Return the normalized path (on the server) of a given path.  This
+        can be used to quickly resolve symbolic links or determine what the
+        server is considering to be the "current folder" (by passing ``'.'``
+        as ``path``).
+
+        :param str path: path to be normalized
+        :return: normalized form of the given path (as a `str`)
+
+        :raises: ``IOError`` -- if the path can't be resolved on the server
+        """
+        ...
+    def chdir(self, path: bytes | str | None = None) -> None:
+        """
+        Change the "current directory" of this SFTP session.  Since SFTP
+        doesn't really have the concept of a current working directory, this is
+        emulated by Paramiko.  Once you use this method to set a working
+        directory, all operations on this `.SFTPClient` object will be relative
+        to that path. You can pass in ``None`` to stop using a current working
+        directory.
+
+        :param str path: new current working directory
+
+        :raises:
+            ``IOError`` -- if the requested path doesn't exist on the server
+
+        .. versionadded:: 1.4
+        """
+        ...
+    def getcwd(self) -> str | None:
+        """
+        Return the "current working directory" for this SFTP session, as
+        emulated by Paramiko.  If no directory has been set with `chdir`,
+        this method will return ``None``.
+
+        .. versionadded:: 1.4
+        """
+        ...
     def putfo(
         self, fl: IO[bytes], remotepath: bytes | str, file_size: int = 0, callback: _Callback | None = None, confirm: bool = True
     ) -> SFTPAttributes:

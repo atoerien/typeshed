@@ -2441,7 +2441,13 @@ else:
         *,
         type_comments: bool = False,
         feature_version: int | tuple[int, int] | None = None,
-    ) -> _T: ...
+    ) -> _T:
+        """
+        Parse the source into an AST node.
+        Equivalent to compile(source, filename, mode, PyCF_ONLY_AST).
+        Pass type_comments=True to get back type comments where the syntax allows.
+        """
+        ...
     @overload
     def parse(
         source: str | ReadableBuffer,
@@ -2450,7 +2456,13 @@ else:
         *,
         type_comments: bool = False,
         feature_version: int | tuple[int, int] | None = None,
-    ) -> Module: ...
+    ) -> Module:
+        """
+        Parse the source into an AST node.
+        Equivalent to compile(source, filename, mode, PyCF_ONLY_AST).
+        Pass type_comments=True to get back type comments where the syntax allows.
+        """
+        ...
     @overload
     def parse(
         source: str | ReadableBuffer,
@@ -2459,7 +2471,13 @@ else:
         *,
         type_comments: bool = False,
         feature_version: int | tuple[int, int] | None = None,
-    ) -> Expression: ...
+    ) -> Expression:
+        """
+        Parse the source into an AST node.
+        Equivalent to compile(source, filename, mode, PyCF_ONLY_AST).
+        Pass type_comments=True to get back type comments where the syntax allows.
+        """
+        ...
     @overload
     def parse(
         source: str | ReadableBuffer,
@@ -2468,7 +2486,13 @@ else:
         *,
         type_comments: bool = False,
         feature_version: int | tuple[int, int] | None = None,
-    ) -> FunctionType: ...
+    ) -> FunctionType:
+        """
+        Parse the source into an AST node.
+        Equivalent to compile(source, filename, mode, PyCF_ONLY_AST).
+        Pass type_comments=True to get back type comments where the syntax allows.
+        """
+        ...
     @overload
     def parse(
         source: str | ReadableBuffer,
@@ -2477,7 +2501,13 @@ else:
         *,
         type_comments: bool = False,
         feature_version: int | tuple[int, int] | None = None,
-    ) -> Interactive: ...
+    ) -> Interactive:
+        """
+        Parse the source into an AST node.
+        Equivalent to compile(source, filename, mode, PyCF_ONLY_AST).
+        Pass type_comments=True to get back type comments where the syntax allows.
+        """
+        ...
     @overload
     def parse(
         source: str | ReadableBuffer,
@@ -2485,7 +2515,13 @@ else:
         mode: Literal["eval"],
         type_comments: bool = False,
         feature_version: int | tuple[int, int] | None = None,
-    ) -> Expression: ...
+    ) -> Expression:
+        """
+        Parse the source into an AST node.
+        Equivalent to compile(source, filename, mode, PyCF_ONLY_AST).
+        Pass type_comments=True to get back type comments where the syntax allows.
+        """
+        ...
     @overload
     def parse(
         source: str | ReadableBuffer,
@@ -2493,7 +2529,13 @@ else:
         mode: Literal["func_type"],
         type_comments: bool = False,
         feature_version: int | tuple[int, int] | None = None,
-    ) -> FunctionType: ...
+    ) -> FunctionType:
+        """
+        Parse the source into an AST node.
+        Equivalent to compile(source, filename, mode, PyCF_ONLY_AST).
+        Pass type_comments=True to get back type comments where the syntax allows.
+        """
+        ...
     @overload
     def parse(
         source: str | ReadableBuffer,
@@ -2501,7 +2543,13 @@ else:
         mode: Literal["single"],
         type_comments: bool = False,
         feature_version: int | tuple[int, int] | None = None,
-    ) -> Interactive: ...
+    ) -> Interactive:
+        """
+        Parse the source into an AST node.
+        Equivalent to compile(source, filename, mode, PyCF_ONLY_AST).
+        Pass type_comments=True to get back type comments where the syntax allows.
+        """
+        ...
     @overload
     def parse(
         source: str | ReadableBuffer,
@@ -2510,7 +2558,13 @@ else:
         *,
         type_comments: bool = False,
         feature_version: int | tuple[int, int] | None = None,
-    ) -> mod: ...
+    ) -> mod:
+        """
+        Parse the source into an AST node.
+        Equivalent to compile(source, filename, mode, PyCF_ONLY_AST).
+        Pass type_comments=True to get back type comments where the syntax allows.
+        """
+        ...
 
 def literal_eval(node_or_string: str | AST) -> Any:
     """

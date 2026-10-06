@@ -44,8 +44,40 @@ class Store:
         ...
     def __iter__(self) -> Iterator[str]: ...
     def is_init(self) -> bool: ...
-    def init_store(self, gpg_ids: str | list[str] | None, path: StrPath | None = None) -> None: ...
-    def init_git(self) -> None: ...
+    def init_store(self, gpg_ids: str | list[str] | None, path: StrPath | None = None) -> None:
+        """
+        Initialise the password store or a subdirectory with the gpg ids.
+
+        :param list gpg_ids: The list of gpg ids to encrypt the
+            password store with.  If the list is empty, the current
+            gpg id will be removed from the directory in path or root,
+            if path is None.
+
+        :param str path: (optional) If given, the gpg ids will only be
+            set for the given directory.  The path is relative to
+            :attr:`passpy.store.Store.store_dir`.
+
+        :raises ValueError: if the there is a problem with `path`.
+
+        :raises FileExistsError: if
+            :attr:`passpy.store.Store.store_dir` already exists and is
+            a file.
+
+        :raises FileNotFoundError: if the current gpg id should be
+            deleted, but none exists.
+
+        :raises OSError: if the directories in path do not exist and
+            can't be created.
+        """
+        ...
+    def init_git(self) -> None:
+        """
+        Initialise git for the password store.
+
+        Silently fails if :attr:`passpy.store.Store.repo` is not
+        ``None``.
+        """
+        ...
     def git(self, method: str, *args: object, **kwargs: object) -> None: ...
     def get_key(self, path: StrPath | None) -> str | None:
         """
@@ -156,5 +188,32 @@ class Store:
         """
         ...
     def iter_dir(self, path: StrPath) -> Iterator[str]: ...
-    def find(self, names: str | list[str] | None) -> list[str]: ...
-    def search(self, term: str) -> dict[str, list[tuple[str, Match[str]]]]: ...
+    def find(self, names: str | list[str] | None) -> list[str]:
+        """
+        Find keys by name.
+
+        Finds any keys in the password store that contain any one
+        entry in `names`.
+
+        :param names: The name or names to find keys for.
+        :type names: str or list
+
+        :rtype: list
+        :returns: A list of keys whose name contain any one entry in
+            `names`.
+        """
+        ...
+    def search(self, term: str) -> dict[str, list[tuple[str, Match[str]]]]:
+        """
+        Search through all keys.
+
+        :param str term: The term to search for.  The term will be
+            compiled as a regular expression.
+
+        :rtype: dict
+        :returns: The dictionary has an entry for each key, that
+            matched the given term.  The entry for that key then
+            contains a list of tuples with the line the term was found
+            on and the match object.
+        """
+        ...

@@ -325,11 +325,57 @@ class NNTP:
         ...
     def over(
         self, message_spec: str | _list[Any] | tuple[Any, ...] | None, *, file: _File = None
-    ) -> tuple[str, _list[tuple[int, dict[str, str]]]]: ...
-    def date(self) -> tuple[str, datetime.datetime]: ...
-    def post(self, data: bytes | Iterable[bytes]) -> str: ...
-    def ihave(self, message_id: Any, data: bytes | Iterable[bytes]) -> str: ...
-    def quit(self) -> str: ...
+    ) -> tuple[str, _list[tuple[int, dict[str, str]]]]:
+        """
+        Process an OVER command.  If the command isn't supported, fall
+        back to XOVER. Arguments:
+        - message_spec:
+            - either a message id, indicating the article to fetch
+              information about
+            - or a (start, end) tuple, indicating a range of article numbers;
+              if end is None, information up to the newest message will be
+              retrieved
+            - or None, indicating the current article number must be used
+        - file: Filename string or file object to store the result in
+        Returns:
+        - resp: server response if successful
+        - list: list of dicts containing the response fields
+
+        NOTE: the "message id" form isn't supported by XOVER
+        """
+        ...
+    def date(self) -> tuple[str, datetime.datetime]:
+        """
+        Process the DATE command.
+        Returns:
+        - resp: server response if successful
+        - date: datetime object
+        """
+        ...
+    def post(self, data: bytes | Iterable[bytes]) -> str:
+        """
+        Process a POST command.  Arguments:
+        - data: bytes object, iterable or file containing the article
+        Returns:
+        - resp: server response if successful
+        """
+        ...
+    def ihave(self, message_id: Any, data: bytes | Iterable[bytes]) -> str:
+        """
+        Process an IHAVE command.  Arguments:
+        - message_id: message-id of the article
+        - data: file containing the article
+        Returns:
+        - resp: server response if successful
+        Note that if the server refuses the article an exception is raised.
+        """
+        ...
+    def quit(self) -> str:
+        """
+        Process a QUIT command and close the socket.  Returns:
+        - resp: server response if successful
+        """
+        ...
     def login(self, user: str | None = None, password: str | None = None, usenetrc: bool = True) -> None: ...
     def starttls(self, context: ssl.SSLContext | None = None) -> None:
         """

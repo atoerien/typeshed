@@ -127,7 +127,39 @@ def load_module(name: str, file: _FileLike | None, filename: str, details: tuple
 # IO[Any] is a TextIOWrapper if name is a .py file, and a FileIO otherwise.
 def find_module(
     name: str, path: list[str] | list[PathLike[str]] | list[StrPath] | None = None
-) -> tuple[IO[Any], str, tuple[str, str, int]]: ...
-def reload(module: types.ModuleType) -> types.ModuleType: ...
-def init_builtin(name: str) -> types.ModuleType | None: ...
-def load_dynamic(name: str, path: str, file: Any = None) -> types.ModuleType: ...  # file argument is ignored
+) -> tuple[IO[Any], str, tuple[str, str, int]]:
+    """
+    **DEPRECATED**
+
+    Search for a module.
+
+    If path is omitted or None, search for a built-in, frozen or special
+    module and continue search in sys.path. The module name cannot
+    contain '.'; to search for a submodule of a package, pass the
+    submodule name and the package's __path__.
+    """
+    ...
+def reload(module: types.ModuleType) -> types.ModuleType:
+    """
+    **DEPRECATED**
+
+    Reload the module and return it.
+
+    The module must have been successfully imported before.
+    """
+    ...
+def init_builtin(name: str) -> types.ModuleType | None:
+    """
+    **DEPRECATED**
+
+    Load and return a built-in module by name, or None is such module doesn't
+    exist
+    """
+    ...
+def load_dynamic(name: str, path: str, file: Any = None) -> types.ModuleType:
+    """
+    **DEPRECATED**
+
+    Load an extension module.
+    """
+    ...

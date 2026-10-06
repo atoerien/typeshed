@@ -7,7 +7,19 @@ class Feature(GeoJSON):
     """Represents a WGS84 GIS feature."""
     def __init__(
         self, id: str | int | None = None, geometry: Geometry | None = None, properties: dict[str, Any] | None = None, **extra
-    ) -> None: ...
+    ) -> None:
+        """
+        Initialises a Feature object with the given parameters.
+
+        :param id: Feature identifier, such as a sequential number.
+        :type id: str, int
+        :param geometry: Geometry corresponding to the feature.
+        :param properties: Dict containing properties of the feature.
+        :type properties: dict
+        :return: Feature object
+        :rtype: Feature
+        """
+        ...
     def errors(self) -> list[str] | None: ...
 
 class FeatureCollection(GeoJSON):
