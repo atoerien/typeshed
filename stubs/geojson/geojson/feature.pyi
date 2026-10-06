@@ -6,20 +6,8 @@ from geojson.geometry import Geometry
 class Feature(GeoJSON):
     """Represents a WGS84 GIS feature."""
     def __init__(
-        self, id: None | str | int = None, geometry: None | Geometry = None, properties: None | dict[str, Any] = None, **extra
-    ) -> None:
-        """
-        Initialises a Feature object with the given parameters.
-
-        :param id: Feature identifier, such as a sequential number.
-        :type id: str, int
-        :param geometry: Geometry corresponding to the feature.
-        :param properties: Dict containing properties of the feature.
-        :type properties: dict
-        :return: Feature object
-        :rtype: Feature
-        """
-        ...
+        self, id: str | int | None = None, geometry: Geometry | None = None, properties: dict[str, Any] | None = None, **extra
+    ) -> None: ...
     def errors(self) -> list[str] | None: ...
 
 class FeatureCollection(GeoJSON):

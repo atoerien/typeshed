@@ -1565,7 +1565,7 @@ def log_poisson_loss(
 def moments(
     x: TensorCompatible | RaggedTensor,
     axes: TensorCompatible,
-    shift: None | Any = None,
+    shift: Any | None = None,
     keepdims: bool = False,
     name: str | None = None,
 ) -> tuple[Tensor, Tensor]:

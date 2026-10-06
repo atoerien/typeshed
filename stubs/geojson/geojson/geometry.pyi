@@ -13,9 +13,9 @@ class Geometry(GeoJSON):
     """Represents an abstract base class for a WGS84 geometry."""
     def __init__(
         self,
-        coordinates: None | Sequence[_InputCoord] | Geometry = None,
+        coordinates: Sequence[_InputCoord] | Geometry | None = None,
         validate: bool = False,
-        precision: None | int = None,
+        precision: int | None = None,
         **extra,
     ) -> None:
         """

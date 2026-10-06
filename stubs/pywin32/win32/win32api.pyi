@@ -28,7 +28,7 @@ class _FileVersionInfo(TypedDict):
     FileOS: int
     FileType: int
     FileSubtype: int
-    FileDate: None | Incomplete
+    FileDate: Incomplete | None
 
 @type_check_only
 class _PwrCapabilitiesBatteryScale(TypedDict):

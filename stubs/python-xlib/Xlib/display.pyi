@@ -6,32 +6,38 @@ from typing import Any, Literal, TypeAlias, TypedDict, overload, type_check_only
 from Xlib import error
 from Xlib._typing import ErrorHandler
 from Xlib.protocol import display, request, rq
-from Xlib.xobject import colormap, cursor, drawable, fontable, resource
+from Xlib.xobject import (
+    colormap as _colormap,
+    cursor as _cursor,
+    drawable as _drawable,
+    fontable as _fontable,
+    resource as _resource,
+)
 
 _ResourceBaseClass: TypeAlias = (
-    resource.Resource
-    | drawable.Drawable
-    | drawable.Window
-    | drawable.Pixmap
-    | fontable.Fontable
-    | fontable.Font
-    | fontable.GC
-    | colormap.Colormap
-    | cursor.Cursor
+    _resource.Resource
+    | _drawable.Drawable
+    | _drawable.Window
+    | _drawable.Pixmap
+    | _fontable.Fontable
+    | _fontable.Font
+    | _fontable.GC
+    | _colormap.Colormap
+    | _cursor.Cursor
 )
 
 # Is the type of the `_resource_baseclasses` variable, defined in this file at runtime
 @type_check_only
 class _ResourceBaseClassesType(TypedDict):  # noqa: Y049
-    resource: type[resource.Resource]
-    drawable: type[drawable.Drawable]
-    window: type[drawable.Window]
-    pixmap: type[drawable.Pixmap]
-    fontable: type[fontable.Fontable]
-    font: type[fontable.Font]
-    gc: type[fontable.GC]
-    colormap: type[colormap.Colormap]
-    cursor: type[cursor.Cursor]
+    resource: type[_resource.Resource]
+    drawable: type[_drawable.Drawable]
+    window: type[_drawable.Window]
+    pixmap: type[_drawable.Pixmap]
+    fontable: type[_fontable.Fontable]
+    font: type[_fontable.Font]
+    gc: type[_fontable.GC]
+    colormap: type[_colormap.Colormap]
+    cursor: type[_cursor.Cursor]
 
 class _BaseDisplay(display.Display):
     def __init__(self, display: str | None = None) -> None: ...
@@ -104,235 +110,25 @@ class Display:
         ...
 
     @overload
-    def create_resource_object(self, type: Literal["resource"], id: int) -> resource.Resource:
-        """
-        Create a resource object of type for the integer id. type
-        should be one of the following strings:
-
-        resource
-        drawable
-        window
-        pixmap
-        fontable
-        font
-        gc
-        colormap
-        cursor
-
-        This function can be used when a resource ID has been fetched
-        e.g. from an resource or a command line argument. Resource
-        objects should never be created by instantiating the appropriate
-        class directly, since any X extensions dynamically added by the
-        library will not be available.
-        """
-        ...
+    def create_resource_object(self, type: Literal["resource"], id: int) -> _resource.Resource: ...
     @overload
-    def create_resource_object(self, type: Literal["drawable"], id: int) -> drawable.Drawable:
-        """
-        Create a resource object of type for the integer id. type
-        should be one of the following strings:
-
-        resource
-        drawable
-        window
-        pixmap
-        fontable
-        font
-        gc
-        colormap
-        cursor
-
-        This function can be used when a resource ID has been fetched
-        e.g. from an resource or a command line argument. Resource
-        objects should never be created by instantiating the appropriate
-        class directly, since any X extensions dynamically added by the
-        library will not be available.
-        """
-        ...
+    def create_resource_object(self, type: Literal["drawable"], id: int) -> _drawable.Drawable: ...
     @overload
-    def create_resource_object(self, type: Literal["window"], id: int) -> drawable.Window:
-        """
-        Create a resource object of type for the integer id. type
-        should be one of the following strings:
-
-        resource
-        drawable
-        window
-        pixmap
-        fontable
-        font
-        gc
-        colormap
-        cursor
-
-        This function can be used when a resource ID has been fetched
-        e.g. from an resource or a command line argument. Resource
-        objects should never be created by instantiating the appropriate
-        class directly, since any X extensions dynamically added by the
-        library will not be available.
-        """
-        ...
+    def create_resource_object(self, type: Literal["window"], id: int) -> _drawable.Window: ...
     @overload
-    def create_resource_object(self, type: Literal["pixmap"], id: int) -> drawable.Pixmap:
-        """
-        Create a resource object of type for the integer id. type
-        should be one of the following strings:
-
-        resource
-        drawable
-        window
-        pixmap
-        fontable
-        font
-        gc
-        colormap
-        cursor
-
-        This function can be used when a resource ID has been fetched
-        e.g. from an resource or a command line argument. Resource
-        objects should never be created by instantiating the appropriate
-        class directly, since any X extensions dynamically added by the
-        library will not be available.
-        """
-        ...
+    def create_resource_object(self, type: Literal["pixmap"], id: int) -> _drawable.Pixmap: ...
     @overload
-    def create_resource_object(self, type: Literal["fontable"], id: int) -> fontable.Fontable:
-        """
-        Create a resource object of type for the integer id. type
-        should be one of the following strings:
-
-        resource
-        drawable
-        window
-        pixmap
-        fontable
-        font
-        gc
-        colormap
-        cursor
-
-        This function can be used when a resource ID has been fetched
-        e.g. from an resource or a command line argument. Resource
-        objects should never be created by instantiating the appropriate
-        class directly, since any X extensions dynamically added by the
-        library will not be available.
-        """
-        ...
+    def create_resource_object(self, type: Literal["fontable"], id: int) -> _fontable.Fontable: ...
     @overload
-    def create_resource_object(self, type: Literal["font"], id: int) -> fontable.Font:
-        """
-        Create a resource object of type for the integer id. type
-        should be one of the following strings:
-
-        resource
-        drawable
-        window
-        pixmap
-        fontable
-        font
-        gc
-        colormap
-        cursor
-
-        This function can be used when a resource ID has been fetched
-        e.g. from an resource or a command line argument. Resource
-        objects should never be created by instantiating the appropriate
-        class directly, since any X extensions dynamically added by the
-        library will not be available.
-        """
-        ...
+    def create_resource_object(self, type: Literal["font"], id: int) -> _fontable.Font: ...
     @overload
-    def create_resource_object(self, type: Literal["gc"], id: int) -> fontable.GC:
-        """
-        Create a resource object of type for the integer id. type
-        should be one of the following strings:
-
-        resource
-        drawable
-        window
-        pixmap
-        fontable
-        font
-        gc
-        colormap
-        cursor
-
-        This function can be used when a resource ID has been fetched
-        e.g. from an resource or a command line argument. Resource
-        objects should never be created by instantiating the appropriate
-        class directly, since any X extensions dynamically added by the
-        library will not be available.
-        """
-        ...
+    def create_resource_object(self, type: Literal["gc"], id: int) -> _fontable.GC: ...
     @overload
-    def create_resource_object(self, type: Literal["colormap"], id: int) -> colormap.Colormap:
-        """
-        Create a resource object of type for the integer id. type
-        should be one of the following strings:
-
-        resource
-        drawable
-        window
-        pixmap
-        fontable
-        font
-        gc
-        colormap
-        cursor
-
-        This function can be used when a resource ID has been fetched
-        e.g. from an resource or a command line argument. Resource
-        objects should never be created by instantiating the appropriate
-        class directly, since any X extensions dynamically added by the
-        library will not be available.
-        """
-        ...
+    def create_resource_object(self, type: Literal["colormap"], id: int) -> _colormap.Colormap: ...
     @overload
-    def create_resource_object(self, type: Literal["cursor"], id: int) -> cursor.Cursor:
-        """
-        Create a resource object of type for the integer id. type
-        should be one of the following strings:
-
-        resource
-        drawable
-        window
-        pixmap
-        fontable
-        font
-        gc
-        colormap
-        cursor
-
-        This function can be used when a resource ID has been fetched
-        e.g. from an resource or a command line argument. Resource
-        objects should never be created by instantiating the appropriate
-        class directly, since any X extensions dynamically added by the
-        library will not be available.
-        """
-        ...
+    def create_resource_object(self, type: Literal["cursor"], id: int) -> _cursor.Cursor: ...
     @overload
-    def create_resource_object(self, type: str, id: int) -> resource.Resource:
-        """
-        Create a resource object of type for the integer id. type
-        should be one of the following strings:
-
-        resource
-        drawable
-        window
-        pixmap
-        fontable
-        font
-        gc
-        colormap
-        cursor
-
-        This function can be used when a resource ID has been fetched
-        e.g. from an resource or a command line argument. Resource
-        objects should never be created by instantiating the appropriate
-        class directly, since any X extensions dynamically added by the
-        library will not be available.
-        """
-        ...
+    def create_resource_object(self, type: str, id: int) -> _resource.Resource: ...
 
     def __getattr__(self, attr: str) -> MethodType: ...
     def screen(self, sno: int | None = None) -> rq.Struct: ...
@@ -490,37 +286,12 @@ class Display:
         """
         ...
     def change_active_pointer_grab(
-        self, event_mask: int, cursor: cursor.Cursor, time: int, onerror: ErrorHandler[object] | None = None
-    ) -> None:
-        """
-        Change the dynamic parameters of a pointer grab. See
-        XChangeActivePointerGrab(3X11).
-        """
-        ...
-    def ungrab_keyboard(self, time: int, onerror: ErrorHandler[object] | None = None) -> None:
-        """
-        Ungrab a grabbed keyboard and any queued events. See
-        XUngrabKeyboard(3X11).
-        """
-        ...
-    def allow_events(self, mode: int, time: int, onerror: ErrorHandler[object] | None = None) -> None:
-        """
-        Release some queued events. mode should be one of
-        X.AsyncPointer, X.SyncPointer, X.AsyncKeyboard, X.SyncKeyboard,
-        X.ReplayPointer, X.ReplayKeyboard, X.AsyncBoth, or X.SyncBoth.
-        time should be a timestamp or X.CurrentTime.
-        """
-        ...
-    def grab_server(self, onerror: ErrorHandler[object] | None = None) -> None:
-        """
-        Disable processing of requests on all other client connections
-        until the server is ungrabbed. Server grabbing should be avoided
-        as much as possible.
-        """
-        ...
-    def ungrab_server(self, onerror: ErrorHandler[object] | None = None) -> None:
-        """Release the server if it was previously grabbed by this client."""
-        ...
+        self, event_mask: int, cursor: _cursor.Cursor, time: int, onerror: ErrorHandler[object] | None = None
+    ) -> None: ...
+    def ungrab_keyboard(self, time: int, onerror: ErrorHandler[object] | None = None) -> None: ...
+    def allow_events(self, mode: int, time: int, onerror: ErrorHandler[object] | None = None) -> None: ...
+    def grab_server(self, onerror: ErrorHandler[object] | None = None) -> None: ...
+    def ungrab_server(self, onerror: ErrorHandler[object] | None = None) -> None: ...
     def warp_pointer(
         self,
         x: int,

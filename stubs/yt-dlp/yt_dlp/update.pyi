@@ -46,21 +46,9 @@ class Updater:
         """Current version"""
         ...
     @property
-    def current_commit(self) -> str:
-        """Current commit hash"""
-        ...
-    def query_update(self, *, _output: bool = False) -> UpdateInfo | None:
-        """
-        Fetches info about the available update
-        @returns   An `UpdateInfo` if there is an update available, else None
-        """
-        ...
-    def update(self, update_info: type[NO_DEFAULT] | None | UpdateInfo = ...) -> bool | None:
-        """
-        Update yt-dlp executable to the latest version
-        @param update_info  `UpdateInfo | None` as returned by query_update()
-        """
-        ...
+    def current_commit(self) -> str: ...
+    def query_update(self, *, _output: bool = False) -> UpdateInfo | None: ...
+    def update(self, update_info: type[NO_DEFAULT] | UpdateInfo | None = ...) -> bool | None: ...
     @functools.cached_property
     def filename(self) -> str:
         """Filename of the executable"""

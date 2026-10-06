@@ -55,13 +55,4 @@ class AXScriptException(COMException):
 
 def ProcessAXScriptException(
     scriptingSite: AXSite, debugManager: DebugManager, exceptionInstance: AXScriptException
-) -> None | COMException | AXScriptException:
-    """
-    General function to handle any exception in AX code
-
-    This function creates an instance of our IActiveScriptError interface, and
-    gives it to the host, along with out exception class.  The host will
-    likely call back on the IActiveScriptError interface to get the source text
-    and other information not normally in COM exceptions.
-    """
-    ...
+) -> COMException | AXScriptException | None: ...

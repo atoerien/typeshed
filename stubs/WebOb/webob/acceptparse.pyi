@@ -1152,21 +1152,7 @@ def create_accept_header(header_value: AcceptInvalidHeader) -> AcceptInvalidHead
     """
     ...
 @overload
-def create_accept_header(header_value: None | AcceptNoHeader) -> AcceptNoHeader:
-    """
-    Create an object representing the ``Accept`` header in a request.
-
-    :param header_value: (``str``) header value
-    :return: If `header_value` is ``None``, an :class:`AcceptNoHeader`
-             instance.
-
-             | If `header_value` is a valid ``Accept`` header, an
-               :class:`AcceptValidHeader` instance.
-
-             | If `header_value` is an invalid ``Accept`` header, an
-               :class:`AcceptInvalidHeader` instance.
-    """
-    ...
+def create_accept_header(header_value: AcceptNoHeader | None) -> AcceptNoHeader: ...
 @overload
 def create_accept_header(header_value: str) -> AcceptValidHeader | AcceptInvalidHeader:
     """

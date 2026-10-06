@@ -11,4 +11,5 @@ whatever if needed.
 def get_rl_tempdir(*subdirs: str) -> str: ...
 def get_rl_tempfile(fn: str | None = None) -> str: ...
 
-__all__ = ("get_rl_tempdir", "get_rl_tempdir")
+# The duplicate entry matches the runtime __all__.
+__all__ = ("get_rl_tempdir", "get_rl_tempdir")  # noqa: RUF068

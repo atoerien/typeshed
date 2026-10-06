@@ -116,25 +116,7 @@ def whence(id: SupportsIndex) -> _Whence:
     ...
 def exec(
     id: SupportsIndex, code: str | types.CodeType | Callable[[], object], shared: _SharedDict = {}, *, restrict: bool = False
-) -> None | types.SimpleNamespace:
-    """
-    exec(id, code, shared=None, *, restrict=False)
-
-    Execute the provided code in the identified interpreter.
-    This is equivalent to running the builtin exec() under the target
-    interpreter, using the __dict__ of its __main__ module as both
-    globals and locals.
-
-    "code" may be a string containing the text of a Python script.
-
-    Functions (and code objects) are also supported, with some restrictions.
-    The code/function must not take any arguments or be a closure
-    (i.e. have cell vars).  Methods and other callables are not supported.
-
-    If a function is provided, its code object is used and all its state
-    is ignored, including its __globals__ dict.
-    """
-    ...
+) -> types.SimpleNamespace | None: ...
 def call(
     id: SupportsIndex,
     callable: Callable[..., _R],

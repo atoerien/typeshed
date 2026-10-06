@@ -73,9 +73,9 @@ class BaseAdapter:
         self,
         request: PreparedRequest,
         stream: bool = False,
-        timeout: None | float | tuple[float, float] | tuple[float, None] = None,
+        timeout: float | tuple[float, float] | tuple[float, None] | None = None,
         verify: bool | str = True,
-        cert: None | bytes | str | tuple[bytes | str, bytes | str] = None,
+        cert: bytes | str | tuple[bytes | str, bytes | str] | None = None,
         proxies: Mapping[str, str] | None = None,
     ) -> Response:
         """
@@ -364,9 +364,9 @@ class HTTPAdapter(BaseAdapter):
         self,
         request: PreparedRequest,
         stream: bool = False,
-        timeout: None | float | tuple[float, float] | tuple[float, None] = None,
+        timeout: float | tuple[float, float] | tuple[float, None] | None = None,
         verify: bool | str = True,
-        cert: None | bytes | str | tuple[bytes | str, bytes | str] = None,
+        cert: bytes | str | tuple[bytes | str, bytes | str] | None = None,
         proxies: Mapping[str, str] | None = None,
     ) -> Response:
         """
