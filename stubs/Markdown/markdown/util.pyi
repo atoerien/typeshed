@@ -7,6 +7,7 @@ from collections.abc import Iterator
 from importlib import metadata
 from re import Pattern
 from typing import Final, Generic, TypedDict, TypeVar, overload, type_check_only
+from xml.etree.ElementTree import Element
 
 from markdown.core import Markdown
 
@@ -97,28 +98,12 @@ class HtmlStash:
     in the beginning and replace with place-holders.
     """
     html_counter: int
-    rawHtmlBlocks: list[str]
+    rawHtmlBlocks: list[str | Element]
     tag_counter: int
     tag_data: list[_TagData]
-    def __init__(self) -> None:
-        """Create an `HtmlStash`. """
-        ...
-    def store(self, html: str) -> str:
-        """
-        Saves an HTML segment for later reinsertion.  Returns a
-        placeholder string that needs to be inserted into the
-        document.
-
-        Keyword arguments:
-            html: An html segment.
-
-        Returns:
-            A placeholder string.
-        """
-        ...
-    def reset(self) -> None:
-        """Clear the stash. """
-        ...
+    def __init__(self) -> None: ...
+    def store(self, html: str | Element) -> str: ...
+    def reset(self) -> None: ...
     def get_placeholder(self, key: int) -> str: ...
     def store_tag(self, tag: str, attrs: dict[str, str], left_index: int, right_index: int) -> str:
         """Store tag data and return a placeholder."""
