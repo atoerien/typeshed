@@ -1,8 +1,5 @@
 # Can't generate with stubgen because:
 # "ImportError: This must be an MFC application - try 'import win32ui' first"
-
-"""A module for Dynamic Data Exchange support"""
-
 from typing import Final
 
 import _win32typing
